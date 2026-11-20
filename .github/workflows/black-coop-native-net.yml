@@ -21,8 +21,44 @@ jobs:
       - name: Compile strict C++20 (ASAN, UBSAN)
         run: |
           g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -fsanitize=address,undefined -fno-omit-frame-pointer coop/native/test_net.cpp -o /tmp/black-coop-net-test
+          g++ -std=c++20 -O2 -Wall -Wextra -Werror -pedantic -pthread coop/native/udp_cli.cpp -o /tmp/black-coop-udp-cli
       - name: Loopback integration and protocol regression
         env:
           ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
           UBSAN_OPTIONS: halt_on_error=1
         run: /tmp/black-coop-net-test
+      - name: CLI real UDP two process smoke test
+        run: |
+          set -euo pipefail
+          /tmp/black-coop-udp-cli host 127.0.0.1 24873 >/tmp/bo-host.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          sleep 0.25
+          /tmp/black-coop-udp-cli join 127.0.0.1 24873 >/tmp/bo-client.log
+          grep -q 'Connected as simulated player' /tmp/bo-client.log
+          grep -q 'snapshot tick=10' /tmp/bo-client.log
+          cat /tmp/bo-client.log
+  android-arm64:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop/native
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Install Android NDK
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install 'ndk;28.2.13676358' >/dev/null
+      - name: Cross-compile Android 10+ ARM64
+        run: |
+          set -euo pipefail
+          tool="$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android29-clang++"
+          "$tool" -std=c++20 -O2 -Wall -Wextra -Werror -pedantic -static-libstdc++ -pthread coop/native/udp_cli.cpp -o black-coop-net-lab-aarch64
+          readelf -h black-coop-net-lab-aarch64 | grep -q AArch64
+          sha256sum black-coop-net-lab-aarch64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: black-coop-net-lab-android-arm64-NO-GAME
+          path: black-coop-net-lab-aarch64
+          if-no-files-found: error
