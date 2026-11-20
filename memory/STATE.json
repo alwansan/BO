@@ -13,11 +13,18 @@
     "NET_001": {
       "status": "pass_loopback_only",
       "run": 44808411128,
-      "code": "79f8648e666d02edae8aefde27e361f8f5ad5cdc"
+      "code": "79f8648e666d02edae8aefde27e361f8f5ad5cdc",
+      "regressionRun": 44813529325
     }
   },
   "pending": {
-    "SRC_001": "CI identity audit newly staged, not yet verified",
+    "SRC_001": {
+      "run": 44813529439,
+      "code": "6a82564229247ed21ef526cfbfb221a499802805",
+      "synthetic": "pass",
+      "identity": "completed",
+      "conclusion": "success"
+    },
     "ACTOR_001": "not_started",
     "COMBAT_001": "not_started",
     "DEVICE": "not_started"

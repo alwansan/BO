@@ -12,3 +12,10 @@
 | src/game/weapons.cpp | inventory, weapon manager, create/free weapon، world models؛ يحتاج lifetime tracing |
 هذه offsets مستخرجة من upstream فقط وليست تكاملاً أو إثبات إصدار عربي. قبل telemetry: طابق XBE ونسخة المصدر، تحقق من mission lifecycle، bounds، thread ownership. لا كتابة ذاكرة في HOOK-001.
 مسار BO: BLACK-Arabic_src/assets/bundle/game.iso 1793179648 bytes SHA256 f6d15ff277eb19ef4fb9092e245599c7ae68f5a49c6ac7db60934a32ec246c62، 39 أجزاء؛ libmain.so 72073216 bytes SHA256 fe3a80fbbffd57d4fa10025d1608ab31cc98c941b8be7450b879552f418e5c38، جزآن. لا تعيد جمع النسختين بلا حاجة.
+
+## نقاط دخول أكثر تحديداً — مرجع فقط
+- cheats.cpp:61-78: X86_FUNC(sub_001E5FA0)، ecx هو اللاعب، يطابق Player() وkind=2. مرشح read-only بعد __imp__ عند التأكد من حالة world وعمر actor؛ لا تُستبدل وظيفة الأصل ولا تكتب god-mode.
+- cheats.cpp:80-87: X86_FUNC(sub_001E74B0)، ecx الضحية وstack+0x18 المهاجم؛ مسار ضرر الجندي (اللاعب له مسار آخر). مرشح رصد أحداث القتال، ليس authoritative replication.
+- cheats.cpp:89-100: animation event sub_001E8830 يحوي pointer للشخصية؛ مرشح رصد أحداث لا إرسال pointer عبر الشبكة.
+- config/game.toml: hook MouseLook عند 0x1BD6A8؛ لا تعتمد عليه كمصدر لكل مدخلات اللاعب قبل تتبع touch/controller أيضاً.
+لا نعتبر أي نقطة مقبولة في APK العربية حتى إثبات الهوية وإعادة إنتاج baseline.

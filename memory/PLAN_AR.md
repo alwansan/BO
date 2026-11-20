@@ -2,7 +2,7 @@
 | Gate | القبول | الحالة |
 |---|---|---|
 | NET-001 | عميلان loopback وحالة authoritative مستقلة | PASS 44808411128 |
-| SRC-001 | SHA256 للأصول المقسمة، XBE SHA1 وELF arm64 وهوية compile image | قيد فحص CI |
+| SRC-001 | SHA256 للأصول المقسمة، XBE SHA1 وELF arm64 وهوية compile image | synthetic PASS؛ identity completed (44813529439) |
 | SRC-002 | إعادة بناء upstream pinned على Windows دون أصول منشورة أو تغييرات gameplay | مفتوح |
 | HOOK-001 | تسجيل محلي read-only للحالة دون crash أو تعديل الحفظ | مفتوح |
 | ACTOR-001 | spawn + render + move شخصية ثانية دون singleton conflict | مفتوح |

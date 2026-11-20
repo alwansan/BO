@@ -6,3 +6,7 @@
 - upstream native/game_files.cpp يخزن kImageSha1 ويدعم تحويل Europe SHA1 796ad8369354e48aa15644d4707dd70bd3bc3b4c إلى US. config/game.toml title 45410083. لا تطابق offsets عربي قبل الفحص.
 - NET-001 run 44808411128 SUCCESS لعميلين على loopback؛ ليس اختبار هاتف/محرك. لا توجد APK جماعية.
 - مصادر مرجعية لنظام الذاكرة: raf clients/GT/RESTORE_AR.md وCP Native-Compose AGENTS.md وprompt/RESTORE_SESSION_AR.md. CB 404؛ CP هو المتاح.
+
+## تحديث CI
+- [44813529325](https://github.com/alwansan/BO/actions/runs/44813529325) NET-001 regression SUCCESS على 6a82564229247ed21ef526cfbfb221a499802805.
+- [44813529439](https://github.com/alwansan/BO/actions/runs/44813529439) SRC-001 synthetic job SUCCESS؛ identity audit completed / success عند الفحص. لا نتيجة XBE مثبتة قبل قراءة تقرير identity.json أو log. لا APK أو اختبار هاتف.
