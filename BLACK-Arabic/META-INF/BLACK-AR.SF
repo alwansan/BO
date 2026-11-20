@@ -1,0 +1,86 @@
+Signature-Version: 1.0
+Created-By: 1.0 (Android)
+SHA-256-Digest-Manifest: QZvu1X3ELaMVvunrJjkG0ygQHxH1FDj53EO9opwHI+U=
+X-Android-APK-Signed: 2, 3
+
+Name: AndroidManifest.xml
+SHA-256-Digest: C+FZBZl9wnjOlIEEfvXQ0aAICfruO2rYHDb/Rva02O0=
+
+Name: META-INF/version-control-info.textproto
+SHA-256-Digest: x9EfxbIOcGYT2fllEAABhMW9/TnKxQbxI4OctnMUPtg=
+
+Name: assets/bundle/game.iso
+SHA-256-Digest: yzCNEC4uvmJqlNdWJJeBUFcewwbyCOvq4knedGL+xbk=
+
+Name: assets/notices/Black-Android-MIT.txt
+SHA-256-Digest: QkmNN8ZysTiTxUgk5JQfkqzHyNbmTKse0PmmdRf6uj0=
+
+Name: assets/notices/Thmanyah-LICENSE.pdf
+SHA-256-Digest: N8gVWMHq+ffPXuDKifwP8OxJxqyPZyaBppbjXSRTnJQ=
+
+Name: assets/thmanyah-Medium.otf
+SHA-256-Digest: dyH90LirGnHzI7w3yTyjf18tSyYxiiJtS5vCpZG6Aro=
+
+Name: classes.dex
+SHA-256-Digest: l9FW+AGImLiXGU1mRYS9ZwZktTfeAg7PkDym4Qo7ziw=
+
+Name: lib/arm64-v8a/libSDL3.so
+SHA-256-Digest: CpCZNpaQGq4G1nroaVcWHQCReZ5ihNoOEva02T5Y08Y=
+
+Name: lib/arm64-v8a/libc++_shared.so
+SHA-256-Digest: bI3y66Pi2SfX6ML4h7188KRTudEO8SZkuyBP979orms=
+
+Name: lib/arm64-v8a/libmain.so
+SHA-256-Digest: j0X0cR9S3pv1cHlP66JJQD69SkwPzDUm0pCH3XE1xYI=
+
+Name: res/drawable-nodpi/ic_launcher_art.png
+SHA-256-Digest: 9zhHs+duh2LY1PTp8KszBVe8i6QkH83yjz4h/xQgdzU=
+
+Name: res/mipmap-anydpi/ic_launcher.xml
+SHA-256-Digest: mKYmQzrllkNdGrz8lBNkL/hcETTN0Wj0EjV6G8M2SkY=
+
+Name: res/mipmap-hdpi/ic_launcher.png
+SHA-256-Digest: uycRSdLhP2MZftyzOh4xKAzI1AtCFhclHeZtR7/dqes=
+
+Name: res/mipmap-mdpi/ic_launcher.png
+SHA-256-Digest: YpNScqRP96MJBMZoubU+jDJlun0VaFIj7ynIKgZXob4=
+
+Name: res/mipmap-xhdpi/ic_launcher.png
+SHA-256-Digest: rAVTVLbI15y8gI8Ls/UZy1Zas9q6V1MRIi5TJ05CKac=
+
+Name: res/mipmap-xxhdpi/ic_launcher.png
+SHA-256-Digest: 8czapVCn/ybA08QTKsSTe5aCwsdrNmwyJMfOrEV8lZA=
+
+Name: res/mipmap-xxxhdpi/ic_launcher.png
+SHA-256-Digest: Pw/+WQ352QNijfkS85LzvWDiEL/4Ft6uuJP0MYWPWYQ=
+
+Name: res/raw/scene_03_n.mp4
+SHA-256-Digest: 5wRLnap/XA60tRKwbCoaVGl8oxfKAYRkVXiP0zNKGWY=
+
+Name: res/raw/scene_05_n.mp4
+SHA-256-Digest: JiHcUltRVEEwMRBk+stV6cnYo7zGzNcF8GeaiygoAkY=
+
+Name: res/raw/scene_07_n.mp4
+SHA-256-Digest: rjgAWSUFK1TTFY+feCheICq3WoUSgXLMjUXg38II06g=
+
+Name: res/raw/scene_09_n.mp4
+SHA-256-Digest: KoAp3GxpxkatxW05T0tmk8Uao0hpdi9slyk5EiA1lo8=
+
+Name: res/raw/scene_11_n.mp4
+SHA-256-Digest: IqpO29I8FPXnEvn5FasANOcEBAl5u2OPOAP9M6OyIT0=
+
+Name: res/raw/scene_13_n.mp4
+SHA-256-Digest: PrdLMZCUUD/RhIqqinZQRihbLF/sdCCqGh4NtNnj5ws=
+
+Name: res/raw/scene_15_n.mp4
+SHA-256-Digest: WlFSJJwB/mJSzNHNB0G4ri58kYo8ixndu0xfqegMSx8=
+
+Name: res/raw/scene_17_n.mp4
+SHA-256-Digest: zOreFxcmoDYxoTicrbAKjpXEOpLFtMkTqgHmFk+9DYs=
+
+Name: res/raw/scene_18_n.mp4
+SHA-256-Digest: KCjfW/Qy+qW2RTZirGcXjYSNJPRnFEn69nzSx1dGUQk=
+
+Name: resources.arsc
+SHA-256-Digest: kjLjkkYAHN+87MUV09DHyLpiLESQ6TfPb5qCP14rhdA=
+
