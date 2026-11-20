@@ -1,0 +1,113 @@
+name: BLACK candidate XBE static analysis NO APK
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths: ['.github/workflows/black-coop-candidate-audit.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: black-coop-candidate-audit
+  cancel-in-progress: false
+jobs:
+  static-candidate:
+    runs-on: windows-2025
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: bo
+          sparse-checkout: |
+            /coop/
+            /BLACK_FILE_MANIFEST.json
+            /BLACK-Arabic_src/assets/bundle/game.iso/
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - uses: actions/checkout@v4
+        with:
+          repository: RanggaCasper/Black-Android
+          ref: f3754d6985a8c35204e7df071546e586b10f1806
+          path: reference
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: TGP482/XboxXBE-Recomp
+          ref: 99078b119b5d5e0d1d6afb1390e29437c0c984c0
+          path: reference/sdk
+          persist-credentials: false
+      - name: Restore licensed owner input in runner only
+        shell: python
+        run: |
+          import hashlib, json, os, pathlib, subprocess, sys
+          root = pathlib.Path('bo').resolve()
+          sys.path.insert(0, str(root / 'coop'))
+          from source_audit import restore, xbe_from_iso, ISO
+          records = json.loads((root / 'BLACK_FILE_MANIFEST.json').read_text())['files']
+          rec = next(r for r in records if r['path'] == ISO)
+          iso = pathlib.Path(os.environ['RUNNER_TEMP']) / 'owner-disc.iso'
+          restore(root, rec, iso)
+          identity = xbe_from_iso(iso)
+          if identity['sha1'] != 'c5bfed25449c8212d7a976f15246e87ead57713f':
+              raise SystemExit('Unexpected candidate identity; inspect before continuing')
+          xbe = pathlib.Path('reference/assets/default.xbe')
+          xbe.parent.mkdir(exist_ok=True)
+          subprocess.run([sys.executable, 'reference/tools/xdvdfs.py', str(iso), 'default.xbe', str(xbe)], check=True)
+          if hashlib.sha1(xbe.read_bytes()).hexdigest() != identity['sha1']:
+              raise SystemExit('Extractor disagreement')
+          report = {'scope': 'static recompiler probe only; no engine build or gameplay',
+                    'candidate': identity,
+                    'reference': 'f3754d6985a8c35204e7df071546e586b10f1806',
+                    'sdk': '99078b119b5d5e0d1d6afb1390e29437c0c984c0',
+                    'existing_compile_image_sha1': '82d0588124e70102ee650f8969c0a56374476234',
+                    'matches_existing_compile_image': False,
+                    'runtime_compatible': None, 'apk_built': False}
+          (pathlib.Path(os.environ['RUNNER_TEMP']) / 'candidate-identity.json').write_text(json.dumps(report, indent=2))
+          iso.unlink()
+      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Build pinned analysis tools only
+        shell: pwsh
+        run: |
+          cmake -S reference/tools -B tools-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cmake --build tools-build --config Release --parallel 2
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Analyze candidate without compiling generated game code
+        shell: python
+        run: |
+          import json, os, pathlib, subprocess
+          temp = pathlib.Path(os.environ['RUNNER_TEMP'])
+          generated = temp / 'candidate-generated-private'
+          with (temp / 'candidate-analysis-private.log').open('w') as log:
+              result = subprocess.run(['tools-build/xbe_recomp.exe', 'reference/config/game.toml',
+                                       'reference/assets/default.xbe', str(generated),
+                                       '--xdk', 'reference/sdk/xdk'], stdout=log, stderr=log)
+          report_path = temp / 'candidate-identity.json'
+          report = json.loads(report_path.read_text())
+          report['recompiler_exit_code'] = result.returncode
+          stats = generated / 'x86_recomp_stats.txt'
+          if stats.exists():
+              text = stats.read_text()
+              report['recompiler_statistics'] = text
+              print(text)
+          report['interpretation'] = 'Successful static translation is not semantic compatibility, a baseline engine build, or multiplayer acceptance.'
+          report_path.write_text(json.dumps(report, indent=2))
+          print(json.dumps(report, indent=2))
+          if result.returncode:
+              # Diagnostics only; never upload generated sources or owner game bytes.
+              print('\n'.join((temp / 'candidate-analysis-private.log').read_text(errors='replace').splitlines()[-20:]))
+              raise SystemExit(result.returncode)
+          if not stats.exists():
+              raise SystemExit('Missing recompiler statistics')
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: black-candidate-static-METADATA-ONLY
+          path: ${{ runner.temp }}/candidate-identity.json
+          if-no-files-found: warn
+      - name: Remove temporary game derivatives
+        if: always()
+        shell: pwsh
+        run: |
+          Remove-Item reference/assets/default.xbe -Force -ErrorAction SilentlyContinue
+          Remove-Item "$env:RUNNER_TEMP/candidate-generated-private" -Recurse -Force -ErrorAction SilentlyContinue
+          Remove-Item "$env:RUNNER_TEMP/owner-disc.iso" -Force -ErrorAction SilentlyContinue

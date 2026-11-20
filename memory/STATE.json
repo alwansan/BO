@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-04-native-net.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-05-candidate-audit.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -54,9 +54,14 @@
     "ACTOR_001": "not_started",
     "COMBAT_001": "not_started",
     "DEVICE": "not_started",
-    "SRC_002": "needs matching lawfully acquired XBE for baseline build",
-    "NET_004": "Phone/ZeroTier runtime and authenticated production protocol untested"
+    "SRC_002": "Exact original XBE unavailable per owner; candidate static analysis pending, no engine build authorized by evidence",
+    "NET_004": "Phone/ZeroTier runtime and authenticated production protocol untested",
+    "SRC_002B": {
+      "status": "prepared_static_recompiler_probe",
+      "candidateSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+      "scope": "Read-only analysis of supplied owner image; no baseline acceptance, no APK"
+    }
   },
   "apk": null,
-  "next": "Offer Android CLI lab on trusted ZeroTier network; exact XBE still blocks in-game actors; prepare secure game-state transport design"
+  "next": "Inspect candidate static CI; investigate semantic compatibility without bypassing image checks. Owner does not possess original XBE or Arabic source."
 }

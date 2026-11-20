@@ -1,0 +1,23 @@
+{
+  "repository_head_inspected": "fcf4b85b0b5a5ae3057a0cec57b1c2b342706809",
+  "source_reference": "f3754d6985a8c35204e7df071546e586b10f1806",
+  "candidate": {
+    "bytes": 2813952,
+    "sha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+    "sha256": "df2739c372d254a90aeeccf5971d12097f22d89fbb90db021fda96dd4deb68f6",
+    "title_id": "45410083",
+    "entry_retail": "00025a3f",
+    "section_count": 13,
+    "internal_section_digests_valid": 13,
+    "text_sha256": "19070bf79e9df42405a863895d3f7445e4b5179807962380e4c43c1d9c2347e4"
+  },
+  "elf_compile_image_sha1": "82d0588124e70102ee650f8969c0a56374476234",
+  "matches_compile_image": false,
+  "owner_has_original_xbe_or_arabic_source": false,
+  "local_tests": {
+    "python_source_unittest": "2 passed",
+    "udp_selftest": "passed_two_clients_loopback"
+  },
+  "runtime_compatible": null,
+  "apk_built": false
+}

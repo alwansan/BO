@@ -26,3 +26,12 @@ CI SUCCESS وartifact14666839620، قراءة job136555949209 مباشرة. اج
 - الأخطار: UDP لا تشفير/مصادقة، لا reliability/jitter/NAT، ZeroTier لم يُختبر. راجع `docs/NET_003_NATIVE_LAB_AR.md` و`memory/evidence/NET-003-cpp-android-44834027711.json`.
 
 - Python UDP regression [44834027684](https://github.com/alwansan/BO/actions/runs/44834027684) SUCCESS على نفس native-lab code commit b7762950e77302d4b15b847e19ef1ba2d5c6886a.
+
+## جلسة 05 — تحقق محلي ومسار بديل للتحليل فقط
+- بداية الفرع الحية `fcf4b85b0b5a5ae3057a0cec57b1c2b342706809`؛ أحدث Python CI `44834294477` completed/success.
+- فحص الملفات المحلية أعاد إثبات disc XBE SHA1 `c5bfed25449c8212d7a976f15246e87ead57713f` وcompile image `82d0588124e70102ee650f8969c0a56374476234`؛ لا تطابق.
+- المالك أكد أنه لا يملك XBE الأصلي المطابق أو مصدر التعديلات العربية. لا تكرر طلبهما كأنهما متوفران.
+- فحص ساكن محلي: title `45410083`، retail entry `25A3F` يطابقان config v1.5.0؛ 13 قسماً اجتازت internal SHA1 section digests. هذا لا يثبت أن الكود يطابق الصورة الأصلية أو صحة offsets.
+- `weapons.cpp` مثل `esp.cpp` غير موجود في tag v1.5.0؛ المراجع السابقة من main لا تستخدم لإثبات baseline.
+- أضيف workflow candidate-audit لتحليل وإعادة ترجمة ساكنة في Windows بواسطة المصدر وSDK المثبتين؛ لا يبني المحرك/Gradle/APK، ولا ينشر مشتقات اللعبة. انتظار نتيجة CI قبل أي قبول.
+- محلياً: unittest المصدر 2/2 PASS وPython two-client UDP selftest PASS؛ لا هاتف/Android runtime.
