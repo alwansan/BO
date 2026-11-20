@@ -6,9 +6,11 @@
   "base": "b1ed1745e3b6b81192581e2824eb0f8daaa977c9",
   "upstream": {
     "repo": "RanggaCasper/Black-Android",
-    "sha": "8e9c6fc7d570503ea68d039cff16c09339ee6d30"
+    "sha": "8e9c6fc7d570503ea68d039cff16c09339ee6d30",
+    "baselineTag": "v1.5.0",
+    "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-20_bo-coop-02.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-03.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -23,18 +25,26 @@
       "artifact": 14666839620,
       "code": "6a82564229247ed21ef526cfbfb221a499802805",
       "evidence": "memory/evidence/SRC-001-identity-44813529439.json"
+    },
+    "SRC_002A": {
+      "status": "release_and_compile_image_provenance_pass",
+      "run": 44817699656,
+      "code": "764613fc07c179b999cd4a4992cd2ecae7a749f3",
+      "evidence": "memory/evidence/SRC-002a-release-comparison-44817699656.json",
+      "exactArabicSource": false
     }
   },
   "pending": {
     "SRC_001": {
-      "status": "blocked_identity_mismatch",
+      "status": "blocked_disc_vs_compile_image_mismatch",
       "discSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
       "compiledSha1": "82d0588124e70102ee650f8969c0a56374476234"
     },
     "ACTOR_001": "not_started",
     "COMBAT_001": "not_started",
-    "DEVICE": "not_started"
+    "DEVICE": "not_started",
+    "SRC_002": "needs matching lawfully acquired XBE for baseline build"
   },
   "apk": null,
-  "next": "SRC-002a establish exact US/reference image and Arabic provenance; do not use unverified offsets"
+  "next": "obtain matching XBE privately for baseline; continue isolated native multiplayer networking without assets"
 }

@@ -1,0 +1,63 @@
+{
+  "apk_revision_matches_tag": true,
+  "arabic": {
+    "architecture": "AArch64",
+    "bytes": 72073216,
+    "compile_image_sha1": "82d0588124e70102ee650f8969c0a56374476234",
+    "hook_symbol_candidates": {
+      "__imp__sub_001E5FA0": true,
+      "__imp__sub_001E74B0": true,
+      "__imp__sub_001E8830": true,
+      "sub_001E5FA0": true,
+      "sub_001E74B0": true,
+      "sub_001E8830": true
+    },
+    "section_hashes": {
+      ".dynstr": "dd9f2271d83897ec2d3e86ccc86ff93934aeb94f8230536407b1ec3fffa219f7",
+      ".dynsym": "fb9ca7689128869749eeecd623be14550a7b416a3bd049416987b03f145e2824",
+      ".rodata": "8f0427768a8cef290824cb376b1d8329e885724c514dfaca2d9cc35621783ab4",
+      ".text": "acda45e80b9b96b8d78b54dd1098e46d47c4356f7a6c2442d82caac7d5cf7736"
+    },
+    "sha256": "fe3a80fbbffd57d4fa10025d1608ab31cc98c941b8be7450b879552f418e5c38",
+    "symbol_matches_disc": false,
+    "xbe_hash_literal_present": false
+  },
+  "arabic_source_exact_proven": false,
+  "device_tested": false,
+  "official": {
+    "architecture": "AArch64",
+    "bytes": 17957208,
+    "compile_image_sha1": "82d0588124e70102ee650f8969c0a56374476234",
+    "hook_symbol_candidates": {
+      "__imp__sub_001E5FA0": true,
+      "__imp__sub_001E74B0": true,
+      "__imp__sub_001E8830": true,
+      "sub_001E5FA0": true,
+      "sub_001E74B0": true,
+      "sub_001E8830": true
+    },
+    "section_hashes": {
+      ".dynstr": "dd9f2271d83897ec2d3e86ccc86ff93934aeb94f8230536407b1ec3fffa219f7",
+      ".dynsym": "fb9ca7689128869749eeecd623be14550a7b416a3bd049416987b03f145e2824",
+      ".rodata": "8f0427768a8cef290824cb376b1d8329e885724c514dfaca2d9cc35621783ab4",
+      ".text": "e964ebf20b90f344a77b0ca16363c759f6063c002f8297cd0a8710001e66f7ea"
+    },
+    "sha256": "af790243e3bcf14302d158f589163fba7da8917d54323b1588fed0e775d4e957",
+    "symbol_matches_disc": false,
+    "xbe_hash_literal_present": false
+  },
+  "official_apk_sha256_verified": true,
+  "same_compile_image": true,
+  "same_native_binary": false,
+  "section_identity": {
+    ".dynstr": true,
+    ".dynsym": true,
+    ".rodata": true,
+    ".text": false
+  },
+  "run": 44817699656,
+  "job": 136570202480,
+  "artifact": 14669549225,
+  "code": "764613fc07c179b999cd4a4992cd2ecae7a749f3",
+  "apkMetadataRevision": "f3754d6985a8c35204e7df071546e586b10f1806"
+}
