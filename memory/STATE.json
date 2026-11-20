@@ -16,7 +16,8 @@
       "status": "pass_loopback_only",
       "run": 44808411128,
       "code": "79f8648e666d02edae8aefde27e361f8f5ad5cdc",
-      "regressionRun": 44813529325
+      "regressionRun": 44813529325,
+      "latestRegressionRun": 44834027684
     },
     "SRC_001_AUDIT": {
       "status": "pass_manifest_and_identity_inspection",

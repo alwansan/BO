@@ -24,3 +24,5 @@ CI SUCCESS وartifact14666839620، قراءة job136555949209 مباشرة. اج
 - التشغيل [44833884316](https://github.com/alwansan/BO/actions/runs/44833884316) SUCCESS؛ [44834027711](https://github.com/alwansan/BO/actions/runs/44834027711) SUCCESS (Linux CLI separate processes + Android NDK cross compile). Artifact 14677732935 SHA256 `0ca758a2ae4ac13a322cfa5106ff49ab58f753cb5758d43e7d9a296a2ccbe100`، binary غير مجرب على هاتف.
 - الفشلان السابقان 44833697806 و44833772092 عيوب في توقعات الاختبار وصُححا؛ لا تُحذف من التاريخ.
 - الأخطار: UDP لا تشفير/مصادقة، لا reliability/jitter/NAT، ZeroTier لم يُختبر. راجع `docs/NET_003_NATIVE_LAB_AR.md` و`memory/evidence/NET-003-cpp-android-44834027711.json`.
+
+- Python UDP regression [44834027684](https://github.com/alwansan/BO/actions/runs/44834027684) SUCCESS على نفس native-lab code commit b7762950e77302d4b15b847e19ef1ba2d5c6886a.

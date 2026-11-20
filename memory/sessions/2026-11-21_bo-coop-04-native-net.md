@@ -19,3 +19,6 @@
 
 ## الخطوة القادمة
 اختبار CLI على هاتفين إن أراد المالك؛ تجهيز Net transport أكثر موثوقية وأماناً وفصل thread/network عن game thread. لا دمج gameplay قبل baseline. حدّث الذاكرة بعد كل دفعة.
+
+## إغلاق نتائج CI
+- [44834027684](https://github.com/alwansan/BO/actions/runs/44834027684) completed SUCCESS لبايثون؛ [44834027711](https://github.com/alwansan/BO/actions/runs/44834027711) completed SUCCESS لـLinux وAndroid cross build. أُعيد التحقق من HEAD والـRESTORE بعد الدفع.
