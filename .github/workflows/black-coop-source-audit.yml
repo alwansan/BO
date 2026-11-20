@@ -1,0 +1,45 @@
+name: BLACK source identity audit
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths: ['coop/source_audit.py','coop/test_source_audit.py','.github/workflows/black-coop-source-audit.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: black-coop-source-audit
+  cancel-in-progress: false
+jobs:
+  synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - run: python3 -m unittest discover -s coop -p test_source_audit.py -v
+  identity:
+    needs: synthetic
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /coop/
+            /BLACK_FILE_MANIFEST.json
+            /BLACK-Arabic_src/assets/bundle/game.iso/
+            /BLACK-Arabic_src/lib/arm64-v8a/libmain.so/
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Verify and report metadata
+        run: |
+          set -o pipefail
+          python3 coop/source_audit.py | tee "$RUNNER_TEMP/identity.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: black-identity-metadata
+          path: ${{ runner.temp }}/identity.json
+          if-no-files-found: error
