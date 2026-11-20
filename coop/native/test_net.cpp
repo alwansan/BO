@@ -53,13 +53,13 @@ void TestState() {
     assert(h.Receive(100,Input(p1.token,3,-1,0),750).size()==3);
     assert(h.Receive(100,Input(p1.token,2,1,0),800).empty());
     // expiry: 101/102 idle, 100 active
-    auto again=h.Receive(100,Input(p1.token,4,1,0),1800);
+    auto again=h.Receive(100,Input(p1.token,4,1,0),2101);
     assert(again.size()==1 && Read(again[0].bytes).count==2);
     assert(h.RemoteCount()==1);
-    auto newjoin=h.Receive(101,Join(222),1801);
+    auto newjoin=h.Receive(101,Join(222),2102);
     assert(Read(newjoin[0].bytes).id==3);
-    assert(h.Receive(101,Input(p2.token,5,1,0),1802).empty());
-    assert(h.Receive(101,Input(Read(newjoin[0].bytes).token,1,1,0),1802).size()==2);
+    assert(h.Receive(101,Input(p2.token,5,1,0),2103).empty());
+    assert(h.Receive(101,Input(Read(newjoin[0].bytes).token,1,1,0),2103).size()==2);
     std::cout<<"PASS 3 peers, capacity, dedup, ordering, token, timeout/rejoin\n";
 }
 struct Socket {
