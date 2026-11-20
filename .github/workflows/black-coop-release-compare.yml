@@ -1,0 +1,35 @@
+name: BLACK v1.5.0 release provenance
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths: ['coop/release_compare.py','.github/workflows/black-coop-release-compare.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /coop/
+            /BLACK_FILE_MANIFEST.json
+            /BLACK-Arabic/META-INF/version-control-info.textproto
+            /BLACK-Arabic_src/lib/arm64-v8a/libmain.so/
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Download published release (no disc assets)
+        run: |
+          curl -fL --retry 3 --max-time 180 'https://github.com/RanggaCasper/Black-Android/releases/download/v1.5.0/Black-1.5.0.apk' -o "$RUNNER_TEMP/reference.apk"
+          echo "102340f238a97ef18a28c9a2e0e2ec47c3e7a982ab1b3845cd65305cad07d28a  $RUNNER_TEMP/reference.apk" | sha256sum -c -
+      - name: Compare verified libraries
+        run: |
+          set -o pipefail
+          python3 coop/release_compare.py --apk "$RUNNER_TEMP/reference.apk" | tee "$RUNNER_TEMP/release-comparison.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: black-release-comparison-metadata
+          path: ${{ runner.temp }}/release-comparison.json
+          if-no-files-found: error
