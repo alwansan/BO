@@ -19,3 +19,6 @@
 - cheats.cpp:89-100: animation event sub_001E8830 يحوي pointer للشخصية؛ مرشح رصد أحداث لا إرسال pointer عبر الشبكة.
 - config/game.toml: hook MouseLook عند 0x1BD6A8؛ لا تعتمد عليه كمصدر لكل مدخلات اللاعب قبل تتبع touch/controller أيضاً.
 لا نعتبر أي نقطة مقبولة في APK العربية حتى إثبات الهوية وإعادة إنتاج baseline.
+
+## نتيجة SRC-001 الفعلية — 44813529439
+CI SUCCESS وartifact14666839620، قراءة job136555949209 مباشرة. اجتاز SHA256 للأصل ISO 1793179648 B وlibmain 72073216 B، XDVDFS partition 0، XBE 2813952 B، AArch64. Disc SHA1 c5bfed25449c8212d7a976f15246e87ead57713f مقابل kImageSha1 من ELF 82d0588124e70102ee650f8969c0a56374476234: **غير متطابقين**؛ disc ليس Europe المعروف. لا يثبت السبب (تعديل عربي/إصدار/غيره) ولا source commit أو أن APK الحالي لا يعمل. لا تعطيل gate، لا استخدام offsets غير مثبتة. SRC-001 فحص نجح؛ **قبول هوية المصدر BLOCKED**. التالي SRC-002a: تحديد US hash/commit من مصدر upstream وmetadata الإصدار العربي، ومقارنة XBE header/sections مع الصورة المطابقة المرخصة إن توفرت. إن تعذر، اطلب من المالك فقط default.xbe الأصلي المطابق أو مصدر تعديلات Arabic أو log تشغيل كامل؛ لا تفترض الحاجة للثلاثة. بناء baseline ثم HOOK-001. تقرير: memory/evidence/SRC-001-identity-44813529439.json، https://github.com/alwansan/BO/actions/runs/44813529439. لا APK جديدة ولا gameplay أو اختبار هاتف.

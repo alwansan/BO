@@ -15,20 +15,26 @@
       "run": 44808411128,
       "code": "79f8648e666d02edae8aefde27e361f8f5ad5cdc",
       "regressionRun": 44813529325
+    },
+    "SRC_001_AUDIT": {
+      "status": "pass_manifest_and_identity_inspection",
+      "run": 44813529439,
+      "job": 136555949209,
+      "artifact": 14666839620,
+      "code": "6a82564229247ed21ef526cfbfb221a499802805",
+      "evidence": "memory/evidence/SRC-001-identity-44813529439.json"
     }
   },
   "pending": {
     "SRC_001": {
-      "run": 44813529439,
-      "code": "6a82564229247ed21ef526cfbfb221a499802805",
-      "synthetic": "pass",
-      "identity": "completed",
-      "conclusion": "success"
+      "status": "blocked_identity_mismatch",
+      "discSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+      "compiledSha1": "82d0588124e70102ee650f8969c0a56374476234"
     },
     "ACTOR_001": "not_started",
     "COMBAT_001": "not_started",
     "DEVICE": "not_started"
   },
   "apk": null,
-  "next": "verify source identity audit and establish exact baseline before any gameplay hooks"
+  "next": "SRC-002a establish exact US/reference image and Arabic provenance; do not use unverified offsets"
 }

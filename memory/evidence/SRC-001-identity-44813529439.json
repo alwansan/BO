@@ -1,0 +1,24 @@
+{
+  "manifest_verified": true,
+  "iso_bytes": 1793179648,
+  "lib_bytes": 72073216,
+  "xbe": {
+    "bytes": 2813952,
+    "sha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+    "sha256": "df2739c372d254a90aeeccf5971d12097f22d89fbb90db021fda96dd4deb68f6",
+    "partition_offset": 0
+  },
+  "elf": {
+    "architecture": "AArch64",
+    "compile_image_sha1": "82d0588124e70102ee650f8969c0a56374476234",
+    "xbe_hash_literal_present": false,
+    "symbol_matches_disc": false
+  },
+  "disc_matches_known_europe": false,
+  "source_commit_proven": false,
+  "gameplay_tested": false,
+  "run": 44813529439,
+  "job": 136555949209,
+  "artifact": 14666839620,
+  "code": "6a82564229247ed21ef526cfbfb221a499802805"
+}
