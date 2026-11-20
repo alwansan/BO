@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <public type="drawable" name="ic_launcher_art" id="0x7f010000" />
+    <public type="mipmap" name="ic_launcher" id="0x7f020000" />
+    <public type="string" name="app_name" id="0x7f030000" />
+    <public type="raw" name="scene_03_n" id="0x7f040000" />
+    <public type="raw" name="scene_05_n" id="0x7f040001" />
+    <public type="raw" name="scene_07_n" id="0x7f040002" />
+    <public type="raw" name="scene_09_n" id="0x7f040003" />
+    <public type="raw" name="scene_11_n" id="0x7f040004" />
+    <public type="raw" name="scene_13_n" id="0x7f040005" />
+    <public type="raw" name="scene_15_n" id="0x7f040006" />
+    <public type="raw" name="scene_17_n" id="0x7f040007" />
+    <public type="raw" name="scene_18_n" id="0x7f040008" />
+</resources>

@@ -1,0 +1,1484 @@
+{
+  "format": 1,
+  "files": [
+    {
+      "path": "BLACK-Arabic/AndroidManifest.xml",
+      "bytes": 5532,
+      "sha256": "e4901c58b1e98c47224d61926b4ed486a8328a0bd0733126e993fb4f1d87af4b",
+      "parts": [
+        "BLACK-Arabic/AndroidManifest.xml"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/META-INF/BLACK-AR.RSA",
+      "bytes": 1158,
+      "sha256": "b1fb327520bf813b8558655d1c08ee137d3917be305c6eb0806c8f664b3caad2",
+      "parts": [
+        "BLACK-Arabic/META-INF/BLACK-AR.RSA"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/META-INF/BLACK-AR.SF",
+      "bytes": 2806,
+      "sha256": "985d2c1c229e0428a9d68d4f1eb8ff61b78f89017b0aa6d618b872a0b5057fab",
+      "parts": [
+        "BLACK-Arabic/META-INF/BLACK-AR.SF"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/META-INF/MANIFEST.MF",
+      "bytes": 2679,
+      "sha256": "419beed57dc42da315bee9eb263906d328101f11f51438f9dc43bda29c0723e5",
+      "parts": [
+        "BLACK-Arabic/META-INF/MANIFEST.MF"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/META-INF/version-control-info.textproto",
+      "bytes": 120,
+      "sha256": "d731e9af7cc6f5993eaf2700662dc677a01cecb2cdf31f3443801925506e23da",
+      "parts": [
+        "BLACK-Arabic/META-INF/version-control-info.textproto"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/assets/bundle/game.iso",
+      "bytes": 1793179648,
+      "sha256": "f6d15ff277eb19ef4fb9092e245599c7ae68f5a49c6ac7db60934a32ec246c62",
+      "parts": [
+        "BLACK-Arabic/assets/bundle/game.iso/part-00000",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00001",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00002",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00003",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00004",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00005",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00006",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00007",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00008",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00009",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00010",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00011",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00012",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00013",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00014",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00015",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00016",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00017",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00018",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00019",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00020",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00021",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00022",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00023",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00024",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00025",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00026",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00027",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00028",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00029",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00030",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00031",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00032",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00033",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00034",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00035",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00036",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00037",
+        "BLACK-Arabic/assets/bundle/game.iso/part-00038"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/assets/notices/Black-Android-MIT.txt",
+      "bytes": 1091,
+      "sha256": "3e8013bc052a103f143df100729cc841785e8bc1c9afe2a98a80b05bc4c5d2a0",
+      "parts": [
+        "BLACK-Arabic/assets/notices/Black-Android-MIT.txt"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/assets/notices/Thmanyah-LICENSE.pdf",
+      "bytes": 92927,
+      "sha256": "07bbb2321bd2b944333c25f4d55140ca22625666132394d7399a365bd8b79a10",
+      "parts": [
+        "BLACK-Arabic/assets/notices/Thmanyah-LICENSE.pdf"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/assets/thmanyah-Medium.otf",
+      "bytes": 242116,
+      "sha256": "f2762ffbe17351193e3d630dd10f0c3a965e6c873998dfdeda2bd0dcad7985c6",
+      "parts": [
+        "BLACK-Arabic/assets/thmanyah-Medium.otf"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/classes.dex",
+      "bytes": 143716,
+      "sha256": "7f03f7d90c85d6e98ec897e35f75cc5aa6252c673893f09a16b75f6b22526538",
+      "parts": [
+        "BLACK-Arabic/classes.dex"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/lib/arm64-v8a/libSDL3.so",
+      "bytes": 1569920,
+      "sha256": "a12de48c6ded800e41c9dd262e9ff59d41633bad2ab71254aefd569c501e2c85",
+      "parts": [
+        "BLACK-Arabic/lib/arm64-v8a/libSDL3.so"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/lib/arm64-v8a/libc++_shared.so",
+      "bytes": 1253544,
+      "sha256": "cd61762848882a16c8244c964a6f396c0caa0b440588a210ce9cc4ab0e6d9f0c",
+      "parts": [
+        "BLACK-Arabic/lib/arm64-v8a/libc++_shared.so"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/lib/arm64-v8a/libmain.so",
+      "bytes": 72073216,
+      "sha256": "fe3a80fbbffd57d4fa10025d1608ab31cc98c941b8be7450b879552f418e5c38",
+      "parts": [
+        "BLACK-Arabic/lib/arm64-v8a/libmain.so/part-00000",
+        "BLACK-Arabic/lib/arm64-v8a/libmain.so/part-00001"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/res/drawable-nodpi/ic_launcher_art.png",
+      "bytes": 214147,
+      "sha256": "57e5f207ea31d5ad88d00975355d1fa8901453c35c88222f9a4e52f061ec484b",
+      "parts": [
+        "BLACK-Arabic/res/drawable-nodpi/ic_launcher_art.png"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/res/mipmap-anydpi/ic_launcher.xml",
+      "bytes": 448,
+      "sha256": "5b06fa4ccda83125aafcda9cc5efdfc8893c54265dbdbd831dda700c75d92399",
+      "parts": [
+        "BLACK-Arabic/res/mipmap-anydpi/ic_launcher.xml"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/res/mipmap-hdpi/ic_launcher.png",
+      "bytes": 11565,
+      "sha256": "0711809e94d48a26658bd05b66a3405a25b119f14fe236701c1d54056b36dbed",
+      "parts": [
+        "BLACK-Arabic/res/mipmap-hdpi/ic_launcher.png"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/res/mipmap-mdpi/ic_launcher.png",
+      "bytes": 5379,
+      "sha256": "f2d661e7497423771e1942f3b4b64143f5e0bf1de2dbe4b19595f2eedb9216c2",
+      "parts": [
+        "BLACK-Arabic/res/mipmap-mdpi/ic_launcher.png"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/res/mipmap-xhdpi/ic_launcher.png",
+      "bytes": 19742,
+      "sha256": "9c854bd115a9deb7c31ec2b4c08d0a030cf3ca2b3f8b09a2ee6d76261ad2afa2",
+      "parts": [
+        "BLACK-Arabic/res/mipmap-xhdpi/ic_launcher.png"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/res/mipmap-xxhdpi/ic_launcher.png",
+      "bytes": 42531,
+      "sha256": "4344fc37b4bac097b46d306fc0cd8a311ac0b9f8cd0c27eefee493b60a68322c",
+      "parts": [
+        "BLACK-Arabic/res/mipmap-xxhdpi/ic_launcher.png"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/res/mipmap-xxxhdpi/ic_launcher.png",
+      "bytes": 72788,
+      "sha256": "91d8d1d16e7fba428a677702b889d0d523abb63192f0e7807af9611024c67fa0",
+      "parts": [
+        "BLACK-Arabic/res/mipmap-xxxhdpi/ic_launcher.png"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/res/raw/scene_03_n.mp4",
+      "bytes": 22931820,
+      "sha256": "b78139917aebe6e3dd1e1592310f5cd1e67ff61e824885ac51fbeb6efe373f5e",
+      "parts": [
+        "BLACK-Arabic/res/raw/scene_03_n.mp4"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/res/raw/scene_05_n.mp4",
+      "bytes": 8195848,
+      "sha256": "0d33fdd3cbf7c8d0cb23ee2a58c92fb8f2e4959ba5bf022cdf0d57072b1508a2",
+      "parts": [
+        "BLACK-Arabic/res/raw/scene_05_n.mp4"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/res/raw/scene_07_n.mp4",
+      "bytes": 18402485,
+      "sha256": "cd87da0a40c8bc47671de0ea154d072c00cc2ab520e4454cb90d01ed2bf62424",
+      "parts": [
+        "BLACK-Arabic/res/raw/scene_07_n.mp4"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/res/raw/scene_09_n.mp4",
+      "bytes": 17532749,
+      "sha256": "47951ea8f6b880c0b9278c7ec6519673ba848da4bf09ab4c1fb26fc7a4083568",
+      "parts": [
+        "BLACK-Arabic/res/raw/scene_09_n.mp4"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/res/raw/scene_11_n.mp4",
+      "bytes": 16529648,
+      "sha256": "835e5d542878206a77311d9edee8949430205320313a5db0ab560e5db5662cde",
+      "parts": [
+        "BLACK-Arabic/res/raw/scene_11_n.mp4"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/res/raw/scene_13_n.mp4",
+      "bytes": 10210598,
+      "sha256": "aa5957dcad52d856b826471d642b494333d9a3129d751cd01ab6da7cb27dc642",
+      "parts": [
+        "BLACK-Arabic/res/raw/scene_13_n.mp4"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/res/raw/scene_15_n.mp4",
+      "bytes": 3647362,
+      "sha256": "097a6ed45c70d2a23850d1acd7332c3910331845f79a65f0cd2ef26b014458b8",
+      "parts": [
+        "BLACK-Arabic/res/raw/scene_15_n.mp4"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/res/raw/scene_17_n.mp4",
+      "bytes": 3200673,
+      "sha256": "955cc9d5c211eae15bd8647c8d7bbb06a7c5d449af259de565bb123bd2f68841",
+      "parts": [
+        "BLACK-Arabic/res/raw/scene_17_n.mp4"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/res/raw/scene_18_n.mp4",
+      "bytes": 9133518,
+      "sha256": "6f04654fe1b0203005586715d51c9d10232d7c82abe31ec5ff2629846b2e1184",
+      "parts": [
+        "BLACK-Arabic/res/raw/scene_18_n.mp4"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic/resources.arsc",
+      "bytes": 2444,
+      "sha256": "d726d40817328e7269a49d298bbd97bc36c8c51c13f37533c0160329bd7f70d7",
+      "parts": [
+        "BLACK-Arabic/resources.arsc"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/.nomedia",
+      "bytes": 57,
+      "sha256": "462dcaecab26b0fd8ee0f950fc2c29333c6cfd5e989ce1612ebae97454d56f20",
+      "parts": [
+        "BLACK-Arabic_src/.nomedia"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/AndroidManifest.xml",
+      "bytes": 4768,
+      "sha256": "51c2c58078c20a85f9d09311968bdea1407b314e3f2b6ba19bf1798f70ded077",
+      "parts": [
+        "BLACK-Arabic_src/AndroidManifest.xml"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/apktool.json",
+      "bytes": 878,
+      "sha256": "67abe3d52fce642dfdd13fc1819b06956b810a9c04b5728f1d6870a242c333e8",
+      "parts": [
+        "BLACK-Arabic_src/apktool.json"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/assets/bundle/game.iso",
+      "bytes": 1793179648,
+      "sha256": "f6d15ff277eb19ef4fb9092e245599c7ae68f5a49c6ac7db60934a32ec246c62",
+      "parts": [
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00000",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00001",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00002",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00003",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00004",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00005",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00006",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00007",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00008",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00009",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00010",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00011",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00012",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00013",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00014",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00015",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00016",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00017",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00018",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00019",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00020",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00021",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00022",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00023",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00024",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00025",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00026",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00027",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00028",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00029",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00030",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00031",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00032",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00033",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00034",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00035",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00036",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00037",
+        "BLACK-Arabic_src/assets/bundle/game.iso/part-00038"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/assets/notices/Black-Android-MIT.txt",
+      "bytes": 1091,
+      "sha256": "3e8013bc052a103f143df100729cc841785e8bc1c9afe2a98a80b05bc4c5d2a0",
+      "parts": [
+        "BLACK-Arabic_src/assets/notices/Black-Android-MIT.txt"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/assets/notices/Thmanyah-LICENSE.pdf",
+      "bytes": 92927,
+      "sha256": "07bbb2321bd2b944333c25f4d55140ca22625666132394d7399a365bd8b79a10",
+      "parts": [
+        "BLACK-Arabic_src/assets/notices/Thmanyah-LICENSE.pdf"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/assets/thmanyah-Medium.otf",
+      "bytes": 242116,
+      "sha256": "f2762ffbe17351193e3d630dd10f0c3a965e6c873998dfdeda2bd0dcad7985c6",
+      "parts": [
+        "BLACK-Arabic_src/assets/thmanyah-Medium.otf"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/lib/arm64-v8a/libSDL3.so",
+      "bytes": 1569920,
+      "sha256": "a12de48c6ded800e41c9dd262e9ff59d41633bad2ab71254aefd569c501e2c85",
+      "parts": [
+        "BLACK-Arabic_src/lib/arm64-v8a/libSDL3.so"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/lib/arm64-v8a/libc++_shared.so",
+      "bytes": 1253544,
+      "sha256": "cd61762848882a16c8244c964a6f396c0caa0b440588a210ce9cc4ab0e6d9f0c",
+      "parts": [
+        "BLACK-Arabic_src/lib/arm64-v8a/libc++_shared.so"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/lib/arm64-v8a/libmain.so",
+      "bytes": 72073216,
+      "sha256": "fe3a80fbbffd57d4fa10025d1608ab31cc98c941b8be7450b879552f418e5c38",
+      "parts": [
+        "BLACK-Arabic_src/lib/arm64-v8a/libmain.so/part-00000",
+        "BLACK-Arabic_src/lib/arm64-v8a/libmain.so/part-00001"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/original/AndroidManifest.xml",
+      "bytes": 5532,
+      "sha256": "e4901c58b1e98c47224d61926b4ed486a8328a0bd0733126e993fb4f1d87af4b",
+      "parts": [
+        "BLACK-Arabic_src/original/AndroidManifest.xml"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/original/META-INF/BLACK-AR.RSA",
+      "bytes": 1158,
+      "sha256": "b1fb327520bf813b8558655d1c08ee137d3917be305c6eb0806c8f664b3caad2",
+      "parts": [
+        "BLACK-Arabic_src/original/META-INF/BLACK-AR.RSA"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/original/META-INF/BLACK-AR.SF",
+      "bytes": 2806,
+      "sha256": "985d2c1c229e0428a9d68d4f1eb8ff61b78f89017b0aa6d618b872a0b5057fab",
+      "parts": [
+        "BLACK-Arabic_src/original/META-INF/BLACK-AR.SF"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/original/META-INF/MANIFEST.MF",
+      "bytes": 2679,
+      "sha256": "419beed57dc42da315bee9eb263906d328101f11f51438f9dc43bda29c0723e5",
+      "parts": [
+        "BLACK-Arabic_src/original/META-INF/MANIFEST.MF"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/original/META-INF/version-control-info.textproto",
+      "bytes": 120,
+      "sha256": "d731e9af7cc6f5993eaf2700662dc677a01cecb2cdf31f3443801925506e23da",
+      "parts": [
+        "BLACK-Arabic_src/original/META-INF/version-control-info.textproto"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/original/signature.data",
+      "bytes": 4096,
+      "sha256": "01ae2912e84c855f3a51d5bcf1902698d1dd0ee91f03ced33d8094af6eea5764",
+      "parts": [
+        "BLACK-Arabic_src/original/signature.data"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/res/drawable-nodpi/ic_launcher_art.png",
+      "bytes": 214147,
+      "sha256": "57e5f207ea31d5ad88d00975355d1fa8901453c35c88222f9a4e52f061ec484b",
+      "parts": [
+        "BLACK-Arabic_src/res/drawable-nodpi/ic_launcher_art.png"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/res/mipmap-anydpi/ic_launcher.xml",
+      "bytes": 279,
+      "sha256": "c75b6a6236ac5d61f26707740d53c31cb4ee34f72ca15b92d582f38d64e29c34",
+      "parts": [
+        "BLACK-Arabic_src/res/mipmap-anydpi/ic_launcher.xml"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/res/mipmap-hdpi/ic_launcher.png",
+      "bytes": 11565,
+      "sha256": "0711809e94d48a26658bd05b66a3405a25b119f14fe236701c1d54056b36dbed",
+      "parts": [
+        "BLACK-Arabic_src/res/mipmap-hdpi/ic_launcher.png"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/res/mipmap-mdpi/ic_launcher.png",
+      "bytes": 5379,
+      "sha256": "f2d661e7497423771e1942f3b4b64143f5e0bf1de2dbe4b19595f2eedb9216c2",
+      "parts": [
+        "BLACK-Arabic_src/res/mipmap-mdpi/ic_launcher.png"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/res/mipmap-xhdpi/ic_launcher.png",
+      "bytes": 19742,
+      "sha256": "9c854bd115a9deb7c31ec2b4c08d0a030cf3ca2b3f8b09a2ee6d76261ad2afa2",
+      "parts": [
+        "BLACK-Arabic_src/res/mipmap-xhdpi/ic_launcher.png"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/res/mipmap-xxhdpi/ic_launcher.png",
+      "bytes": 42531,
+      "sha256": "4344fc37b4bac097b46d306fc0cd8a311ac0b9f8cd0c27eefee493b60a68322c",
+      "parts": [
+        "BLACK-Arabic_src/res/mipmap-xxhdpi/ic_launcher.png"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/res/mipmap-xxxhdpi/ic_launcher.png",
+      "bytes": 72788,
+      "sha256": "91d8d1d16e7fba428a677702b889d0d523abb63192f0e7807af9611024c67fa0",
+      "parts": [
+        "BLACK-Arabic_src/res/mipmap-xxxhdpi/ic_launcher.png"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/res/raw/scene_03_n.mp4",
+      "bytes": 22931820,
+      "sha256": "b78139917aebe6e3dd1e1592310f5cd1e67ff61e824885ac51fbeb6efe373f5e",
+      "parts": [
+        "BLACK-Arabic_src/res/raw/scene_03_n.mp4"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/res/raw/scene_05_n.mp4",
+      "bytes": 8195848,
+      "sha256": "0d33fdd3cbf7c8d0cb23ee2a58c92fb8f2e4959ba5bf022cdf0d57072b1508a2",
+      "parts": [
+        "BLACK-Arabic_src/res/raw/scene_05_n.mp4"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/res/raw/scene_07_n.mp4",
+      "bytes": 18402485,
+      "sha256": "cd87da0a40c8bc47671de0ea154d072c00cc2ab520e4454cb90d01ed2bf62424",
+      "parts": [
+        "BLACK-Arabic_src/res/raw/scene_07_n.mp4"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/res/raw/scene_09_n.mp4",
+      "bytes": 17532749,
+      "sha256": "47951ea8f6b880c0b9278c7ec6519673ba848da4bf09ab4c1fb26fc7a4083568",
+      "parts": [
+        "BLACK-Arabic_src/res/raw/scene_09_n.mp4"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/res/raw/scene_11_n.mp4",
+      "bytes": 16529648,
+      "sha256": "835e5d542878206a77311d9edee8949430205320313a5db0ab560e5db5662cde",
+      "parts": [
+        "BLACK-Arabic_src/res/raw/scene_11_n.mp4"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/res/raw/scene_13_n.mp4",
+      "bytes": 10210598,
+      "sha256": "aa5957dcad52d856b826471d642b494333d9a3129d751cd01ab6da7cb27dc642",
+      "parts": [
+        "BLACK-Arabic_src/res/raw/scene_13_n.mp4"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/res/raw/scene_15_n.mp4",
+      "bytes": 3647362,
+      "sha256": "097a6ed45c70d2a23850d1acd7332c3910331845f79a65f0cd2ef26b014458b8",
+      "parts": [
+        "BLACK-Arabic_src/res/raw/scene_15_n.mp4"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/res/raw/scene_17_n.mp4",
+      "bytes": 3200673,
+      "sha256": "955cc9d5c211eae15bd8647c8d7bbb06a7c5d449af259de565bb123bd2f68841",
+      "parts": [
+        "BLACK-Arabic_src/res/raw/scene_17_n.mp4"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/res/raw/scene_18_n.mp4",
+      "bytes": 9133518,
+      "sha256": "6f04654fe1b0203005586715d51c9d10232d7c82abe31ec5ff2629846b2e1184",
+      "parts": [
+        "BLACK-Arabic_src/res/raw/scene_18_n.mp4"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/res/values/public.xml",
+      "bytes": 798,
+      "sha256": "ac35fce603bd5aa33b323666fb9a3d60343372000dba824dc67c8c502caecbbf",
+      "parts": [
+        "BLACK-Arabic_src/res/values/public.xml"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/res/values/strings.xml",
+      "bytes": 116,
+      "sha256": "15597db053bd3083c015311a39233c10340d852cc0e3e2376db0d0b216404ca6",
+      "parts": [
+        "BLACK-Arabic_src/res/values/strings.xml"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/.dex039",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "parts": [
+        "BLACK-Arabic_src/smali/.dex039"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda0.smali",
+      "bytes": 1066,
+      "sha256": "ba434e0431a100d65b52532093506bad57755b5c6b035924044bc16e844b6bd6",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda0.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda1.smali",
+      "bytes": 1066,
+      "sha256": "4216218d0b4d25877d45f3dfd7a48bc93a9bc5e39c46ec31afed06d32216b397",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda1.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda10.smali",
+      "bytes": 1053,
+      "sha256": "855caf95682ed369e21037c3ab1bccc8527c3bd671a0671ed97661975b61a9c4",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda10.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda11.smali",
+      "bytes": 1073,
+      "sha256": "0e8120fc4c05d49353fd6abbe91122ef6bc354a964350ebadaa93e8a73e075ba",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda11.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda12.smali",
+      "bytes": 1069,
+      "sha256": "7bd9c5d2ace900c09d0f25c9690245b627f91d627ee752dff8c4151178027b4b",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda12.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda2.smali",
+      "bytes": 1066,
+      "sha256": "adab065860130261c54904316fb1fa8aa7a9f74fc6de0d1db5c0581e62f20aeb",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda2.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda3.smali",
+      "bytes": 1064,
+      "sha256": "2d9232b4d41025cf17ec773d1921b507ae6f928d9ede66683815483793100133",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda3.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda4.smali",
+      "bytes": 1064,
+      "sha256": "06947db8f2ff2eed79c17a31f8052c9ed1e6e668778a9a4c28fb43174feed63c",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda4.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda5.smali",
+      "bytes": 720,
+      "sha256": "7cf0ce0f32906c098a2ceedfd7367d677c700e58d5b59a797ef90ce13626097a",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda5.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda6.smali",
+      "bytes": 1070,
+      "sha256": "8484fd809815e0f1408c7124552083ee1c7c0b369f6157a06a0613228c1d60aa",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda6.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda7.smali",
+      "bytes": 957,
+      "sha256": "db4d9a00a107c44c4b3ed806fa7f9ea34ed6341d80a5f11da13a0014ca31538e",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda7.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda8.smali",
+      "bytes": 1479,
+      "sha256": "6728eda0ed91c1c32a1188b68bfcbd14f0a964a31b6c0feebeeb62bdcb1350c2",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda8.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda9.smali",
+      "bytes": 1479,
+      "sha256": "54c4235227147587df4ad8ac1d830abc9c5ff309526ccc9305706b83a0eb732d",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BlackActivity$$ExternalSyntheticLambda9.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BlackActivity.smali",
+      "bytes": 55330,
+      "sha256": "3a1517bd354425434d87384672549b4d47e98e1d2d9fa8db843536a4dcd18e23",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BlackActivity.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BundleActivity$$ExternalSyntheticLambda0.smali",
+      "bytes": 1341,
+      "sha256": "7c7d440d5b93b9fcf3c978b65bc43cd9f1c420e3e7d561fc756bff4613f32de7",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BundleActivity$$ExternalSyntheticLambda0.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BundleActivity$1$$ExternalSyntheticLambda0.smali",
+      "bytes": 1047,
+      "sha256": "1165ac26eb864d3b160706c407d646e1cb33e090135a040402902993fc20e128",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BundleActivity$1$$ExternalSyntheticLambda0.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BundleActivity$1$$ExternalSyntheticLambda1.smali",
+      "bytes": 958,
+      "sha256": "01e31200c3394c53ce0d61df1496a42a99512b717c9f7a1f92d0613ce02e2184",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BundleActivity$1$$ExternalSyntheticLambda1.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BundleActivity$1$$ExternalSyntheticLambda2.smali",
+      "bytes": 1626,
+      "sha256": "ec6b3dbcd210d2e8e70eec81f187ef6b02edf5c8139a18938d21f7c06754a653",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BundleActivity$1$$ExternalSyntheticLambda2.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BundleActivity$1$1$$ExternalSyntheticLambda0.smali",
+      "bytes": 1755,
+      "sha256": "29728196d948936cf2ae506e92169c8b8cb7958939d9ac9425c32ca95cb32f88",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BundleActivity$1$1$$ExternalSyntheticLambda0.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BundleActivity$1$1.smali",
+      "bytes": 6492,
+      "sha256": "6db09d8a1621ef1d9de6c817167aee3a2164d95a9306ba7effee3eebb9b4c722",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BundleActivity$1$1.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BundleActivity$1.smali",
+      "bytes": 8849,
+      "sha256": "621b1f6c7fc202a093e0c4703059e330b6ced1909ae48e24865197abfb97bc34",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BundleActivity$1.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BundleActivity.smali",
+      "bytes": 13968,
+      "sha256": "bbab91b3d6825ebc95166d37da02d25931b280f372112c61aff4b53de2bdb5ac",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BundleActivity.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BundleFiles$Source.smali",
+      "bytes": 578,
+      "sha256": "d10bc50f927dccc75cc0c4d08b873bfbed769a0a0830967dce0a9ba480bb8e0f",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BundleFiles$Source.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BundleFiles$Status.smali",
+      "bytes": 580,
+      "sha256": "e10ff02e90e4df1426c84b150953e7c9143721b07e5cb90d390598e747f9d410",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BundleFiles$Status.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/BundleFiles.smali",
+      "bytes": 27642,
+      "sha256": "1b41799945046c81c0ec9a953aaf7a481c7c7e4424e509ca1bb01d65b63419ad",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/BundleFiles.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$1.smali",
+      "bytes": 1720,
+      "sha256": "d204c033bf806980de8323b5bc7374a089cde9d560f20a4f39dcda6a89e9b03f",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$1.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$10$1.smali",
+      "bytes": 1971,
+      "sha256": "e9dd56a9fa5432be452d520bfee13710a44b56a01c233becfb92dfb739e02e9c",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$10$1.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$10.smali",
+      "bytes": 3992,
+      "sha256": "cd731544361cde4d929e8fefe7760cc4558c12c9538ca0dced233c92e3a0dfa7",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$10.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$11.smali",
+      "bytes": 1326,
+      "sha256": "996ce0cb493599185dda431a422abaf0c68c38168f6692782e188309a054c081",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$11.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$12.smali",
+      "bytes": 2910,
+      "sha256": "c8a0f262c5535870d651d72cf12c8da130ce04e17721c80dee55666f57749fe8",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$12.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$13.smali",
+      "bytes": 4678,
+      "sha256": "867782dd0394cff89f30850e8d0e0e2f49940795281ea5641824a592cfdf65f2",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$13.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$2.smali",
+      "bytes": 1649,
+      "sha256": "c6c1c74ca55b6581499e63f31854b20cdeee50d3fa378266ce79575a9f51ec0c",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$2.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$3.smali",
+      "bytes": 1256,
+      "sha256": "0d268e1f937ee0fa415a5178da84bcc8499709473ef9cd90bca427987f5265b1",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$3.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$4.smali",
+      "bytes": 1295,
+      "sha256": "c924e41e67c966865f628d41da1612efd718d6cc6006d82f2b06bc56be5c9d0b",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$4.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$5.smali",
+      "bytes": 3321,
+      "sha256": "7532d0dd1c0638bb7ac54bf49e3aec9e1f6dc61c51e3c6962d20d75902223747",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$5.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$6.smali",
+      "bytes": 1751,
+      "sha256": "4da60dbe627e179e621ef6b7b502eec6436bfa11426ebc2a18cefb9ba01a5237",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$6.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$7.smali",
+      "bytes": 2534,
+      "sha256": "8a6296ba401d016823e782b3ca78041287f689c1c3d203f7618903a5d81432c0",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$7.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$8.smali",
+      "bytes": 1895,
+      "sha256": "cdc93f2ca4a75aaecc30af6c6ab009bb12d56097c6b8b0b33fe51ed784e84a70",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$8.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$9.smali",
+      "bytes": 2080,
+      "sha256": "072fa9210dd293b53b8a21f7d80bfaa2440cdcc090f3f1d23a716ac75ebb41a6",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity$9.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity.smali",
+      "bytes": 32698,
+      "sha256": "2d890df5d7947597faa42a5179482c2d21625f30ccf1274469bbd03026744306",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/CinemaActivity.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/GameImporter$$ExternalSyntheticLambda0.smali",
+      "bytes": 918,
+      "sha256": "dbbc2e28bdaa0b0b8336440984c4ee5a0ea7ceff015719e1dc769f7528861e2e",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/GameImporter$$ExternalSyntheticLambda0.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/GameImporter$$ExternalSyntheticLambda1.smali",
+      "bytes": 918,
+      "sha256": "f805aa74caa097518aab8dca2af241ebcf3e9929bfb27b2d4ecbe6cfeb2acce9",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/GameImporter$$ExternalSyntheticLambda1.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/GameImporter$$ExternalSyntheticLambda2.smali",
+      "bytes": 1057,
+      "sha256": "14a40c9ce32375fb3b6062c1e4267313a29d532ee94c77f840378b081b5f2c1b",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/GameImporter$$ExternalSyntheticLambda2.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/GameImporter$$ExternalSyntheticLambda3.smali",
+      "bytes": 3724,
+      "sha256": "f3da8a5126443d758086b288274be67ed50c6b15b995636506924aff9e07126c",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/GameImporter$$ExternalSyntheticLambda3.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/GameImporter$$ExternalSyntheticLambda4.smali",
+      "bytes": 1688,
+      "sha256": "38676e79236d61c12a515498732aecfc80911318b998736f5525c1904994cf84",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/GameImporter$$ExternalSyntheticLambda4.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/GameImporter$$ExternalSyntheticLambda5.smali",
+      "bytes": 2759,
+      "sha256": "35c77eb0d95b657d047c776ec47f6f71b6f6b7174b2e6d3a0a649bac65e341e0",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/GameImporter$$ExternalSyntheticLambda5.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/GameImporter$$ExternalSyntheticLambda6.smali",
+      "bytes": 918,
+      "sha256": "438e2fbab2a355b22c2cc291e58eaa50ba69b73680d2f518655f70277b07ded9",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/GameImporter$$ExternalSyntheticLambda6.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/GameImporter$$ExternalSyntheticLambda7.smali",
+      "bytes": 918,
+      "sha256": "a081f3526eb92f965e5401b83ff2b85ef821784e695359cd30eb23032b80efcd",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/GameImporter$$ExternalSyntheticLambda7.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/GameImporter$$ExternalSyntheticLambda8.smali",
+      "bytes": 983,
+      "sha256": "db4c429208a2958d3c11a053d1ac325eb0a96ddf48539c0ec7ca8f06970dc308",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/GameImporter$$ExternalSyntheticLambda8.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/GameImporter.smali",
+      "bytes": 42043,
+      "sha256": "860a6bd657e04b1a5df8a6eac5d06d4abea3936569522ee978e26bfb495d3ef5",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/GameImporter.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/R$drawable.smali",
+      "bytes": 530,
+      "sha256": "bce117de868686a8986f3dad2d187e88518b566fdfb0d191937e2bb37f5d71a8",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/R$drawable.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/R$mipmap.smali",
+      "bytes": 522,
+      "sha256": "b39ab39f853a851e88cb15427b014de0d6bb2f9ede60bae098adc52d374d060c",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/R$mipmap.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/R$string.smali",
+      "bytes": 519,
+      "sha256": "812bbc6f642823fb03cb6ec61c3d6e1612e41352d482a5e8fa38f99264a1e358",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/R$string.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/R.smali",
+      "bytes": 435,
+      "sha256": "1b8ab7b93f97f3480ab3a7e4e558d1d66a5de3af0ee02500fc89aab6587a910b",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/R.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/UpdateChecker$$ExternalSyntheticLambda0.smali",
+      "bytes": 2222,
+      "sha256": "3be1df5d7e639be64dfb993c1e27c3474975321e6e4137d75aa511f386fd4380",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/UpdateChecker$$ExternalSyntheticLambda0.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/UpdateChecker$$ExternalSyntheticLambda1.smali",
+      "bytes": 1616,
+      "sha256": "1f3fc1b0935a2765e7049f65fbccbecdbc505b6dc7b3b8b01c7493aaf8ff65c0",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/UpdateChecker$$ExternalSyntheticLambda1.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/UpdateChecker$Listener.smali",
+      "bytes": 473,
+      "sha256": "943ea81a87da90157758af77b7a733b3f71df1db70c85db32c8dbb0ecb4757db",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/UpdateChecker$Listener.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/UpdateChecker$Release.smali",
+      "bytes": 689,
+      "sha256": "c741872b97fe1b891e8680f4c36a738533bbde2425f25e6b2415ed611e392aeb",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/UpdateChecker$Release.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/com/racas/black/UpdateChecker.smali",
+      "bytes": 20265,
+      "sha256": "d38a8e391856665e6f8e972916849cc90389c41b893f9f16de5c8440e697d1a7",
+      "parts": [
+        "BLACK-Arabic_src/smali/com/racas/black/UpdateChecker.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/HIDDevice.smali",
+      "bytes": 928,
+      "sha256": "9a9777338d6d4b9d21aea07bea238462683b2f868ffb3211f13b2b3ee5f8cd98",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/HIDDevice.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceBLESteamController$1.smali",
+      "bytes": 1600,
+      "sha256": "af4e238391159c85b87f7830d6eae4497f474064059a5d7df27d83084c0eaa06",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceBLESteamController$1.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceBLESteamController$2.smali",
+      "bytes": 2455,
+      "sha256": "4581d16e95cda3456598b43b97f45497fe5148424f41a0616a891af14130de13",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceBLESteamController$2.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceBLESteamController$3.smali",
+      "bytes": 4203,
+      "sha256": "de8dedaf7435c1d6d6f58d081b2df745569481c538f2db89b541747d5cfe15a1",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceBLESteamController$3.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceBLESteamController$4.smali",
+      "bytes": 1407,
+      "sha256": "a44619a86e7b10fc15b91ba704d04df7844f520c84d7b633613841b2ce9ecb65",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceBLESteamController$4.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceBLESteamController$5.smali",
+      "bytes": 2722,
+      "sha256": "5b4acd2aa4f0a090a623e64d65f33a2aa1491baa2debe9d0483e826487d8c519",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceBLESteamController$5.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceBLESteamController$GattOperation$Operation.smali",
+      "bytes": 5199,
+      "sha256": "7d4072d696bd0ad218c734115e087bf3afbdc49629d16c3887c4fae0bb84fc43",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceBLESteamController$GattOperation$Operation.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceBLESteamController$GattOperation.smali",
+      "bytes": 16399,
+      "sha256": "f80e71550245c04ae71d965cf7bed3b5d11a8c25b7b257b6983de3c15db34692",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceBLESteamController$GattOperation.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceBLESteamController.smali",
+      "bytes": 62788,
+      "sha256": "7b2e7390aa1e46724f6e0521c70082b5876a642eeecacf0bc03498ae7d429ed4",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceBLESteamController.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceManager$1.smali",
+      "bytes": 3389,
+      "sha256": "0eb93d564422006c82def0d12817cfd7128e9f6fe51be5f7ab898d400860d4be",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceManager$1.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceManager$2.smali",
+      "bytes": 3810,
+      "sha256": "e293500e037269414de23f2a7977e074ec54721694f8d5dae0e13ca9a7070a1a",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceManager$2.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceManager$3.smali",
+      "bytes": 1434,
+      "sha256": "7e7c3026dd42060104662afda5040561b805adf159f6ea9f51602c3ca8ac7b66",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceManager$3.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceManager.smali",
+      "bytes": 58353,
+      "sha256": "3321d0bbfe5aff1909ecad5159b72bef7028069aec12655ee189777caa819ac7",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceManager.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceUSB$InputThread.smali",
+      "bytes": 3744,
+      "sha256": "83728daaddf842ec4d31dd94113ec62db4eab515ea8d3633f3a82dbb69d810af",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceUSB$InputThread.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceUSB.smali",
+      "bytes": 27509,
+      "sha256": "98179951871346bf54cb0f96d7fb2ab966070e4fe5ba152bdc1f5e93aeecccff",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/HIDDeviceUSB.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDL.smali",
+      "bytes": 5515,
+      "sha256": "c2e5e2013a58c21d9cb5f45f3d408ae41c2bfb014d920bbeb00ddafbd0016c82",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDL.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity$1.smali",
+      "bytes": 1087,
+      "sha256": "95ff61bb110170a7d54a41d23282c603bd5421c1a20a377ebdca46000b0ab1c6",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity$1.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity$1OneShotTask.smali",
+      "bytes": 2643,
+      "sha256": "a1db633cbe4baae17bab3b71ae04337c3e39fd8b5c460d63709998e0d790ec5f",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity$1OneShotTask.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity$2.smali",
+      "bytes": 1256,
+      "sha256": "cebdfbc71ff13eac464875a61e6df0a83b6f9f3f4b90c53afa0c1ebe09dde583",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity$2.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity$3.smali",
+      "bytes": 1486,
+      "sha256": "db6e57fd365631e459a168c5b26e4c6bbf136a37646ddf929a11abde76be2f06",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity$3.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity$4.smali",
+      "bytes": 1582,
+      "sha256": "a374a85031d1ae95e3c7e3a679f4b2e3cbc69e2b19f0fec7af04441cf90a77b7",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity$4.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity$5.smali",
+      "bytes": 1755,
+      "sha256": "9e10034099477a7812d52605af412c793887cc2c35c7dbf22a302e4434dc2469",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity$5.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity$6.smali",
+      "bytes": 1831,
+      "sha256": "2878b82ea2ebde56ed226c198743e0c49eb105cdb211fca90460af4c1adbe278",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity$6.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity$7.smali",
+      "bytes": 1253,
+      "sha256": "d412d40a2f924943f22cbcb301b724a24b105a9642f9132cde0ee9c15d4f033b",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity$7.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity$NativeState.smali",
+      "bytes": 4002,
+      "sha256": "c1b620d1cc4259fb46b4151d7bd751afb3fba7aab011a275dedb7b154b0f4a32",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity$NativeState.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity$SDLCommandHandler.smali",
+      "bytes": 7833,
+      "sha256": "3db2b1fd5256c6fda6e5db27f4d2838c818ff97b662b646d8092dce6d02eec89",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity$SDLCommandHandler.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity$SDLFileDialogState.smali",
+      "bytes": 584,
+      "sha256": "ff33e498d7489de7b787e57966ac56501578342a0bbd4cff74db73409c545b56",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity$SDLFileDialogState.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity$ShowTextInputTask.smali",
+      "bytes": 4843,
+      "sha256": "95f451ea84e6cbe22f2019c11637815fbce4ee5b7767dc68ab718d8acd08805c",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity$ShowTextInputTask.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity.smali",
+      "bytes": 116367,
+      "sha256": "2c6208e98769ec7b1bba793c70d622d45c52771df68e531954ef5350b7c28c23",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLActivity.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLAudioManager$1.smali",
+      "bytes": 1978,
+      "sha256": "4cfc6353c7f9df6fd48faa069c41943cebd3e005b01eca4d16888d072f612a5a",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLAudioManager$1.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLAudioManager.smali",
+      "bytes": 8987,
+      "sha256": "900d74e5d74d5f9fe891c3be5c999b9bd9e92511fabc368ae0fb7b44fe625924",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLAudioManager.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLClipboardHandler.smali",
+      "bytes": 3928,
+      "sha256": "3a3aa236ead30bd4b78686be0e46e2525f44757f85fe62fb91d8b79824e1578b",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLClipboardHandler.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLControllerManager.smali",
+      "bytes": 5597,
+      "sha256": "68f530e89a4a0c4018e27998e0e28d26df9dedd910fcbf35452904d2f861c771",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLControllerManager.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLDummyEdit.smali",
+      "bytes": 3183,
+      "sha256": "3ab3b492e7fa1138398472cb3ecc0c3c49cdc577f892e705e0766c495dfad481",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLDummyEdit.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLGenericMotionListener_API14.smali",
+      "bytes": 5593,
+      "sha256": "ad72eff273fc3613beff891034c4b5ea96983fe727cac866016fb0d98d6e9766",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLGenericMotionListener_API14.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLGenericMotionListener_API24.smali",
+      "bytes": 2166,
+      "sha256": "7860cf483fbd8765c7011565ef4f7718bf1e65f535e788962bc9e1ba7515e311",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLGenericMotionListener_API24.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLGenericMotionListener_API26.smali",
+      "bytes": 2793,
+      "sha256": "7cce703d2cb4eaebe6bbbf8e33a4e610bc1e11d756fec979c87726651de8d631",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLGenericMotionListener_API26.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLGenericMotionListener_API29.smali",
+      "bytes": 733,
+      "sha256": "20ba20d08e9a24ea6c2fea732f585a99f061975ee85e401c1d4456f150f0c8dd",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLGenericMotionListener_API29.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLHapticHandler$SDLHaptic.smali",
+      "bytes": 623,
+      "sha256": "19429c7db59a32ffdfaace1dd9e90f6ab4f9342edfe84d30ead12141534699e7",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLHapticHandler$SDLHaptic.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLHapticHandler.smali",
+      "bytes": 7754,
+      "sha256": "9a3918bb2397e699c8e00bd52c73bad72461653b39faca0466f3c274a4a78fd5",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLHapticHandler.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLHapticHandler_API26.smali",
+      "bytes": 1901,
+      "sha256": "95ea6e4ad5f2ebdbc1275c4b7dfb52ac4f3ad176c15f0623ede6199abe301f1f",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLHapticHandler_API26.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLHapticHandler_API31.smali",
+      "bytes": 3956,
+      "sha256": "29bf567632db2f011c7d91e2bba79c36a067fd3722c473008d770758710d71be",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLHapticHandler_API31.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLInputConnection.smali",
+      "bytes": 7352,
+      "sha256": "33e43381f20f34e4c2a5fa4fc885ec6af6f97ea438f752234c40ab00292b2c1c",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLInputConnection.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLJoySensorListener.smali",
+      "bytes": 1452,
+      "sha256": "4e388b3d8226eca91a18fb0a043df09dc5b35fa69b51c6c839560eb552e4ddc4",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLJoySensorListener.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLJoystickHandler$RangeComparator.smali",
+      "bytes": 2416,
+      "sha256": "cda5b6d4f312db06d024a5adcba79a791ecc77eb71415bf3df2bab2832c1d01a",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLJoystickHandler$RangeComparator.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLJoystickHandler$SDLJoystick.smali",
+      "bytes": 1685,
+      "sha256": "371362e40ee3a7d778b63669733e526ec50e387cbdf058d9394f901ac1a58bc3",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLJoystickHandler$SDLJoystick.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLJoystickHandler.smali",
+      "bytes": 32301,
+      "sha256": "74208e8cd77cda123780870602fca11f0ba673f06dd051531322aaf794f94c4d",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLJoystickHandler.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLMain.smali",
+      "bytes": 2427,
+      "sha256": "01dcdc87f8b55e8ba9dc5f9faa30faa0dbb9a12337969f217d9b465420f183d1",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLMain.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLSensorManager.smali",
+      "bytes": 4949,
+      "sha256": "7f25c1fee5cc9c7af779914b38209e7e190aacdc6649a4e75f259b91b057a760",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLSensorManager.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/smali/org/libsdl/app/SDLSurface.smali",
+      "bytes": 27522,
+      "sha256": "bfdc6f0ceb9ff9eeb5dcce00c4fdab52b2f04e5e6fa99b382c2203e4e1963695",
+      "parts": [
+        "BLACK-Arabic_src/smali/org/libsdl/app/SDLSurface.smali"
+      ]
+    },
+    {
+      "path": "BLACK-Arabic_src/unknown/META-INF/version-control-info.textproto",
+      "bytes": 120,
+      "sha256": "d731e9af7cc6f5993eaf2700662dc677a01cecb2cdf31f3443801925506e23da",
+      "parts": [
+        "BLACK-Arabic_src/unknown/META-INF/version-control-info.textproto"
+      ]
+    }
+  ],
+  "empty_dirs": []
+}
