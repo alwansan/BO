@@ -1,0 +1,28 @@
+name: BLACK isolated native C++ UDP lab
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/native/**'
+      - '.github/workflows/black-coop-native-net.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-linux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop/native
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Compile strict C++20 (ASAN, UBSAN)
+        run: |
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -fsanitize=address,undefined -fno-omit-frame-pointer coop/native/test_net.cpp -o /tmp/black-coop-net-test
+      - name: Loopback integration and protocol regression
+        env:
+          ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+          UBSAN_OPTIONS: halt_on_error=1
+        run: /tmp/black-coop-net-test
