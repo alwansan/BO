@@ -26,7 +26,7 @@ void TestWire() {
     a=Snapshot(11,arr,4); assert(Decode(a,p) && p.tick==11 && p.count==4 &&
                                    p.actors[1].x==-110 && p.actors[2].y==-7);
     a.push_back(0); assert(!Decode(a,p));
-    a=Snapshot(11,arr,4); a[20]=2; // duplicate actor id
+    a=Snapshot(11,arr,4); a[20]=1; // duplicate the host actor ID
     assert(!Decode(a,p));
     a=Join(0); assert(!Decode(a,p));
     std::cout<<"PASS strict packet codec\n";
