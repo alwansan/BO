@@ -1,0 +1,37 @@
+{
+  "apkFileName": "BLACK-Arabic_src.apk",
+  "PackageInfo": {
+    "forcedPackageId": "127",
+    "renameManifestPackage": null
+  },
+  "doNotCompress": [
+    "classes.dex",
+    "resources.arsc",
+    "png",
+    "mp4",
+    "assets/bundle/game.iso",
+    "lib/arm64-v8a/libc++_shared.so",
+    "lib/arm64-v8a/libmain.so",
+    "lib/arm64-v8a/libSDL3.so"
+  ],
+  "compressionType": false,
+  "sparseResources": false,
+  "version": "2.4.0-261120",
+  "sharedLibrary": false,
+  "VersionInfo": {
+    "versionName": "1.5.0-ar1.0",
+    "versionCode": "35"
+  },
+  "UsesFramework": {
+    "ids": [1],
+    "tag": null
+  },
+  "unknownFiles": {"META-INF/version-control-info.textproto": "8"},
+  "apkFilePath": "/storage/emulated/0/Download/Games/black/BLACK-Arabic.apk",
+  "compactEntries": false,
+  "isFrameworkApk": false,
+  "sdkInfo": {
+    "minSdkVersion": "29",
+    "targetSdkVersion": "34"
+  }
+}
