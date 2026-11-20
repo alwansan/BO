@@ -1,29 +1,25 @@
-# رسالة الاستعادة — BO-COOP
-اسمك BO-COOP. أكمل مشروع BLACK Android story co-op في https://github.com/alwansan/BO، فرع الكتابة الوحيد **experiment/black-coop**. لا تعدل main أو أي مستودع مرجعي. المالك أعطاك حرية التجارب وCI والقرارات الهندسية؛ لا تطلب إذناً لكل دفعة. الهدف لاعبان حقيقيان داخل مهمة القصة، ثم 4+، المضيف هاتف لاعب، LAN وZeroTier/Tailscale وعبر الإنترنت دون سيرفر ألعاب مخصص، الفردي محفوظ.
-اقرأ بالترتيب:
-https://github.com/alwansan/BO/blob/experiment/black-coop/AGENTS.md
-https://github.com/alwansan/BO/blob/experiment/black-coop/memory/MEMORY.md
-https://github.com/alwansan/BO/blob/experiment/black-coop/memory/STATE.json
-https://github.com/alwansan/BO/blob/experiment/black-coop/memory/PLAN_AR.md
-https://github.com/alwansan/BO/blob/experiment/black-coop/memory/ISSUES_AR.md
-https://github.com/alwansan/BO/blob/experiment/black-coop/prompt/SESSION_PROTOCOL_AR.md
-https://github.com/alwansan/BO/blob/experiment/black-coop/docs/SOURCE_MAP_AR.md
-https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-20_bo-coop-02.md
-ثم راجع HEAD وActions الحيين https://github.com/alwansan/BO/actions . المصدر المرجعي pinned 8e9c6fc7d570503ea68d039cff16c09339ee6d30: https://github.com/RanggaCasper/Black-Android/tree/8e9c6fc7d570503ea68d039cff16c09339ee6d30
-## آخر نقطة
-NET-001 run 44808411128 نجح loopback فقط. SRC-001 أضيف له مختبر تحقق split SHA256 وXDVDFS وXBE وELF identity؛ run 44813529439: synthetic SUCCESS؛ identity completed عند الفحص. NET regression 44813529325 SUCCESS. راجع نتيجة black-coop-source-audit run وأصلح أي فشل دون تجاوز hash. لا لاعبان داخل اللعبة ولا APK جديدة. لا تنشر game assets. إذا نجح audit، حدد صلاحية matching للـXBE، ثم baseline بناء المصدر Windows قبل Hook read-only. راجع source map؛ لا تستخدم offsets من إصدار غير مثبت. إذا تعذر مصدر/توقيع العربية اطلب الملف الضروري فقط.
-حدّث هذه الرسالة وSTATE/MEMORY/PLAN/ISSUES وسجل الجلسة في GitHub بعد كل دفعة أو فشل تلقائياً. لا تعد العمل الخلفي دون automation. لا تدّع نجاح اختبار لم يحصل.
+# رسالة الاستعادة الأساسية الحية — BO-COOP | 2026-11-21 (جلسة 04)
+اسمك BO-COOP، العميل الهندسي لتطوير قصة BLACK Android التعاونية LAN/ZeroTier/Tailscale. المستودع https://github.com/alwansan/BO؛ **فرع الكتابة الوحيد experiment/black-coop**، main وجميع المستودعات الأخرى للقراءة فقط. إذن المالك يتيح الاستكشاف والتجارب وCI دون سؤال لكل دفعة. لا تغير ملفات حفظ أو توقيع أو APK الأصلية. لا ادعاء multiplayer يعمل قبل رؤية لاعبين في المهمة نفسها على جهازين.
 
-## تحديث CI
-- [44813529325](https://github.com/alwansan/BO/actions/runs/44813529325) NET-001 regression SUCCESS على 6a82564229247ed21ef526cfbfb221a499802805.
-- [44813529439](https://github.com/alwansan/BO/actions/runs/44813529439) SRC-001 synthetic job SUCCESS؛ identity audit completed / success عند الفحص. لا نتيجة XBE مثبتة قبل قراءة تقرير identity.json أو log. لا APK أو اختبار هاتف.
+## استعادة ملزمة
+1. اقرأ https://github.com/alwansan/BO/blob/experiment/black-coop/AGENTS.md
+2. اقرأ https://github.com/alwansan/BO/blob/experiment/black-coop/memory/MEMORY.md
+3. اقرأ https://github.com/alwansan/BO/blob/experiment/black-coop/memory/STATE.json
+4. اقرأ https://github.com/alwansan/BO/blob/experiment/black-coop/memory/PLAN_AR.md وmemory/ISSUES_AR.md
+5. اقرأ https://github.com/alwansan/BO/blob/experiment/black-coop/prompt/SESSION_PROTOCOL_AR.md
+6. اقرأ https://github.com/alwansan/BO/blob/experiment/black-coop/docs/SOURCE_MAP_AR.md وdocs/V150_PROVENANCE_AR.md وdocs/NET_003_NATIVE_LAB_AR.md
+7. اقرأ أحدث جلسة https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-21_bo-coop-04-native-net.md ثم راجع HEAD وفرع GitHub Actions الحي https://github.com/alwansan/BO/actions
 
-## نتيجة SRC-001 الفعلية — 44813529439
-CI SUCCESS وartifact14666839620، قراءة job136555949209 مباشرة. اجتاز SHA256 للأصل ISO 1793179648 B وlibmain 72073216 B، XDVDFS partition 0، XBE 2813952 B، AArch64. Disc SHA1 c5bfed25449c8212d7a976f15246e87ead57713f مقابل kImageSha1 من ELF 82d0588124e70102ee650f8969c0a56374476234: **غير متطابقين**؛ disc ليس Europe المعروف. لا يثبت السبب (تعديل عربي/إصدار/غيره) ولا source commit أو أن APK الحالي لا يعمل. لا تعطيل gate، لا استخدام offsets غير مثبتة. SRC-001 فحص نجح؛ **قبول هوية المصدر BLOCKED**. التالي SRC-002a: تحديد US hash/commit من مصدر upstream وmetadata الإصدار العربي، ومقارنة XBE header/sections مع الصورة المطابقة المرخصة إن توفرت. إن تعذر، اطلب من المالك فقط default.xbe الأصلي المطابق أو مصدر تعديلات Arabic أو log تشغيل كامل؛ لا تفترض الحاجة للثلاثة. بناء baseline ثم HOOK-001. تقرير: memory/evidence/SRC-001-identity-44813529439.json، https://github.com/alwansan/BO/actions/runs/44813529439. لا APK جديدة ولا gameplay أو اختبار هاتف.
+## الحالة المثبتة
+- BO APK Arabic v1.5.0-ar1.0 versionCode35 يرتبط upstream Black-Android v1.5.0 tag f3754d6985a8c35204e7df071546e586b10f1806، والمكتبتان لهما compile-XBE SHA1 = 82d0588124e70102ee650f8969c0a56374476234، لكن .text مختلف. ISO المرفوع يحوي XBE آخر SHA1 c5bfed25449c8212d7a976f15246e87ead57713f. لا تعطيل match، لا build فعلي للمحرك دون default.xbe مرخص مطابق. SOURCE: [44817699656](https://github.com/alwansan/BO/actions/runs/44817699656).
+- NET-001 Python UDP localhost PASS [44808411128](https://github.com/alwansan/BO/actions/runs/44808411128).
+- NET-003 C++20 host/client simulated state + strict codec + UDP real loopback، Linux ASAN/UBSAN tests [44833884316](https://github.com/alwansan/BO/actions/runs/44833884316) SUCCESS. Two-process CLI and Android ARM64 NDK build [44834027711](https://github.com/alwansan/BO/actions/runs/44834027711) SUCCESS. Artifact `black-coop-net-lab-android-arm64-NO-GAME` id14677732935 executable SHA256 `0ca758a2ae4ac13a322cfa5106ff49ab58f753cb5758d43e7d9a296a2ccbe100`. **لم يجرب على Android أو ZeroTier ولا يوجد APK جماعي**. تحذير: UDP lab غير مشفر وغير مصادق، لا يُستخدم خارج شبكة موثوقة.
+- انظر تقرير `memory/evidence/NET-003-cpp-android-44834027711.json` وجلسة 04؛ فشلان اختباريان أوليان 44833697806 و44833772092 تم إصلاحهما، لا تنسَ توثيقهما.
+- مصدر code C++ في coop/native/net_core.hpp وtest_net.cpp وudp_cli.cpp. مرجع source بصيغة v1.5.0 لا upstream main (esp.cpp غير موجود في v1.5.0).
+- هدف المستخدم: هوست على هاتف، لاعبان ثم 4 داخل مهمة القصة مع AI والقتال والأهداف المشتركة، LAN/ZeroTier في البداية ثم WAN؛ الحفاظ على الفردي.
 
-## جلسة 03 — SRC-002a: تثبيت v1.5.0 (2026-11-21)
-- APKTool 1.5.0-ar1.0/code35، META-INF revision f3754d6985a8c35204e7df071546e586b10f1806 مطابق tag v1.5.0 upstream (ليس main 8e9c6fc). المصدر المرجعي للعمل على baseline أصبح tag v1.5.0؛ المصدر العربي الكامل غير مثبت. esp.cpp غير موجود في tag؛ layout/cheats/hooks موجودة. راجع docs/V150_PROVENANCE_AR.md.
-- CI [44817699656](https://github.com/alwansan/BO/actions/runs/44817699656) completed/success؛ تحقق SHA256 الرسمي، ومقارنة ELF حقيقية، job136570202480، artifact14669549225. الرسمي libmain.so 17957208 B، العربي 72073216 B؛ كلاهما AArch64 وkImageSha1=82d0588124e70102ee650f8969c0a56374476234. .dynstr/.dynsym/.rodata SHA identical؛ .text مختلف، file SHA مختلف. جميع 6 hook-symbol candidates موجودة في الاثنين (بحث substring فقط؛ لا إثبات function semantics). disc الموجود c5bfed254... لا يطابق compile image، لا نُضعف الفحص. النتيجة تثبت release provenance وcompile image match الرسمية/العربية، لا source العربي المطابق ولا compatibility للـISO. دليل memory/evidence/SRC-002a-release-comparison-44817699656.json. NET regression 44817699458 SUCCESS.
-- التالي: تحقق من نسخة قانونية لـdefault.xbe SHA1=82d0588124e70102ee650f8969c0a56374476234؛ المالك قد يملكها من نسخته الأصلية. لا تستعمل encrypted upstream XBE أو تدّع تحويل XBE العربي. إن لم تتوفر، واصل شبكات C++ مستقلة/اختبارات Android دون game assets. لا APK ولا gameplay. يمكن فحص hash الدوال المرشحة في ELF كدليل إضافي فقط؛ لا كتابة ذاكرة. لا نحتاج نشر أصول جديدة في public repo. إذا رفع المالك نسخة XBE مطابقة فليكن في مسار خاص مع صلاحية مشروعة، لا تُرفع للفرع العام.
-
-أحدث سجل جلسة: https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-21_bo-coop-03.md
+## العمل القادم
+1. عند رغبة المستخدم في تجربة الهاتف: دليل Termux وZeroTier في docs/NET_003_NATIVE_LAB_AR.md. لا تدّع عمله على الهاتف قبل التجربة.
+2. NET-004/005: اختبارات Android runtime، اعتماد آمن وتشفير ونقل موثوق/تزامن bounded game-thread؛ لا تتعامل مع مختبر NET-003 كحل production.
+3. SRC-002 baseline يتطلب XBE مرخصاً مطابقاً؛ لا ترفع ملفات اللعبة إلى مستودع عام ولا تنسخ المفتاح المشفر upstream. HOOK-001 (read-only) ثم ACTOR-001 (second proxy) بعد الهوية، لا قبلها.
+4. راجع آخر Actions/HEAD، أصلح الفشل، ثم **حدّث MEMORY وSTATE وPLAN وISSUES وسجل جلسة مستقل ورسالة RESTORE بعد كل دفعة أو اكتشاف أو نتيجة اختبار**؛ commit على experiment/android-coop؟ **لا**: الفرع الصحيح experiment/black-coop فقط. لا تزعم عمل خلفي غير مجدول.

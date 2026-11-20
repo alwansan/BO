@@ -1,0 +1,46 @@
+{
+  "id": "NET-003",
+  "name": "Native C++ network transport laboratory",
+  "status": "passed_in_isolated_CI_only",
+  "repository": "alwansan/BO",
+  "branch": "experiment/black-coop",
+  "code_sha": "b7762950e77302d4b15b847e19ef1ba2d5c6886a",
+  "failed_runs": [
+    {
+      "run": 44833697806,
+      "cause": "negative packet test used valid actor ID, corrected"
+    },
+    {
+      "run": 44833772092,
+      "cause": "timeout test expected peer expiry before configured TTL, corrected"
+    }
+  ],
+  "passed_runs": [
+    {
+      "run": 44833884316,
+      "scope": "C++20 ASAN/UBSAN, strict codec, authoritative host logic, real IPv4 UDP loopback"
+    },
+    {
+      "run": 44834027711,
+      "scope": "Linux C++20 test, two-process UDP host/client smoke, Android ARM64 NDK cross-build; no device runtime"
+    }
+  ],
+  "artifact": {
+    "id": 14677732935,
+    "name": "black-coop-net-lab-android-arm64-NO-GAME",
+    "sha256": "0ca758a2ae4ac13a322cfa5106ff49ab58f753cb5758d43e7d9a296a2ccbe100",
+    "platform": "Android ARM64 API29+",
+    "source": "coop/native/udp_cli.cpp"
+  },
+  "observations": {
+    "total_simulated_players": 4,
+    "remote_clients": 3,
+    "network": "IPv4 UDP loopback runtime tested on Linux",
+    "android_cross_compiled": true,
+    "android_device_runtime": false,
+    "actual_game_integration": false,
+    "cryptographic_authentication": false,
+    "zero_tier_tested": false
+  },
+  "security": "Lab-only test packets. Token is pseudorandom and NOT cryptographic authentication; use only trusted VPN/LAN; never expose to public internet."
+}

@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-03.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-04-native-net.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -32,6 +32,16 @@
       "code": "764613fc07c179b999cd4a4992cd2ecae7a749f3",
       "evidence": "memory/evidence/SRC-002a-release-comparison-44817699656.json",
       "exactArabicSource": false
+    },
+    "NET_003": {
+      "status": "passed_isolated_native_lab_ci",
+      "linuxRun": 44833884316,
+      "fullRun": 44834027711,
+      "code": "b7762950e77302d4b15b847e19ef1ba2d5c6886a",
+      "androidArtifact": 14677732935,
+      "androidSha256": "0ca758a2ae4ac13a322cfa5106ff49ab58f753cb5758d43e7d9a296a2ccbe100",
+      "evidence": "memory/evidence/NET-003-cpp-android-44834027711.json",
+      "scope": "Linux UDP real loopback and Android ARM64 cross compilation only"
     }
   },
   "pending": {
@@ -43,8 +53,9 @@
     "ACTOR_001": "not_started",
     "COMBAT_001": "not_started",
     "DEVICE": "not_started",
-    "SRC_002": "needs matching lawfully acquired XBE for baseline build"
+    "SRC_002": "needs matching lawfully acquired XBE for baseline build",
+    "NET_004": "Phone/ZeroTier runtime and authenticated production protocol untested"
   },
   "apk": null,
-  "next": "obtain matching XBE privately for baseline; continue isolated native multiplayer networking without assets"
+  "next": "Offer Android CLI lab on trusted ZeroTier network; exact XBE still blocks in-game actors; prepare secure game-state transport design"
 }

@@ -15,3 +15,6 @@
 7. UI: إنشاء/انضمام/جاهزية/اختيار مهمة/كلمة مرور/اتصال وping. طور القصة الفردي دون تغيير. لا host migration مبدئياً.
 ## حدود المختبر
 لا يقرأ ISO أو يحقن مكتبة أو يشغل BLACK. لا يثبت إمكانية لاعب ثان داخل المحرك. ملف Python مستقل لا حاجة إلى تنزيل ملفات اللعبة لتشغيله؛ CI يستخرج ملف المختبر وحده من Git، لا يعيد تجميع ISO. لا تنشر أصول اللعبة المحمية في artifacts؛ استخدم نسخاً مرخصة.
+
+## C++ native transport lab (NET-003)
+Tested strict C++ protocol, authoritative simulated host, native IPv4 UDP loopback, and Android ARM64 CLI **cross-compile** (not device runtime); [run 44834027711](https://github.com/alwansan/BO/actions/runs/44834027711). Phone test instructions: [docs/NET_003_NATIVE_LAB_AR.md](../docs/NET_003_NATIVE_LAB_AR.md). No in-game multiplayer. No encryption/authentication; never expose to internet.
