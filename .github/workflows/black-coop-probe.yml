@@ -1,0 +1,20 @@
+name: BLACK Co-op isolated UDP probe
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths: ['coop/**', '.github/workflows/black-coop-probe.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  udp-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - run: python3 -m py_compile coop/net_probe.py
+      - run: python3 coop/net_probe.py selftest
