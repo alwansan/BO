@@ -147,6 +147,18 @@ public final class RoomOverlay {
             cancelScan.set(true);session.stop();RoomDiagnostics.event("ROOM_LEFT");dialog.dismiss();
         });
         button(statusPanel,"BACK TO GAME  ·  KEEP ROOM",()->dialog.dismiss());
+        button(statusPanel,"SAVE ROOM LOG TO DOWNLOADS",()->{
+            RoomDiagnostics.event("EXPORT_REQUESTED");
+            worker.execute(()->{
+                boolean result=RoomDiagnostics.exportToDownloads(activity.getApplicationContext());
+                handler.post(()->{
+                    if(closed)return;
+                    RoomDiagnostics.event(result?"EXPORT_OK":"EXPORT_FAILED");
+                    if(result)status.setText("Saved safe room events to Downloads/Games/cl/black log/logs. Share from BOTH phones.");
+                    else status.setText("Could not export room events; use COPY SAFE CONNECTION LOG.");
+                });
+            });
+        });
         button(statusPanel,"COPY SAFE CONNECTION LOG",()->{
             ClipboardManager clip=(ClipboardManager)activity.getSystemService(Context.CLIPBOARD_SERVICE);
             if(clip!=null){clip.setPrimaryClip(ClipData.newPlainText("BLACK Co-op",RoomDiagnostics.read()));
