@@ -1,3 +1,8 @@
+## Session40 final verified CI-only diagnostics gate
+Owner is NOT asked for minor physical-device tests. Actual owner c5 XBE entry candidates mapped in static CI44956138064, but real stage load remains unproven. TLS/room state safe event codes real JVM CI44957104351 SUCCESS; Android29 synthetic Keystore+TLS+one combined previous/current rotated MediaStore room log/tamper rejection **CI44957104337 SUCCESS**, literal `ROOM_LOG_ROTATION_PASS`; source44957104363/UDP44957104323 SUCCESS. Room-only Android APK44957104347 check live. Next engineering stage: verify actual BLACK scene epoch/load and game-thread hook, then human remote fullbody AllyBody and host shared world. ONLY one future major owner two-phone acceptance trial with automatic minor logs.
+
+---
+
 ## Session40 Android29 CI corrective gate
 - JVM host/guest story safe events PASS44956904362; room source staging PASS44956904317; UDP PASS44956904308.
 - Android29 previously blocked before instrumentation: 44956473707 emulator pm install timeout; 44956739205 malformed Bash retry caused unexpected EOF. Fixed in commits5dd84a4a and c8c734bc, with fast syntax gate before SDK boot. **Verify current run44956919973**, inspect `TLS_PLATFORM_PASS` before acceptance. Room-only APK44956904350 check live.
