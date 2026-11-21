@@ -1,7 +1,9 @@
 # BLACK Co-op — زر الغرفة مباشرة تحت «الإعدادات»
 
 ## حالة التنفيذ — جلسة28
-نُفذالمسارفي`coop/prepare_room_ui.py`والخطة`docs/superpowers/plans/2026-11-21-title-coop-entry.md`،source `bf9a5c8199f28983865db20016cd8bb737cb13b5`،Actions44913282838فشلقبلcompileبسببCRLFWindows؛أُصلحبـregressionRED→GREENو13/13preparerPASS. إعادةالبناءمطلوبة. الصوررُئيتفعلياًمنCL:فيblacktitlemenu2الحلقةOptions→CO-OP→Quit؛وفيblacktitlemenuOptions→CO-OP→Profile→Quit. ينقلكCO-OPمباشرةإلىmode6فيOptionsMenuXbox،ويرجعBackإلىtitleالأصلية. لاISOمعدلةلهذهالإضافة. HOST/JOINغيرمتاحينبعد؛لاادعاءnetwork/playableco-op. تفاصيلالأقسامالتاليةهيخلفيةالبحثوالتصميمالسابق؛حالةالتنفيذهناهيالأحدث.
+نُفذ الزر في `coop/prepare_room_ui.py`،وبُني APK في [44913654405](https://github.com/alwansan/BO/actions/runs/44913654405) **SUCCESS** على `96f69b6c8e912760fedaf5d7add52928f3b212f7`. أُصلح اختلاف CRLF في Windows باختبار RED→GREEN؛13/13 preparer ناجحة. نُزل APK وفُحص مستقلاً. تفاصيل الدليل في `memory/evidence/ROOM-UI-apk-44913654405.json` وبروتوكول الهاتف في `docs/ROOM_UI_DEVICE_TEST_AR.md`؛الموضع/الرجوع لم يُقبلا على الهاتف بعد.
+
+الصورتان رُئيتا فعلياً: `Options→CO-OP→Quit` في قائمة المهمة، و`Options→CO-OP→Profile→Quit` في قائمة الملف. تُفتح الغرفة mode6 في OptionsMenuXbox مباشرة وBack إلى نفس title. لا ISO معدلة لهذه الإضافة،ولا Host/Join فعليين أو أجسام لاعبين متصلين. الأقسام التالية خلفية البحث السابقة؛الحالة هنا هي الأحدث.
 
 **التاريخ:** 2026-11-21. **المرجع المقروء:** `RanggaCasper/Black-Android@f3754d6985a8c35204e7df071546e586b10f1806`، خصوصاً `src/game/exit_menu.cpp`, `src/game/flash.h`, `src/game/options_menu.cpp`. المرجع للقراءة فقط؛ لا تغيير في main أو binary الأصل.
 

@@ -32,10 +32,12 @@
 ## Task 2 — independent Android build
 - [x] Add separate workflow based on verified Probe4 build; allowlist the two UI changes and exact new headers.
 - [x] Review diff independently; fix material findings and rerun checks.
-- [ ] Push with expected-head lease, wait for Actions, inspect logs and artifact metadata/hash.
-- [ ] Update STATE/RESTORE with owner solo-only clarification, ISO/APK distinction and true remaining actor/network gates.
+- [x] Push with expected-head lease, wait for Actions, inspect logs and artifact metadata/hash.
+- [x] Update STATE/RESTORE with owner solo-only clarification, ISO/APK distinction and true remaining actor/network gates.
 
 ## Next subsystems (not completed by a UI build)
 Native independent actor/controller acquisition (null-brain registered actor rejected), two-phone authenticated host/join and snapshots, host-authoritative combat and AI target integration, mission/checkpoint transitions and full player bodies including host third-person representation. NPC allies/enemies are not remote players and are preserved by default; AI multiplayer behavior needs verification rather than assuming it adapts automatically.
 
 Ledger: source bf9a5c8; Windows CI first failed on raw CRLF source anchor. Reproducer RED→GREEN; normalize new title source only. Preparer13/13 and route PASS; native build retry required.
+
+Final: retry44913654405 SUCCESS on96f69b6; Linux+NDK logs read. Artifact14710883570 downloaded, ZIP/APK hashes independently match. Phone UI navigation is pending; overall co-op goal remains unfinished.

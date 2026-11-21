@@ -27,3 +27,6 @@ run44913282838فشلjob136873477193فيpreparerقبلcompile:ملفexit_menu.cpp
 localdraw1D25D0يستخدم+420/+460..490خارجNPCstride3C0؛لايمكنتركيبdrawالمحليعلىNPCأوادعاءfullbodyمنProbe4. راجعdocs/ACTOR_INSTANCE_OWNERSHIP_AR.md. الحوض324منفصل16عنصرstride1FE0؛pop1848F0لايفحصnullويحتاجprecheck،والـdescriptorوملكيةمراجعAIمازالاتحتاجتدقيقاً. لامحركspawnمطبقفيهذهالدفعة.
 
 إعادةالبناء44913654405علىالإصلاح96f69b6c8e912760fedaf5d7add52928f3b212f7؛Linux136874536833نجح،Windows136874579612قيدالتنفيذ. مراجعةمستقلةأكدتاختلافdrawوكتابةlocalحتى+49F،وحوض324عدد16؛القفزبرسمlocalإلىNPCغيرآمن.
+
+## النتيجة النهائية للدفعة
+Actions44913654405 **SUCCESS**؛قرئت سجلاتLinux وWindows/NDK،13preparer و12rootPythonPASS،ومطابقةc5/JNI/signature/package ناجحة. نُزلartifact14710883570 وفُحص ZIP/APKhash مستقلاً:APK21753039bytes/SHA256 af133c9b2a74a9714d62ca943bdd209ffc552267a053951085980ad7addfebfe. الأدلة memory/evidence/ROOM-UI-apk-44913654405.json. بروتوكول الهاتف docs/ROOM_UI_DEVICE_TEST_AR.md:موضعCO-OP،دخولمباشرللغرفة،Backللـtitle،وبقاءStart/Options. Host/Join مازالا غيرمتاحين؛لاbodyspawn أوnetworkintegration أوco-opقابلللعب،ولاISOمعدلة.

@@ -511,6 +511,45 @@
       "androidBuildAccepted": false,
       "phoneVerified": false,
       "playableCoop": false
+    },
+    "ROOM_UI_ANDROID_BUILD": {
+      "schema": 1,
+      "run": 44913654405,
+      "sourceCommit": "96f69b6c8e912760fedaf5d7add52928f3b212f7",
+      "conclusion": "success",
+      "jobs": {
+        "linuxCore": 136874536833,
+        "androidApk": 136874579612
+      },
+      "artifact": 14710883570,
+      "metadataArtifact": 14710784028,
+      "package": "org.bocoop.black.roomui",
+      "label": "BLACK Co-op UI TEST",
+      "apkBytes": 21753039,
+      "apkSha256": "af133c9b2a74a9714d62ca943bdd209ffc552267a053951085980ad7addfebfe",
+      "zipSha256": "677ab59a99567675a227720505a311ca0b346c3d8a340ecae1d86cde2020f4b7",
+      "compileImageSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+      "architecture": "AArch64",
+      "downloadedAndIndependentlyHashed": true,
+      "signaturePackageJniVerifiedInCi": true,
+      "noOriginalAssetsInApk": true,
+      "noNetworkPermission": true,
+      "isoModified": false,
+      "topLevelEntryImplemented": true,
+      "directRoomRouteImplemented": true,
+      "uiGuestWritesAdded": true,
+      "observerGuestWritesAdded": false,
+      "metadataScopeNote": "Raw build metadata guest_memory_writes_added=false describes the observer only; the Flash UI deliberately writes UI objects. No gameplay actor writes or spawn added.",
+      "preparerTests": 13,
+      "rootPythonTests": 12,
+      "nativeRouteSanitizersPassed": true,
+      "independentSourceReview": "no material findings",
+      "phoneMenuVerified": false,
+      "hostJoinEnabled": false,
+      "realHumanBodiesImplemented": false,
+      "playableCoop": false,
+      "artifactExpires": "2026-12-05T14:32:57Z",
+      "localOutput": "/home/a/Desktop/black/RoomUI-44913654405"
     }
   },
   "pending": {
@@ -521,7 +560,7 @@
     },
     "ACTOR_001": "Real Probe2 13 LOD+animation correlations, 9 first observed late, 2 10s sampling gaps; NOT NPC death/spawn or ownership proof. ACTOR001A analyzer and value-only mock remote roster pass isolated CI, actual game actor factory/proxy unimplemented.",
     "COMBAT_001": "not_started",
-    "DEVICE": "Probe4 owner capture accepted. No repeated passive probe requested; next meaningful test requires real local body experiment.",
+    "DEVICE": "Solo Probe4 capture accepted; title CO-OP UI APK now requires its first menu placement/navigation phone check. No two-phone gameplay build yet.",
     "SRC_002": "Separate candidate build and owner baseline runtime accepted for this limited device test; not original Arabic source equivalence/full campaign proof.",
     "NET_004": "Synthetic host+scene inbox composition PASS. Real Android LAN/ZeroTier, secure session auth, actor mapping and game-thread integration NOT tested.",
     "SRC_002B": {
@@ -565,16 +604,18 @@
       "sampleSize": 130243
     },
     "COOP_ROOM_MENU": {
-      "status": "CRLF_FIX_CORE_PASS_ANDROID_BUILD_IN_PROGRESS",
+      "status": "APK_CI_SUCCESS_HASH_VERIFIED_OWNER_MENU_TEST_PENDING",
       "run": 44913654405,
       "package": "org.bocoop.black.roomui",
       "hostJoinEnabled": false,
-      "topLevelUnderSettings": "IMPLEMENTED_NOT_DEVICE_VERIFIED",
+      "topLevelUnderSettings": "IMPLEMENTED_APK_BUILT_NOT_PHONE_VERIFIED",
       "topLevelFeasibility": "Pinned source exit_menu.cpp already clones a Quit button below Options",
       "design": "docs/ROOM_TOP_LEVEL_FEASIBILITY_AR.md",
       "sourceCommit": "96f69b6c8e912760fedaf5d7add52928f3b212f7",
       "failedRun": 44913282838,
-      "failureReason": "Windows CRLF in exit_menu.cpp raw bytes prevented multiline source anchor match; normalized CRLF to LF with reproducing regression RED then GREEN"
+      "failureReason": "Windows CRLF in exit_menu.cpp raw bytes prevented multiline source anchor match; normalized CRLF to LF with reproducing regression RED then GREEN",
+      "artifact": 14710883570,
+      "protocol": "docs/ROOM_UI_DEVICE_TEST_AR.md"
     },
     "OWNER_BISO_FULL_SHA": "COMPLETE: owner's actual ISO all 574 per-file SHA256 were streamed and hashed; their lexicographically ordered 256-bit rolling digest matches pinned biso manifest; all relative paths and sizes canonical digest matches. STILL OPEN: bytes of split part blobs in GitHub biso not independently downloaded/hashed. Use restore_github_upload.py locally if required.",
     "ACTOR001A_TOY_HOST_PROXY_INTEGRATION": {
@@ -625,25 +666,25 @@
     }
   },
   "apk": {
-    "kind": "Probe4 read-only instance graph diagnostic",
-    "run": 44876183662,
-    "artifact": 14696342069,
-    "package": "org.bocoop.black.probe4",
-    "sha256": "bfd7968b04851d8c814bdb88563b1efb8e8b9b88695d2c161c077111bd3c9897",
-    "bytes": 21749755,
-    "sourceCommit": "1b27ecc26e5417b91eb84208479e039e9b792521",
-    "deviceAccepted": true,
+    "kind": "Native title CO-OP UI test; host/join unavailable",
+    "run": 44913654405,
+    "artifact": 14710883570,
+    "package": "org.bocoop.black.roomui",
+    "sha256": "af133c9b2a74a9714d62ca943bdd209ffc552267a053951085980ad7addfebfe",
+    "bytes": 21753039,
+    "sourceCommit": "96f69b6c8e912760fedaf5d7add52928f3b212f7",
+    "deviceAccepted": false,
     "gameplayCoop": false
   },
-  "next": "Build and inspect title room UI APK in Actions, then native independent controller acquisition and real gameplay integration; no passive Probe4 retest.",
+  "next": "Owner may test CO-OP placement, direct room page and Back using docs/ROOM_UI_DEVICE_TEST_AR.md. Independently continue native actor/controller and full-body compatibility audit before real two-phone gameplay. No repeated passive Probe4 capture.",
   "latestHandoff": {
     "date": "2026-11-21",
     "session": 28,
     "kind": "title_room_ui_implementation",
-    "newApk": false,
+    "newApk": true,
     "newCI": true,
     "actorPoolEvidence": "memory/sessions/2026-11-21_bo-coop-19-cloud-handoff.md",
-    "next": "Build and inspect title room UI APK in Actions, then native independent controller acquisition and real gameplay integration; no passive Probe4 retest.",
+    "next": "Owner may test CO-OP placement, direct room page and Back using docs/ROOM_UI_DEVICE_TEST_AR.md. Independently continue native actor/controller and full-body compatibility audit before real two-phone gameplay. No repeated passive Probe4 capture.",
     "cloudFilesRequiredFromOwner": false,
     "actorPoolContracts": "docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md",
     "fullOwnerObjective": "docs/OWNER_PROJECT_OBJECTIVE_AR.md",
@@ -651,7 +692,7 @@
     "poolReader": "coop/probe3/pool_snapshot.hpp",
     "poolReaderStatus": "OWNER_PROBE3_AND_PROBE4_CAPTURE_ACCEPTED"
   },
-  "executionStatus": "room_ui_retry_44913654405_android_build_in_progress",
+  "executionStatus": "room_ui_apk_verified_owner_menu_test_pending_actor_network_work_remains",
   "ownerClarifications": {
     "session": 28,
     "previousPhoneTests": "solo local human plus enemy/friendly NPCs only; never two phones",

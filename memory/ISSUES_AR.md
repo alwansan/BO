@@ -262,3 +262,5 @@ APK44876183662SUCCESS؛artifact14696342069 نُزلوفُحصhash. راجع memo
 اختبارات الهاتف السابقة فردية فقط؛الآخرونNPC. يريد المالك أجسام بشر مستقلين وانتقالهم مع المضيف بينالمراحل. إذن جديد بفرع تجريبيbiso وتعديلISOعندالحاجة،دونmain. CO-OP تحتOptionsنُفذفيprepare_room_ui.py،مباشرةإلىالغرفةمعBackللـtitle؛12preparer+12rootPython+native routePASSومراجعةمستقلةواضحة،NDKوالهاتفلميثبتابعد. HOST/JOINغيرمتاحينولاجسملاعبثانبعد. راجع`memory/sessions/2026-11-21_bo-coop-28-title-room-ui.md`.
 
 جلسة28/إصلاحCI:run44913282838فشلقبلcompileبسببCRLFفيexit_menu.cpp. اختبارreproducerREDثمLFnormalizationGREEN،13/13preparerPASS؛إعادةCIمطلوبة. المصدرالأولbf9a5c8ليسAPKجاهزاً.
+
+جلسة28/النتيجة: UI APK جاهز،run44913654405 SUCCESS على96f69b6،artifact14710883570،APK SHA256 af133c9b2a74a9714d62ca943bdd209ffc552267a053951085980ad7addfebfe وحجمه21753039B؛نُزل وفُحص مستقلاً. المطلوب أول فحص لموضعCO-OP والدخول والعودة على الهاتف حسبdocs/ROOM_UI_DEVICE_TEST_AR.md. لا Host/Join فعليين أو أجسام بشر متصلين،ولا ISO جديدة. خريطةالربطdocs/COOP_INTEGRATION_ROADMAP_AR.md.
