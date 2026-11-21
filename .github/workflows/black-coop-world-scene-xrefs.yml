@@ -1,0 +1,98 @@
+name: BO-COOP private owner world pointer scene-loader candidate audit
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/analysis/world_xref_static.py'
+      - 'coop/analysis/test_world_xref_static.py'
+      - '.github/workflows/black-coop-world-scene-xrefs.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: bo-coop-world-xrefs
+  cancel-in-progress: false
+jobs:
+  synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Verify world pointer xref analyzer on artificial XBE only
+        run: |
+          set -euo pipefail
+          command -v objdump
+          python3 -m unittest discover -s coop/analysis -p test_world_xref_static.py -v
+          echo 'BO_WORLD_XREF_SYNTHETIC_PASS: no real game bytes or gameplay'
+  owner-private:
+    needs: synthetic
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /coop/analysis/
+            /coop/source_audit.py
+            /BLACK_FILE_MANIFEST.json
+            /BLACK-Arabic_src/assets/bundle/game.iso/
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - uses: actions/checkout@v4
+        with:
+          repository: RanggaCasper/Black-Android
+          ref: f3754d6985a8c35204e7df071546e586b10f1806
+          path: reference
+          sparse-checkout: tools/xdvdfs.py
+          sparse-checkout-cone-mode: false
+          lfs: false
+          persist-credentials: false
+      - name: Extract pinned original XBE privately and classify world xrefs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, subprocess, sys, tempfile
+          sys.path.insert(0, 'coop')
+          sys.path.insert(0, 'coop/analysis')
+          from source_audit import restore, xbe_from_iso, ISO
+          from world_xref_static import analyze_bytes
+          root=pathlib.Path('.').resolve()
+          temp=pathlib.Path(os.environ['RUNNER_TEMP'])
+          records=json.loads((root/'BLACK_FILE_MANIFEST.json').read_text())['files']
+          record=next(x for x in records if x['path']==ISO)
+          with tempfile.TemporaryDirectory(prefix='bo-world-private-',dir=temp) as private:
+              iso=pathlib.Path(private)/'owner.iso'
+              xbe=pathlib.Path(private)/'default.xbe'
+              restore(root,record,iso)
+              identity=xbe_from_iso(iso)
+              if identity['sha1']!='c5bfed25449c8212d7a976f15246e87ead57713f':
+                  raise SystemExit('Owner XBE hash mismatch')
+              subprocess.run(
+                  [sys.executable, 'reference/tools/xdvdfs.py',str(iso),'default.xbe',str(xbe)],
+                  check=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+              binary=xbe.read_bytes()
+              if hashlib.sha1(binary).hexdigest()!=identity['sha1']:
+                  raise SystemExit('Owner ISO/XBE extraction identity mismatch')
+              report=analyze_bytes(binary)
+              assert not report['true_scene_loader_proven']
+              assert not report['safe_hook_proven']
+              (temp/'bo-world-xrefs-safe-summary.json').write_text(
+                  json.dumps(report,indent=2,sort_keys=True)+'\n',encoding='utf8')
+          print('BO_WORLD_XREF_OWNER_PASS: pinned XBE scanned, derived memory-xref counts only')
+          print('NO scene loader, game-thread callback, stage epoch or co-op proof claimed')
+          PY
+      - name: Upload bounded derived address/count metadata ONLY
+        uses: actions/upload-artifact@v4
+        with:
+          name: bo-world-xrefs-safe-summary
+          path: ${{ runner.temp }}/bo-world-xrefs-safe-summary.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Ensure private report is removed from runner
+        if: always()
+        run: rm -f "$RUNNER_TEMP/bo-world-xrefs-safe-summary.json"
