@@ -39,3 +39,10 @@ User interrupted implementation to move work to another session. Core tests pass
 - [ ] Wait for actual CI outcome of [44854667587](https://github.com/alwansan/BO/actions/runs/44854667587), then record hashes/artifact and choose latest candidate.
 - [ ] First owner device probe run for runtime evidence; no request to repeat accepted baseline.
 - [ ] Only then evaluate actor classifications; no spawn/factory claim or guest memory writes before evidence.
+
+## Session11 continued
+- [x] Prove previous Probe1 Android candidate 44854667587 passes all CI gates, artifact14687571586.
+- [x] Fix local player promotion and per-slot serial after early NPC/LOD observation (f7abf7de); ASAN/preparer44855984868 PASS.
+- [ ] Check completion 44855984997, new metadata/sha, then release only a verified candidate for first Probe1 phone run.
+- [x] Add isolated NET-004 game-thread inbox and sanitizer tests (44856160545), not connected to game.
+- [ ] Collect actual phone HOOK001 observations before ACTOR-001 spawn research changes.

@@ -1,0 +1,27 @@
+{
+  "gate": "HOOK001",
+  "label": "Reserved-local-slot v3 Probe APK",
+  "scope": "CI compilation and release gating only",
+  "run": 44854667587,
+  "job": 136693938648,
+  "code_sha": "457740830d2ba1b65ac9694759c86daf38fc27ee",
+  "artifact_id": 14687571586,
+  "metadata_artifact_id": 14686964630,
+  "apk_bytes": 21738227,
+  "apk_sha256": "80a95208d19b5437815e61cdd35a118a920b1b9841c324f35b9fefad55e815b9",
+  "package": "org.bocoop.black.probe1",
+  "native_compile_image_sha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+  "checks": {
+    "windows_android_arm64": true,
+    "source_allowlist": true,
+    "generated_lod_symbol_and_link": true,
+    "jni_export": true,
+    "debug_signature": true,
+    "package_activity": true,
+    "no_game_assets_in_apk": true,
+    "no_network_or_broad_storage_permission": true
+  },
+  "phone_runtime": false,
+  "multiplayer": false,
+  "note": "The player slot is reserved, but before f7abf7de a local player first observed as LOD might retain an NPC slot. The newest code fixes local promotion; its APK CI was still in progress at this update."
+}

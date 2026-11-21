@@ -41,3 +41,8 @@ python3 coop/analysis/summarize_probe.py /private/path/coop_probe.jsonl --output
 ## تحديث جلسة10 — تحليل الخصوصية والنتائج الحية
 - [44854855170](https://github.com/alwansan/BO/actions/runs/44854855170) completed SUCCESS for privacy-safe probe log analyzer tests (synthetic only), on code bcbf1964b7fb378ad17fed2724aaeefbab91de46. Added bounded diagnostic reason-code flags: capture_end_not_seen, no_samples, no_player_samples, no_lod_samples, no_animation_samples, reader_unavailable, local_output_error. No raw pointer, position, names, thread/epoch IDs or raw logs in summaries. Tests include empty/permission and truncated capture. These flags DO NOT prove model absence or factory success.
 - [44854855083](https://github.com/alwansan/BO/actions/runs/44854855083) Python UDP regression SUCCESS. Android candidate run44854667587 was in progress (Gradle native compile) at this documentation update. Do not infer Android runtime from host CI.
+
+## Session11 CI candidate
+- [44854667587](https://github.com/alwansan/BO/actions/runs/44854667587) SUCCESS, code457740830d2ba1b65ac9694759c86daf38fc27ee, artifact14687571586, APK SHA256 80a95208d19b5437815e61cdd35a118a920b1b9841c324f35b9fefad55e815b9. This includes reserved local slot, but not *promotion* from prior NPC slot.
+- Follow-up local-promotion fix f7abf7de, preflight44855984868 PASS; [new build 44855984997](https://github.com/alwansan/BO/actions/runs/44855984997) in_progress when this was written. Prefer it only if all gates PASS, and check new artifact SHA; do not use the old hash for a different APK.
+- Device test still only first Probe1 read-only run, not accepted baseline retest or actual multiplayer.

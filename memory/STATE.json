@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-10-player-slot-and-probe-build.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-11-local-promotion-and-scene-inbox.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -149,6 +149,30 @@
       "code": "bcbf1964b7fb378ad17fed2724aaeefbab91de46",
       "script": "coop/analysis/summarize_probe.py",
       "scope": "Only aggregate diagnostic flags, no raw log processed"
+    },
+    "HOOK001_RESERVED_SLOT_APK": {
+      "status": "CI_build_verified_no_phone_runtime",
+      "run": 44854667587,
+      "code": "457740830d2ba1b65ac9694759c86daf38fc27ee",
+      "artifact": 14687571586,
+      "apkSha256": "80a95208d19b5437815e61cdd35a118a920b1b9841c324f35b9fefad55e815b9",
+      "evidence": "memory/evidence/HOOK001-player-slot-44854667587.json",
+      "deviceTested": false,
+      "supersededBySourceFix": "f7abf7de9fbde64bca97597765e0dbdc61d1f20c"
+    },
+    "HOOK001_LOCAL_PROMOTION_HOST": {
+      "status": "passed_host_sanitizer_and_pinned_source",
+      "run": 44855984868,
+      "code": "f7abf7de9fbde64bca97597765e0dbdc61d1f20c",
+      "deviceTested": false
+    },
+    "NET004_GAME_THREAD_INBOX": {
+      "status": "passed_isolated_host_sanitizer_only",
+      "run": 44856160545,
+      "code": "2b74bdae0647de0194f267e533a2bb6be92ead79",
+      "deviceTested": false,
+      "gameIntegrated": false,
+      "source": "coop/bridge/scene_inbox.hpp"
     }
   },
   "pending": {
@@ -157,11 +181,11 @@
       "discSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
       "compiledSha1": "82d0588124e70102ee650f8969c0a56374476234"
     },
-    "ACTOR_001": "not_started",
+    "ACTOR_001": "No actor factory or second playable model proven. Probe phone runtime not yet tested; no guest writes.",
     "COMBAT_001": "not_started",
     "DEVICE": "Owner-tested rebuilt baseline ACCEPTED; HOOK001 probe device test NOT STARTED; co-op device-pair test NOT STARTED.",
     "SRC_002": "Separate candidate build and owner baseline runtime accepted for this limited device test; not original Arabic source equivalence/full campaign proof.",
-    "NET_004": "Phone/ZeroTier runtime and authenticated production protocol untested",
+    "NET_004": "Isolated game-thread inbox passed Linux CI; no in-game integration, authenticated transport or phone peer-pair test.",
     "SRC_002B": {
       "status": "candidate translation possible; 46 library symbols, 5 data locations, 11 ABI unresolved; semantics not accepted",
       "candidateSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
@@ -175,17 +199,17 @@
     },
     "DEVICE_BASELINE": "Already accepted by owner; do not ask to repeat.",
     "HOOK_001": {
-      "status": "current player-slot host preflight PASS; Windows Android build in progress",
-      "workflowRun": 44854667587,
+      "status": "Latest local-promotion Android run in_progress",
+      "workflowRun": 44855984997,
       "package": "org.bocoop.black.probe1",
       "baselineAccepted": true,
       "appBuildConfirmed": false,
       "deviceTest": false,
-      "plan": "docs/superpowers/plans/2026-11-21-readonly-probe.md",
-      "previousCandidateRun": 44852913117,
-      "previousCandidateStatus": "pass_ci_only"
+      "previousCandidateRun": 44854667587,
+      "previousCandidateStatus": "CI_PASS",
+      "plan": "docs/superpowers/plans/2026-11-21-readonly-probe.md"
     }
   },
   "apk": null,
-  "next": "Verify run 44854667587 and accept artifact if APK signature/package/identity pass; then optional first HOOK001 device capture only. No baseline re-test, XBE request or actor spawn claim."
+  "next": "Verify Android build 44855984997 against code f7abf7de; record artifact if PASS, then optional first Probe1-only phone capture. Continue safe isolated network and ACTOR design, no baseline retest."
 }

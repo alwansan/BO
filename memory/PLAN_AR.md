@@ -125,3 +125,10 @@ Owner ISO uploaded 5 parts and fully SHA-verified. See docs/OWNER_ISO_UPLOAD_AR.
 ## تحديث جلسة10 — تحليل الخصوصية والنتائج الحية
 - [44854855170](https://github.com/alwansan/BO/actions/runs/44854855170) completed SUCCESS for privacy-safe probe log analyzer tests (synthetic only), on code bcbf1964b7fb378ad17fed2724aaeefbab91de46. Added bounded diagnostic reason-code flags: capture_end_not_seen, no_samples, no_player_samples, no_lod_samples, no_animation_samples, reader_unavailable, local_output_error. No raw pointer, position, names, thread/epoch IDs or raw logs in summaries. Tests include empty/permission and truncated capture. These flags DO NOT prove model absence or factory success.
 - [44854855083](https://github.com/alwansan/BO/actions/runs/44854855083) Python UDP regression SUCCESS. Android candidate run44854667587 was in progress (Gradle native compile) at this documentation update. Do not infer Android runtime from host CI.
+
+## Session11 gate update
+- [x] Windows verified reserved-slot Probe1 candidate [44854667587](https://github.com/alwansan/BO/actions/runs/44854667587) SUCCESS; not phone-tested. Artifact14687571586 and memory/evidence/HOOK001-player-slot-44854667587.json.
+- [x] Local-promotion and slot serial negative tests [44855984868](https://github.com/alwansan/BO/actions/runs/44855984868) PASS; current Windows [44855984997](https://github.com/alwansan/BO/actions/runs/44855984997) in_progress at recording.
+- [x] Game-neutral scene inbox [44856160545](https://github.com/alwansan/BO/actions/runs/44856160545) PASS; no device/BLACK integration.
+- [ ] Verify latest APK and optionally first HOOK001 device capture (not baseline re-test).
+- [ ] Validate actor lifetimes/full-body before ACTOR-001; no guest writes or production auth claims.

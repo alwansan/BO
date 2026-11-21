@@ -101,3 +101,8 @@ AOSP Android15 SYSCALLS.TXT يحتوي process_vm_readv all، app/common blockli
 ## تحديث جلسة10 — تحليل الخصوصية والنتائج الحية
 - [44854855170](https://github.com/alwansan/BO/actions/runs/44854855170) completed SUCCESS for privacy-safe probe log analyzer tests (synthetic only), on code bcbf1964b7fb378ad17fed2724aaeefbab91de46. Added bounded diagnostic reason-code flags: capture_end_not_seen, no_samples, no_player_samples, no_lod_samples, no_animation_samples, reader_unavailable, local_output_error. No raw pointer, position, names, thread/epoch IDs or raw logs in summaries. Tests include empty/permission and truncated capture. These flags DO NOT prove model absence or factory success.
 - [44854855083](https://github.com/alwansan/BO/actions/runs/44854855083) Python UDP regression SUCCESS. Android candidate run44854667587 was in progress (Gradle native compile) at this documentation update. Do not infer Android runtime from host CI.
+
+## Session11 remaining risks
+- Old reserved-slot registry fails to promote previously NPC-classified local object; fixed with slot serial in f7abf7de, host tests pass44855984868. Android current run44855984997 in_progress; runtime unproven until phone.
+- Serial prevents stale per-slot cooldown but **does not establish actor lifetime**. Registry matches address/vtable and resets on changed world pointer; same-pointer reload reuse may go unnoticed.
+- New NET-004 inbox is isolated and not connected to guest/thread hooks. No secure session identity, delivery reliability, overflow recovery, or real-world scene epoch yet. Must not be treated as production co-op.
