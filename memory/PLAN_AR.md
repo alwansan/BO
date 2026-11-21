@@ -1,3 +1,23 @@
+# ACTIVE Session38 — Corrected implementation gates (older checklists below are historical)
+Owner direction now: ORIGINAL first-person local on EVERY phone; use ALLY full-body model/rig ONLY for OTHER human network players; never NPC AI. One host-authoritative mission/world, not separately started solo games. New CL default player test exists with 8/8 primary arms-only samples. No repeat phone test for that diagnostic required.
+
+| Gate | Status |
+|---|---|
+| Owner original primary model evidence | READ/CONFIRMED 8/8 complete, 44 bones, 2 buffers, mask32, arms only; source CL BLACK-Probe-20261121-235407-267 |
+| Real LAN lobby | Older 2/4 on two phones ACCEPTED; still lobby only; automatic no-PIN source ready |
+| VIEW-001 host+guest first-person/ally state | Source-only CI PASS 44951425780; no real render or game actor |
+| MISSION-001 host Prepare/Ready/Commit barrier | Source-only CI PASS 44951425780; no TLS mission wire/game-stage loading |
+| WIRE-001 authenticated story control | OPEN |
+| ENGINE-001 host-selected real shared stage and client loaded/ready | OPEN |
+| BODY-001 human-controlled remote ALLY rig with lifetime/animation | OPEN |
+| INPUT-001 local movement/weapon snapshots to remote display | OPEN |
+| WORLD-001 AI/combat/quest/checkpoint/stage/save sync | OPEN |
+| COOP-ACCEPT 2-4 phones SAME mission and bodies | OPEN |
+
+Prior plans requiring PIN, mandatory fingerprint confirmation, manual port, no ally-body ever, new defaultplayer capture still missing, Windows APK44924346601 pending are obsolete. Use docs/superpowers/plans/2026-11-22-host-story-remote-ally.md and Session38. Latest verified Android APK run44946597973/artifact14724535514, owner test captured, no new APK created by source-only contracts.
+
+---
+
 ## تسليم جلسة37 — 2026-11-22
 المالك سينتقل مؤقتاً لجلسة أخرى. اقرأ memory/sessions/2026-11-22_bo-coop-37-cloud-handoff.md وdocs/CLOUD_HANDOFF_AR.md. جميع أدوات المصدر والخطط والمراجع مرفوعة؛لا تعتمد علىالجهازالمحلي. آخرAPK44946597973/artifact14724535514مفحوصة،ولا سجلاتهاتفجديدةبعدطلبها. الشخصيةالأصليةفقط،لاNPCبديل،ولاsharedStartأوgameplayبعد. افحصCLالحيةأولاًلأيcaptureجديد.
 
