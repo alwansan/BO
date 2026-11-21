@@ -72,7 +72,7 @@ void Observe(Kind kind,uint32_t argument,const uint8_t* base) noexcept {
         uint64_t now=Now();
         if(!Init(now)) return;
         if((budget.started && !budget.Active(now)) || now-opened_at>=300000) {End("time_or_record_limit");return;}
-        if(!budget.Attempt(now)) return;
+        if(!budget.Attempt(now,kind==Kind::Player)) return;
         ++attempts;
         GuestReader read(reinterpret_cast<uintptr_t>(base));
         uint32_t world=0;
@@ -139,7 +139,7 @@ void Observe(Kind kind,uint32_t argument,const uint8_t* base) noexcept {
         }
         char line[1024];
         size_t n=Format(sample,line,sizeof(line));
-        if(!n || !budget.Record(now)) return;
+        if(!n || !budget.Record(now,kind==Kind::Player)) return;
         if(Write(line,n)) last[id-1][index]=now;
     } catch(...) {
         // Fail closed; release any open descriptor. Never unwind across a guest hook.

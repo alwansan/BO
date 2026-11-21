@@ -87,22 +87,35 @@ struct Budget {
     bool started=false;
     uint64_t start=0,second=0;
     uint32_t attempts=0,records=0,total=0;
+    uint32_t nonplayer_attempts=0,nonplayer_records=0,nonplayer_total=0;
     void Start(uint64_t now) noexcept { if(!started) {started=true;start=now;second=now/1000;} }
     bool Active(uint64_t now) const noexcept {return started && now>=start && now-start<180000 && total<2048;}
     void Roll(uint64_t now) noexcept {
-        if(second!=now/1000) {second=now/1000;attempts=0;records=0;}
+        if(second!=now/1000) {
+            second=now/1000;attempts=0;records=0;
+            nonplayer_attempts=0;nonplayer_records=0;
+        }
     }
-    bool Attempt(uint64_t now) noexcept {
+    // LOD hooks can arrive far more frequently than player updates. Never
+    // allow them to exhaust all of the per-second sampling opportunities.
+    bool Attempt(uint64_t now,bool player) noexcept {
         if(started && !Active(now)) return false;
         Roll(now);
-        if(attempts>=256) return false;
-        ++attempts;return true;
+        if(attempts>=256 || (!player && nonplayer_attempts>=192)) return false;
+        ++attempts;
+        if(!player) ++nonplayer_attempts;
+        return true;
     }
-    bool Record(uint64_t now) noexcept {
+    // Preserve 8 of 32 records/sec and 256 of 2048 lifetime records for
+    // player observations, even under dense animation/LOD workloads.
+    bool Record(uint64_t now,bool player) noexcept {
         if(!Active(now)) return false;
         Roll(now);
-        if(records>=32) return false;
-        ++records;++total;return true;
+        if(records>=32 || (!player && (nonplayer_records>=24 || nonplayer_total>=1792)))
+            return false;
+        ++records;++total;
+        if(!player) {++nonplayer_records;++nonplayer_total;}
+        return true;
     }
 };
 struct ByteBudget {

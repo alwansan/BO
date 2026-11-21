@@ -90,22 +90,46 @@ int main() {
     assert(packed.Id(99999,24000)==42);
 
     Budget warm;
-    assert(warm.Attempt(1000));
+    assert(warm.Attempt(1000,true));
     warm.Start(120000);
     assert(warm.Active(120001));
 
     Budget budget;
     budget.Start(1000);
-    for(int i=0;i<256;++i) assert(budget.Attempt(1000));
-    assert(!budget.Attempt(1000));
-    for(int i=0;i<32;++i) assert(budget.Record(1000));
-    assert(!budget.Record(1000));
-    assert(budget.Attempt(2000) && budget.Record(2000));
-    assert(!budget.Attempt(181000));
+    for(int i=0;i<256;++i) assert(budget.Attempt(1000,true));
+    assert(!budget.Attempt(1000,true));
+    for(int i=0;i<32;++i) assert(budget.Record(1000,true));
+    assert(!budget.Record(1000,true));
+    assert(budget.Attempt(2000,true) && budget.Record(2000,true));
+    assert(!budget.Attempt(181000,true));
     Budget cap;
     cap.Start(0);
-    for(uint32_t i=0;i<2048;++i) assert(cap.Record(uint64_t(i/32)*1000));
-    assert(!cap.Record(65000));
+    for(uint32_t i=0;i<2048;++i) assert(cap.Record(uint64_t(i/32)*1000,true));
+    assert(!cap.Record(65000,true));
+
+    // LOD/animation floods must leave at least 64 player hook attempts and
+    // 8 player records per second, plus 256 reserved lifetime records.
+    Budget fair;
+    fair.Start(1000);
+    for(int i=0;i<192;++i) assert(fair.Attempt(1000,false));
+    assert(!fair.Attempt(1000,false));
+    for(int i=0;i<64;++i) assert(fair.Attempt(1000,true));
+    assert(!fair.Attempt(1000,true));
+    for(int i=0;i<24;++i) assert(fair.Record(1000,false));
+    assert(!fair.Record(1000,false));
+    for(int i=0;i<8;++i) assert(fair.Record(1000,true));
+    assert(!fair.Record(1000,true));
+    assert(fair.Attempt(2000,false) && fair.Record(2000,false));
+
+    Budget lifetime;
+    lifetime.Start(0);
+    for(uint32_t i=0;i<1792;++i)
+        assert(lifetime.Record(uint64_t(i/24)*1000,false));
+    assert(!lifetime.Record(75000,false));
+    for(uint32_t i=0;i<256;++i)
+        assert(lifetime.Record(uint64_t(75+i/8)*1000,true));
+    assert(lifetime.total==2048 && lifetime.nonplayer_total==1792);
+    assert(!lifetime.Record(107000,true));
 
     ByteBudget bytes;
     assert(bytes.Reserve(1024*1024-10));
