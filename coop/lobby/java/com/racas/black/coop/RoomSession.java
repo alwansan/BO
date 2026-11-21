@@ -2,6 +2,10 @@
 package com.racas.black.coop;
 
 import java.io.IOException;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
+import javax.net.ssl.SSLHandshakeException;
 import java.net.InetAddress;
 import java.security.GeneralSecurityException;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -26,6 +30,10 @@ public final class RoomSession implements AutoCloseable {
         }
     }
     public interface IdentitySource { HostIdentity load() throws Exception; }
+    public interface Reporter { void event(String safeCode); }
+    private volatile Reporter reporter;
+    public void setReporter(Reporter sink){reporter=sink;}
+    private void event(String code){Reporter sink=reporter;if(sink!=null)try{sink.event(code);}catch(RuntimeException ignored){}}
     public static final class Status {
         public final Phase phase;
         public final String description, fingerprint;
@@ -66,6 +74,7 @@ public final class RoomSession implements AutoCloseable {
             description="Connecting";fingerprint="";
         }
         closeQuietly(oldAnnouncer);closeQuietly(oldClient);closeQuietly(oldHost);
+        event("SESSION_CONNECTING");
         return token;
     }
     private boolean current(long token) {
@@ -77,14 +86,27 @@ public final class RoomSession implements AutoCloseable {
             int reason=((RoomTls.Rejected)cause).reason;
             message=reason==1?"Wrong room PIN":reason==2?"Incompatible game version":
                     reason==3?"Room is full":reason==5?"Too many failed attempts":"Room rejected";
+        } else if(cause instanceof SSLHandshakeException) {
+            message="Host TLS handshake rejected; verify its fingerprint";
         } else if(cause instanceof GeneralSecurityException) {
             message="Host identity or certificate verification failed";
+        } else if(cause instanceof SocketTimeoutException) {
+            message="Network timeout: check Wi-Fi and access-point isolation";
+        } else if(cause instanceof ConnectException) {
+            message="Host unreachable: check Wi-Fi, port and firewall";
+        } else if(cause instanceof UnknownHostException) {
+            message="Invalid or unreachable host address";
+        } else if(cause instanceof IOException) {
+            message="Network connection closed or unavailable";
         }
+        boolean published=false;
         synchronized(lock) {
             if(!closed && generation==token) {
-                phase=Phase.ERROR;description=message;fingerprint="";
+                phase=Phase.ERROR;description=message;fingerprint="";published=true;
             }
         }
+        if(published)event("ERROR_"+cause.getClass().getSimpleName()
+            .replaceAll("[^A-Za-z0-9]","").toUpperCase(java.util.Locale.ROOT));
     }
     private void submit(Runnable action,long token){
         try{work.execute(action);}
@@ -120,6 +142,7 @@ public final class RoomSession implements AutoCloseable {
                     }
                 }
                 if(!owned){closeQuietly(broadcast);closeQuietly(candidate);}
+                else event(discoverable?"HOST_DISCOVERY_READY":"HOST_DISCOVERY_DISABLED");
             } catch(Exception e) {
                 closeQuietly(broadcast);closeQuietly(candidate);
                 failure(token,e);
@@ -140,6 +163,7 @@ public final class RoomSession implements AutoCloseable {
                     }
                 }
                 if(!owned)closeQuietly(candidate);
+                else event("JOIN_AUTHENTICATED");
             } catch(Exception e) {
                 closeQuietly(candidate);
                 failure(token,e);
@@ -172,6 +196,7 @@ public final class RoomSession implements AutoCloseable {
             host=null;client=null;announcer=null;phase=Phase.IDLE;description="";fingerprint="";
         }
         closeQuietly(oldAnnouncer);closeQuietly(oldClient);closeQuietly(oldHost);
+        event("SESSION_STOPPED");
     }
     @Override public void close(){
         synchronized(lock){if(closed)return;closed=true;}
