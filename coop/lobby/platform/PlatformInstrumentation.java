@@ -23,6 +23,21 @@ public final class PlatformInstrumentation extends Instrumentation {
                 try(RoomTls.Client peer=RoomTls.Client.connect(RoomTls.pinnedContext(first.fingerprint()),loop,host.port(),"Client")){
                     check(peer.snapshot()!=null&&peer.snapshot().players.size()==2&&peer.snapshot().self>1);
                     check(host.snapshot().players.size()==2);Thread.sleep(1500);check(peer.isRunning());
+                    // Real Conscrypt/AndroidKeyStore encrypted story envelopes:
+                    // no BLACK scene loader or gameplay is invoked.
+                    RoomStoryWire.Ticket ticket=host.prepareStory(0,0,1);
+                    long storyDeadline=System.nanoTime()+8_000_000_000L;
+                    while(peer.storyTicket()==null){
+                        check(System.nanoTime()<storyDeadline);Thread.sleep(15);
+                    }
+                    check(ticket.same(peer.storyTicket()));
+                    check(!peer.acknowledgeSceneLoaded(0,1,1)); // wrong stage
+                    check(!host.hostSceneLoaded(0,0,1)); // waits for guest
+                    check(peer.acknowledgeSceneLoaded(0,0,1)); // mock loader proof for emulator only
+                    while(!host.storyCommitted()||!peer.storyCommitted()){
+                        check(System.nanoTime()<storyDeadline);Thread.sleep(15);
+                    }
+                    check(peer.isRunning());
                 }catch(Throwable failure){
                     Thread.sleep(80);
                     android.util.Log.e("BlackTlsPlatform","TLS server failure kind="+host.handshakeFailureKind()+
@@ -75,7 +90,7 @@ public final class PlatformInstrumentation extends Instrumentation {
             while(Thread.getAllStackTraces().keySet().stream().anyMatch(t->t.isAlive()&&t.getName().startsWith("bo-room-"))){
                 if(System.nanoTime()>deadline)throw new AssertionError("Room threads survived close");Thread.sleep(10);
             }
-            result.putString("stream","TLS_PLATFORM_PASS: opaque AndroidKeyStore identity persisted; pinned TLS host/client, roster, heartbeat and shutdown succeeded; names-only Android Host button opened default port; automatic join succeeded; dialog Back did not finish host Activity\n");
+            result.putString("stream","TLS_PLATFORM_PASS: AndroidKeyStore TLS room, host-story PREPARE / guest explicit READY / host COMMIT succeeded over Android29 sockets; names-only Host, automatic Join and Back regression passed (NO BLACK game loader/actor)\n");
             finish(Activity.RESULT_OK,result);
         }catch(Throwable failure){
             android.util.Log.e("BlackTlsPlatform","Platform test failed",failure);
