@@ -23,3 +23,5 @@ RoomPresence خدمة مستقلة UDP1511 تبدأ مع BlackActivity، تعل�
 تحقق Actions على4c9f8bb: source preflight44942174338 وJVM44942174361 وAndroid29 instrumentation44942174364 كلهاSUCCESS. سجلjob136961573450 قرئ ويؤكدTLS_PLATFORM_PASS: زرHost الفعلي بالأسماء الافتراضية فتحTCP24872، joinAutomaticنجح، وBackلميغلقActivity. APK44942174355مازالقيدالبناء؛لااختبارهاتفينبعد.
 
 APK44942174355فشلفيWindowsقبلالبناء: اختبارroom_network_prepare_checksقرأRoomOverlayالعربيباستخدامcp1252الافتراضي. أُصلحread_textبـUTF-8صريح؛ليسفشلاًفيAndroidأوالشبكة. مراجعةالإلغاءالمستقلةأُعيدتولمتجدمانعاًمتبقياً.
+
+إعادةالبناء44942585121كشفتالجزءالثانيمننفسمشكلةWindows:اختبارتغييرanchorيكتبالنصUTF-8بترميزcp1252. أضيفencodingللكتابةوأُجريت16اختباراتتحتPath.openافتراضيcp1252ونجحت؛فُعلPYTHONUTF8لـWindowsjobلمنعاختلافاتالبيئة.

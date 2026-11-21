@@ -38,6 +38,8 @@ jobs:
     needs: observer-core
     runs-on: windows-2025
     timeout-minutes: 180
+    env:
+      PYTHONUTF8: "1"
     steps:
       - uses: actions/checkout@v4
         with:
