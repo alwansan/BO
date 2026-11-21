@@ -1,3 +1,8 @@
+## Session40 final CI proof
+Android29 run44957104337 **SUCCESS** with `ROOM_LOG_ROTATION_PASS` and `TLS_PLATFORM_PASS`; safe rotated room logs and one MediaStore export verified on emulator, not phone. JVM44957104351, source44957104363, UDP44957104323 SUCCESS. Owner preference CI-only for minor concerns is saved to AGENTS, STATE, RESTORE and MAJOR_DEVICE_TEST_GATE_AR; no phone test requested. Real BLACK scene/remote-human rig/shared world still OPEN.
+
+---
+
 ## Session40 test gate update
 Real Android29 emulator now passed again on run44956919973 after bounded PackageManager retry and fast `bash -n`, confirmed TLS_PLATFORM_PASS. Follow-on Android platform test added for combined rotated-safe MediaStore log export and tamper rejection, commit b21e0e01, CI44957104337 check live. JVM44957104351 and source44957104363 and UDP44957104323 PASS. No phone trial requested until real shared world/human ally milestone. See session40 and docs/MAJOR_DEVICE_TEST_GATE_AR.md.
 
