@@ -1,3 +1,18 @@
+## CI-verified owner XBE candidate windows — 2026-11-22 (Session40)
+New `coop/analysis/story_entry_static.py` validates the actual owner c5 XBE SHA-1 and executable section mapping, then privately decodes **only fixed 160-byte windows** at three pinned candidate entry addresses. `.github/workflows/black-coop-story-xbe-static.yml` run **44956138064 SUCCESS** both synthetic tests and owner-private static read. Safe metadata artifact **14727458498** (no XBE/ISO/raw disassembly). Report preserved at `memory/evidence/STORY-ENTRY-XBE-STATIC-44956138064.json`.
+
+| Candidate | x86 instructions parsed in first 160 B | calls | conditional branches | unconditional jumps | returns |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `00124CF0` putative mission launch | 46 | 0 | 7 | 0 | 0 |
+| `0011B890` level-select ticks | 44 | 2 | 5 | 1 | 0 |
+| `00124F30` difficulty UI ticks | 35 | 6 | 0 | 0 | 0 |
+
+All three map uniquely into executable sections (10 executable sections observed). **These are bounded disassembly counts, NOT proof of whole function shape or hook validity**: windows may cover portions of adjacent functions or data, and no return in the bounded window is unsurprising. In particular, `00124CF0` had zero decoded direct calls in that short window; do **not** infer that it cannot launch a mission, nor infer selected mission or loaded scene from it. Need a stronger full control-flow/source ABI and authoritative real stage-loaded analysis before game writes or guest READY.
+
+Owner device burden directive: Actions/static/synthetic/emulator first, no phone testing until a substantial single-world + human remote avatar milestone. One combined safe diagnostic export if an owner major test becomes necessary (see `docs/MAJOR_DEVICE_TEST_GATE_AR.md`). TLS v3 room lifecycle event codes and two-segment safe export are being tested on CI; no actual BLACK story integration yet.
+
+---
+
 # BO-COOP — candidate host mission entry audit, 2026-11-22
 
 ## Evidence and scope
