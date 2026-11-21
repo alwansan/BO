@@ -1,12 +1,12 @@
 # BO-COOP — استعادة أحدث حالة، جلسة28، 2026-11-21
 
 ## الهدف والفرع
-تطوير story co-op حقيقي لـBLACK Android، وليس TDM أو محاكاة شبكة. المتطلبات الكاملة في `docs/OWNER_PROJECT_OBJECTIVE_AR.md`. **لم يكتمل co-op بعد**: لا لاعب ثانٍ حقيقي أو COMBAT/AI/quest sync مقبول، ولا ISO معدل جديد. الكتابة حصراً `alwansan/BO:experiment/black-coop`؛main وكل المراجع للقراءة فقط،لاforcepush. المالك يجيز البحث والتنفيذ وActions حتى الحاجة لاختبار هاتف.
+تطوير story co-op حقيقي لـBLACK Android، وليس TDM أو محاكاة شبكة. المتطلبات الكاملة في `docs/OWNER_PROJECT_OBJECTIVE_AR.md`. **لم يكتمل co-op بعد**: لا لاعب ثانٍ حقيقي أو COMBAT/AI/quest sync مقبول، ولا ISO معدل جديد. التطويرعلى `alwansan/BO:experiment/black-coop`؛وأجازالمالكفيجلسة28فرعاًتجريبياًجديداًفيbisoلتعديلISOعندالحاجة.mainوالمراجعالأخرىللقراءةفقط،لاforcepush. المالك يجيز البحث والتنفيذ وActions حتى الحاجة لاختبار هاتف.
 
 ابدأ بـAGENTS.md ثمmemory/STATE.json و`memory/sessions/2026-11-21_bo-coop-28-title-room-ui.md`،ثمMEMORY/PLAN_AR/ISSUES_AR. تحقق منHEAD وActions الحيين؛لا تستعد حالة تاريخية قديمة بدلاً منالحالة هنا.
 
 ## الخطوة التالية الآن
-**دفعة الواجهة الحالية:** prepare_room_ui.py يضيفCO-OPتحتOptionsفيقائمةFlash،يفتحالغرفةmode6مباشرةويعيدBackإلىنفسtitle؛org.bocoop.black.roomui / BLACK Co-op UI TEST. المصدرواختباراتpreparer12/12وroutingوrootPython12/12نجحتومراجعةمستقلةبلاملاحظاتمادية. افحصworkflowblack-coop-room-ui-apkحياًقبلأيادعاءAPKجاهز؛عندكتابةهذهالرسالةCIلميثبتبعد. HOST/JOINيبقيانغيرمتاحينولاco-opقابلللعب. الخطةdocs/superpowers/plans/2026-11-21-title-coop-entry.md.
+**دفعة الواجهة الحالية:** prepare_room_ui.py يضيفCO-OPتحتOptionsفيقائمةFlash،يفتحالغرفةmode6مباشرةويعيدBackإلىنفسtitle؛org.bocoop.black.roomui / BLACK Co-op UI TEST. المصدرواختباراتpreparer12/12وroutingوrootPython12/12نجحتومراجعةمستقلةبلاملاحظاتمادية. افحص[run44913282838](https://github.com/alwansan/BO/actions/runs/44913282838)حياًقبلأيادعاءAPKجاهز؛sourcebf9a5c8199f28983865db20016cd8bb737cb13b5.نجحLinuxjob136873434926لكنWindowsjob136873477193فشلبسببCRLFفيexit_menu.cppقبلcompile. أُعيدالفشلREDوأصلحالتطبيعإلىLF؛13/13preparerPASS. افحصإعادةالبناءعلىالإصلاح،لا تعتبرrunالأولناجحاً. HOST/JOINيبقيانغيرمتاحينولاco-opقابلللعب. الخطةdocs/superpowers/plans/2026-11-21-title-coop-entry.md.
 
 **توضيح المالك:** جميعاختباراتالهاتفالسابقةفردية،والشخصياتالأخرىبوتات. يريدأجساماًمستقلةللبشرالحقيقيينومزامنةانتقالالمراحلواختيارالمهمةللمضيف. أجازفرعاًتجريبياًفيbisoوتعديل/تجميعISOعندالحاجة؛لاmain. الزرالحاليينفذمنAPKولايحتاجISOمعدلة. رابطالمحادثةالمشتركةتعذرفتحه؛صورCLرُئيتفعلياً.
 

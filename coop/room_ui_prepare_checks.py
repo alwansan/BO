@@ -36,3 +36,12 @@ class RoomUIPrepareTests(unittest.TestCase):
    before={str(p.relative_to(root)):p.read_bytes() for p in root.rglob('*') if p.is_file()}
    with self.assertRaises(ValueError):prepare(root)
    self.assertEqual(before,{str(p.relative_to(root)):p.read_bytes() for p in root.rglob('*') if p.is_file()})
+
+ def test_windows_crlf_source_is_supported_without_changing_original_assets(self):
+  with tempfile.TemporaryDirectory() as d:
+   root=pathlib.Path(d);self.fixture(root)
+   p=root/'src/game/exit_menu.cpp';p.write_bytes(p.read_bytes().replace(b'\r\n',b'\n').replace(b'\n',b'\r\n'))
+   changes=prepare(root)
+   self.assertEqual(len(changes),18)
+   self.assertNotIn(b'\r\n',p.read_bytes())
+   self.assertIn('game::RequestCoopRoom',p.read_text())

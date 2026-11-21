@@ -305,3 +305,5 @@ APK44876183662SUCCESS؛artifact14696342069 نُزلوفُحصhash. راجع memo
 
 ## جلسة28 — طلب المالك وتنفيذ title UI
 اختبارات الهاتف السابقة فردية فقط؛الآخرونNPC. يريد المالك أجسام بشر مستقلين وانتقالهم مع المضيف بينالمراحل. إذن جديد بفرع تجريبيbiso وتعديلISOعندالحاجة،دونmain. CO-OP تحتOptionsنُفذفيprepare_room_ui.py،مباشرةإلىالغرفةمعBackللـtitle؛12preparer+12rootPython+native routePASSومراجعةمستقلةواضحة،NDKوالهاتفلميثبتابعد. HOST/JOINغيرمتاحينولاجسملاعبثانبعد. راجع`memory/sessions/2026-11-21_bo-coop-28-title-room-ui.md`.
+
+جلسة28/إصلاحCI:run44913282838فشلقبلcompileبسببCRLFفيexit_menu.cpp. اختبارreproducerREDثمLFnormalizationGREEN،13/13preparerPASS؛إعادةCIمطلوبة. المصدرالأولbf9a5c8ليسAPKجاهزاً.

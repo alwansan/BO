@@ -1,4 +1,7 @@
-# BLACK Co-op — إضافة زر الغرفة مباشرة تحت «الإعدادات» (بحث ساكن)
+# BLACK Co-op — زر الغرفة مباشرة تحت «الإعدادات»
+
+## حالة التنفيذ — جلسة28
+نُفذالمسارفي`coop/prepare_room_ui.py`والخطة`docs/superpowers/plans/2026-11-21-title-coop-entry.md`،source `bf9a5c8199f28983865db20016cd8bb737cb13b5`،Actions44913282838فشلقبلcompileبسببCRLFWindows؛أُصلحبـregressionRED→GREENو13/13preparerPASS. إعادةالبناءمطلوبة. الصوررُئيتفعلياًمنCL:فيblacktitlemenu2الحلقةOptions→CO-OP→Quit؛وفيblacktitlemenuOptions→CO-OP→Profile→Quit. ينقلكCO-OPمباشرةإلىmode6فيOptionsMenuXbox،ويرجعBackإلىtitleالأصلية. لاISOمعدلةلهذهالإضافة. HOST/JOINغيرمتاحينبعد؛لاادعاءnetwork/playableco-op. تفاصيلالأقسامالتاليةهيخلفيةالبحثوالتصميمالسابق؛حالةالتنفيذهناهيالأحدث.
 
 **التاريخ:** 2026-11-21. **المرجع المقروء:** `RanggaCasper/Black-Android@f3754d6985a8c35204e7df071546e586b10f1806`، خصوصاً `src/game/exit_menu.cpp`, `src/game/flash.h`, `src/game/options_menu.cpp`. المرجع للقراءة فقط؛ لا تغيير في main أو binary الأصل.
 

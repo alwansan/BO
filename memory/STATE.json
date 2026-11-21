@@ -502,6 +502,15 @@
       "evidence": "memory/evidence/PROBE4-owner-163248-safe-summary.json",
       "ownerReportedNoProblems": true,
       "playableCoop": false
+    },
+    "ROOM_UI_HOST_CORE": {
+      "status": "PASS_ROUTING_AND_OBSERVER_ASAN_UBSAN_ONLY",
+      "run": 44913282838,
+      "job": 136873434926,
+      "sourceCommit": "bf9a5c8199f28983865db20016cd8bb737cb13b5",
+      "androidBuildAccepted": false,
+      "phoneVerified": false,
+      "playableCoop": false
     }
   },
   "pending": {
@@ -556,13 +565,16 @@
       "sampleSize": 130243
     },
     "COOP_ROOM_MENU": {
-      "status": "TOP_LEVEL_COOP_IMPLEMENTED_SOURCE_TESTED_AWAITING_NDK_AND_PHONE",
-      "run": 44860874976,
+      "status": "WINDOWS_CRLF_FIX_13_PREPARER_PASS_RETRY_PENDING",
+      "run": 44913282838,
       "package": "org.bocoop.black.roomui",
       "hostJoinEnabled": false,
       "topLevelUnderSettings": "IMPLEMENTED_NOT_DEVICE_VERIFIED",
       "topLevelFeasibility": "Pinned source exit_menu.cpp already clones a Quit button below Options",
-      "design": "docs/ROOM_TOP_LEVEL_FEASIBILITY_AR.md"
+      "design": "docs/ROOM_TOP_LEVEL_FEASIBILITY_AR.md",
+      "sourceCommit": "bf9a5c8199f28983865db20016cd8bb737cb13b5",
+      "failedRun": 44913282838,
+      "failureReason": "Windows CRLF in exit_menu.cpp raw bytes prevented multiline source anchor match; normalized CRLF to LF with reproducing regression RED then GREEN"
     },
     "OWNER_BISO_FULL_SHA": "COMPLETE: owner's actual ISO all 574 per-file SHA256 were streamed and hashed; their lexicographically ordered 256-bit rolling digest matches pinned biso manifest; all relative paths and sizes canonical digest matches. STILL OPEN: bytes of split part blobs in GitHub biso not independently downloaded/hashed. Use restore_github_upload.py locally if required.",
     "ACTOR001A_TOY_HOST_PROXY_INTEGRATION": {
@@ -628,7 +640,7 @@
     "poolReader": "coop/probe3/pool_snapshot.hpp",
     "poolReaderStatus": "OWNER_PROBE3_AND_PROBE4_CAPTURE_ACCEPTED"
   },
-  "executionStatus": "title_room_ui_source_verified_android_ci_pending",
+  "executionStatus": "room_ui_crlf_regression_fixed_ci_retry_pending",
   "ownerClarifications": {
     "session": 28,
     "previousPhoneTests": "solo local human plus enemy/friendly NPCs only; never two phones",

@@ -19,7 +19,7 @@ def prepare(root:pathlib.Path):
   pending[name]=pending[name].replace('org.bocoop.black.probe4',PACKAGE).replace('BLACK Probe 4 - READ ONLY','BLACK Co-op UI TEST').replace('BLACK Probe 4','BLACK Co-op UI TEST')
  for name in ('room_route.hpp','room_ui.h'):
   pending['src/coop/'+name]=(HERE/'room_ui'/name).read_text()
- title='src/game/exit_menu.cpp';text=originals[title].decode()
+ title='src/game/exit_menu.cpp';text=originals[title].decode().replace('\r\n','\n')
  text=once(text,'#include "game/flash.h"','#include "game/flash.h"\n#include "coop/room_ui.h"',title)
  text=once(text,'constexpr char kButtonDepth[] = "100";', '''constexpr char kButtonDepth[] = "100";
 constexpr char kCoopButton[] = "CoopButton";
