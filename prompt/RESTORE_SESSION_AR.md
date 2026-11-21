@@ -14,5 +14,5 @@
 ## المقبل
 1. **ACTOR-001A**: بحث ownership/lifetime للجسم المرئي من NPC-like LOD+animation عبر read-only، مشاهد متغيرة أو NPC death/reload، ثم فقط فحص مرشحات factory والتمييز بين render resource shared وactor instance. لا guest writes ولا second-player claim.
 2. افتح معمارية Flash main/pause menu لبحث إضافة زر مستقل CO-OP تحت «الإعدادات»، لكن تجنب تغيير الطور الفردي أو حقن مدخل غير مثبت. تحقق من صفحة SETTINGS الحالية إن قدم المالك صورة لها.
-3. احتفظ بأمان privacy، وحدث STATE/MEMORY/PLAN/ISSUES والجلسة وRESTORE بعد كل عمل أو CI في experiment/android-black-coop? **لا**: الاسم الصحيح **experiment/black-coop**.
+3. احتفظ بخصوصية بيانات المالك وحدّث STATE/MEMORY/PLAN/ISSUES والجلسة وRESTORE بعد كل عمل أو CI في الفرع **experiment/black-coop** فقط.
 4. لا تقل إن co-op playable: لا ACTOR factory ولا COMBAT/mission sync ولا Android network game integration. NET lab ما زال معزولاً.

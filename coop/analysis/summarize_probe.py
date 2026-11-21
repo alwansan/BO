@@ -208,7 +208,7 @@ def summarize(path):
         "valid_health_count":{k:valid_health[k] for k in KINDS},
         "valid_resource_count":{k:valid_resource[k] for k in KINDS},
         "valid_render_count":{k:valid_render[k] for k in KINDS},
-        "nonzero_animation_clip_hash_count":{k:nonzero_clip_hash[k] for k in KINDS},
+        "nonzero_unverified_clip_field_0x18_count":{k:nonzero_clip_hash[k] for k in KINDS},
         "sample_observation_span_seconds":sampled_span_seconds,
         "capture_is_partial_snapshot":end==0,
         "local_player_sample_count":local["player"],
