@@ -58,7 +58,14 @@ public final class RoomOverlay {
             if(!text.equals(status.getText().toString()))status.setText(text);
             String phase=state.phase.name();
             if(!phase.equals(lastPhase)){lastPhase=phase;RoomDiagnostics.event("ROOM_"+phase);}
-            if(tab==-103&&!scanning.get()&&android.os.SystemClock.elapsedRealtime()>=nextScan)scan();
+            if(!RoomScanGate.canSearch(state.phase) && !cancelScan.get()){
+                // Stop the previous untrusted discovery task after TLS connects.
+                cancelScan.set(true);
+                if(tab==-103)scanStatus.setText("تم الاتصال؛ لا حاجة للبحث عن غرف أخرى.");
+                RoomDiagnostics.event("SCAN_PAUSED_ACTIVE_ROOM");
+            }
+            if(RoomScanGate.shouldAutoScan(tab,state.phase,scanning.get(),
+                    android.os.SystemClock.elapsedRealtime(),nextScan))scan();
             handler.postDelayed(this,400);
         }
     };
@@ -217,9 +224,17 @@ public final class RoomOverlay {
     private void select(int action){
         tab=action;hostPanel.setVisibility(action==-102?View.VISIBLE:View.GONE);
         joinPanel.setVisibility(action==-103?View.VISIBLE:View.GONE);
-        if(action==-103)scan();else cancelScan.set(true);
+        if(action==-103 && RoomScanGate.canSearch(session.snapshot().phase))scan();
+        else{
+            cancelScan.set(true);
+            if(action==-103)scanStatus.setText("متصل بغرفة؛ غادر الغرفة قبل البحث من جديد.");
+        }
     }
     private void host(){
+        if(!RoomScanGate.canStartRoom(session.snapshot().phase)){
+            notice.setText("هناك غرفة قيد الاتصال؛ غادرها أولاً قبل إنشاء غرفة جديدة.");
+            RoomDiagnostics.event("HOST_BLOCKED_ALREADY_ACTIVE");return;
+        }
         try{
             String name=RoomWire.name(value(hostName)),room=RoomWire.name(value(roomName));
             RoomAppRooms.setDisplayName(name);
@@ -228,13 +243,19 @@ public final class RoomOverlay {
         }catch(Exception error){RoomDiagnostics.event("HOST_INPUT_ERROR");notice.setText("أدخل اسماً قصيراً للاعب والغرفة.");}
     }
     private void join(String address){
+        if(!RoomScanGate.canStartRoom(session.snapshot().phase)){
+            notice.setText("هناك اتصال نشط؛ غادر الغرفة أولاً قبل الانضمام لغيرها.");
+            RoomDiagnostics.event("JOIN_BLOCKED_ALREADY_ACTIVE");return;
+        }
         try{
             String name=RoomWire.name(value(guestName));RoomDirect.manual(address);RoomAppRooms.setDisplayName(name);
-            session.joinAutomatic(address,name);RoomDiagnostics.event("JOIN_REQUEST");notice.setText("جارٍ الانضمام تلقائياً…");
+            session.joinAutomatic(address,name);cancelScan.set(true);
+            RoomDiagnostics.event("JOIN_REQUEST");notice.setText("جارٍ الانضمام تلقائياً…");
         }catch(Exception error){notice.setText("أدخل اسمك وعنوان IP صحيحاً للمضيف.");RoomDiagnostics.event("JOIN_INPUT_ERROR");}
     }
     private void scan(){
-        if(closed||tab!=-103||!scanning.compareAndSet(false,true))return;
+        if(closed||tab!=-103||!RoomScanGate.canSearch(session.snapshot().phase)
+           ||!scanning.compareAndSet(false,true))return;
         nextScan=android.os.SystemClock.elapsedRealtime()+5500;
         cancelScan.set(true);AtomicBoolean cancelled=new AtomicBoolean();cancelScan=cancelled;
         scanStatus.setText("جارٍ البحث عن الأجهزة والغرف…");RoomDiagnostics.event("SCAN_STARTED");
@@ -243,7 +264,9 @@ public final class RoomOverlay {
             try{found=RoomPresence.scan(RoomPresence.targets(),RoomPresence.PORT,4000,RoomAppRooms.presenceId(),cancelled);}catch(Exception error){failed=true;RoomDiagnostics.event("SCAN_FAILED");}
             List<RoomPresence.Peer> peers=found;final boolean scanFailed=failed;
             handler.post(()->{
-                scanning.set(false);if(closed||cancelled.get()||tab!=-103)return;
+                scanning.set(false);
+                if(closed||cancelled.get()||tab!=-103||
+                   !RoomScanGate.canSearch(session.snapshot().phase))return;
                 results.removeAllViews();int count=peers==null?0:peers.size();RoomDiagnostics.event("SCAN_RESULTS_"+Math.min(count,32));
                 if(scanFailed)scanStatus.setText("تعذر البحث الآن. يمكنك استخدام عنوان IP يدوياً.");
                 else if(count==0)scanStatus.setText("لا أجهزة ظاهرة حالياً؛ البحث يتجدد تلقائياً. يمكنك استخدام عنوان IP.");
