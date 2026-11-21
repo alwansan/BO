@@ -47,7 +47,7 @@ public final class RoomOverlay {
     private AtomicBoolean cancelScan=new AtomicBoolean();
     private LinearLayout hostPanel,joinPanel,results,manualPanel;
     private EditText hostName,roomName,hostPin,port,guestName,guestPin,ip,pinHash;
-    private TextView status,scanStatus;
+    private TextView status,scanStatus,notice;
     private boolean closed;
     private int tab;
     private String lastPhase="";
@@ -143,6 +143,7 @@ public final class RoomOverlay {
         LinearLayout statusPanel=group(side);
         label(statusPanel,"REAL CONNECTION STATUS",15,FG);
         status=label(statusPanel,"OFFLINE",14,FG);
+        notice=label(statusPanel,"Choose HOST or JOIN to begin.",12,MUTED);
         button(statusPanel,"LEAVE ROOM & BACK",()->{
             cancelScan.set(true);session.stop();RoomDiagnostics.event("ROOM_LEFT");dialog.dismiss();
         });
@@ -154,15 +155,15 @@ public final class RoomOverlay {
                 handler.post(()->{
                     if(closed)return;
                     RoomDiagnostics.event(result?"EXPORT_OK":"EXPORT_FAILED");
-                    if(result)status.setText("Saved safe room events to Downloads/Games/cl/black log/logs. Share from BOTH phones.");
-                    else status.setText("Could not export room events; use COPY SAFE CONNECTION LOG.");
+                    if(result)notice.setText("Saved safe room events to Downloads/Games/cl/black log/logs. Share from BOTH phones.");
+                    else notice.setText("Could not export room events; use COPY SAFE CONNECTION LOG.");
                 });
             });
         });
         button(statusPanel,"COPY SAFE CONNECTION LOG",()->{
             ClipboardManager clip=(ClipboardManager)activity.getSystemService(Context.CLIPBOARD_SERVICE);
             if(clip!=null){clip.setPrimaryClip(ClipData.newPlainText("BLACK Co-op",RoomDiagnostics.read()));
-                status.setText("Log copied; collect a copy from EACH device.");}
+                notice.setText("Log copied; collect a copy from EACH device.");}
         });
         dialog.setOnDismissListener(ignored->{
             closed=true;cancelScan.set(true);worker.shutdownNow();handler.removeCallbacks(poll);
@@ -230,10 +231,10 @@ public final class RoomOverlay {
                 return new RoomSession.HostIdentity(identity.serverContext(),identity.fingerprint());
             },InetAddress.getByAddress(new byte[]{0,0,0,0}),portNumber,name,room,pin);
             RoomDiagnostics.event("HOST_REQUEST");
-            status.setText("Starting encrypted LAN room...");
+            notice.setText("Starting encrypted LAN room...");
         }catch(Exception error){
             RoomDiagnostics.event("HOST_INPUT_ERROR");
-            status.setText("Enter names, 8-digit PIN, and port 1024–65535.");
+            notice.setText("Enter names, 8-digit PIN, and port 1024–65535.");
         }
     }
     private static String hex(byte[] data){
@@ -247,18 +248,18 @@ public final class RoomOverlay {
             RoomDirect.fingerprint(fingerprint);
             if(!value(guestPin).matches("[0-9]{8}"))throw new IllegalArgumentException();
             session.join(address,fingerprint,value(guestName),value(guestPin));
-            status.setText("Verifying host certificate and joining...");
+            notice.setText("Verifying host certificate and joining...");
             RoomDiagnostics.event("JOIN_REQUEST");
         }catch(Exception error){
-            status.setText("Enter a valid room PIN, name, address and verified fingerprint.");
+            notice.setText("Enter a valid room PIN, name, address and verified fingerprint.");
             RoomDiagnostics.event("JOIN_INPUT_ERROR");
         }
     }
     private void joinFound(RoomDiscovery.Found found){
-        if(!found.compatible){status.setText("Incompatible BLACK game profile.");return;}
-        if(found.occupied==4){status.setText("Room full.");return;}
+        if(!found.compatible){notice.setText("Incompatible BLACK game profile.");return;}
+        if(found.occupied==4){notice.setText("Room full.");return;}
         if(!value(guestPin).matches("[0-9]{8}")){
-            status.setText("Enter the 8-digit room PIN then tap its name.");return;
+            notice.setText("Enter the 8-digit room PIN then tap its name.");return;
         }
         String address=found.address.getHostAddress()+":"+found.port;
         String fingerprint=hex(found.fingerprint);
