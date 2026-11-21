@@ -27,7 +27,9 @@ class HostMissionBarrier {
         return !owned_||std::this_thread::get_id()==owner_;
     }
     static bool valid(const MissionTicket& value)noexcept{
-        return value.session&&value.nonce&&value.mission&&value.stage&&
+        // BLACK's pinned frontend has eight zero-based missions (0..7),
+        // and stage 0 may be valid. Never reject first mission as unset.
+        return value.session&&value.nonce&&value.mission<8&&
                value.scene_epoch&&(value.participants&1u)&&
                (value.participants&0x0Eu)&&!(value.participants&0xF0u);
     }
@@ -81,7 +83,7 @@ public:
                        bool fromAuthenticatedHost)noexcept{
         if(!ownerThread()||active_||!fromAuthenticatedHost||
            local_id<2||local_id>4||!key.session||!key.nonce||
-           !key.mission||!key.stage||!key.scene_epoch||
+           key.mission>7||!key.scene_epoch||
            !(key.participants&1u)||!(key.participants&(1u<<(local_id-1)))||
            (key.participants&0xF0u))return false;
         if(!owned_){owned_=true;owner_=std::this_thread::get_id();}
