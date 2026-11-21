@@ -53,7 +53,7 @@ def summarize(path):
             if event=="end":
                 end+=1
                 reason=rec.get("reason")
-                if reason in END_REASONS:
+                if isinstance(reason,str) and reason in END_REASONS:
                     reasons[reason]+=1
                 else:
                     reasons["other"]+=1

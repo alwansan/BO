@@ -54,6 +54,11 @@ class SummaryChecks(unittest.TestCase):
             p.write_bytes(line(HEADER)+b"not a JSON object\n")
             self.assertEqual(summarize(p)["unknown_or_malformed_line_count"],1)
 
+    def test_untrusted_end_reason_type_cannot_crash_parser(self):
+        p=self.fixture([HEADER, {"event":"end","reason":["not","hashable"]}])
+        r=summarize(p)
+        self.assertEqual(r["end_reasons"],{"other":1})
+
     def test_integer_and_bool_guards(self):
         p=self.fixture([HEADER,
           {"event":"player","epoch":1,"id":1,"thread":5,"position_valid":1,"health_valid":True,"local":True},
