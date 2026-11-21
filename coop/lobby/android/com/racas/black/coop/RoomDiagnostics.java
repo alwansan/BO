@@ -14,12 +14,26 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /** Persistent sanitized room events, usable from either Android device. */
 public final class RoomDiagnostics {
     private RoomDiagnostics(){}
     private static final Object lock=new Object();
     private static Context app;
+    // Never open/rotate/write the on-device file on any game, UI or TLS thread.
+    // Bounded 2048-event backlog (~150 KiB worst case); overload fails closed
+    // with one aggregate marker, not an unbounded queue or per-frame writes.
+    private static final AtomicInteger dropped=new AtomicInteger();
+    private static final ThreadPoolExecutor writer=new ThreadPoolExecutor(
+        1,1,0,TimeUnit.MILLISECONDS,new ArrayBlockingQueue<>(2048),
+        job->{Thread t=new Thread(job,"bo-room-safe-log-io");t.setDaemon(true);return t;},
+        new ThreadPoolExecutor.AbortPolicy());
     public static void init(Context context){
         synchronized(lock){app=context.getApplicationContext();}
     }
@@ -31,22 +45,56 @@ public final class RoomDiagnostics {
         if(!directory.exists()&&!directory.mkdirs())return null;
         return new File(directory,"coop_room_events.log");
     }
-    /** Codes only. NEVER emit a user name, PIN, IP, cert, fingerprint, or key. */
+    /** Codes only. NEVER emit a user name, PIN, IP, cert, fingerprint, or key.
+     *  Pure in-memory bounded enqueue; safe to invoke from game-frame callbacks. */
     public static void event(String code){
-        if(code==null||!code.matches("[A-Z0-9_]{1,70}"))return;
+        if(!safeCode(code))return;
+        final long timestamp=System.currentTimeMillis();
+        try{
+            writer.execute(()->writeEventOffGameThread(code,timestamp));
+        }catch(RejectedExecutionException overloaded){
+            dropped.incrementAndGet(); // no IO, no callbacks, no user data
+        }
+    }
+    private static boolean safeCode(String code){
+        if(code==null||code.isEmpty()||code.length()>70)return false;
+        for(int i=0;i<code.length();i++){
+            char ch=code.charAt(i);
+            if(!(ch>='A'&&ch<='Z')&&!(ch>='0'&&ch<='9')&&ch!='_')return false;
+        }
+        return true;
+    }
+    private static void writeEventOffGameThread(String code,long timestamp){
         synchronized(lock){
-            File file=path();if(file==null)return;
-            try{
-                if(file.length()>49152){
-                    File old=new File(file.getParentFile(),"coop_room_events.old.log");
-                    if(old.exists()&&!old.delete())return;
-                    if(!file.renameTo(old))return;
-                }
-                String row=String.format(Locale.ROOT,"%d %s%n",System.currentTimeMillis(),code);
-                try(FileOutputStream out=new FileOutputStream(file,true)){
-                    out.write(row.getBytes(StandardCharsets.UTF_8));
-                }
-            }catch(Exception ignored){}
+            if(dropped.getAndSet(0)>0)append("ROOM_LOG_EVENTS_DROPPED",timestamp);
+            append(code,timestamp);
+        }
+    }
+    private static void append(String code,long timestamp){
+        File file=path();if(file==null)return;
+        try{
+            if(file.length()>49152){
+                File old=new File(file.getParentFile(),"coop_room_events.old.log");
+                if(old.exists()&&!old.delete())return;
+                if(!file.renameTo(old))return;
+            }
+            String row=String.format(Locale.ROOT,"%d %s%n",timestamp,code);
+            try(FileOutputStream out=new FileOutputStream(file,true)){
+                out.write(row.getBytes(StandardCharsets.UTF_8));
+            }
+        }catch(Exception ignored){}
+    }
+    /** Explicit export/read barrier. Never used by ordinary event producer. */
+    private static boolean waitForWriter(){
+        if(Thread.currentThread().getName().equals("bo-room-safe-log-io"))return true;
+        CountDownLatch done=new CountDownLatch(1);
+        try{
+            if(!writer.getQueue().offer(done::countDown,2,TimeUnit.SECONDS))return false;
+            // With a lazy executor the queue needs its first worker started.
+            writer.prestartCoreThread();
+            return done.await(5,TimeUnit.SECONDS);
+        }catch(InterruptedException e){
+            Thread.currentThread().interrupt();return false;
         }
     }
     /**
@@ -116,6 +164,7 @@ public final class RoomDiagnostics {
     /** One combined export keeps the previous rotated segment and current
      *  safe codes. No extra owner phone test is needed for the earlier events. */
     public static String read(){
+        if(!waitForWriter())return "Unable to read BLACK Co-op room log.";
         synchronized(lock){
             File current=path();
             if(current==null)return "No BLACK Co-op room log exists yet.";
