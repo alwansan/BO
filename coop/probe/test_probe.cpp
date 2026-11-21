@@ -1,5 +1,6 @@
 #include "probe_core.hpp"
 #include <cassert>
+#include <algorithm>
 #include <cfenv>
 #include <cerrno>
 #include <cstring>
@@ -30,6 +31,7 @@ int main() {
     assert(kept==0x9988776655443322ULL); // partial read never leaks into output
     assert(!reader.Read(0xfffffffcu,kept));
     assert(!reader.Read(0,kept));
+    assert(!reader.Read(0x10000u + static_cast<uint32_t>(page),kept));
     GuestReader overflow(std::numeric_limits<uintptr_t>::max()-10);
     assert(!overflow.Read(0x10000,kept));
     assert(!reader.Field(0xfffffff0u,0x100u,kept));
@@ -75,6 +77,7 @@ int main() {
     char line[1024];
     auto n=Format(s,line,sizeof(line));
     assert(n>0 && line[n-1]=='\n');
+    assert(n<=1024);
     assert(std::strstr(line,"\"position\":[1,2,3]")!=nullptr);
     s.x=std::numeric_limits<float>::quiet_NaN();
     assert(Format(s,line,sizeof(line))==0);

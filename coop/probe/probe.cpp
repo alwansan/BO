@@ -6,6 +6,7 @@
 #include "app/app.h"
 #include "core/log.h"
 #include "xdk/hle.h"
+#include <algorithm>
 #include <atomic>
 #include <chrono>
 #include <fcntl.h>
@@ -16,6 +17,7 @@
 namespace bo_probe {
 namespace {
 std::atomic<bool> enabled{false};
+std::atomic<bool> ever_enabled{false};
 std::mutex lock;
 Registry registry;
 Budget budget;
@@ -127,15 +129,22 @@ void Observe(Kind kind,uint32_t argument,const uint8_t* base) noexcept {
         if(!n || !budget.Record(now)) return;
         if(Write(line,n)) last[id-1][index]=now;
     } catch(...) {
-        // Do not unwind through guest wrappers or skip original game functions.
-        enabled.store(false,std::memory_order_relaxed);
+        // Fail closed; release any open descriptor. Never unwind across a guest hook.
+        std::unique_lock<std::mutex> held(lock,std::try_to_lock);
+        if(held.owns_lock()) End("exception");
+        else enabled.store(false,std::memory_order_relaxed);
     }
 }
 } // namespace
 void ObservePlayer(uint32_t object,const uint8_t* base) noexcept {Observe(Kind::Player,object,base);}
 void ObserveAnimation(uint32_t stack,const uint8_t* base) noexcept {Observe(Kind::Animation,stack,base);}
 void ObserveLod(uint32_t stack,const uint8_t* base) noexcept {Observe(Kind::Lod,stack,base);}
-void Enable() noexcept {enabled.store(true,std::memory_order_relaxed);}
+void Enable() noexcept {
+    bool expected=false;
+    // One capture attempt per process. Never reopen a truncated log after End.
+    if(ever_enabled.compare_exchange_strong(expected,true,std::memory_order_acq_rel))
+        enabled.store(true,std::memory_order_release);
+}
 } // namespace bo_probe
 
 extern "C" JNIEXPORT void JNICALL Java_com_racas_black_BlackActivity_nativeCoopProbeEnable(JNIEnv*,jclass) {
