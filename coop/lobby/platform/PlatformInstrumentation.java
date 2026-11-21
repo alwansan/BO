@@ -129,6 +129,18 @@ public final class PlatformInstrumentation extends Instrumentation {
                 check(System.nanoTime()<hosted);Thread.sleep(20);
             }
             check(RoomAppRooms.obtain().snapshot().port==RoomDirect.DEFAULT_PORT);
+            // CL two-device evidence: repeated host taps must not collide with
+            // an active listener; auto-discovery must stop once HOSTING/JOINED.
+            runOnMainSync(()->RoomOverlay.startHostForTest());
+            check(RoomAppRooms.obtain().snapshot().phase==RoomSession.Phase.HOSTING);
+            check(RoomDiagnostics.read().contains("HOST_BLOCKED_ALREADY_ACTIVE"));
+            int scansBefore=RoomDiagnostics.read().split(" SCAN_STARTED\\n",-1).length;
+            runOnMainSync(()->RoomOverlay.show(harness,-103));
+            Thread.sleep(6100); // longer than the 5.5s automatic discovery cadence
+            waitForIdleSync();
+            int scansAfter=RoomDiagnostics.read().split(" SCAN_STARTED\\n",-1).length;
+            check(scansAfter==scansBefore);
+            check(RoomAppRooms.obtain().snapshot().phase==RoomSession.Phase.HOSTING);
             waitForIdleSync();
             sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
             waitForIdleSync();
@@ -138,7 +150,7 @@ public final class PlatformInstrumentation extends Instrumentation {
             while(Thread.getAllStackTraces().keySet().stream().anyMatch(t->t.isAlive()&&t.getName().startsWith("bo-room-"))){
                 if(System.nanoTime()>deadline)throw new AssertionError("Room threads survived close");Thread.sleep(10);
             }
-            result.putString("stream","TLS_PLATFORM_PASS: AndroidKeyStore TLS room, host-story PREPARE / guest explicit READY / host COMMIT and same-port rapid rehost succeeded over Android29 sockets; names-only Host, automatic Join and Back regression passed; ROOM_LOG_ROTATION_PASS verified safe rotated MediaStore export and tamper refusal (NO BLACK game loader/actor)\n");
+            result.putString("stream","TLS_PLATFORM_PASS: AndroidKeyStore TLS room, host-story PREPARE / guest explicit READY / host COMMIT and same-port rapid rehost succeeded over Android29 sockets; names-only Host, automatic Join and Back regression passed; ROOM_LOG_ROTATION_PASS verified safe rotated MediaStore export and tamper refusal; ROOM_ACTIVE_SCAN_GATE_PASS no scan storm or duplicate host while connected (NO BLACK game loader/actor)\n");
             finish(Activity.RESULT_OK,result);
         }catch(Throwable failure){
             android.util.Log.e("BlackTlsPlatform","Platform test failed",failure);
