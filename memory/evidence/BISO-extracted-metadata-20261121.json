@@ -1,0 +1,78 @@
+{
+  "kind": "Owner extracted BLACK XDVDFS inventory, metadata and sampled original-disc identity",
+  "ownerRepo": "alwansan/biso",
+  "ref": "main",
+  "pinnedCommit": "9ceb6a65fb5a4414c106ca3961295a1f8f7e558b",
+  "readOnly": true,
+  "manifest": "GITHUB_UPLOAD_MANIFEST.json",
+  "restoreScript": "restore_github_upload.py",
+  "extractedRoot": "Black_Xbox_Extracted",
+  "extractedFiles": 574,
+  "repositoryPartBlobs": 578,
+  "splitOriginalFiles": 3,
+  "originalFileByteSum": 1701896359,
+  "splitFiles": [
+    {
+      "path": "levels/global/Speech.bks",
+      "parts": 3,
+      "bytes": 121995264
+    },
+    {
+      "path": "levels/level_03/Ambience.bks",
+      "parts": 2,
+      "bytes": 81985536
+    },
+    {
+      "path": "levels/level_08/Ambience.bks",
+      "parts": 2,
+      "bytes": 91226112
+    }
+  ],
+  "githubTreeManifestCheck": {
+    "allListedPartPathsPresent": true,
+    "sumOfListedPartBlobSizesMatchesOriginalFileSizes": true,
+    "uniqueParts": true,
+    "missingPartPaths": 0,
+    "sizeMismatches": 0
+  },
+  "inSessionContainer": {
+    "archivePartsPresent": [
+      "game.iso.zip.001",
+      "game.iso.zip.002",
+      "game.iso.zip.003",
+      "game.iso.zip.004",
+      "game.iso.zip.005"
+    ],
+    "ownerArchivePresent": true,
+    "extractedTemporaryIsoPresent": true,
+    "fileAvailabilityIsDurable": false,
+    "isoSizeBytes": 1793179648,
+    "isoSha256": "f6d15ff277eb19ef4fb9092e245599c7ae68f5a49c6ac7db60934a32ec246c62",
+    "parsedXdvdfsFileCount": 574,
+    "parsedXdvdfsDirectoryCount": 40,
+    "xisoFileByteSum": 1701896359,
+    "xbeSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+    "xbeSha256": "df2739c372d254a90aeeccf5971d12097f22d89fbb90db021fda96dd4deb68f6",
+    "sampledPerFileSHA256MatchToBiso": [
+      "default.xbe",
+      "GlobData.bin",
+      "chars/trans_ch.bin",
+      "chars/trans_fp.bin",
+      "export/frontend/FEMain.bin"
+    ]
+  },
+  "ci": {
+    "syntheticAndPinnedManifestRun": 44867209688,
+    "conclusion": "success",
+    "codeCommit": "28d08eed70241dfbf34ede0802aba576cfc721f5",
+    "manifestOnlyInActions": true,
+    "checkedOriginalCopyrightedAssetContentInActions": false
+  },
+  "cautions": {
+    "all574FileHashesCrossVerifiedAgainstBiso": false,
+    "rebuiltXisoByteIdenticalToOriginal": false,
+    "actorFactoryProven": false,
+    "neverUploadAssetsToActions": true,
+    "avoidMutatingProtectedXbe": true
+  }
+}

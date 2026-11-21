@@ -18,3 +18,6 @@
 صمم probe منفصلاً opt-in دون كتابة guest memory أو استدعاء guest functions غير مثبتة. تحقق من bounds والعمر وfinite vectors قبل القراءة؛ عيّن هوية محلية مؤقتة للأجسام مع reset عند reload. اجمع عدداً محدوداً من العينات في buffer محلي، وسجل thread IDs أولاً؛ لا تفترض أن CharacterDetail/animation hooks تعمل جميعها في game thread ذاته.
 
 قارن الثبات/المشي/الدوران/الرمي، حركة وموت NPC قريب، checkpoint reload والخروج من المهمة. اربط animation owners وLOD/resource changes دون تصدير pointers إلى شبكة أو افتراض أن object يماثل اللاعب. يلزم إثبات الاختفاء/إعادة الإنشاء قبل البحث عن lifecycle/factory. لا شبكة أو spawn أو تعطيل original hooks من هذا التحقيق.
+
+## جلسة16 — موارد المالك المفككة
+`alwansan/biso@9ceb6a65fb5a4414c106ca3961295a1f8f7e558b` يتيح دراسة الملفات الأصلية دون استخراج ISO كل مرة: `chars/trans_ch.bin`, `chars/trans_fp.bin`, `levels/level_XX/Unit_01.bin`، `LevelDat.bin` و`export/frontend/FEMain.bin`. فحص الأسماء والأحجام ثابت، وليس إثبات معنى تنسيق البيانات أو ارتباطها بهويات runtime التي ظهرت في Probe2. خريطة مستقلة docs/ACTOR_BISO_ASSET_INDEX_AR.md، وبوابة مراجعة lifecycle قبل أي spawn باقية.

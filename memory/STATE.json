@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-15-probe2-actual-actor-trace.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-16-biso-extracted-owner-assets.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -292,6 +292,41 @@
       "regressionRun": 44864020404,
       "priorFailedRun": 44863951613,
       "priorFailureRootCause": "Outdated test assertion for renamed unverified clip+0x18 field"
+    },
+    "OWNER_BISO_EXTRACTED": {
+      "status": "LIVE_MANIFEST_GIT_TREE_AND_SAMPLE_ISO_IDENTITY_VERIFIED",
+      "repo": "alwansan/biso",
+      "branch": "main",
+      "pinnedCommit": "9ceb6a65fb5a4414c106ca3961295a1f8f7e558b",
+      "originalFiles": 574,
+      "storedParts": 578,
+      "splitOriginalFiles": 3,
+      "originalPayloadBytes": 1701896359,
+      "missingGitParts": 0,
+      "partSizeMismatches": 0,
+      "manifest": "GITHUB_UPLOAD_MANIFEST.json",
+      "restoreScript": "restore_github_upload.py",
+      "evidence": "memory/evidence/BISO-extracted-metadata-20261121.json",
+      "docs": "docs/OWNER_BISO_SOURCE_AR.md",
+      "fullFileSHA256Compared": false
+    },
+    "OWNER_ISO_CURRENT_SESSION_VERIFIED": {
+      "status": "LOCAL_ISO_SHA256_PASS_AND_XDVDFS_FILESET_COUNT_SIZE_MATCH",
+      "isoSha256": "f6d15ff277eb19ef4fb9092e245599c7ae68f5a49c6ac7db60934a32ec246c62",
+      "isoBytes": 1793179648,
+      "xdvdfsFiles": 574,
+      "xdvdfsDirectories": 40,
+      "xdvdfsSumBytes": 1701896359,
+      "checkedSampleFileHashes": 5,
+      "temporaryContainerPathsExistNow": true,
+      "guaranteedFutureAvailability": false,
+      "evidence": "memory/evidence/BISO-extracted-metadata-20261121.json"
+    },
+    "BISO_METADATA_CI": {
+      "status": "SUCCESS_METADATA_ONLY_SYNTHETIC_CONTENT_CHECKS",
+      "run": 44867209688,
+      "code": "28d08eed70241dfbf34ede0802aba576cfc721f5",
+      "copyrightedAssetsDownloadedInActions": false
     }
   },
   "pending": {
@@ -353,7 +388,8 @@
       "topLevelUnderSettings": "NOT_IMPLEMENTED_YET",
       "topLevelFeasibility": "Pinned source exit_menu.cpp already clones a Quit button below Options",
       "design": "docs/ROOM_TOP_LEVEL_FEASIBILITY_AR.md"
-    }
+    },
+    "OWNER_BISO_FULL_SHA": "Metadata, byte counts and 5 sampled file SHA-256 match owner ISO; full 574 file hashes not yet compared against biso on local checkout. New script offers --iso/--checkout verification; use only locally, never put assets in artifacts."
   },
   "apk": {
     "kind": "Probe2 read-only export+room candidate",
@@ -366,5 +402,5 @@
     "gameplayCoop": false,
     "sourceCommit": "d8dba8d8da2da69c62718a87f3e6f03f16be0d2f"
   },
-  "next": "ACTOR001A read-only NPC LOD+animation ownership/lifetime proof; isolated top-level room button design from exit_menu.cpp without altering tested Probe2; no new baseline or export retest."
+  "next": "Use pinned extracted owner asset inventory in ACTOR-001A static resource investigation, correlate with sanitized Probe2 runtime observations and prove NPC actor lifetimes; top-level CO-OP menu isolated design remains open. No baseline retest or missing XBE request."
 }

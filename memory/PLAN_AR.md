@@ -176,3 +176,11 @@ HOOK001 fairness source e9ad056: host sanitizer + pinned-source [44856368591](ht
 ## جلسة15 — تصحيح CI ومرشح القائمة العليا
 - After privacy analyzer field renamed to explicitly `nonzero_unverified_clip_field_0x18_count`, synthetic test used its old key, causing [44863951613](https://github.com/alwansan/BO/actions/runs/44863951613) FAILURE (KeyError only). Fixed test expectation in code `77e5c031ecc1d55cbefdc73a7a1139a714150b82`; [44864020398](https://github.com/alwansan/BO/actions/runs/44864020398) privacy analyzer SUCCESS and [44864020404](https://github.com/alwansan/BO/actions/runs/44864020404) isolated UDP SUCCESS. No Android build needed (only offline analysis/test).
 - Pinned v1.5.0 upstream `src/game/exit_menu.cpp` was inspected read-only: title menu already duplicates Options text clip into QuitButton below settings using Flash `CopyButton/Follow/JoinRing`. Strong candidate for independent CO-OP top-level button **between OPTIONS and QUIT**, with no claim implementation yet. Plan and hazards in `docs/ROOM_TOP_LEVEL_FEASIBILITY_AR.md`; keep current Probe2 APK intact until isolated Probe3 experiment and device UI proof.
+
+## جلسة16 — مصادر المالك المفككة والتطابق
+- [x] Pin `biso@9ceb6a65fb5a4414c106ca3961295a1f8f7e558b`, review manifest and restore script; metadata574 original files/578 stored parts, 3 large split files,0 missing,0 size mismatches.
+- [x] Independently read owner's **actual ISO** currently mounted; SHA256 `f6d15ff...3ec246c62` passes, XDVDFS574 files/40 dirs, exact byte-sum match, XBE+four additional file SHA256 samples match `biso`.
+- [x] Add pinned metadata-only + synthetic XDVDFS CI [44867209688](https://github.com/alwansan/BO/actions/runs/44867209688) SUCCESS; `coop/biso_manifest_audit.py` supports `--checkout` and `--iso` local full verification when permitted.
+- [x] Save pinned sources to `memory/STATE.json`, `docs/OWNER_BISO_SOURCE_AR.md`, `docs/ACTOR_BISO_ASSET_INDEX_AR.md`, and restore. Do not rely on sandbox persistence.
+- [ ] If needed for ACTOR-001A, perform full per-file SHA comparison of owner ISO and restored biso locally; check format of selected model/animation candidate files without asserting unproven meaning.
+- [ ] Continue ACTOR ownership/lifetime and isolated CO-OP top-level UX without modifying successful Baseline/Probe2 or game saves. No playable multiplayer yet.
