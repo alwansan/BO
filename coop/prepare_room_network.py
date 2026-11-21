@@ -120,6 +120,7 @@ def prepare(root: pathlib.Path):
         'RoomDirect.java': 'lobby/java/com/racas/black/coop/RoomDirect.java',
         'RoomDiscovery.java': 'lobby/java/com/racas/black/coop/RoomDiscovery.java',
         'RoomSession.java': 'lobby/java/com/racas/black/coop/RoomSession.java',
+        'RoomScanGate.java': 'lobby/java/com/racas/black/coop/RoomScanGate.java',
         'RoomPeerTrust.java': 'lobby/java/com/racas/black/coop/RoomPeerTrust.java',
         'RoomPresence.java': 'lobby/java/com/racas/black/coop/RoomPresence.java',
         'RoomIdentity.java': 'lobby/android/com/racas/black/coop/RoomIdentity.java',
