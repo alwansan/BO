@@ -92,7 +92,7 @@ def prepare(root: pathlib.Path, probe_dir: pathlib.Path):
         "    private boolean checking;   // a check asked from the menu is under way",
         "    private boolean checking;   // a check asked from the menu is under way\n"
         "    private boolean coopProbePrompted;\n"
-        "    private final ProbeLogExporter probeLogExporter = new ProbeLogExporter(this);\n",java)
+        "    private ProbeLogExporter probeLogExporter;\n",java)
     text = once(text, "    private static native void nativeLooseRelease();",
         "    private static native void nativeLooseRelease();\n"
         "    private static native void nativeCoopProbeEnable();", java)
@@ -135,8 +135,13 @@ def prepare(root: pathlib.Path, probe_dir: pathlib.Path):
 
 '''
     text = once(text, "    private void startImport() {", java_method + "    private void startImport() {", java)
+    text = once(text, "        super.onCreate(savedInstanceState);",
+                "        super.onCreate(savedInstanceState);\n"
+                "        probeLogExporter = new ProbeLogExporter(this);", java)
     text = once(text, "    protected void onPause() {\n        resumed = false;",
-                "    protected void onPause() {\n        probeLogExporter.snapshot();\n        resumed = false;", java)
+                "    protected void onPause() {\n"
+                "        if (probeLogExporter != null) probeLogExporter.snapshot();\n"
+                "        resumed = false;", java)
     pending[java] = text
 
     cheats = "src/game/cheats.cpp"
