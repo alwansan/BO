@@ -1,0 +1,45 @@
+name: BO-COOP owner extracted XISO metadata and safety
+on:
+  workflow_dispatch:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/biso_manifest_audit.py'
+      - 'coop/test_biso_manifest_audit.py'
+      - '.github/workflows/black-coop-biso-metadata.yml'
+permissions:
+  contents: read
+jobs:
+  metadata-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: BO-COOP audit code, no game assets
+        uses: actions/checkout@v4
+        with:
+          lfs: false
+          sparse-checkout: |
+            coop/biso_manifest_audit.py
+            coop/test_biso_manifest_audit.py
+          sparse-checkout-cone-mode: false
+      - name: Pinned owner biso manifest only, NO asset files
+        uses: actions/checkout@v4
+        with:
+          repository: alwansan/biso
+          ref: 9ceb6a65fb5a4414c106ca3961295a1f8f7e558b
+          path: owner-biso-manifest
+          lfs: false
+          sparse-checkout: |
+            GITHUB_UPLOAD_MANIFEST.json
+          sparse-checkout-cone-mode: false
+      - name: Test synthetic split reconstruction and XDVDFS guards
+        run: |
+          python3 -m py_compile coop/biso_manifest_audit.py coop/test_biso_manifest_audit.py
+          python3 -m unittest discover -s coop -p test_biso_manifest_audit.py -v
+      - name: Audit pinned manifest structure only
+        run: |
+          python3 coop/biso_manifest_audit.py \
+            --manifest owner-biso-manifest/GITHUB_UPLOAD_MANIFEST.json \
+            --expect-files 574 --expect-parts 578
+          test ! -f owner-biso-manifest/Black_Xbox_Extracted/default.xbe
+          echo "PASS: owner manifest metadata only; no game ISO/XBE or assets in CI"
