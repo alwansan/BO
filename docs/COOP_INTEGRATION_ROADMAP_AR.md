@@ -1,3 +1,8 @@
+# ACTIVE Session38 architecture override — source-only work; no playable Co-op
+Every device runs ORIGINAL local first-person player. OTHER actual human players (including host visible to guests) are rendered using a separate ALLY FULL-BODY look, human controlled, no AI brain or stolen NPC instance. Host chooses, prepares and starts SINGLE authoritative mission; guests load SAME stage and acknowledge READY before any shared COMMIT. Old strategy copying full original player body to remote is unsupported by new 8/8 primary arm-only model evidence. New C++ source contracts/test CI44951425780 PASS but not wired to BLACK render, real TLS story, scene loader or world sync. Separate solo starts are forbidden. Preserve single player/ISO/saves. See plan docs/superpowers/plans/2026-11-22-host-story-remote-ally.md.
+
+---
+
 # الربط الفعلي للغرفة والأجسام والقصة — جلسة28
 
 طلب المالك واضح: CO-OP تحت الإعدادات، ثم Host/Join، مضيف هاتف يختار المهمة، حتى4بشر بأجسام مستقلة، دخول متأخر وانتقال للمهمة التالية مع المضيف. الاختبارات السابقة كلها فردية. NPCالأعداء والأصدقاء ليسوا لاعبين متصلين،والرصدالمستقرلايعداختباراًعلىهاتفين.
