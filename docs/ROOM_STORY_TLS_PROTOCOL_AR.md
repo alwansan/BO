@@ -1,3 +1,8 @@
+## Verified current build gates — 2026-11-22
+After the initial story transport proof, the host fast-restart test was added. JVM run44953176046 SUCCESS: STORY_WIRE_PASS, STORY_TLS_PASS and ROOM_REHOST_PASS (four immediate same-port TLS Host/Leave/Host iterations, no second simultaneous listener). Android29 emulator run44953176054 SUCCESS: TLS_PLATFORM_PASS explicitly includes host story PREPARE/READY/COMMIT, rapid same-port rehost and Back/host UI. This is an Android emulator running synthetic socket code; it does NOT load real BLACK or test the two owner phones. Source SO_REUSEADDR+bounded 1.5sec retry was prompted by CL ERROR_BINDEXCEPTION; residual owner-device acceptance remains OPEN. Protocol VERSION/PROFILE3 intentionally incompatible with previous owner APK version2. Actual BLACK stage/actor/story synchronization still OPEN.
+
+---
+
 # BO-COOP — TLS story-control handoff, Session38 (2026-11-22)
 
 Scope: real sockets carrying control signals ONLY. NO BLACK engine scene load, bodies, gameplay, shared world, combat or new accepted Android APK.
