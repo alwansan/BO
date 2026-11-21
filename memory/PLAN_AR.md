@@ -1,3 +1,9 @@
+## Session44 newly grounded BODY gate (owner asset data, not animation)
+Owner original StLevel `level_00`, `level_07`, `level_08` geometry audit run44964028143 SUCCESS, safe-only artifact14730578388: 12 body-tagged context records, all 12 indexed surfaces bound checked, 0 rejects. First mission candidate MODEL resource keys BC1_MAT, BC1_TOM, LRG, SOL, with 25 bone names/3 buffers each; distinct buffer/index counts ~2.7k–3.4k and nonrepeat strip triangles ~3.8k–4.5k (NOT total vertices/tris). Next priority: verify RCB animations/hierarchy, joint mapping, skinning influences, texture/material and safe renderer/actor lifetime from owner resources; preserve first-person local arms; use fullbody candidate only for OTHER human player controlled proxies, NO NPC AI takeover. Scene-loaded game-thread ABI/host campaign and actual TLS gameplay replication still blockers. More details in docs/OWNER_ALLY_GEOMETRY_SAFETY_AR.md.
+CI status: Android diagnostic room APK44962611024 PASS artifact14730766256; host value input ASAN/UBSAN44963681576 PASS; MODEL audit44964028143 PASS. Still no real game actor or world/story sync. No owner phone trial until major gameplay milestone.
+
+---
+
 ## Session44 execution gates / next concrete integration
 DONE `44962611024 SUCCESS` complete room-only Android build after source-only native witness strict path allowlist repair; artifact14730766256. NOT PLAYABLE CO-OP, do not ask owner to install for tiny checks.
 DONE `44963681576 SUCCESS` host-only `HumanInput` value ingress C++ sanitizer tests: capacity 48, <=12 commands per frame, expires >250ms, room/scene/roster revision and fresh peer generation on each join, rejects unauthenticated and invalid/replay; scene/leave reentrant callbacks cannot apply later batch commands. This contract is NOT connected to live RoomTls or actual BLACK actors.
