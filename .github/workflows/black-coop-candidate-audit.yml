@@ -67,7 +67,11 @@ jobs:
       - name: Build pinned analysis tools only
         shell: pwsh
         run: |
-          cmake -S reference/tools -B tools-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl
+          $compiler = Join-Path $env:VCINSTALLDIR 'Tools/Llvm/x64/bin/clang-cl.exe'
+          if (-not (Test-Path $compiler)) { throw 'Visual Studio bundled clang-cl missing' }
+          & $compiler --version
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cmake -S reference/tools -B tools-build -G Ninja -DCMAKE_BUILD_TYPE=Release "-DCMAKE_C_COMPILER=$compiler" "-DCMAKE_CXX_COMPILER=$compiler"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           cmake --build tools-build --config Release --parallel 2
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

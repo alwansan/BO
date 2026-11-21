@@ -57,9 +57,10 @@
     "SRC_002": "Exact original XBE unavailable per owner; candidate static analysis pending, no engine build authorized by evidence",
     "NET_004": "Phone/ZeroTier runtime and authenticated production protocol untested",
     "SRC_002B": {
-      "status": "prepared_static_recompiler_probe",
+      "status": "toolchain_failure_before_analysis; explicit VS bundled compiler selected for next run",
       "candidateSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
-      "scope": "Read-only analysis of supplied owner image; no baseline acceptance, no APK"
+      "scope": "Read-only analysis of supplied owner image; no baseline acceptance, no APK",
+      "firstRun": 44840599544
     }
   },
   "apk": null,
