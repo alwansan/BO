@@ -5,6 +5,8 @@ on:
     paths:
       - 'coop/analysis/world_xref_static.py'
       - 'coop/analysis/test_world_xref_static.py'
+      - 'coop/analysis/world_writer_flow.py'
+      - 'coop/analysis/test_world_writer_flow.py'
       - '.github/workflows/black-coop-world-scene-xrefs.yml'
   workflow_dispatch:
 permissions:
@@ -27,6 +29,8 @@ jobs:
           set -euo pipefail
           command -v objdump
           python3 -m unittest discover -s coop/analysis -p test_world_xref_static.py -v
+          python3 -m unittest discover -s coop/analysis -p test_world_writer_flow.py -v
+          echo 'BO_WORLD_WRITER_FLOW_SYNTHETIC_PASS: bounded register-store and caller context; no engine hook proof'
           echo 'BO_WORLD_XREF_SYNTHETIC_PASS: no real game bytes or gameplay'
   owner-private:
     needs: synthetic
@@ -61,6 +65,7 @@ jobs:
           sys.path.insert(0, 'coop/analysis')
           from source_audit import restore, xbe_from_iso, ISO
           from world_xref_static import analyze_bytes
+          from world_writer_flow import analyze_context
           root=pathlib.Path('.').resolve()
           temp=pathlib.Path(os.environ['RUNNER_TEMP'])
           records=json.loads((root/'BLACK_FILE_MANIFEST.json').read_text())['files']
@@ -79,11 +84,14 @@ jobs:
               if hashlib.sha1(binary).hexdigest()!=identity['sha1']:
                   raise SystemExit('Owner ISO/XBE extraction identity mismatch')
               report=analyze_bytes(binary)
+              report['writer_flow_context']=analyze_context(binary)
+              assert not report['writer_flow_context']['verified_scene_loader']
               assert not report['true_scene_loader_proven']
               assert not report['safe_hook_proven']
               (temp/'bo-world-xrefs-safe-summary.json').write_text(
                   json.dumps(report,indent=2,sort_keys=True)+'\n',encoding='utf8')
           print('BO_WORLD_XREF_OWNER_PASS: pinned XBE scanned, derived memory-xref counts only')
+          print('BO_WORLD_WRITER_FLOW_OWNER_PASS: pinned two store neighborhoods classified; no game scene or stage proof')
           print('NO scene loader, game-thread callback, stage epoch or co-op proof claimed')
           PY
       - name: Upload bounded derived address/count metadata ONLY
