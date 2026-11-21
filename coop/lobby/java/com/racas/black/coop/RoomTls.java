@@ -18,6 +18,10 @@ public final class RoomTls {
     private static final SecureRandom RANDOM=new SecureRandom();
     private static long now(){return System.nanoTime()/1_000_000L;}
     private static byte[] nonce(){byte[] b=new byte[16];RANDOM.nextBytes(b);return b;}
+    // Fixed, non-sensitive event codes ONLY; no peer/user/network/secret data.
+    private static void safeEvent(java.util.function.Consumer<String> sink,String code){
+        if(sink!=null)try{sink.accept(code);}catch(RuntimeException ignored){}
+    }
     private static Thread thread(Runnable work){Thread t=new Thread(work,"bo-room-"+THREAD_ID.incrementAndGet());t.setDaemon(true);return t;}
     private static void closeSocket(Socket s){try{s.close();}catch(IOException ignored){}}
     private static String[] protocols(String[] supported)throws IOException{
@@ -56,6 +60,9 @@ public final class RoomTls {
         private final Map<Integer,Peer> peers=new LinkedHashMap<>();
 
         private final Object lock=new Object();
+        private volatile java.util.function.Consumer<String> safeEventSink;
+        public void setSafeEventSink(java.util.function.Consumer<String> sink){safeEventSink=sink;}
+        private void record(String code){safeEvent(safeEventSink,code);}
         private final byte[] session=nonce();
         private final String host,room;
         private int nextId=2;
@@ -144,6 +151,7 @@ public final class RoomTls {
                 }
                 story=ticket;storyReadyMask=0;storyCommitted=false;
                 storySlots.clear();storySlots.putAll(slots);
+                record("STORY_HOST_PREPARED");
                 return ticket;
             }
         }
@@ -161,6 +169,7 @@ public final class RoomTls {
                    mission!=story.mission||stage!=story.stage||epoch!=story.sceneEpoch||
                    (storyReadyMask&1)!=0||revision!=story.rosterRevision)return false;
                 storyReadyMask|=1;
+                record("STORY_HOST_SCENE_READY");
                 return maybeCommitStoryLocked();
             }
         }
@@ -176,11 +185,13 @@ public final class RoomTls {
                 abortStoryLocked();return false;
             }
             storyCommitted=true;
+            record("STORY_HOST_COMMITTED");
             return true;
         }
         private void abortStoryLocked(){
             RoomStoryWire.Ticket old=story;
             story=null;storyReadyMask=0;storyCommitted=false;storySlots.clear();
+            if(old!=null)record("STORY_HOST_ABORTED");
             if(old!=null)try{
                 byte[] cancel=RoomStoryWire.encode(RoomWire.STORY_ABORT,old);
                 for(Peer peer:peers.values())peer.outbound.offer(cancel);
@@ -256,6 +267,7 @@ public final class RoomTls {
                                (storyReadyMask&(1<<(slot-1)))!=0)
                                 throw new IOException("Unexpected, stale or repeated story READY");
                             storyReadyMask|=(1<<(slot-1));
+                            record("STORY_HOST_PEER_READY");
                             maybeCommitStoryLocked();
                         }
                         continue;
@@ -312,6 +324,9 @@ public final class RoomTls {
         private volatile RoomStoryWire.Ticket story;
         private volatile boolean storyReadySent,storyCommitted;
         private volatile String failure="";
+        private volatile java.util.function.Consumer<String> safeEventSink;
+        public void setSafeEventSink(java.util.function.Consumer<String> sink){safeEventSink=sink;}
+        private void record(String code){safeEvent(safeEventSink,code);}
         private volatile long sequence;
         private volatile long lastPong=now();
         public static Client connect(SSLContext context,InetAddress address,int port,String name)throws IOException{
@@ -369,6 +384,7 @@ public final class RoomTls {
             }
             try{
                 synchronized(out){RoomWire.write(out,RoomStoryWire.encode(RoomWire.STORY_READY,ticket));}
+                record("STORY_GUEST_READY_SENT");
                 return true;
             }catch(IOException e){close();throw e;}
         }
@@ -407,6 +423,7 @@ public final class RoomTls {
                         synchronized(lifecycle){
                             if(!closed.get()){
                                 story=incoming;storyReadySent=false;storyCommitted=false;
+                                record("STORY_GUEST_PREPARED");
                             }
                         }
                         continue;
@@ -417,6 +434,7 @@ public final class RoomTls {
                             if(story==null||!storyReadySent||storyCommitted||
                                !story.same(incoming))throw new IOException("Untrusted story COMMIT");
                             storyCommitted=true;
+                            record("STORY_GUEST_COMMITTED");
                         }
                         continue;
                     }
@@ -425,6 +443,7 @@ public final class RoomTls {
                         synchronized(lifecycle){
                             if(story!=null&&story.same(incoming)){
                                 story=null;storyReadySent=false;storyCommitted=false;
+                                record("STORY_GUEST_ABORTED");
                             }
                         }
                         continue;
@@ -437,6 +456,7 @@ public final class RoomTls {
                     synchronized(lifecycle){
                         if(story!=null&&story.rosterRevision!=next.revision){
                             story=null;storyReadySent=false;storyCommitted=false;
+                            record("STORY_GUEST_ROSTER_INVALIDATED");
                         }
                     }
                 }
