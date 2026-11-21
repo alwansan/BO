@@ -31,3 +31,11 @@
 ## قابلية الإعادة
 BLACK_OWNER_XBE=/path/default.xbe python coop/analysis/owner_xbe_static_slices.py 1b6770:1b67ec 1c4a90:1c4b17 1df440:1df593
 ابدأ تفكيك1E69B0 من بدايتها أو حدود تعليمات مؤكدة؛ slices1E6B50 و1DA750 تبدأ منتصف تعليمة وأنتجت garbage في أول أسطر،استُبعدت هذه الأسطر من الأدلة. لا ترفع ELF المؤقت أو disassembly الكامل/بيانات اللعبة.
+
+
+## إثبات reset — متابعة19
+فُككت الدالة1D5E00 حتىret عند1D5F29 على حدود مؤكدة. EDI=manager. قد ترجعAL0 مبكراً بناءً على global2D45D8+B14/B15 أو1D52A0. على المسار الناجح تصفر قوائم79A0/B0/C0/D0 وoccupied،تمشي32 خانة بدءmanager+A0 بخطوة3C0،تصفرactor+250 ثم تنقل كل خانة إلى79A0 بواسطة1B6770. عند1D5F08..1D5F0E تكتب **manager+8524=1**،وتعيدEAX1. إذن reset ناجح يعيد serial إلى1؛world/manager pointer قد يبقى نفسه،ولا يجوز تعريف persistent identity بالـserial وحده.
+مرجع call مباشر مثبت عند1EDED0: يحملglobal2D1980 إلىEDI،يناديreset،يختبرAL،ويسير state+5AE0 من7 إلى8 عند النجاح. معنى المهمة/الcheckpoint الكامل ما زال بحاجة runtime.
+فحص كامل instruction disassembly بحثاً عن displacement0x8524 وجد أيضاً **1B68F0** (ECX manager) يعيدcounter القديم فيEAX ويزيده؛لا call مباشر لها في مسح تعليماتcalll إلى العنوان،وقد تستعمل بشكل غير مباشر. هذا ليس إثبات عدم استدعائها. كذلك inline counter increment داخلinit1DA4F0 كما سبق. المسح النصي ينتج false matches من عناوين0x85240 وتعليقات الأقسام؛استبعدت،ولا نزعم حصر كل reset أوكتابة aliased.
+1E69B0 حتىret1E6EEB تمت مراجعتها ولا تحتوي كتابة صريحة إلى+8524 في ذلك العرض؛تهيئة قوائمها وحدها ليستserial reset.
+**عقد Probe3 المقترح:** مراقبة reset wrapper بعد الأصل وإضافةepoch فقط إنAL!=0؛مراقبة المدخل وحده خاطئة لأنreset قد يفشل. يجب حفظ host state ونتيجة السياق تماماً. إن بقيتsnapshot-only،سجلcounter regression كإشارةreset غير كاملة؛فقد يفوت reset من1إلى1 بين عينتين. لا تطلق persistent IDs أو spawn/death بناءً على هذه الإشارة وحدها.

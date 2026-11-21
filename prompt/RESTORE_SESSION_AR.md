@@ -1,3 +1,5 @@
+**آخر دليل:** reset1D5E00 يعيدcounter8524 إلى1 ويعيد32 خانة إلىfree-list على مسارAL1 فقط؛راجع ملحق docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md. نطاق المنتج الكامل محفوظ في docs/OWNER_PROJECT_OBJECTIVE_AR.md.
+
 **تصحيح أحدث:** اقرأ docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md: container+4=capacity و+8=occupied، مصفوفات sparse؛ 1DF440 acquisition path إلىinit1DA4F0، و1B6770 نقل عضوية. لا تعتمد تسميات count القديمة.
 
 **تنبيه متابعة جلسة19:** 0x1E6860 لها آثار جانبية وليست capacity predicate نقية؛ لا تستدعها من probe. +79C0/+79D0 قوائم حالات متعددة وactor+384 يكتب1/2. اقرأ ملحق جلسة19 قبل التنفيذ.

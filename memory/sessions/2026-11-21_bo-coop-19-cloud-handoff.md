@@ -45,3 +45,7 @@ Baseline يعمل على هاتف المالك بلا تعطل؛ لا تعيد �
 
 ## آخر متابعة — عقود الحاويات
 اقرأ docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md؛ صححت capacity/occupied،وأثبتت نقل العضوية ومسارacquisition1DF440 إلىinit1DA4F0. لا تجربة هاتف/CI/APK جديدة.
+
+
+### متابعة19 — reset مثبت ونطاق المنتج
+دالة1D5E00 على مسارAL1 تعيد32 خانة إلى79A0 وتكتبcounter8524=1؛لا هوية دائمة بالserial وحده، ولاepoch بمجرد دخولreset الذي قد يفشل. التفاصيل docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md. نص هدف المالك الكامل محفوظ docs/OWNER_PROJECT_OBJECTIVE_AR.md. تحليل ثابت فقط،لاAPK/CI جديد.

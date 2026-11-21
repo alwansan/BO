@@ -516,6 +516,8 @@
     "actorPoolEvidence": "memory/sessions/2026-11-21_bo-coop-19-cloud-handoff.md",
     "next": "Verify serial reset and init return/ABI, then implement isolated read-only sparse pool snapshot Probe3",
     "cloudFilesRequiredFromOwner": false,
-    "actorPoolContracts": "docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md"
+    "actorPoolContracts": "docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md",
+    "fullOwnerObjective": "docs/OWNER_PROJECT_OBJECTIVE_AR.md",
+    "serialReset": "1D5E00 successful AL1 path restores pool and sets counter8524=1; instrument return without changing context"
   }
 }

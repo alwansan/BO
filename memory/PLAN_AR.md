@@ -251,3 +251,7 @@ HOOK001 fairness source e9ad056: host sanitizer + pinned-source [44856368591](ht
 
 ### تصحيح عقود pool — جلسة19
 اقرأ docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md: +4 capacity/+8 occupied؛ sparse lists32/16/8/8،actor+250 membership،acquisition1DF440→init1DA4F0. إثبات ثابت فقط؛reset/overflow/runtime/model ما زالت مفتوحة.
+
+
+### متابعة19 — reset مثبت ونطاق المنتج
+دالة1D5E00 على مسارAL1 تعيد32 خانة إلى79A0 وتكتبcounter8524=1؛لا هوية دائمة بالserial وحده، ولاepoch بمجرد دخولreset الذي قد يفشل. التفاصيل docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md. نص هدف المالك الكامل محفوظ docs/OWNER_PROJECT_OBJECTIVE_AR.md. تحليل ثابت فقط،لاAPK/CI جديد.
