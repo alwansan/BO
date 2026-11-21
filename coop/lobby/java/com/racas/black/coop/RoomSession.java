@@ -203,6 +203,7 @@ public final class RoomSession implements AutoCloseable {
                 HostIdentity key=identity.load();
                 if(!current(token))return;
                 candidate=RoomTls.Server.start(key.tls,bind,port,displayName,roomName);
+                candidate.setSafeEventSink(this::event);
                 boolean discoverable=true;
                 if(!bind.isLoopbackAddress()&&port!=0){
                     try{broadcast=RoomDiscovery.Host.start(candidate,bind,RoomDiscovery.PORT,key.fingerprint);}
@@ -238,6 +239,8 @@ public final class RoomSession implements AutoCloseable {
                     RoomDirect.Endpoint endpoint=RoomDirect.parse(ipv4Port);
                     candidate=RoomTls.Client.connect(RoomTls.pinnedContext(RoomDirect.fingerprint(hostFingerprint)),endpoint.address,endpoint.port,displayName,()->!current(token));
                 }
+                // Always-on small safe codes, including after dismissing room UI.
+                candidate.setSafeEventSink(this::event);
                 boolean owned;
                 synchronized(lock){
                     owned=!closed&&generation==token;
