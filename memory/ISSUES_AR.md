@@ -1,3 +1,9 @@
+## Session44 remaining verified blockers
+CLOSED: room-only Android staging build `44962611024 SUCCESS` (artifact14730766256), previous Windows strict source allowlist CI44962275637 failure repaired by commit561eacc0. C++ HOST_HUMAN_INPUT_GATE_PASS on `44963681576 SUCCESS`, including reentrant scene-switch/peer-leave stale commands. These are CI/synthetic only, no phone.
+OPEN (critical): actual owner c5 BLACK game-thread mission and scene-loaded evidence/epoch is missing; world xref assignments EAX/EBX alone cannot prove loading, native witness event codes cannot assert READY. RoomWire v3 has no authenticated high-frequency gameplay input/snapshot channel; value-only host input gate must NOT accept raw unauthenticated UDP and cannot mutate BLACK game objects. Remote fullbody human-controlled ally renderer, original owner asset skinning/lifetime, AI/combat/quest/host world remain not implemented. Local first-person hands untouched. Keep source-only vs actual co-op distinction and owner CI-first one major device trial policy.
+
+---
+
 ## Session43 APK packaging + external reference status
 - CI44962275637 FAILURE was strict Windows packaging diff-list missing newly staged read-only `src/game/difficulty.cpp` and two `src/coop` header names, NOT compilation/gameplay or unit failure. Corrected exact finite whitelist in workflow commit561eacc0. New CI44962611024 check live.
 - Peterson047 public TDM reference is binary-only; linked BLACK-Coop source 404 on attempted read. Do not claim reused source, player renderer or mission sync. Third-party `body.bca` animation file permission limited to original mod; must NOT copy. See docs/REFERENCE_BLACK_XBEMULTIPLAYER_20261122_AR.md.
