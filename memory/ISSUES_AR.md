@@ -1,3 +1,14 @@
+# ACTIVE Session38 — Open and resolved distinctions (historical issues below)
+- RESOLVED: Latest original-player primary-model phone test was received: 8 complete arms-only primary model samples, not absent. It is NOT proof all game model resources lack a fullbody.
+- OVERRIDDEN: Session36 prohibited ally substitutes; owner now approves independent ALLY VISUAL mesh for remote real-human player ONLY, while everyone's ORIGINAL local first-person experience remains unchanged. Do not reuse AI-controlled NPC brains/actors.
+- OPEN: Actual 3D ally rig skinning/material/animation, engine-owned renderer instance, cleanup and human-input ownership not validated on phones. The new RemoteAllyRoster only tracks value-only selection for both host and guest.
+- OPEN: HostMissionBarrier only source/CI; need real TLS mission-control messages and actual shared BLACK stage loading/ready/host authority, then network motion/world sync; don't claim playable co-op.
+- OPEN: CL host event log includes ERROR_BINDEXCEPTION during quick Host/Leave/Host; isolate TCP vs presence UDP bind/race in future.
+- OPEN: New JPG metadata indexed but binaries could not be displayed via GitHub UTF-8-only tools; no fabricated visual screenshot findings.
+- ACCEPTED: older two-phone room lobby 2/4 and real automatic scan JOIN_CONNECTED/ROOM_JOINED logs, not mission/actor proof. No ISO reupload needed.
+
+---
+
 ## تسليم جلسة37 — 2026-11-22
 المالك سينتقل مؤقتاً لجلسة أخرى. اقرأ memory/sessions/2026-11-22_bo-coop-37-cloud-handoff.md وdocs/CLOUD_HANDOFF_AR.md. جميع أدوات المصدر والخطط والمراجع مرفوعة؛لا تعتمد علىالجهازالمحلي. آخرAPK44946597973/artifact14724535514مفحوصة،ولا سجلاتهاتفجديدةبعدطلبها. الشخصيةالأصليةفقط،لاNPCبديل،ولاsharedStartأوgameplayبعد. افحصCLالحيةأولاًلأيcaptureجديد.
 
