@@ -1,0 +1,17 @@
+{
+  "scope": "Owner tested rebuilt isolated baseline; no co-op or probe runtime yet",
+  "owner_report": "Tested new baseline without crashes or other observed problems",
+  "package": "org.bocoop.black.baseline",
+  "log_sha256": "fd4ea3ebc2d0254abba138bd7156ce1ace4aa93c0d0e34f6f5633ce5677cc235",
+  "source_build": "f3754d6",
+  "loaded_xbe_sha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+  "another_release_warning": false,
+  "exit_code": 0,
+  "elapsed_exit_seconds": 162.117,
+  "import_completed_at_seconds": 24.36,
+  "known_log_messages": [
+    "Missing game image before import completed",
+    "quit: ConfirmWarning, FEAudio failed on exit menu"
+  ],
+  "limitations": "Mission success is owner report, not instrumented mission completion; no full campaign or multiplayer acceptance"
+}

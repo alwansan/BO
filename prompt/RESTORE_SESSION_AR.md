@@ -1,3 +1,19 @@
+# استعادة BO-COOP — 2026-11-21 — جلسة08 / تسليم إلى جلسة غير محلية
+
+## ابدأ هنا — الحالة الأحدث تتقدم على التاريخ السابق
+المستودع https://github.com/alwansan/BO والفرع الوحيد للكتابة experiment/black-coop. اقرأ AGENTS.md ثم memory/STATE.json وMEMORY.md وPLAN_AR.md وISSUES_AR.md وprompt/SESSION_PROTOCOL_AR.md، ثم **memory/sessions/2026-11-21_bo-coop-08-probe-handoff.md** وخطة docs/superpowers/plans/2026-11-21-readonly-probe.md. تحقق من HEAD/Actions الحقيقيين قبل تعديل/تشغيل. لا تعتمد المسارات المحلية في الجلسة الجديدة؛ كل الكود والخطط اللازمة محفوظة بالفرع.
+
+**المستخدم اختبر APK الجديدة org.bocoop.black.baseline بنجاح، وليس الأصل فقط.** السجل يؤكد c5bfed... دون another release وExit0. دليل metadata DEVICE-rebuilt-baseline-owner-runtime.json. لا تطلب إعادة الاختبار أو XBE المفقود.
+
+**أحدث العمل غير مكتمل:** coop/probe/ يحتوي reader/core/tests وAndroid sampler WIP. core test host نجح محلياً فقط. **لا Java opt-in/preparer/source integration/CI/Android APK أو phone test للرصد حتى الآن.** اقرأ جلسة08: فيها التصميم، الأوامر، المخاطر المعروفة، المواقع التي جرى التحقق منها، والخطوات المتبقية. لا تخلط نجاح baseline مع نجاح probe.
+
+العمل التالي: راجع sampler، أضف includealgorithm ومسارات error/re-enable المناسبة، أكمل prepare_probe وopt-in/hook injection وworkflow، اختبر host sanitizers وAndroid build وفحوص APK ثم اطلب capture هاتف. newpackage المقترحة org.bocoop.black.probe1، استيراد خاص وصلاحيات ضيقة كما baseline، JNI class الأصلي محفوظ. لا writes إلى guest ولا network أو spawn. لا full-body أو factory مثبتة.
+
+الهدف الكامل لم يتغير: story co-op فعلي2 ثم4 مع هوست هاتف، LAN/ZeroTier، الغرف/late-join/AI/قتال/أهداف، نوك/إنعاش/friendly fire/أسماء، وحفظ الفردي. docs/COOP_REQUIREMENTS_AR.md. لا co-op أو APK جماعية جاهزة.
+
+الأصول اللازمة للاختبارات موجودة مقسمة في المستودع وmanifest مع SHA؛ استخدم GitHub Actions كما يفضل المالك. لا يحتاج رفع ISO أو ملفات حفظ أو مكتبات من جديد. **raw phone logs خاصة ولا تُنشر بالفرع العام**؛ metadata sanitized مرفوعة. إن احتجت raw log لاحقاً، يرفعه المالك مرفقاً خاصاً فقط. الأصل والنسخة الأساسية وحفظهما وتوقيعهما لا يمسّون، لا force push. حدّث STATE/MEMORY/PLAN/ISSUES والجلسة/RESTORE بعد كل دفعة.
+
+## تاريخ baseline والأدلة السابقة (للمرجع، لا لإعادة العمل)
 # استعادة BO-COOP — 2026-11-21، نهاية جلسة07
 
 الهدف الكامل: قصة BLACK Android تعاونية فعلية، هاتف هوست، لاعبان ثم4، LAN/ZeroTier ثم WAN، غرف واكتشاف واتصال يدوي وlate-join، AI/قتال/أهداف، نوك60s/إنعاش5s، friendly fire، أسماء ومجسمات وحفظ فردي مستقل. المتطلبات وبراهينها docs/COOP_REQUIREMENTS_AR.md. لا co-op منفذة أو APK جماعية بعد.

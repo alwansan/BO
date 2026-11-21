@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-07-phone-baseline.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-08-probe-handoff.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -84,7 +84,16 @@
       "apkSha256": "4ead325d67772a1c877b9f073aebc0e9eaaab45e9a0028d2380645c4bc2f69f7",
       "package": "org.bocoop.black.baseline",
       "evidence": "memory/evidence/BASELINE-candidate-build-44845637359.json",
-      "phoneTested": false,
+      "phoneTested": true,
+      "multiplayer": false
+    },
+    "CANDIDATE_BASELINE_DEVICE": {
+      "status": "owner_reports_working_rebuilt_baseline_and_log_confirms_exact_image",
+      "evidence": "memory/evidence/DEVICE-rebuilt-baseline-owner-runtime.json",
+      "package": "org.bocoop.black.baseline",
+      "loadedImage": "c5bfed25449c8212d7a976f15246e87ead57713f",
+      "anotherReleaseWarning": false,
+      "exitCode": 0,
       "multiplayer": false
     }
   },
@@ -97,7 +106,7 @@
     "ACTOR_001": "not_started",
     "COMBAT_001": "not_started",
     "DEVICE": "No co-op phone/device-pair test; separate rebuilt baseline phone test pending",
-    "SRC_002": "Candidate Android build and self-consistent identity proven; rebuilt runtime device acceptance still pending. Not original Arabic source equivalence.",
+    "SRC_002": "Separate candidate build and owner baseline runtime accepted for this limited device test; not original Arabic source equivalence/full campaign proof.",
     "NET_004": "Phone/ZeroTier runtime and authenticated production protocol untested",
     "SRC_002B": {
       "status": "candidate translation possible; 46 library symbols, 5 data locations, 11 ABI unresolved; semantics not accepted",
@@ -110,9 +119,16 @@
         "fullAbiSemanticsAccepted": false
       }
     },
-    "DEVICE_BASELINE": "NEW baseline APK built and verified. Await first-mission movement/fire/retry/quit and log from org.bocoop.black.baseline. Original Arabic test already answered.",
-    "HOOK_001": "Read-only probe design candidates in docs/ACTOR_FEASIBILITY_AR.md; implementation waits rebuilt-baseline device acceptance and bounds/lifecycle/thread proof"
+    "DEVICE_BASELINE": "Baseline test answered successfully; no repeat needed. Probe Android build/device capture not started.",
+    "HOOK_001": {
+      "status": "WIP_unintegrated_host_core_test_only",
+      "files": "coop/probe/",
+      "plan": "docs/superpowers/plans/2026-11-21-readonly-probe.md",
+      "androidBuild": false,
+      "deviceTest": false,
+      "requires": "review runtime, implement opt-in/preparer/source injection/workflow, sanitizer+NDK+APK verification"
+    }
   },
   "apk": null,
-  "next": "Deliver verified NO-COOP baseline APK and read new-app device result/log before HOOK-001. Actor factory/full-body ownership remains unproven."
+  "next": "User requested urgent remote-session handoff. Read session08 and restore; finish/review/test unintegrated read-only probe. Do not claim probe APK, spawn or co-op exists."
 }
