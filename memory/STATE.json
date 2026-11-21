@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-29-real-tls-core.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-30-directjoin-android-keystore.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -594,6 +594,16 @@
       "untrustedUntilTls": true,
       "androidLanVerified": false,
       "file": "coop/lobby/java/com/racas/black/coop/RoomDiscovery.java"
+    },
+    "ROOM_DIRECT_IPV4_TLS": {
+      "status": "PASS_ACTUAL_JVM_TLS_DIRECT_IP_AND_CERTIFICATE_PIN_TESTS_NOT_APP_INTEGRATED",
+      "sourceCommit": "8df7a68346aed269bbd762449db7b7af5af6ea3f",
+      "run": 44920763536,
+      "roomCoreJava": "coop/lobby/java/com/racas/black/coop/RoomDirect.java",
+      "tests": "coop/lobby/test/DirectTest.java",
+      "trueHumanRoomNetwork": true,
+      "androidUiIntegrated": false,
+      "gameNetworkIntegrated": false
     }
   },
   "pending": {
@@ -714,12 +724,18 @@
       "ownerReportedCrash": false
     },
     "ANDROID_KEYSTORE_PLATFORM": {
-      "status": "EMULATOR_AVD_REGISTRY_MISMATCH_IDENTIFIED_EXPLICIT_SHARED_AVD_HOME_FIX_RETRY_PENDING",
-      "run": 44918736731,
-      "job": 136889884196,
-      "sourceCommit": "234afa093387d7b52746880bfeb37dc9dcacf999",
-      "runtimeVerified": false,
-      "failure": "KVM usable, but emulator could not find black_tls.ini. Explicit Android user/emulator/AVD homes plus avdmanager -p and list-avds check added."
+      "status": "ANDROID29_EMULATOR_BOOT_AND_SYNTHETIC_APK_PASS; CONSCRYPT_RSA_HANDSHAKE_FAIL; EC_P256_RETRY_PENDING",
+      "sourceCommit": "af67599d8cbe7db7f99bf36f1ebc139f0ec4e0c0",
+      "currentRun": 44922289967,
+      "priorFailures": [
+        44920763565,
+        44921276909,
+        44921495502,
+        44921892101
+      ],
+      "androidRuntimeVerified": false,
+      "diagnostic": "Android Conscrypt requested EC certificate while previous X509KeyManager was RSA-only. New EC P-256 non-exportable KeyStore identity tested in next run.",
+      "noCredentialsLogged": true
     }
   },
   "apk": {
@@ -733,7 +749,7 @@
     "deviceAccepted": true,
     "gameplayCoop": false
   },
-  "next": "Run synthetic Android emulator instrumentation for per-install opaque AndroidKeyStore identity and real pinned TLS; then implement discovery/direct join, Android forms and Flash/JNI live room state. Native actor/body and story sync remain required.",
+  "next": "Check Android Keystore EC P-256 platform workflow 44922289967 and inspect instrumentation logs. If PASS, add Android host/join forms & game JNI/Flash live room rows in an isolated APK. If FAIL, diagnose server-side sanitized handshake info, no insecure TLS bypass. Continue native actor+brain ownership separately; no actual 2-player campaign yet.",
   "latestHandoff": {
     "date": "2026-11-21",
     "session": 29,

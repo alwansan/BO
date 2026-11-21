@@ -1,3 +1,17 @@
+# BO-COOP — Latest restore Session30 (2026-11-21)
+**Only writable GitHub branch `alwansan/BO:experiment/black-coop`.** Start with `AGENTS.md`, `memory/STATE.json`, `memory/sessions/2026-11-21_bo-coop-30-directjoin-android-keystore.md`, then `memory/MEMORY.md`, `memory/PLAN_AR.md`, `memory/ISSUES_AR.md`, `docs/ROOM_DIRECT_JOIN_AR.md`, `docs/superpowers/plans/2026-11-21-real-lobby.md`, and `docs/COOP_INTEGRATION_ROADMAP_AR.md`. Verify HEAD and Actions live before writing.
+
+## Session30 new work — keep all session29 advances
+- User linked another ChatGPT shared chat, but exact URL was unavailable via web; progress was recovered **from newer live GitHub commits and session29**, not fabricated from the chat itself. The UI CO-OP under Options and Probe4 were owner accepted; do not retest them. Four humans including phone host remains target, but second actor/brain/mission/combat sync are **still absent**.
+- Real TLS core RoomTls/RoomWire on JVM and UDP room discovery existed in session29. New `RoomDirect.java` validates canonical IPv4:port, full SHA256 fingerprint, rejects wrong PIN/cert on real TLS; source8df7a683 and CI [44920763536](https://github.com/alwansan/BO/actions/runs/44920763536) **SUCCESS**. Still no Android/Flash UI bridge for this.
+- Emulator script had ADB hang; bounded calls with `timeout -k` (code a954306c). Subsequent Android29 simulator **booted and test APK installed**, actual TLS failed with `SSLHandshakeException: Connection closed by peer`. Added `DIGEST_NONE` in AndroidKeyStore (code650d50eb) but not enough.
+- Sanitized no-secrets server diagnostics (code903bb225, run [44921892101](https://github.com/alwansan/BO/actions/runs/44921892101)) revealed `SSLHandshakeException/SSLProtocolException`, requested key type `EC` while old server X509KeyManager only served RSA. Replaced test identity with new opaque AndroidKeyStore **EC P-256** alias `BLACK_COOP_TLS_EC_V1` code `af67599d8cbe7db7f99bf36f1ebc139f0ec4e0c0`. **Check current platform run [44922289967](https://github.com/alwansan/BO/actions/runs/44922289967) before claiming Android PASS.** No RSA-as-EC misuse, no disabling pin or trust.
+- The old title UI APK `org.bocoop.black.roomui` built in run44913654405 and owner accepted; Probe4 pool/instance read-only capture verified; refer to Session29 full handoff below for actor ABI and ownership caveats. `biso` owner ISO already decomposed/pinned; Peterson Windows TDM external source restricted and binary-only, never copy private code/animations.
+- Don't ask the owner to redo accepted baseline/UI/Probe4, or upload an XBE. Preserve story saves and main. Approval for separate experimental `biso` branch remains only if modifying ISO becomes genuinely necessary.
+- Next: verify Android EC identity/TLS test, then connect Android host/join form and immutable room roster to game Flash in separate package; **not** equal to actual co-op. Independently audit actor+324 ownership, allocator/factory and safe full-body rig before writing guest memory. Keep project memory updated, expected-SHA CAS commits, no force-push.
+
+---
+## Prior session29 detail retained
 # BO-COOP — استعادة أحدث حالة، جلسة29، 2026-11-21
 
 ## الهدف والفرع
