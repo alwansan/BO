@@ -1,3 +1,16 @@
+# LATEST RESTORE: BO-COOP Session38 — 2026-11-22
+**Only write alwansan/BO:experiment/black-coop.** Read AGENTS.md, memory/sessions/2026-11-22_bo-coop-38-firstperson-remote-ally-shared-mission.md, docs/superpowers/plans/2026-11-22-host-story-remote-ally.md and CLOUD_HANDOFF, STATE, MEMORY, PLAN, ISSUES. Fetch live HEAD and Actions first.
+
+NEW OWNER DIRECTIVE supersedes Session36: normal original first-person camera/arms/weapon on each local phone, but OTHER real human players appear as fully visible ALLY model (render-only representation), not bots. The guest must see the host as an ally body, and the host must see guests. Shared host-selected story mission/world, no two separate solo sessions, is the end goal.
+
+**NEW DEVICE CAPTURE ALREADY UPLOADED to CL:** black log/logs/BLACK-Probe-20261121-235407-267/coop_probe.txt contains 8/8 complete valid default_player_model samples: 44 bones, 2 buffers, mask32=draw-list5, arms only, head/torso/legs absent IN PRIMARY MODEL. Xiaomi23013PC75G Android15 captured it. Huawei JSN-L22 Android10 ran the same original-player APK but its new folder has only black_log, no model probe. Both XBE c5bfed...; safe evidence memory/evidence/DEFAULT-PLAYER-owner-20261122-235407-safe-summary.json. New CL screenshot JPG paths exist, but GitHub binary images were NOT decoded; never claim inspected pixels. CL later room logs show LAN discovery and JOIN_CONNECTED/ROOM_JOINED, still lobby-only, and host quick restart ERROR_BINDEXCEPTION. Earlier 2/4 real LAN lobby accepted.
+
+Source work: coop/bridge/remote_ally_roster.hpp supports host and guest viewpoint-specific local first-person vs others ally view. coop/story/mission_barrier.hpp implements host-owned mission Prepare/Ready/Commit blocking stale/wrong scene/missing peer. Both are value-only, NO renderer/engine hooks, no network story protocol or shared world yet. Workflow .github/workflows/black-coop-story-contracts.yml run44951425780 **SUCCESS** ASAN/UBSAN. New code has no new Android APK. Last genuine owner-tested defaultplayer APK run44946597973, artifact14724535514 (previous SHA verified). Preserve solo/main/ISO/saves; no ISO reupload.
+
+Next implement real encrypted host mission control messages, verified game-thread stage load/ready, independent ally rig display/ownership, remote input/state/animation/AI/combat/story. No fake Start. Historical Session36 no-ally and no-new-capture directions below are superseded for current work.
+
+---
+
 ## تسليم جلسة37 — 2026-11-22
 المالك سينتقل مؤقتاً لجلسة أخرى. اقرأ memory/sessions/2026-11-22_bo-coop-37-cloud-handoff.md وdocs/CLOUD_HANDOFF_AR.md. جميع أدوات المصدر والخطط والمراجع مرفوعة؛لا تعتمد علىالجهازالمحلي. آخرAPK44946597973/artifact14724535514مفحوصة،ولا سجلاتهاتفجديدةبعدطلبها. الشخصيةالأصليةفقط،لاNPCبديل،ولاsharedStartأوgameplayبعد. افحصCLالحيةأولاًلأيcaptureجديد.
 
