@@ -33,12 +33,13 @@ jobs:
               coop/bridge/test_remote_ally_roster.cpp \
               coop/story/test_mission_barrier.cpp \
               coop/bridge/test_remote_proxy_roster.cpp \
-              coop/bridge/test_scene_inbox.cpp; do
+              coop/bridge/test_scene_inbox.cpp \
+              coop/bridge/test_host_human_input_gate.cpp; do
             binary="$RUNNER_TEMP/$(basename "$file" .cpp)"
             g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic \
               -fno-omit-frame-pointer -pthread \
               -fsanitize=address,undefined "$file" -o "$binary"
             "$binary"
           done
-          echo 'PASS story and ally value-only safety contracts'
+          echo 'PASS story, remote ally and bounded generation-fenced human input contracts'
           echo 'NOT a story Start, remote actor, network connection or Android APK'
