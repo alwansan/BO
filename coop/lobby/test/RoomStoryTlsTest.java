@@ -78,6 +78,28 @@ public final class RoomStoryTlsTest {
                 until(()->host.storyCommitted()&&later.storyCommitted());
             }
         }
+        // Owner CL reported ERROR_BINDEXCEPTION on rapid Host -> Leave -> Host.
+        // An active second listener must still be rejected on the same port;
+        // rebind AFTER shutdown and completed TLS clients must be allowed.
+        int reusablePort;
+        try(RoomTls.Server first=RoomTls.Server.start(hostContext,loop,0,"Host","Restart")){
+            reusablePort=first.port();
+            try(RoomTls.Server illegal=RoomTls.Server.start(hostContext,loop,reusablePort,"Other","Other")){
+                throw new AssertionError("Concurrent host unexpectedly bound the same TCP port");
+            }catch(java.net.BindException expected){}
+            try(RoomTls.Client connected=RoomTls.Client.connect(guestContext,loop,reusablePort,"Before leave")){
+                ok(connected.snapshot().players.size()==2);
+            }
+        }
+        for(int attempt=0;attempt<4;attempt++){
+            try(RoomTls.Server restarted=RoomTls.Server.start(hostContext,loop,reusablePort,"Host","Restart")){
+                ok(restarted.port()==reusablePort);
+                try(RoomTls.Client joined=RoomTls.Client.connect(guestContext,loop,reusablePort,"Again")){
+                    ok(joined.snapshot().players.size()==2);
+                }
+            }
+        }
+        System.out.println("ROOM_REHOST_PASS: concurrent listener refused; 4 rapid same-port host restarts with real TLS clients");
         System.out.println("STORY_TLS_PASS: real authenticated host PREPARE, guest scene READY, host COMMIT, abort on leave, compact slots after rejoin");
         System.out.println("NO BLACK engine scene loading, gameplay actor or phone co-op executed");
     }
