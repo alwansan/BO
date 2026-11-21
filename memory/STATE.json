@@ -387,6 +387,24 @@
       "correctSizeCount": 13,
       "matchedWeaponPairs": 16,
       "provesRuntime": false
+    },
+    "NET_LAN_DISCOVERY_CODEC": {
+      "status": "PASS_HOST_ASAN_UBSAN_AND_ANDROID_ARM64_CROSSCOMPILE_ONLY",
+      "sourceCommit": "33bff07535a85f256c50a6a2842c19714148d5fe",
+      "run": 44869092957,
+      "linuxJob": 136739329989,
+      "androidCrossCompileJob": 136739329666,
+      "namedProtocol": "BCLN-v1",
+      "boundedFields": true,
+      "gamePortDefault": 1508,
+      "discoveryPortDefault": 1510,
+      "gamePortDiscoveryPortMustDiffer": true,
+      "syntheticMalformedPackets": 5000,
+      "actualDiscoverySockets": false,
+      "actualAndroidDeviceTest": false,
+      "productionAuthentication": false,
+      "originalImplementation": true,
+      "referenceDoc": "docs/NET_LAN_DISCOVERY_AR.md"
     }
   },
   "pending": {
@@ -454,6 +472,10 @@
       "status": "PASSED_MOCK_ONLY_NEXT_GATE_GAME_ACTOR_LIFETIME",
       "run": 44867924228,
       "realGameplay": false
+    },
+    "NET_LAN_DISCOVERY_SOCKET_INTEGRATION": {
+      "status": "NOT_IMPLEMENTED",
+      "next": "POSIX UDP client/server discovery adapter, no game JNI/network broadcast yet; enforce per-IP rate limits and port separation"
     }
   },
   "apk": {
@@ -467,5 +489,5 @@
     "gameplayCoop": false,
     "sourceCommit": "d8dba8d8da2da69c62718a87f3e6f03f16be0d2f"
   },
-  "next": "ACTOR-001A actor lifetime/owner/rig proof remains the gate. Apply only independently written ideas from Peterson047 TDM Windows alpha; add LAN discovery port separation/bounded parser in isolated native CI, then top-level room UI later. Do not copy restricted body.bca/binaries/scripts. No baseline retest."
+  "next": "ACTOR001A real NPC lifetime/model-owner/ABI proof remains main critical path; portable BCLN-v1 discovery codec now passes Linux ASAN and Android NDK cross compile, but no sockets or device test. Next implement isolated discovery UDP listener/host browser with bounded endpoint policy, and top-level CO-OP room UI experiment without touching accepted Probe2."
 }

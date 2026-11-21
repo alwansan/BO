@@ -222,3 +222,14 @@ HOOK001 fairness source e9ad056: host sanitizer + pinned-source [44856368591](ht
 - [ ] Add independent LAN discovery codec and port distinctness/rate-limit tests (do NOT expose unauthenticated WAN).
 - [ ] NPC actor/render/animation ownership proof for story player2, then optionally remote-body visuals after licenses/format support.
 - [ ] Top-level CO-OP room menu + Android package only after safe source integration; no asset/binary source copying.
+
+## جلسة18 — LAN discovery codec مستقل نجح في CI (2026-11-21)
+- Developed original `coop/native/lan_discovery.hpp` and `test_lan_discovery.cpp`, source code `33bff07535a85f256c50a6a2842c19714148d5fe`. Inspired by Peterson047's *documented architecture only* (game and discovery ports distinct, LAN browser concept), **no source/assets copied**.
+- Wire format `BCLN` version1: short query/reply with 32-bit challenge (correlation, **not auth**), game port, occupied/capacity (1..4), printable room name max32, length/byte/version/duplicate port guards and outgoing 1Hz RateGate. Only **codec/state validation**, **no UDP broadcast socket, actual browser, phone JNI integration, encrypted/authenticated session or playable game network**. Suggested game1508/discovery1510 are defaults referenced by Peterson project, configurable later. Android might require system multicast/broadcast considerations; not yet proven on phone.
+- [44869092957](https://github.com/alwansan/BO/actions/runs/44869092957) **SUCCESS BOTH JOBS**: native-linux job136739329989 printed passing strict packet parsing, port/name/rate guard,5000 deterministic malformed packets; legacy UDP loopback 2 clients passes. Android ARM64 job136739329666 cross-compiled LAN test binary and `udp_cli` with NDK28 and confirmed AArch64 ELF; **not executed on Android phone**. Existing unrelated UDP mock [44869092971](https://github.com/alwansan/BO/actions/runs/44869092971) SUCCESS.
+- Remote author source `Peterson047/BLACK-Coop` remained 404; do not copy its restricted `body.bca`, binary, badges or unlicensed scripts. Actor lifetime/rig/weapon/quest sync remains primary main blocker. Safe discovery design `docs/NET_LAN_DISCOVERY_AR.md`.
+
+### NET-LAN-001 (Peterson idea independently implemented)
+- [x] Portable discovery Query/Reply codec, room and port guards, 1 Hz outgoing rate,5000 malformed packet tests; Linux ASAN/UBSAN and Android ARM64 NDK28 compile SUCCESS [44869092957](https://github.com/alwansan/BO/actions/runs/44869092957).
+- [ ] POSIX socket LAN responder/browser isolated mock + per-peer inbound rate cap, Android broadcast viability and explicit JOIN/authentication gate.
+- [ ] Separate game/room UI Host/Join; no source/animation media copied.
