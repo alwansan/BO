@@ -1,3 +1,12 @@
+## Session42 PASS update and real engine research priority
+1. Accepted: guest READY off actual socket writer game thread (JVM44960452007 PASS, Android29 44960451936 and 44961110132 PASS), capacity-one bounded worker with stale checks.
+2. Accepted: room event disk writes off game/network/UI threads via bounded 2048-item diagnostic queue, flush for combined safe MediaStore export; Android29 44961110132 PASS `ROOM_LOG_ASYNC_PASS`, `ROOM_LOG_ROTATION_PASS`. Source staging44961110163 PASS.
+3. Accepted private research only: owner c5 XBE world global kWorld=0x2D45D4 writer candidates 0020BF48/0020BF51 from 892 xrefs, both register-sourced; xref audits44960617668/44960876328/44960893099 PASS. No actual loader or ABI proven.
+4. NEXT: call-flow/ownership validation at these two x86 sites + mission start candidate00124CF0 to establish real world assignment/loaded scene/epoch, then gate RoomSession scene READY from verified BLACK game-thread callback. FULLBODY remote human AllyBody/input and one authoritative host campaign/world/combat/AI/quest sync remain OPEN.
+5. CI-first. Room-only APK44961110208 latest to verify; no owner phone test until one substantial real gameplay acceptance with auto safe logs.
+
+---
+
 ## Session42 next-step plan — 2026-11-22
 DONE: guest TLS STORY_READY write moved off potential BLACK game thread into bounded single worker; JVM44960452007 and Android29 44960451936 PASS, no socket IO during callback. DONE: read-only true owner c5 XBE static world pointer scan run44960617668, typed44960876328, regression44960893099 PASS; discovered only two register-sourced absolute kWorld store candidates 0020BF48/0020BF51 among 892 xrefs, 10 sections/2.77MB. This narrows static hunt but **is not scene loader proof**.
 WORK IN PROGRESS: bounded async RoomDiagnostics file writer and read/export barrier; Android29 attempts44960759104/44960934419 failed from test expectation and logger-name false leak; fixed in commits0de18eb19,367052097. Verify new Android29 run44961110132 before acceptance. Source/room APK run44961110163/44961110208 check live (NO GAMEPLAY).
