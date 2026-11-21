@@ -1,3 +1,14 @@
+## ACTIVE Session38 progress — actual real room TLS mission control
+- VIEW-001 value-only local POV vs remote human AllyBody: PASS C++ CI44951984399, REAL engine render OPEN.
+- MISSION-001 source gate: PASS CI44951984399, corrected mission index0 and stage0 accepted.
+- WIRE-001 encrypted actual host/guest story frames: **PASS TRANSPORT ONLY** CI44952822531 JVM + CI44952822499 Android29; PREPARE/READY/COMMIT/ABORT over TLS, exact room/session/roster and compact slots. Story protocol VERSION/PROFILE=3; old v2 owner app incompatible with new app, so do not compare the two mixed builds.
+- TCP quick host restart: CI44953176046 PASS ROOM_REHOST_PASS 4 same-port real TLS sessions, second simultaneous listener denied. Android run44953176054 needs live check before marking PASS on Android.
+- ENGINE-001 real BLACK stage selection/load/ready connection: OPEN. Candidate hook sub_00124CF0 must be verified on owner c5 image and proper game thread; do not write mission unlock table or autonomously start two solo missions.
+- BODY-001 actual independently owned ALLY visual for OTHER human participants: OPEN. Original player hands/camera remain local. INPUT-001, WORLD-001, phone shared story ACCEPT OPEN.
+- Latest owner-tested APK remains run44946597973/artifact14724535514. New story tests do not produce a game-co-op-ready APK. See docs/ROOM_STORY_TLS_PROTOCOL_AR.md and owner Session38 plan.
+
+---
+
 # ACTIVE Session38 — Corrected implementation gates (older checklists below are historical)
 Owner direction now: ORIGINAL first-person local on EVERY phone; use ALLY full-body model/rig ONLY for OTHER human network players; never NPC AI. One host-authoritative mission/world, not separately started solo games. New CL default player test exists with 8/8 primary arms-only samples. No repeat phone test for that diagnostic required.
 
