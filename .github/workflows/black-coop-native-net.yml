@@ -21,12 +21,15 @@ jobs:
       - name: Compile strict C++20 (ASAN, UBSAN)
         run: |
           g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -fsanitize=address,undefined -fno-omit-frame-pointer coop/native/test_net.cpp -o /tmp/black-coop-net-test
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -fsanitize=address,undefined -fno-omit-frame-pointer coop/native/test_lan_discovery.cpp -o /tmp/black-coop-lan-test
           g++ -std=c++20 -O2 -Wall -Wextra -Werror -pedantic -pthread coop/native/udp_cli.cpp -o /tmp/black-coop-udp-cli
       - name: Loopback integration and protocol regression
         env:
           ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
           UBSAN_OPTIONS: halt_on_error=1
-        run: /tmp/black-coop-net-test
+        run: |
+          /tmp/black-coop-net-test
+          /tmp/black-coop-lan-test
       - name: CLI real UDP two process smoke test
         run: |
           set -euo pipefail
@@ -55,6 +58,8 @@ jobs:
           set -euo pipefail
           tool="$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android29-clang++"
           "$tool" -std=c++20 -O2 -Wall -Wextra -Werror -pedantic -static-libstdc++ -pthread coop/native/udp_cli.cpp -o black-coop-net-lab-aarch64
+          "$tool" -std=c++20 -O2 -Wall -Wextra -Werror -pedantic -static-libstdc++ -pthread coop/native/test_lan_discovery.cpp -o /tmp/black-coop-lan-aarch64
+          readelf -h /tmp/black-coop-lan-aarch64 | grep -q AArch64
           readelf -h black-coop-net-lab-aarch64 | grep -q AArch64
           sha256sum black-coop-net-lab-aarch64
       - uses: actions/upload-artifact@v4
