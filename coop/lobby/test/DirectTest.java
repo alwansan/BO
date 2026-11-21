@@ -49,9 +49,9 @@ public final class DirectTest {
         }
         final InetAddress loop=InetAddress.getByName("127.0.0.1");
         try(RoomTls.Server host=RoomTls.Server.start(TlsRoomTest.host(Paths.get(args[0])),
-                 loop,0,"Host","Direct room","12345678")) {
+                 loop,0,"Host","Direct room")) {
             String endpoint="127.0.0.1:"+host.port();
-            try(RoomTls.Client peer=RoomDirect.join(endpoint,canonical,"Player2","12345678")) {
+            try(RoomTls.Client peer=RoomDirect.join(endpoint,canonical,"Player2")) {
                 TlsRoomTest.await(()->host.snapshot().players.size()==2);
                 check(peer.snapshot()!=null&&peer.snapshot().self==2);
                 check(peer.isRunning());
@@ -59,14 +59,12 @@ public final class DirectTest {
             TlsRoomTest.await(()->host.snapshot().players.size()==1);
             byte[] wrong=pin.clone();wrong[31]^=1;
             rejected(()->{try(RoomTls.Client unused=RoomDirect.join(endpoint,toHex(wrong),
-                                           "Wrong fingerprint","12345678")){check(unused.isRunning());}});
-            rejected(()->{try(RoomTls.Client unused=RoomDirect.join(endpoint,canonical,
-                                           "Wrong PIN","99999999")){check(unused.isRunning());}});
+                                           "Wrong fingerprint")){check(unused.isRunning());}});
             check(host.snapshot().players.size()==1);
         }
         TlsRoomTest.await(()->Thread.getAllStackTraces().keySet().stream()
             .noneMatch(t->t.isAlive()&&t.getName().startsWith("bo-room-")));
-        System.out.println("PASS direct IPv4:port input and 32-byte pin; real TLS JOIN, reject spoof/pin/PIN, cleanup");
+        System.out.println("PASS direct IPv4:port input and 32-byte pin; real TLS JOIN, reject spoof and wrong certificate, cleanup");
         System.out.println("No Android forms, gameplay actors or network-thread guest calls");
     }
 }

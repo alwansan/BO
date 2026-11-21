@@ -2,7 +2,6 @@
 package com.racas.black.coop;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -27,7 +26,6 @@ import java.net.Inet4Address;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -46,11 +44,12 @@ public final class RoomOverlay {
     private final AtomicBoolean scanning=new AtomicBoolean();
     private AtomicBoolean cancelScan=new AtomicBoolean();
     private LinearLayout hostPanel,joinPanel,results,manualPanel;
-    private EditText hostName,roomName,hostPin,port,guestName,guestPin,ip,pinHash;
+    private EditText hostName,roomName,guestName,ip;
     private TextView status,scanStatus,notice;
     private boolean closed;
     private int tab;
     private String lastPhase="";
+    private long nextScan;
     private final Runnable poll=new Runnable(){
         public void run(){
             if(closed)return;
@@ -59,6 +58,7 @@ public final class RoomOverlay {
             if(!text.equals(status.getText().toString()))status.setText(text);
             String phase=state.phase.name();
             if(!phase.equals(lastPhase)){lastPhase=phase;RoomDiagnostics.event("ROOM_"+phase);}
+            if(tab==-103&&!scanning.get()&&android.os.SystemClock.elapsedRealtime()>=nextScan)scan();
             handler.postDelayed(this,400);
         }
     };
@@ -84,8 +84,13 @@ public final class RoomOverlay {
         overlay.handler.post(overlay.poll);
         RoomDiagnostics.event("MENU_OPEN");
     }
+    static void startHostForTest(){
+        if(active==null)throw new IllegalStateException("Room dialog closed");
+        View button=active.dialog.getWindow().getDecorView().findViewWithTag("room_host_start");
+        if(button==null||!button.performClick())throw new IllegalStateException("Host button missing");
+    }
     private RoomOverlay(Activity context){
-        activity=context;session=RoomAppRooms.obtain();
+        activity=context;RoomAppRooms.attach(context);session=RoomAppRooms.obtain();
         dialog=new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         ScrollView scroll=new ScrollView(context);
@@ -96,13 +101,13 @@ public final class RoomOverlay {
         root.setBackgroundColor(Color.rgb(14,15,17));
         scroll.addView(root);dialog.setContentView(scroll);
         label(root,"B L A C K    /    C O - O P",24,Color.rgb(176,55,47));
-        label(root,"LOCAL NETWORK  —  SECURE ROOM",14,FG);
-        label(root,"This is a real TLS lobby; human game actors and story sync are not ready.",12,MUTED);
+        label(root,"الشبكة المحلية / VPN",14,FG);
+        label(root,"اتصال الأجهزة والغرف؛ مزامنة الشخصيات والقصة قيد التطوير.",12,MUTED);
         LinearLayout tabs=new LinearLayout(context);
         tabs.setOrientation(LinearLayout.HORIZONTAL);
         root.addView(tabs);
-        button(tabs,"HOST ROOM",()->select(-102));
-        button(tabs,"FIND LAN ROOM",()->select(-103));
+        button(tabs,"استضافة",()->select(-102));
+        button(tabs,"الأجهزة والغرف",()->select(-103));
         // A real landscape game needs two columns, not a tall Android settings page.
         boolean wide=context.getResources().getConfiguration().screenWidthDp>=600;
         LinearLayout sections=new LinearLayout(context);
@@ -120,34 +125,29 @@ public final class RoomOverlay {
             sections.addView(side,new LinearLayout.LayoutParams(-1,-2));
         }
         hostPanel=group(controls);
-        label(hostPanel,"CREATE ROOM",18,FG);
-        hostName=field(hostPanel,"PLAYER NAME","Host",32,false);hostName.setText("Host");
-        roomName=field(hostPanel,"ROOM NAME","BLACK LAN",32,false);roomName.setText("BLACK LAN");
-        hostPin=field(hostPanel,"PRIVATE 8-DIGIT PIN","",8,true);
-        port=field(hostPanel,"PORT","24872",5,false);
-        port.setInputType(InputType.TYPE_CLASS_NUMBER);port.setText("24872");
-        button(hostPanel,"START HOST",this::host);
+        label(hostPanel,"إنشاء غرفة",18,FG);
+        hostName=field(hostPanel,"اسمك","Host",32,false);hostName.setText(RoomAppRooms.displayName());
+        roomName=field(hostPanel,"اسم الغرفة","BLACK LAN",32,false);roomName.setText("BLACK LAN");
+        button(hostPanel,"بدء الاستضافة",this::host).setTag("room_host_start");
         joinPanel=group(controls);
-        label(joinPanel,"AVAILABLE WI-FI ROOMS",18,FG);
-        guestName=field(joinPanel,"YOUR NAME","Player 2",32,false);guestName.setText("Player 2");
-        guestPin=field(joinPanel,"ROOM'S 8-DIGIT PIN","",8,true);
-        button(joinPanel,"REFRESH LAN",this::scan);
-        scanStatus=label(joinPanel,"Looking for nearby rooms...",12,MUTED);
+        label(joinPanel,"الأجهزة المفتوحة والغرف المتاحة",18,FG);
+        guestName=field(joinPanel,"اسمك","Player",32,false);guestName.setText(RoomAppRooms.displayName());
+        button(joinPanel,"تحديث الآن",this::scan);
+        scanStatus=label(joinPanel,"جارٍ اكتشاف الأجهزة تلقائياً…",12,MUTED);
         results=group(joinPanel);
-        button(joinPanel,"MANUAL JOIN (ADVANCED)",()->manualPanel.setVisibility(
+        button(joinPanel,"اتصال يدوي عند الحاجة",()->manualPanel.setVisibility(
             manualPanel.getVisibility()==View.GONE?View.VISIBLE:View.GONE));
         manualPanel=group(joinPanel);manualPanel.setVisibility(View.GONE);
-        ip=field(manualPanel,"HOST IPv4:PORT","192.168.1.10:24872",21,false);
-        pinHash=field(manualPanel,"VERIFIED HOST TLS SHA-256","",64,false);
-        button(manualPanel,"JOIN VERIFIED ADDRESS",()->join(value(ip),value(pinHash)));
+        ip=field(manualPanel,"عنوان جهاز المضيف IPv4","192.168.1.10",21,false);
+        button(manualPanel,"انضمام",()->join(value(ip)));
         LinearLayout statusPanel=group(side);
-        label(statusPanel,"REAL CONNECTION STATUS",15,FG);
+        label(statusPanel,"حالة الاتصال",15,FG);
         status=label(statusPanel,"OFFLINE",14,FG);
-        notice=label(statusPanel,"Choose HOST or JOIN to begin.",12,MUTED);
-        button(statusPanel,"LEAVE ROOM & BACK",()->{
+        notice=label(statusPanel,"اختر الاستضافة أو جهازاً من القائمة.",12,MUTED);
+        button(statusPanel,"مغادرة الغرفة والرجوع",()->{
             cancelScan.set(true);session.stop();RoomDiagnostics.event("ROOM_LEFT");dialog.dismiss();
         });
-        button(statusPanel,"BACK TO GAME  ·  KEEP ROOM",()->dialog.dismiss());
+        button(statusPanel,"الرجوع للعبة مع إبقاء الاتصال",()->dialog.dismiss());
         button(statusPanel,"SAVE ROOM LOG TO DOWNLOADS",()->{
             RoomDiagnostics.event("EXPORT_REQUESTED");
             worker.execute(()->{
@@ -190,7 +190,7 @@ public final class RoomOverlay {
         view.setPadding(dp(4),dp(6),dp(4),dp(6));
         parent.addView(view);return view;
     }
-    private void button(LinearLayout parent,String text,Runnable click){
+    private Button button(LinearLayout parent,String text,Runnable click){
         Button button=new Button(activity);
         button.setText(text);button.setAllCaps(false);button.setTextSize(13);
         button.setTextColor(FG);button.setBackground(style(Color.rgb(74,30,29)));
@@ -199,7 +199,7 @@ public final class RoomOverlay {
             new LinearLayout.LayoutParams(0,dp(45),1f):
             new LinearLayout.LayoutParams(-1,dp(45));
         lp.topMargin=dp(5);parent.addView(button,lp);
-        button.setOnClickListener(v->click.run());
+        button.setOnClickListener(v->click.run());return button;
     }
     private EditText field(LinearLayout parent,String title,String hint,int size,boolean secret){
         label(parent,title,11,MUTED);
@@ -220,92 +220,42 @@ public final class RoomOverlay {
         if(action==-103)scan();else cancelScan.set(true);
     }
     private void host(){
-        String name=value(hostName),room=value(roomName),pin=value(hostPin);
         try{
-            int portNumber=Integer.parseInt(value(port));
-            RoomWire.name(name);RoomWire.name(room);
-            if(portNumber<1024||portNumber>65535||!pin.matches("[0-9]{8}"))
-                throw new IllegalArgumentException();
-            session.startHost(()->{
-                RoomIdentity identity=RoomIdentity.load();
-                return new RoomSession.HostIdentity(identity.serverContext(),identity.fingerprint());
-            },InetAddress.getByAddress(new byte[]{0,0,0,0}),portNumber,name,room,pin);
-            RoomDiagnostics.event("HOST_REQUEST");
-            notice.setText("Starting encrypted LAN room...");
-        }catch(Exception error){
-            RoomDiagnostics.event("HOST_INPUT_ERROR");
-            notice.setText("Enter names, 8-digit PIN, and port 1024–65535.");
-        }
+            String name=RoomWire.name(value(hostName)),room=RoomWire.name(value(roomName));
+            RoomAppRooms.setDisplayName(name);
+            session.startHost(()->{RoomIdentity identity=RoomIdentity.load();return new RoomSession.HostIdentity(identity.serverContext(),identity.fingerprint());},InetAddress.getByAddress(new byte[]{0,0,0,0}),RoomDirect.DEFAULT_PORT,name,room);
+            RoomDiagnostics.event("HOST_REQUEST");notice.setText("جارٍ فتح الغرفة…");
+        }catch(Exception error){RoomDiagnostics.event("HOST_INPUT_ERROR");notice.setText("أدخل اسماً قصيراً للاعب والغرفة.");}
     }
-    private static String hex(byte[] data){
-        StringBuilder out=new StringBuilder(64);
-        for(byte b:data)out.append(String.format(Locale.ROOT,"%02X",b&255));
-        return out.toString();
-    }
-    private void join(String address,String fingerprint){
+    private void join(String address){
         try{
-            RoomWire.name(value(guestName));RoomDirect.parse(address);
-            RoomDirect.fingerprint(fingerprint);
-            if(!value(guestPin).matches("[0-9]{8}"))throw new IllegalArgumentException();
-            session.join(address,fingerprint,value(guestName),value(guestPin));
-            notice.setText("Verifying host certificate and joining...");
-            RoomDiagnostics.event("JOIN_REQUEST");
-        }catch(Exception error){
-            notice.setText("Enter a valid room PIN, name, address and verified fingerprint.");
-            RoomDiagnostics.event("JOIN_INPUT_ERROR");
-        }
-    }
-    private void joinFound(RoomDiscovery.Found found){
-        if(!found.compatible){notice.setText("Incompatible BLACK game profile.");return;}
-        if(found.occupied==4){notice.setText("Room full.");return;}
-        if(!value(guestPin).matches("[0-9]{8}")){
-            notice.setText("Enter the 8-digit room PIN then tap its name.");return;
-        }
-        String address=found.address.getHostAddress()+":"+found.port;
-        String fingerprint=hex(found.fingerprint);
-        String trusted=activity.getPreferences(Context.MODE_PRIVATE).getString("trusted_"+address,"");
-        if(trusted.equals(fingerprint)){join(address,fingerprint);return;}
-        // Discovery is UNAUTHENTICATED. First connection must confirm certificate
-        // against the host phone's displayed fingerprint before sending the PIN.
-        new AlertDialog.Builder(activity).setTitle("VERIFY HOST IDENTITY")
-            .setMessage("Compare this full SHA-256 fingerprint with the HOST phone:\n\n"+
-                fingerprint+"\n\nWi-Fi discovery alone is not authentication.")
-            .setNegativeButton("CANCEL",null)
-            .setPositiveButton("I VERIFIED THE MATCH",(dialog,which)->{
-                activity.getPreferences(Context.MODE_PRIVATE).edit()
-                    .putString("trusted_"+address,fingerprint).apply();
-                RoomDiagnostics.event("HOST_VERIFIED");join(address,fingerprint);
-            }).show();
+            String name=RoomWire.name(value(guestName));RoomDirect.manual(address);RoomAppRooms.setDisplayName(name);
+            session.joinAutomatic(address,name);RoomDiagnostics.event("JOIN_REQUEST");notice.setText("جارٍ الانضمام تلقائياً…");
+        }catch(Exception error){notice.setText("أدخل اسمك وعنوان IP صحيحاً للمضيف.");RoomDiagnostics.event("JOIN_INPUT_ERROR");}
     }
     private void scan(){
         if(closed||tab!=-103||!scanning.compareAndSet(false,true))return;
-        cancelScan.set(true);
-        AtomicBoolean cancelled=new AtomicBoolean();
-        cancelScan=cancelled;results.removeAllViews();
-        scanStatus.setText("Scanning current Wi-Fi...");
-        RoomDiagnostics.event("SCAN_STARTED");
+        nextScan=android.os.SystemClock.elapsedRealtime()+5500;
+        cancelScan.set(true);AtomicBoolean cancelled=new AtomicBoolean();cancelScan=cancelled;
+        scanStatus.setText("جارٍ البحث عن الأجهزة والغرف…");RoomDiagnostics.event("SCAN_STARTED");
         worker.execute(()->{
-            List<RoomDiscovery.Found> found=null;
-            boolean failed=false;
-            try{found=RoomDiscovery.scan(RoomDiscovery.broadcastTargets(),
-                RoomDiscovery.PORT,1900,cancelled);}
-            catch(Exception error){failed=true;RoomDiagnostics.event("SCAN_FAILED");}
-            List<RoomDiscovery.Found> rooms=found;
-            final boolean scanFailed=failed;
+            List<RoomPresence.Peer> found=null;boolean failed=false;
+            try{found=RoomPresence.scan(RoomPresence.targets(),RoomPresence.PORT,4000,RoomAppRooms.presenceId(),cancelled);}catch(Exception error){failed=true;RoomDiagnostics.event("SCAN_FAILED");}
+            List<RoomPresence.Peer> peers=found;final boolean scanFailed=failed;
             handler.post(()->{
-                scanning.set(false);
-                if(closed||cancelled.get()||tab!=-103)return;
-                int count=rooms==null?0:rooms.size();
-                RoomDiagnostics.event("SCAN_RESULTS_"+Math.min(count,16));
-                if(scanFailed){
-                    scanStatus.setText("LAN search error. Check Wi-Fi connectivity and system restrictions.");
-                }else if(count==0){
-                    scanStatus.setText("No rooms found. Check same Wi-Fi / AP isolation, or use MANUAL JOIN.");
-                }else{
-                    scanStatus.setText(count+" room(s). Tap a room after entering its PIN.");
-                    for(RoomDiscovery.Found room:rooms){
-                        button(results,room.room+" · "+room.occupied+"/4"+
-                            (room.compatible?" · JOIN":" · INCOMPATIBLE"),()->joinFound(room));
+                scanning.set(false);if(closed||cancelled.get()||tab!=-103)return;
+                results.removeAllViews();int count=peers==null?0:peers.size();RoomDiagnostics.event("SCAN_RESULTS_"+Math.min(count,32));
+                if(scanFailed)scanStatus.setText("تعذر البحث الآن. يمكنك استخدام عنوان IP يدوياً.");
+                else if(count==0)scanStatus.setText("لا أجهزة ظاهرة حالياً؛ البحث يتجدد تلقائياً. يمكنك استخدام عنوان IP.");
+                else{
+                    scanStatus.setText("أجهزة اللعبة المتاحة: "+count);
+                    for(RoomPresence.Peer peer:peers){
+                        String name=peer.info.name;
+                        if(!peer.compatible){label(results,name+" — حدّث اللعبة على الجهازين",13,MUTED);continue;}
+                        if(peer.info.role==1){
+                            String target=peer.address.getHostAddress()+":"+peer.info.port;
+                            Button choice=button(results,name+" · "+peer.info.room+" · "+peer.info.occupied+"/4 — انضمام",()->join(target));choice.setEnabled(peer.info.occupied<4);
+                        }else label(results,name+(peer.info.role==2?" — متصل بغرفة":" — متاح، لم ينشئ غرفة"),14,FG);
                     }
                 }
             });
@@ -334,11 +284,9 @@ public final class RoomOverlay {
     private String describe(RoomSession.Status state){
         StringBuilder out=new StringBuilder("STATE: ").append(state.phase);
         if(!state.description.isEmpty())out.append("\n").append(state.description);
-        if(state.phase==RoomSession.Phase.HOSTING)
-            out.append("\nLOCAL IPv4: ").append(addresses()).append(":").append(state.port)
-                .append("\nHOST SHA-256 (verify with guest):\n").append(state.fingerprint);
+        if(state.phase==RoomSession.Phase.HOSTING)out.append("\nعنوان المضيف للاتصال اليدوي: ").append(addresses());
         if(state.roster!=null){
-            out.append("\nAUTHENTICATED PLAYERS: ").append(state.roster.players.size()).append("/4");
+            out.append("\nاللاعبون المتصلون: ").append(state.roster.players.size()).append("/4");
             for(RoomWire.Player player:state.roster.players)
                 out.append("\n").append(player.id).append(" · ").append(player.name);
             out.append("\nSTORY START: unavailable until real remote actors and story sync exist.");

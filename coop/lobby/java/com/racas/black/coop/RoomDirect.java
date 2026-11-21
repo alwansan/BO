@@ -6,11 +6,7 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.security.GeneralSecurityException;
 
-/** Strict, DNS-free direct IPv4 joining with a full out-of-band TLS pin.
- *  This does not connect to BLACK gameplay or expose the server identity
- *  through untrusted LAN discovery. The pin must come from a trusted
- *  separate channel (e.g., the host's fingerprint display/QR).
- */
+/** DNS-free direct IPv4 joining with automatic opportunistic LAN pairing. */
 public final class RoomDirect {
     private RoomDirect() {}
     public static final class Endpoint {
@@ -19,6 +15,21 @@ public final class RoomDirect {
         private Endpoint(Inet4Address address,int port) {
             this.address=address;this.port=port;
         }
+    }
+    public static final int DEFAULT_PORT=24872;
+    public static Endpoint manual(String target)throws IOException {
+        if(target==null)throw new IOException("Missing host address");
+        return parse(target.indexOf(':')<0?target+":"+DEFAULT_PORT:target);
+    }
+    /** Opportunistic encrypted connection on the owner's trusted LAN/VPN; no manual fingerprint or password. */
+    public static RoomTls.Client joinAutomatic(String target,String displayName)throws IOException,GeneralSecurityException {
+        return joinAutomatic(target,displayName,()->false);
+    }
+    static RoomTls.Client joinAutomatic(String target,String displayName,java.util.function.BooleanSupplier cancelled)throws IOException,GeneralSecurityException {
+        if(cancelled.getAsBoolean())throw new IOException("Join cancelled");
+        Endpoint endpoint=manual(target);
+        byte[] observed=RoomPeerTrust.inspect(endpoint.address,endpoint.port,cancelled);
+        return RoomTls.Client.connect(RoomTls.pinnedContext(observed),endpoint.address,endpoint.port,displayName,cancelled);
     }
     private static int decimal(String s,int max) throws IOException {
         if(s.isEmpty() || s.length()>5 || (s.length()>1&&s.charAt(0)=='0'))
@@ -85,13 +96,13 @@ public final class RoomDirect {
         }
         return pin;
     }
-    /** Real TLS and JOIN; errors are fail-closed and never expose the PIN. */
+    /** Real TLS and JOIN; keeps full certificate checking for internal callers. */
     public static RoomTls.Client join(String ipv4Port,String hexFingerprint,
-                                      String displayName,String roomPin)
+                                      String displayName)
             throws IOException,GeneralSecurityException {
         Endpoint target=parse(ipv4Port);
         byte[] fullPin=fingerprint(hexFingerprint);
         return RoomTls.Client.connect(RoomTls.pinnedContext(fullPin),
-                                      target.address,target.port,displayName,roomPin);
+                                      target.address,target.port,displayName);
     }
 }

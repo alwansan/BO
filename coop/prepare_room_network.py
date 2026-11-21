@@ -69,6 +69,8 @@ def prepare(root: pathlib.Path):
 
     @Override
     protected void onPause() {''', java)
+    text = once(text, '        super.onCreate(savedInstanceState);',
+                '        super.onCreate(savedInstanceState);\n        com.racas.black.coop.RoomAppRooms.attach(this);', java)
     pending[java] = text
 
     # Host/Join in the accepted Flash page dispatch to a same-Activity dialog, which
@@ -117,6 +119,8 @@ def prepare(root: pathlib.Path):
         'RoomDirect.java': 'lobby/java/com/racas/black/coop/RoomDirect.java',
         'RoomDiscovery.java': 'lobby/java/com/racas/black/coop/RoomDiscovery.java',
         'RoomSession.java': 'lobby/java/com/racas/black/coop/RoomSession.java',
+        'RoomPeerTrust.java': 'lobby/java/com/racas/black/coop/RoomPeerTrust.java',
+        'RoomPresence.java': 'lobby/java/com/racas/black/coop/RoomPresence.java',
         'RoomIdentity.java': 'lobby/android/com/racas/black/coop/RoomIdentity.java',
         'RoomAppRooms.java': 'lobby/android/com/racas/black/coop/RoomAppRooms.java',
         'RoomOverlay.java': 'lobby/android/com/racas/black/coop/RoomOverlay.java',

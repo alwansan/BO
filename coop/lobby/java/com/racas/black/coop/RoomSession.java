@@ -84,16 +84,16 @@ public final class RoomSession implements AutoCloseable {
         String message="Could not establish room";
         if(cause instanceof RoomTls.Rejected) {
             int reason=((RoomTls.Rejected)cause).reason;
-            message=reason==1?"Wrong room PIN":reason==2?"Incompatible game version":
+            message=reason==2?"Incompatible game version":
                     reason==3?"Room is full":reason==5?"Too many failed attempts":"Room rejected";
         } else if(cause instanceof SSLHandshakeException) {
-            message="Host TLS handshake rejected; verify its fingerprint";
+            message="Automatic connection failed; check that both phones use the same game build";
         } else if(cause instanceof GeneralSecurityException) {
-            message="Host identity or certificate verification failed";
+            message="Could not prepare the automatic connection";
         } else if(cause instanceof SocketTimeoutException) {
             message="Network timeout: check Wi-Fi and access-point isolation";
         } else if(cause instanceof ConnectException) {
-            message="Host unreachable: check Wi-Fi, port and firewall";
+            message="Host unreachable: check Wi-Fi or VPN peer connectivity";
         } else if(cause instanceof UnknownHostException) {
             message="Invalid or unreachable host address";
         } else if(cause instanceof IOException) {
@@ -113,18 +113,20 @@ public final class RoomSession implements AutoCloseable {
         catch(java.util.concurrent.RejectedExecutionException e){failure(token,e);}
     }
     public void startHost(IdentitySource identity,InetAddress bind,int port,
-                          String displayName,String roomName,String pin) {
+                          String displayName,String roomName) {
         if(identity==null||bind==null)throw new IllegalArgumentException("Missing host settings");
         long token=begin();
         submit(()->{
             RoomTls.Server candidate=null;
             RoomDiscovery.Host broadcast=null;
             try {
+                if(!current(token))return;
                 // Port 0 is reserved for localhost-only isolated instrumentation.
                 if(port>65535 || (port<1024 && !(port==0 && bind.isLoopbackAddress())))
                     throw new IOException("Invalid listener port");
                 HostIdentity key=identity.load();
-                candidate=RoomTls.Server.start(key.tls,bind,port,displayName,roomName,pin);
+                if(!current(token))return;
+                candidate=RoomTls.Server.start(key.tls,bind,port,displayName,roomName);
                 boolean discoverable=true;
                 if(!bind.isLoopbackAddress()&&port!=0){
                     try{broadcast=RoomDiscovery.Host.start(candidate,bind,RoomDiscovery.PORT,key.fingerprint);}
@@ -149,12 +151,17 @@ public final class RoomSession implements AutoCloseable {
             }
         },token);
     }
-    public void join(String ipv4Port,String hostFingerprint,String displayName,String pin) {
+    public void join(String ipv4Port,String hostFingerprint,String displayName) {
         long token=begin();
         submit(()->{
             RoomTls.Client candidate=null;
             try {
-                candidate=RoomDirect.join(ipv4Port,hostFingerprint,displayName,pin);
+                if(!current(token))return;
+                if(hostFingerprint==null)candidate=RoomDirect.joinAutomatic(ipv4Port,displayName,()->!current(token));
+                else {
+                    RoomDirect.Endpoint endpoint=RoomDirect.parse(ipv4Port);
+                    candidate=RoomTls.Client.connect(RoomTls.pinnedContext(RoomDirect.fingerprint(hostFingerprint)),endpoint.address,endpoint.port,displayName,()->!current(token));
+                }
                 boolean owned;
                 synchronized(lock){
                     owned=!closed&&generation==token;
@@ -163,13 +170,14 @@ public final class RoomSession implements AutoCloseable {
                     }
                 }
                 if(!owned)closeQuietly(candidate);
-                else event("JOIN_AUTHENTICATED");
+                else event("JOIN_CONNECTED");
             } catch(Exception e) {
                 closeQuietly(candidate);
                 failure(token,e);
             }
         },token);
     }
+    public void joinAutomatic(String target,String name){join(target,null,name);}
     /** An immutable-by-copy view; no socket or peer pointer reaches UI/game code. */
     public Status snapshot(){
         synchronized(lock) {

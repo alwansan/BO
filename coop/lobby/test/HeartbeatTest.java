@@ -22,7 +22,7 @@ public final class HeartbeatTest {
      while(System.nanoTime()<until){RoomWire.write(out,RoomWire.state(RoomWire.ROSTER,session,join.nonce,2,1,"Room",people));Thread.sleep(250);}
     }catch(Exception expectedDisconnect){}
    },"test-host-without-pong");fake.setDaemon(true);fake.start();
-   try(RoomTls.Client client=RoomTls.Client.connect(RoomTls.pinnedContext(TlsRoomTest.fingerprint(identity)),loop,server.getLocalPort(),"Client","01234567")){
+   try(RoomTls.Client client=RoomTls.Client.connect(RoomTls.pinnedContext(TlsRoomTest.fingerprint(identity)),loop,server.getLocalPort(),"Client")){
     TlsRoomTest.await(()->!client.isRunning());
     TlsRoomTest.check(client.snapshot()==null);
    }finally{SSLSocket peer=accepted.get();if(peer!=null)peer.close();fake.join(2000);TlsRoomTest.check(!fake.isAlive());}

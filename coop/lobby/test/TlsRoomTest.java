@@ -22,7 +22,7 @@ public final class TlsRoomTest {
   InetAddress loop=InetAddress.getLoopbackAddress();Path identity=Paths.get(args[0]);byte[] fp=fingerprint(identity);
   SSLContext client=RoomTls.pinnedContext(fp);String pin="01234567";
   List<RoomTls.Client> clients=new ArrayList<>();
-  try(RoomTls.Server server=RoomTls.Server.start(host(identity),loop,0,"Host","Real room",pin)){
+  try(RoomTls.Server server=RoomTls.Server.start(host(identity),loop,0,"Host","Real room")){
    // A trickled first JOIN must have an absolute deadline, not a fresh timeout per byte.
    try(SSLSocket slow=(SSLSocket)client.getSocketFactory().createSocket(loop,server.port())){
     slow.setSoTimeout(6500);slow.startHandshake();
@@ -38,7 +38,7 @@ public final class TlsRoomTest {
    for(int mode=0;mode<3;mode++){
     try(SSLSocket raw=(SSLSocket)client.getSocketFactory().createSocket(loop,server.port())){
      raw.setSoTimeout(3000);raw.startHandshake();
-     byte[] request=RoomWire.join(new RoomWire.Join("Fragment",pin,new byte[16]));
+     byte[] request=RoomWire.join(new RoomWire.Join("Fragment",new byte[16]));
      if(mode==0)request[8]^=1;
      if(mode==1)request[4]=99;
      var output=raw.getOutputStream();
@@ -50,26 +50,25 @@ public final class TlsRoomTest {
     }
     await(()->server.snapshot().players.size()==1);
    }
-   try{RoomTls.Client.connect(client,loop,server.port(),"Wrong PIN","99999999");throw new AssertionError();}catch(RoomTls.Rejected e){check(e.reason==1);}
    check(server.snapshot().players.size()==1);
    byte[] wrong=fp.clone();wrong[0]^=1;
-   try{RoomTls.Client.connect(RoomTls.pinnedContext(wrong),loop,server.port(),"Wrong identity",pin);throw new AssertionError();}catch(javax.net.ssl.SSLException expected){}
-   for(String name:List.of("One","اثنان","Three"))clients.add(RoomTls.Client.connect(client,loop,server.port(),name,pin));
+   try{RoomTls.Client.connect(RoomTls.pinnedContext(wrong),loop,server.port(),"Wrong identity");throw new AssertionError();}catch(javax.net.ssl.SSLException expected){}
+   for(String name:List.of("One","اثنان","Three"))clients.add(RoomTls.Client.connect(client,loop,server.port(),name));
    await(()->server.snapshot().players.size()==4&&clients.stream().allMatch(c->c.snapshot()!=null&&c.snapshot().players.size()==4));
    var exposed=clients.get(0).snapshot();byte original=exposed.session[0];exposed.session[0]^=1;
    check(clients.get(0).snapshot().session[0]==original);
    Set<Integer> ids=new HashSet<>();for(var c:clients)check(ids.add(c.snapshot().self));check(!ids.contains(1));
-   try{RoomTls.Client.connect(client,loop,server.port(),"Full",pin);throw new AssertionError();}catch(RoomTls.Rejected e){check(e.reason==3);}
+   try{RoomTls.Client.connect(client,loop,server.port(),"Full");throw new AssertionError();}catch(RoomTls.Rejected e){check(e.reason==3);}
    int old=clients.get(0).snapshot().self;
    var closing=clients.remove(0);var parsedBeforeClose=closing.snapshot();closing.close();
    // Deterministic interleaving: parse/validate, close, then delayed publication.
    closing.publish(parsedBeforeClose);check(closing.snapshot()==null);
    await(()->server.snapshot().players.size()==3);
-   var replacement=RoomTls.Client.connect(client,loop,server.port(),"Replacement",pin);clients.add(replacement);check(replacement.snapshot().self!=old);
+   var replacement=RoomTls.Client.connect(client,loop,server.port(),"Replacement");clients.add(replacement);check(replacement.snapshot().self!=old);
    await(()->clients.stream().allMatch(c->c.snapshot()!=null&&c.snapshot().players.size()==4));
    Thread.sleep(1500);check(clients.stream().allMatch(RoomTls.Client::isRunning));
   }finally{for(var c:clients)c.close();}
   await(()->Thread.getAllStackTraces().keySet().stream().noneMatch(t->t.isAlive()&&t.getName().startsWith("bo-room-")));
-  System.out.println("PASS actual TLS sockets: pinned host, PIN rejection, four humans, full room, fresh IDs, disconnect, shutdown");
+  System.out.println("PASS actual TLS sockets: pinned host, password-free join, four humans, full room, fresh IDs, disconnect, shutdown");
  }
 }

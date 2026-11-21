@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-33-owner-two-phone-lan-feedback.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-34-simple-auto-network.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -865,5 +865,17 @@
     "bisoAuthorization": "new experimental branch and ISO content changes/repack via Actions when necessary; main unchanged",
     "sharedChat": "fetch failed; content not read"
   },
-  "integrationRoadmap": "docs/COOP_INTEGRATION_ROADMAP_AR.md"
+  "integrationRoadmap": "docs/COOP_INTEGRATION_ROADMAP_AR.md",
+  "currentWork": {
+    "session": 34,
+    "base": "3608ac51b43a9cfd99eb91a47d9de4148293f285",
+    "task": "names-only hosting, automatic room and idle device discovery, manual IP fallback",
+    "status": "local JVM eight suites and source seven checks passed; Android/APK pending",
+    "tcpPort": 24872,
+    "presenceUdpPort": 1511,
+    "wireVersion": 2,
+    "profile": 2,
+    "phoneJoinProven": false,
+    "gameplayCoopProven": false
+  }
 }

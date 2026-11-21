@@ -7,15 +7,14 @@ public final class WireTest {
  static void rejects(Attempt f)throws Exception{try{f.run();}catch(IOException|IllegalArgumentException expected){return;}throw new AssertionError("accepted bad input");}
  public static void main(String[]args)throws Exception{
   byte[] nonce=new byte[16];Arrays.fill(nonce,(byte)7);
-  var join=new RoomWire.Join("علي", "01234567",nonce);
+  var join=new RoomWire.Join("علي",nonce);
   byte[] frame=RoomWire.join(join);
   check(RoomWire.parseJoin(RoomWire.decode(frame)).name.equals("علي"));
   byte[] wrong=frame.clone();wrong[4]=99;rejects(()->RoomWire.decode(wrong));
   rejects(()->RoomWire.decode(Arrays.copyOf(frame,frame.length+1)));
-  rejects(()->RoomWire.join(new RoomWire.Join("bad\nname","01234567",nonce)));
-  rejects(()->RoomWire.join(new RoomWire.Join("\ud800","01234567",nonce)));
-  rejects(()->RoomWire.join(new RoomWire.Join("a".repeat(33),"01234567",nonce)));
-  rejects(()->RoomWire.join(new RoomWire.Join("name","123",nonce)));
+  rejects(()->RoomWire.join(new RoomWire.Join("bad\nname",nonce)));
+  rejects(()->RoomWire.join(new RoomWire.Join("\ud800",nonce)));
+  rejects(()->RoomWire.join(new RoomWire.Join("a".repeat(33),nonce)));
   byte[] badUtf8=frame.clone();badUtf8[8+20+2+16+1]=(byte)255;
   rejects(()->RoomWire.parseJoin(RoomWire.decode(badUtf8)));
   byte[] badImage=frame.clone();badImage[8]^=1;

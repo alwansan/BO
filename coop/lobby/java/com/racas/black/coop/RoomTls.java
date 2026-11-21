@@ -25,9 +25,6 @@ public final class RoomTls {
         for(String wanted:new String[]{"TLSv1.3","TLSv1.2"})for(String s:supported)if(s.equals(wanted))result.add(s);
         if(result.isEmpty())throw new IOException("TLS 1.2 or later required");return result.toArray(new String[0]);
     }
-    private static void pin(String pin)throws IOException {
-        if(pin==null||!pin.matches("[0-9]{8}"))throw new IOException("Eight-digit room PIN required");
-    }
     public static SSLContext pinnedContext(byte[] expected)throws GeneralSecurityException{
         if(expected==null||expected.length!=32)throw new IllegalArgumentException("Full SHA-256 certificate pin required");
         final byte[] fingerprint=expected.clone();
@@ -57,9 +54,9 @@ public final class RoomTls {
         private final Set<SSLSocket> sockets=ConcurrentHashMap.newKeySet();
         private final ConcurrentMap<SSLSocket,Long> pending=new ConcurrentHashMap<>();
         private final Map<Integer,Peer> peers=new LinkedHashMap<>();
-        private final Map<String,Attempt> failures=new HashMap<>();
+
         private final Object lock=new Object();
-        private final byte[] session=nonce(), secret;
+        private final byte[] session=nonce();
         private final String host,room;
         private int nextId=2;
         private long revision=1;
@@ -67,7 +64,6 @@ public final class RoomTls {
         // Pre-JOIN handshake diagnostics only; never store PINs or peer identities.
         private volatile String handshakeFailureKind="none";
         public String handshakeFailureKind(){return handshakeFailureKind;}
-        private static final class Attempt {long start;int count;Attempt(long start){this.start=start;}}
         private final class Peer {
             final int id;final String name;final byte[] echo;final SSLSocket socket;
             final ArrayBlockingQueue<byte[]> outbound=new ArrayBlockingQueue<>(8);
@@ -78,13 +74,12 @@ public final class RoomTls {
             void send(byte[] data){if(!dead.get()&&!outbound.offer(data))stop();}
             void stop(){if(dead.compareAndSet(false,true)){closeSocket(socket);Thread t=writer;if(t!=null)t.interrupt();}}
         }
-        public static Server start(SSLContext ctx,InetAddress bind,int port,String host,String room,String pin)throws IOException{
-            return new Server(ctx,bind,port,host,room,pin);
+        public static Server start(SSLContext ctx,InetAddress bind,int port,String host,String room)throws IOException{
+            return new Server(ctx,bind,port,host,room);
         }
-        private Server(SSLContext ctx,InetAddress bind,int port,String host,String room,String pin)throws IOException{
-            RoomTls.pin(pin);this.host=RoomWire.name(host);this.room=RoomWire.name(room);
+        private Server(SSLContext ctx,InetAddress bind,int port,String host,String room)throws IOException{
+            this.host=RoomWire.name(host);this.room=RoomWire.name(room);
             if(bind==null||port<0||port>65535)throw new IOException("Invalid listener address");
-            secret=pin.getBytes(StandardCharsets.US_ASCII);
             listener=(SSLServerSocket)ctx.getServerSocketFactory().createServerSocket();
             try{listener.setReuseAddress(false);listener.setEnabledProtocols(protocols(listener.getSupportedProtocols()));listener.bind(new InetSocketAddress(bind,port),8);}
             catch(IOException|RuntimeException e){try{listener.close();}catch(IOException ignored){}throw e;}
@@ -111,17 +106,6 @@ public final class RoomTls {
             }
             for(Peer p:slow)p.stop();
         }
-        private boolean limited(String ip){
-            long time=now();synchronized(lock){Attempt a=failures.get(ip);return a!=null&&time-a.start<60000&&a.count>=5;}
-        }
-        private void badPin(String ip){
-            long time=now();synchronized(lock){
-                failures.entrySet().removeIf(e->time-e.getValue().start>=60000);
-                Attempt a=failures.get(ip);
-                if(a==null&&failures.size()<16){a=new Attempt(time);failures.put(ip,a);}
-                if(a!=null)a.count++;
-            }
-        }
         private void accept(){
             while(!closed)try{
                 SSLSocket s=(SSLSocket)listener.accept();
@@ -139,12 +123,9 @@ public final class RoomTls {
                 socket.setEnabledProtocols(protocols(socket.getSupportedProtocols()));socket.startHandshake();
                 tlsEstablished=true;
                 DataInputStream in=new DataInputStream(socket.getInputStream());DataOutputStream out=new DataOutputStream(socket.getOutputStream());
-                String ip=socket.getInetAddress().getHostAddress();
-                if(limited(ip)){reject(out,5);return;}
                 RoomWire.Join request;
                 try{request=RoomWire.parseJoin(RoomWire.decode(RoomWire.read(in)));}
                 catch(RoomWire.Incompatible e){reject(out,2);return;}
-                if(!MessageDigest.isEqual(secret,request.pin.getBytes(StandardCharsets.US_ASCII))){badPin(ip);reject(out,1);return;}
                 synchronized(lock){
                     if(closed)return;
                     if(peers.size()<3&&nextId<Integer.MAX_VALUE&&revision<0xffffffffL){
@@ -201,7 +182,7 @@ public final class RoomTls {
             try{listener.close();}catch(IOException ignored){}
             for(SSLSocket s:sockets)closeSocket(s);
             List<Peer> closing;
-            synchronized(lock){closing=new ArrayList<>(peers.values());Arrays.fill(secret,(byte)0);}
+            synchronized(lock){closing=new ArrayList<>(peers.values());}
             for(Peer p:closing)p.stop();
             ticker.shutdownNow();workers.shutdownNow();acceptor.interrupt();
         }
@@ -218,19 +199,25 @@ public final class RoomTls {
         private volatile String failure="";
         private volatile long sequence;
         private volatile long lastPong=now();
-        public static Client connect(SSLContext context,InetAddress address,int port,String name,String pin)throws IOException{
-            return new Client(context,address,port,name,pin);
+        public static Client connect(SSLContext context,InetAddress address,int port,String name)throws IOException{
+            return connect(context,address,port,name,()->false);
         }
-        private Client(SSLContext context,InetAddress address,int port,String name,String pin)throws IOException{
-            RoomTls.pin(pin);RoomWire.name(name);if(address==null||port<1||port>65535)throw new IOException("Invalid peer address");
+        static Client connect(SSLContext context,InetAddress address,int port,String name,java.util.function.BooleanSupplier cancelled)throws IOException{
+            return new Client(context,address,port,name,cancelled);
+        }
+        private Client(SSLContext context,InetAddress address,int port,String name,java.util.function.BooleanSupplier cancelled)throws IOException{
+            RoomWire.name(name);if(address==null||port<1||port>65535)throw new IOException("Invalid peer address");
+            if(cancelled.getAsBoolean())throw new IOException("Join cancelled");
             byte[] echo=nonce();socket=(SSLSocket)context.getSocketFactory().createSocket();
             ScheduledExecutorService deadline=Executors.newSingleThreadScheduledExecutor(RoomTls::thread);
             deadline.schedule(()->closeSocket(socket),5,TimeUnit.SECONDS);
+            deadline.scheduleAtFixedRate(()->{if(cancelled.getAsBoolean())closeSocket(socket);},0,50,TimeUnit.MILLISECONDS);
             try{
                 socket.setSoTimeout(3000);socket.setTcpNoDelay(true);socket.setSendBufferSize(8192);
                 socket.setEnabledProtocols(protocols(socket.getSupportedProtocols()));socket.connect(new InetSocketAddress(address,port),3000);socket.startHandshake();
                 in=new DataInputStream(socket.getInputStream());out=new DataOutputStream(socket.getOutputStream());
-                RoomWire.write(out,RoomWire.join(new RoomWire.Join(name,pin,echo)));
+                if(cancelled.getAsBoolean())throw new IOException("Join cancelled");
+                RoomWire.write(out,RoomWire.join(new RoomWire.Join(name,echo)));
                 RoomWire.Packet first=RoomWire.decode(RoomWire.read(in));
                 if(first.type==RoomWire.REJECT)throw new Rejected(RoomWire.parseReject(first));
                 if(first.type!=RoomWire.ACCEPT)throw new IOException("Expected room acceptance");

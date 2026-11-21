@@ -12,7 +12,7 @@ import java.util.*;
 public final class RoomWire {
     private RoomWire() {}
     public static final int JOIN=1, ACCEPT=2, ROSTER=3, PING=4, PONG=5, LEAVE=6, REJECT=7;
-    public static final int MAX_FRAME=512, MAX_PLAYERS=4, VERSION=1, PROFILE=1;
+    public static final int MAX_FRAME=512, MAX_PLAYERS=4, VERSION=2, PROFILE=2;
     private static final byte[] IMAGE=hex("c5bfed25449c8212d7a976f15246e87ead57713f");
     public static final class Incompatible extends IOException {
         private static final long serialVersionUID=1L;
@@ -24,9 +24,9 @@ public final class RoomWire {
         private Packet(int type,byte[] body){this.type=type;this.body=body;}
     }
     public static final class Join {
-        public final String name, pin;
+        public final String name;
         public final byte[] nonce;
-        public Join(String name,String pin,byte[] nonce){this.name=name;this.pin=pin;this.nonce=nonce.clone();}
+        public Join(String name,byte[] nonce){this.name=name;this.nonce=nonce.clone();}
     }
     public static final class Player {
         public final int id;
@@ -81,10 +81,6 @@ public final class RoomWire {
         return normalized;
     }
     private static void nonce(byte[] b)throws IOException{if(b==null||b.length!=16)throw new IOException("Bad nonce length");}
-    private static void pin(String s)throws IOException {
-        if(s==null||s.length()!=8)throw new IOException("PIN requires eight digits");
-        for(int i=0;i<s.length();i++)if(s.charAt(i)<'0'||s.charAt(i)>'9')throw new IOException("Invalid PIN");
-    }
     private static byte[] frame(int type,byte[] body)throws IOException {
         if(type<JOIN||type>REJECT||body.length>MAX_FRAME-8)throw new IOException("Invalid frame");
         ByteArrayOutputStream b=new ByteArrayOutputStream();DataOutputStream out=new DataOutputStream(b);
@@ -112,17 +108,17 @@ public final class RoomWire {
     }
     private static void end(DataInputStream in)throws IOException{if(in.available()!=0)throw new IOException("Trailing data");}
     public static byte[] join(Join value)throws IOException {
-        nonce(value.nonce);pin(value.pin);
+        nonce(value.nonce);
         ByteArrayOutputStream b=new ByteArrayOutputStream();DataOutputStream out=new DataOutputStream(b);
         out.write(IMAGE);out.writeShort(PROFILE);out.write(value.nonce);putName(out,value.name);
-        out.write(value.pin.getBytes(StandardCharsets.US_ASCII));return frame(JOIN,b.toByteArray());
+        return frame(JOIN,b.toByteArray());
     }
     public static Join parseJoin(Packet p)throws IOException {
         DataInputStream in=body(p,JOIN);byte[] image=new byte[20];in.readFully(image);
         if(!MessageDigest.isEqual(image,IMAGE)||in.readUnsignedShort()!=PROFILE)throw new Incompatible();
         byte[] nonce=new byte[16];in.readFully(nonce);String name=getName(in);
-        byte[] digits=new byte[8];in.readFully(digits);String pin=new String(digits,StandardCharsets.US_ASCII);pin(pin);end(in);
-        return new Join(name,pin,nonce);
+        end(in);
+        return new Join(name,nonce);
     }
     private static void roster(int self,long revision,List<Player> players)throws IOException {
         if(self<1||revision<1||revision>0xffffffffL||players.isEmpty()||players.size()>MAX_PLAYERS)

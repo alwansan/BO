@@ -1,3 +1,5 @@
+جلسة34: ثبت أن آخر محاولات الهاتفين توقفت عند تحققPIN الفارغ قبل الشبكة. أزيل الشرط وأضيف اكتشاف الأجهزة الخاملة. ما زال تحققAndroid/هاتفين مطلوباً؛ عدم اكتشاف أقرانVPN خارج/24 أو مع عزل المرور يحتاجIPيدوي. لا gameplayبعد.
+
 ## SESSION33 — حالات مفتوحة من تجربة هاتفين
 - OWNER-LAN-JOIN: الجهازان على Wi-Fi نفسه لكن لا دليل authenticated JOIN/2/4؛ القديم يحتاج manual IPv4/fingerprint/PIN، ولا سجل network. الجديدة تضيف discovery+safe error codes؛ real device acceptance PENDING.
 - OWNER-ROOM-UI: شاشة Activity منفصلة لا تشبه BLACK وتتسبب بمسار خروج/Back؛ source fix Dialog in BlackActivity and concise Flash buttons. لا ادعاء نجاح الجهاز قبل الاختبار. الواجهة styled وليس 100% Flash.

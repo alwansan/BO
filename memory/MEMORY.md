@@ -1,3 +1,6 @@
+## الحالة الحالية — جلسة34
+طلب المالك الحالي يلغي PIN والتحقق اليدوي والبورت في الواجهة. السبب المؤكد للعينة الأخيرة HOST_INPUT_ERROR/JOIN_INPUT_ERROR قبل الاتصال؛ شاهدنا صور CL فعلياً. أضيف اكتشاف الأجهزة الخاملة والغرف واتصال تلقائي ومنفذ24872. اختبارات JVM الثمانية وتحويل المصدر7 ناجحة محلياً؛ Android/APK قيد التحقق، لا هاتفين ناجحين أو gameplay. اقرأ جلسة34 أولاً؛ السياسات اليدوية في نصوص جلسة33 أدناه تاريخية ومتجاوزة.
+
 ## Session33 — 2026-11-21, two-device room-net feedback and repairs
 Two phones on same Wi-Fi attempted HOST/JOIN; game runs on both and XBE matches c5bfed... but real JOIN not shown. Owner reports native Android form ugly, Back exits game, Leave fails to navigate, discovery absent; second phone exported sparse/empty logs. CL image files indexed, binary not available to inspect pixels. Code fixes on experiment/black-coop: live UDP 1510 discovery with full TLS pin metadata, same-BlackActivity styled RoomOverlay with native game CO-OP rows, distinct BACK/LEAVE, first-trust fingerprint check and PIN, sanitized persistent room logs in Android/data/<package>/files/logs. Preflight 44930785583 SUCCESS, JVM TLS 44930785371 SUCCESS. New Windows APK queued; not tested on phones. Full details memory/sessions/2026-11-21_bo-coop-33-owner-two-phone-lan-feedback.md and docs/ROOM_NETWORK_DEVICE_TEST_AR.md. No gameplay co-op or player body.
 
