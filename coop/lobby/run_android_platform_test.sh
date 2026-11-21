@@ -81,9 +81,54 @@ fi
 # and ask PackageManager to install it directly. No game assets are involved.
 remote=/data/local/tmp/bo_coop_tls_platform.apk
 timeout -k 5s 40s "$adb" -s emulator-5554 push "$out/test.apk" "$remote"
-installed="$(timeout -k 5s 60s "$adb" -s emulator-5554 shell pm install -r -t "$remote" | tr -d '\r')"
-printf '%s\n' "$installed"
-[[ "$installed" == *Success* ]]
+# sys.boot_completed can precede PackageManager readiness on a cold AVD.
+# Fail closed, but avoid treating a bounded pm startup stall as a code failure.
+package_ready=false
+for attempt in {1..12}; do
+    if timeout -k 2s 8s "$adb" -s emulator-5554 shell cmd package list packages android 2>/dev/null | tr -d '\r' | grep -q '^package:android
+timeout -k 3s 10s "$adb" -s emulator-5554 shell rm -f "$remote" || true
+timeout -k 5s 90s "$adb" -s emulator-5554 shell am instrument -w -r org.bocoop.black.tlsplatform/com.racas.black.coop.PlatformInstrumentation | tee "$out/result.txt"
+if command -v rg >/dev/null 2>&1; then
+    passed=$(rg -c 'TLS_PLATFORM_PASS' "$out/result.txt" || true)
+else
+    passed=$(grep -c 'TLS_PLATFORM_PASS' "$out/result.txt" || true)
+fi
+if [[ "$passed" != 1 ]]; then
+    timeout -k 3s 10s "$adb" -s emulator-5554 logcat -d -s BlackTlsPlatform:E AndroidRuntime:E || true
+    exit 1
+fi
+; then
+        package_ready=true
+        break
+    fi
+    echo "Waiting for Android PackageManager service ($attempt/12)"
+    sleep 2
+done
+if [[ "$package_ready" != true ]]; then
+    echo "Emulator PackageManager never became ready"
+    exit 1
+fi
+installed=false
+for attempt in {1..3}; do
+    result="$(timeout -k 5s 35s "$adb" -s emulator-5554 shell pm install -r -t "$remote" 2>&1 | tr -d '\r')" || result=""
+    if [[ "$result" == *Success* ]]; then
+        installed=true
+        break
+    fi
+    # pm may have committed the package just before adb timed out.
+    existing="$(timeout -k 2s 8s "$adb" -s emulator-5554 shell pm path org.bocoop.black.tlsplatform 2>/dev/null || true)"
+    if [[ "$existing" == *package:* ]]; then
+        installed=true
+        break
+    fi
+    echo "Bounded PackageManager install retry $attempt/3 (cold AVD service)"
+    sleep 3
+done
+if [[ "$installed" != true ]]; then
+    echo "Synthetic APK could not be installed; no owner game code executed"
+    exit 1
+fi
+echo 'BO_TLS_ANDROID_PACKAGE_INSTALL_PASS'
 timeout -k 3s 10s "$adb" -s emulator-5554 shell rm -f "$remote" || true
 timeout -k 5s 90s "$adb" -s emulator-5554 shell am instrument -w -r org.bocoop.black.tlsplatform/com.racas.black.coop.PlatformInstrumentation | tee "$out/result.txt"
 if command -v rg >/dev/null 2>&1; then
