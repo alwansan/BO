@@ -1,3 +1,8 @@
+## Session40 test gate update
+Real Android29 emulator now passed again on run44956919973 after bounded PackageManager retry and fast `bash -n`, confirmed TLS_PLATFORM_PASS. Follow-on Android platform test added for combined rotated-safe MediaStore log export and tamper rejection, commit b21e0e01, CI44957104337 check live. JVM44957104351 and source44957104363 and UDP44957104323 PASS. No phone trial requested until real shared world/human ally milestone. See session40 and docs/MAJOR_DEVICE_TEST_GATE_AR.md.
+
+---
+
 ## Session40 — successful offline story static audit and safe always-on room evidence (2026-11-22)
 Owner policy is GitHub Actions/synthetic/emulator first; **only one substantial phone test** once same-world/remote-human integration is ready, with all small evidence captured automatically and exported together. No test requested now. Actions44956138064 SUCCESS maps pinned c5 XBE executable candidate windows; metadata artifact14727458498 and memory/evidence/STORY-ENTRY-XBE-STATIC-44956138064.json, NOT scene-loader proof. New RoomTls fixed lifecycle codes -> RoomSession persistent RoomDiagnostics; rotated safe logs included in one 128KiB max export and externally modified lines rejected. JVM real TLS44956473684 SUCCESS (STORY_DIAGNOSTICS_PASS) and source44956473685 SUCCESS; Android29 44956473707 and lobby-only APK44956473687 statuses to verify. Full story/host game thread and real remote AllyBody/AI combat quest still OPEN. Session memory/sessions/2026-11-22_bo-coop-40-ci-first-story-audit-automatic-evidence.md.
 
