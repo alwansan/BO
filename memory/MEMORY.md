@@ -63,3 +63,6 @@ Run 44841534370 على code 08fd55b4cb1640b4b56445d43e1801dbc635b1a3 completed/s
 مراجعة baseline قبل CI: الاستيراد داخل assets الخاصة فقط، لا صلاحيات تخزين واسعة، artifacts لا تصعد قبل نجاح تحقق APK. source packaging preview الحقيقي PASS واختبارات4/4 PASS. لا نتيجة بناء Android بعد.
 
 Baseline CI بدأ فعلياً: run44845056293، job136662594366، code6aa718839d912d8924af62f11c4c55999847c24e؛ تابع نفس run ولا تعيد تشغيله بسبب مهلة رصد. قبول البناء/الفحص/الهاتف لم يثبت بعد. دليل تجربة الناتج عند نجاحه docs/CANDIDATE_BASELINE_DEVICE_AR.md. Python regression44845056127 SUCCESS؛ source audit44845056215 قيد الفحص.
+
+### Baseline أول محاولة — تشخيص Windows CLI
+Run44845056293 على code6aa718839d912d8924af62f11c4c55999847c24e فشل job136662594366 قبل أي native compile: Gradle رأى Task `.5.0-baseline-candidate1` بسبب tokenization لوسيط PowerShell غير المقتبس. اقتبست وسيطي -PversionName و-PversionCode كـstrings كاملين؛ لم يتغير source/SDK أو إعداد اللعبة. الاختبارات وتجهيز الحزمة وإعادة الترجمة نجحت قبله، وAPK/metadata uploads تخطيت كما يجب. source audit44845056215 SUCCESS وUDP44845056127 SUCCESS. لا APK أو runtime acceptance من هذه المحاولة.

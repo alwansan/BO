@@ -120,7 +120,7 @@ jobs:
         env:
           CMAKE_BUILD_PARALLEL_LEVEL: 2
         run: |
-          .\gradlew.bat assembleDebug --no-daemon --max-workers=2 "-Dorg.gradle.jvmargs=-Xmx2g" -PversionName=1.5.0-baseline-candidate1 -PversionCode=1
+          .\gradlew.bat assembleDebug --no-daemon --max-workers=2 "-Dorg.gradle.jvmargs=-Xmx2g" "-PversionName=1.5.0-baseline-candidate1" "-PversionCode=1"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Verify package signature ABI and real compile image before publishing
         shell: python

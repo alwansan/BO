@@ -100,12 +100,13 @@
     },
     "DEVICE_BASELINE": "Original-phone question answered and image identified. NEW isolated rebuilt candidate baseline still unbuilt/untested.",
     "CANDIDATE_BUILD": {
-      "status": "ci_running",
+      "status": "first_ci_failed_before_native_compile; quoting fix prepared",
       "package": "org.bocoop.black.baseline",
       "phoneTested": false,
       "run": 44845056293,
       "job": 136662594366,
-      "code": "6aa718839d912d8924af62f11c4c55999847c24e"
+      "code": "6aa718839d912d8924af62f11c4c55999847c24e",
+      "firstFailedRun": 44845056293
     }
   },
   "apk": null,
