@@ -1,3 +1,12 @@
+## ACTIVE Session39 — verified TLS handoff to RoomSession, engine remains next gate (2026-11-22)
+- ENGINE BRIDGE STAGE 1 SOURCE DONE: commits `86faa014` / `5370dcae` provide `RoomSession.bindStoryGameThread`, read-only story status, host-only PREPARE, game-thread scene-loaded READY, host cancel and thread binding generation reset. This still depends on **an unimplemented, independently verified BLACK game-thread callback**; calling these from synthetic JVM test does not prove game loading.
+- JVM real TLS test `44954581676` SUCCESS confirmed log strings `SESSION_STORY_BRIDGE_PASS`, `STORY_TLS_PASS`, `ROOM_REHOST_PASS`; source staging `44954581651` SUCCESS; Android29 `44954581718`, Android lobby-only APK `44954581624` verify live before acceptance.
+- ENGINE BRIDGE STAGE 2 OPEN: verify c5 image mission choice `sub_00124CF0` and actual game-thread loaded scene/epoch and JNI. Do not launch a second solo campaign on guest. Avoid writing unlock table, guest actors, NPC AI brain or saves from TLS worker.
+- BODY, INPUT, WORLD, AI/QUEST, two-phone same-world acceptance OPEN; only original local first-person and independently owned remote human ally fullbody appearance is acceptable.
+- Evidence: user nine screenshots 2/4 host+guest; CL last room logs show old rapid Host/Leave/Host bind races; original primary arms-model capture already present. No repeat ISO/probe request. See Session39 docs and RESTORE.
+
+---
+
 ## ACTIVE Session38 progress — actual real room TLS mission control
 - VIEW-001 value-only local POV vs remote human AllyBody: PASS C++ CI44951984399, REAL engine render OPEN.
 - MISSION-001 source gate: PASS CI44951984399, corrected mission index0 and stage0 accepted.
