@@ -1,3 +1,10 @@
+## Session43 APK packaging + external reference status
+- CI44962275637 FAILURE was strict Windows packaging diff-list missing newly staged read-only `src/game/difficulty.cpp` and two `src/coop` header names, NOT compilation/gameplay or unit failure. Corrected exact finite whitelist in workflow commit561eacc0. New CI44962611024 check live.
+- Peterson047 public TDM reference is binary-only; linked BLACK-Coop source 404 on attempted read. Do not claim reused source, player renderer or mission sync. Third-party `body.bca` animation file permission limited to original mod; must NOT copy. See docs/REFERENCE_BLACK_XBEMULTIPLAYER_20261122_AR.md.
+- Actual host selected BLACK story, guest scene-loaded proof and world/AI/quest sync and human remote full-body visuals still OPEN. CI-first, no phone requests.
+
+---
+
 ## Session43 research and verified limitations
 - Real c5 XBE private metadata44961768279 PASS: both kWorld write sites in one executable section, 9B apart with EAX/EBX sources, direct branch to second; no validated function boundaries/ABI, no known mission ID, stage-loaded callback or scene epoch. EBX possible zero-instruction in previous linear path is NOT proof of zero across branch. Keep actual story integration blocked.
 - Staging native source observer at existing original player update and difficulty wrapper added; C++ tests44962215874 and source preflight44962275672 PASS. Diagnostic codes are safe + bounded, do not indicate actual game loads, and are not connected to STORY_READY. Android full room-only APK44962275637 check live before claiming compile success. Never ask owner to install this just for these markers.
