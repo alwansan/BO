@@ -36,8 +36,10 @@ def summarize(path):
     # in the serialized summary, including in CI or error messages.
     positions_first={}
     position_variation_keys=set()
-    clip_first={}
-    multiple_clip_keys=set()
+    clip_field_first={}
+    clip_field_changed_keys=set()
+    animation_label_first={}
+    animation_label_changed_keys=set()
     valid_position=collections.Counter()
     valid_health=collections.Counter()
     valid_resource=collections.Counter()
@@ -112,10 +114,18 @@ def summarize(path):
                     first=positions_first.setdefault(key,tuple(position))
                     if any(abs(a-b)>0.1 for a,b in zip(position,first)):
                         position_variation_keys.add(key)
-            if event=="animation" and type(clip) is int and 0<clip<=0xffffffff:
-                prior=clip_first.setdefault(key,clip)
-                if prior!=clip:
-                    multiple_clip_keys.add(key)
+            if event=="animation":
+                # clip_hash is an UNVERIFIED field read from clip+0x18.
+                # It is not proven to be an animation clip identity/hash.
+                if type(clip) is int and 0<clip<=0xffffffff:
+                    prior=clip_field_first.setdefault(key,clip)
+                    if prior!=clip:
+                        clip_field_changed_keys.add(key)
+                label=rec.get("anim_name")
+                if isinstance(label,str) and 0<len(label)<=32:
+                    prior_label=animation_label_first.setdefault(key,label)
+                    if prior_label!=label:
+                        animation_label_changed_keys.add(key)
             ms=rec.get("ms")
             if type(ms) is int and 0<=ms<=1800000:
                 sample_ms_min=ms if sample_ms_min is None else min(ms,sample_ms_min)
@@ -172,13 +182,18 @@ def summarize(path):
         "lod_correlation_position_variation":sum(
             k in position_variation_keys and "lod" in kinds_seen
             for k,kinds_seen in kinds_by_correlation.items()),
-        "lod_animation_multi_clip_correlation":sum(
-            k in multiple_clip_keys and "lod" in kinds_seen and
+        "lod_animation_clip_field_0x18_changed":sum(
+            k in clip_field_changed_keys and "lod" in kinds_seen and
+            "animation" in kinds_seen
+            for k,kinds_seen in kinds_by_correlation.items()),
+        "lod_animation_label_changed":sum(
+            k in animation_label_changed_keys and "lod" in kinds_seen and
             "animation" in kinds_seen
             for k,kinds_seen in kinds_by_correlation.items()),
     }
     # All motion thresholds are arbitrary >0.1 in unknown source units,
-    # not meters; overlap is not ownership or an actor lifetime.
+    # not meters; the field at clip+0x18 is not a proven clip identifier;
+    # neither label change nor overlap proves ownership or actor lifetime.
     # No epoch numbers, pointer IDs or thread IDs in the report.
     return {
         "diagnostic_flags": flags,

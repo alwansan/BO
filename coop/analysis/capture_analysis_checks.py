@@ -188,8 +188,8 @@ class SummaryChecks(unittest.TestCase):
               rec("animation",1,clip=101010),
               rec("animation",1,clip=101011),
               rec("lod",2,[0,10,20]),rec("lod",2,[0.11,10,20]),
-              rec("animation",2,clip=888888),
-              rec("animation",2,clip=888889),
+              dict(rec("animation",2,clip=888888),anim_name="PRIVATE_LABEL_A"),
+              dict(rec("animation",2,clip=888889),anim_name="PRIVATE_LABEL_B"),
               rec("lod",3,[2,3,4]),rec("lod",3,[2.05,3,4]),
               rec("animation",3,clip=888888),
               rec("animation",3,clip=888888),
@@ -199,11 +199,13 @@ class SummaryChecks(unittest.TestCase):
         self.assertEqual(report["correlation_motion_heuristics"],{
             "local_player_correlation_position_variation":1,
             "lod_correlation_position_variation":1,
-            "lod_animation_multi_clip_correlation":1
+            "lod_animation_clip_field_0x18_changed":1,
+            "lod_animation_label_changed":1
         })
         self.assertFalse(report["motion_is_actor_lifecycle_proof"])
         output=json.dumps(report)
-        for sentinel in ("99900.7","99900.9","440044","101010","888888"):
+        for sentinel in ("99900.7","99900.9","440044","101010","888888",
+                         "PRIVATE_LABEL_A","PRIVATE_LABEL_B"):
             self.assertNotIn(sentinel,output)
 
     def test_integer_and_bool_guards(self):
