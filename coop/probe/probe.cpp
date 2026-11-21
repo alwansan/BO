@@ -14,6 +14,10 @@
 #include <mutex>
 #include <sys/syscall.h>
 
+// The X86_FUNC/X86_EXTERN_FUNC hook macros use kernel context types.
+// Keep the same namespace convention as pinned src/game/cheats.cpp/hooks.cpp.
+using namespace kernel;
+
 namespace bo_probe {
 namespace {
 std::atomic<bool> enabled{false};
