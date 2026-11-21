@@ -565,14 +565,14 @@
       "sampleSize": 130243
     },
     "COOP_ROOM_MENU": {
-      "status": "WINDOWS_CRLF_FIX_13_PREPARER_PASS_RETRY_PENDING",
-      "run": 44913282838,
+      "status": "CRLF_FIX_CORE_PASS_ANDROID_BUILD_IN_PROGRESS",
+      "run": 44913654405,
       "package": "org.bocoop.black.roomui",
       "hostJoinEnabled": false,
       "topLevelUnderSettings": "IMPLEMENTED_NOT_DEVICE_VERIFIED",
       "topLevelFeasibility": "Pinned source exit_menu.cpp already clones a Quit button below Options",
       "design": "docs/ROOM_TOP_LEVEL_FEASIBILITY_AR.md",
-      "sourceCommit": "bf9a5c8199f28983865db20016cd8bb737cb13b5",
+      "sourceCommit": "96f69b6c8e912760fedaf5d7add52928f3b212f7",
       "failedRun": 44913282838,
       "failureReason": "Windows CRLF in exit_menu.cpp raw bytes prevented multiline source anchor match; normalized CRLF to LF with reproducing regression RED then GREEN"
     },
@@ -611,6 +611,17 @@
       "sourceCommit": "1b27ecc26e5417b91eb84208479e039e9b792521",
       "artifact": 14696342069,
       "sha256": "bfd7968b04851d8c814bdb88563b1efb8e8b9b88695d2c161c077111bd3c9897"
+    },
+    "REAL_PLAYER_BODY": {
+      "status": "NATIVE_ACTOR_CONTROLLER_ACQUISITION_UNIMPLEMENTED",
+      "required": "independent full body for each human, including host representation on peers",
+      "localVtableDraw": "1D25D0",
+      "npcVtableDraw": "1C6150",
+      "localDrawWritesThrough": "actor+49F; outside NPC stride3C0",
+      "fullMainCharacterBodyAssetVerified": false,
+      "nullBrainRegisteredProxy": "REJECTED_DAMAGE_NULL_DEREFERENCE",
+      "brainPool": "16 preconstructed, stride1FE0, not player capacity proof",
+      "noTwoPhoneTestYet": true
     }
   },
   "apk": {
@@ -640,7 +651,7 @@
     "poolReader": "coop/probe3/pool_snapshot.hpp",
     "poolReaderStatus": "OWNER_PROBE3_AND_PROBE4_CAPTURE_ACCEPTED"
   },
-  "executionStatus": "room_ui_crlf_regression_fixed_ci_retry_pending",
+  "executionStatus": "room_ui_retry_44913654405_android_build_in_progress",
   "ownerClarifications": {
     "session": 28,
     "previousPhoneTests": "solo local human plus enemy/friendly NPCs only; never two phones",
@@ -649,5 +660,6 @@
     "npcPolicy": "preserve existing NPC behavior; multiplayer targeting is an explicit verification/integration task",
     "bisoAuthorization": "new experimental branch and ISO content changes/repack via Actions when necessary; main unchanged",
     "sharedChat": "fetch failed; content not read"
-  }
+  },
+  "integrationRoadmap": "docs/COOP_INTEGRATION_ROADMAP_AR.md"
 }
