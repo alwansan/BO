@@ -1,0 +1,26 @@
+# BO-COOP Session40 — CI-first owner test policy + story entry audit + automatic room evidence (2026-11-22)
+
+## Latest owner directive, mandatory in every future session
+Owner requests NO fragmented small phone tests. GitHub Actions static/synthetic/Android emulator and builds should handle everything feasible. Only ask for a real physical two-phone trial once a **major meaningful feature** cannot otherwise be proven (host-selected real shared campaign/remote human ally visualization/movement/game world). During the one combined trial automatically capture all smaller uncertainties as bounded safe diagnostics so no extra trials are needed. Owner assets and primary arms-model capture are already available. This directive was added to AGENTS.md, MEMORY, PLAN, ISSUES, RESTORE, and `docs/MAJOR_DEVICE_TEST_GATE_AR.md`. **NO owner test is needed at this moment.**
+
+## Confirmed starting state
+- Previous verified branch HEAD `23a4ed46ad1bbab9397ea152ee17460cbcfa3434`, the Session39 handoff.
+- v3 lobby Android build run **44954581624 SUCCESS** (lobby-only; `black-room-network-android-arm64-NO-GAMEPLAY-COOP` artifact 14727218458 and metadata 14727302986). Still no shared mission/actor.
+- JVM TLS source Session39 44954581676 PASS, Android29 emulator 44954581718 PASS, source preflight 44954581651 PASS.
+- User-visible historic host/guest 2/4 lobby proves real LAN, not story gameplay.
+
+## New actual source and CI work
+1. `coop/analysis/story_entry_static.py` and synthetic tests `test_story_entry_static.py`, new Actions workflow `.github/workflows/black-coop-story-xbe-static.yml` committed. Read owner ISO only on ephemeral Actions Runner; reassemble/validate pinned original c5 XBE and disassemble three fixed 160-byte executable windows in private temporary directory. Never upload raw XBE, ISO, code bytes or disassembly.
+2. Owner static run **44956138064 SUCCESS** for synthetic and owner-private jobs, literal `BO_STORY_XBE_STATIC_PASS` and `BO_STORY_XBE_SYNTHETIC_PASS`. Safe metadata artifact **14727458498**, preserved as `memory/evidence/STORY-ENTRY-XBE-STATIC-44956138064.json`. 10 executable sections; candidate 00124CF0 first 160B: 46 decoded instructions, 0 calls, 7 conditional branches; 0011B890: 44/2 calls/5 conditional; 00124F30: 35/6 calls/0 conditional. No return within any fixed window. These counts DO NOT prove mission ID, real level load, ABI, hook safety or shared play. Source docs updated in `docs/BLACK_STORY_ENTRY_AUDIT_AR.md`.
+3. `RoomTls.java` new restricted constant-only story lifecycle event codes on host and guest: prepared, host loaded-confirmation, guest READY, committed, aborted, roster invalidation. `RoomSession.java` connects these to its existing reporter; `RoomAppRooms` already forwards to persistent `RoomDiagnostics.event` even when room UI is dismissed. No names/PIN/IP/identity/fingerprints/keys/addresses are accepted into codes. `SessionTest.java` now asserts these codes over real TLS loopback and that they contain no sensitive free-form details. Source commits `5c2b82b8`, `8db000a2`, `6c315af9`.
+4. `RoomDiagnostics.java` export combines current and previous rotated safe event segments, caps combined export at 128KiB and checks every line for timestamp + whitelisted event code, rejecting tampered external files. Commits `6dc4de0b`, `aa802da8`. Enables one export per phone at a major trial instead of losing early records when logs rotate.
+5. Real JVM story test run **44956473684 SUCCESS** read job log: literal `STORY_DIAGNOSTICS_PASS`, `SESSION_STORY_BRIDGE_PASS`, `STORY_TLS_PASS`, `ROOM_REHOST_PASS`. Source network preflight **44956473685 SUCCESS**. Android29 **44956473707** and lobby-only APK **44956473687** were still in progress at writing; verify live before marking complete.
+
+## Remaining real game integration blockers
+- Owner c5 true game-thread mission selection and **actual** stage-loaded scene epoch callback not proven. `sub_00124CF0` is candidate only; frontend Flash page change and engine frame counter are NOT scene load. Need verified loader plus JNI callback to `RoomSession` before sending READY.
+- Real independent render/rig for OTHER human players (FULLBODY ALLY LOOK, no NPC AI brain) not created. Local user retains original first-person camera/arms/weapon.
+- Remote human input/transform/weapon animation, authoritative host AI/enemies/damage/objectives/stage transitions/world replication remain open. Two phones in one world untested.
+- No owner phone trial needed. Future trial is one deliberate major acceptance with automatic safe bounded diagnostic package, not repeated small experiments.
+
+## Session restoration
+Read AGENTS.md, RESTORE, STATE, docs/MAJOR_DEVICE_TEST_GATE_AR.md, this Session40, BLACK_STORY_ENTRY_AUDIT, docs/ROOM_STORY_TLS_PROTOCOL_AR.md, then Session39/38; check live HEAD and Actions. Write ONLY `alwansan/BO:experiment/black-coop`; no main, ISO, save modification, keys, copied unlicensed binaries. Update state and RESTORE after further work.
