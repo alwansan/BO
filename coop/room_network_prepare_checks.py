@@ -65,6 +65,10 @@ class RoomNetPrepareTests(unittest.TestCase):
             # loaded campaign stage. Source-only witness; never sends READY.
             native=(root/'src/game/cheats.cpp').read_text(encoding='utf-8')
             self.assertIn('blackcoop::ObserveLocalWorldTick(R32(kWorld))',native)
+            difficulty=(root/'src/game/difficulty.cpp').read_text(encoding='utf-8')
+            self.assertIn('blackcoop::ObserveMissionLaunchCandidate()',difficulty)
+            self.assertIn('__imp__sub_00124CF0(ctx, base)',difficulty)
+            self.assertNotIn('reportSceneLoadedFromGameThread',difficulty)
             self.assertIn('#include "coop/room_world_tick.hpp"',native)
             witness=(root/'src/coop/room_world_tick.hpp').read_text(encoding='utf-8')
             guard=(root/'src/coop/world_tick_contract.hpp').read_text(encoding='utf-8')
