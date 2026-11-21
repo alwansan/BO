@@ -827,7 +827,15 @@
       "actualStory": false,
       "physicalPhoneTrial": false,
       "reportLogContentWhitelist": true,
-      "eventLogRotatedSegmentsCombined": true
+      "eventLogRotatedSegmentsCombined": true,
+      "latestJvmRun": 44956739261,
+      "android29RetryRun": 44956739205,
+      "android29InitialFailureRun": 44956473707,
+      "android29InitialFailureCause": "SYNTHETIC_EMULATOR_PM_INSTALL_TIMEOUT_124_BEFORE_TEST",
+      "android29RetryFixCommit": "449cc1d78f6d84dbc6876baf113e7de73ed27c44",
+      "android29RetryStatus": "CHECK_LIVE",
+      "newAndroidLobbyOnlyApkRun": 44956739241,
+      "newAndroidLobbyOnlyApkStatus": "CHECK_LIVE"
     }
   },
   "pending": {
@@ -1001,7 +1009,7 @@
     "deviceTested": true,
     "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "Session40: use owner XBE static report memory/evidence/STORY-ENTRY-XBE-STATIC-44956138064.json and docs/BLACK_STORY_ENTRY_AUDIT_AR.md; validate real mission scene loader/epoch + game thread and narrow JNI before invoking RoomSession facade. Then independently render human remote AllyBody, share input/world/combat/quest; CI first. Ask owner for ONE combined two-phone major acceptance ONLY after these major gates. Android29 CI44956473707 and room-only APK44956473687 check live.",
+  "next": "No phone test. Fix/verify Android29 cold PackageManager CI run44956739205 and lobby-only build44956739241. After CI, prioritize verified actual BLACK mission selection/loaded scene game-thread callback and independent fullbody remote human AllyBody for host single shared world. Preserve owner CI-first major test policy.",
   "latestHandoff": {
     "date": "2026-11-22",
     "session": 40,
@@ -1042,7 +1050,7 @@
     "fullbodyRemoteHumanRigImplemented": false,
     "actualBlackSceneLoaded": false
   },
-  "executionStatus": "Session40: owner XBE 3 candidate executable windows verified in runner CI44956138064; automatic TLS story safe codes with JVM real sockets pass CI44956473684, source preflight44956473685. Rotated room event exports preserved and whitelisted; Android29 and lobby-only APK runs open. No BLACK world/scene/remote ally human gameplay. Owner phone trial NOT requested.",
+  "executionStatus": "Session40: owner XBE static 44956138064 SUCCESS, JVM story safe code 44956739261 SUCCESS, stage preflight44956739276 SUCCESS. Android29 previously failed before tests due PackageManager install timeout; bounded readiness/retry source fix449cc1d7, rerun44956739205 pending; lobby-only APK44956739241 pending. Actual BLACK co-op gameplay/actor/world absent. Owner trial NOT requested.",
   "ownerClarifications": {
     "session": 28,
     "previousPhoneTests": "Solo gameplay and two-phone real LAN lobby now confirmed, but no two-phone SAME WORLD gameplay",
@@ -1070,7 +1078,7 @@
     "storyProfile": 3,
     "storyJVMRun": 44952822531,
     "android29StoryRun": 44952822499,
-    "sourcePreflightRun": 44952822545,
+    "sourcePreflightRun": 44956739276,
     "rapidRehostCITest": 44953176046,
     "rapidRehostTestStatus": "PASS_4_REAL_TCP_RESTARTS_AND_ACTIVE_LISTENER_REFUSED",
     "latestOwnerTestedApkRun": 44946597973,
@@ -1086,11 +1094,18 @@
     "storyBridgeSourcePreflight": 44954581651,
     "gameThreadHookVerified": false,
     "ownerPhoneV3Tested": false,
-    "androidLobbyOnlyApkRun": 44956473687,
+    "androidLobbyOnlyApkRun": 44956739241,
     "xbeStaticRun": 44956138064,
-    "safeDiagnosticsJvmRun": 44956473684,
-    "appAndroid29Run": 44956473707,
-    "deviceTestRequiredNow": false
+    "safeDiagnosticsJvmRun": 44956739261,
+    "appAndroid29Run": 44956739205,
+    "deviceTestRequiredNow": false,
+    "android29PreviousFailedRun": 44956473707,
+    "android29PreviousFailure": "COLD_EMULATOR_PM_INSTALL_TIMEOUT_124_BEFORE_INSTRUMENTATION",
+    "android29RetrySourceCommit": "449cc1d78f6d84dbc6876baf113e7de73ed27c44",
+    "android29RetryResult": "CHECK_LIVE",
+    "androidLobbyOnlyApkResult": "CHECK_LIVE",
+    "safeDiagnosticsJvmStatus": "SUCCESS",
+    "sourcePreflightStatus": "SUCCESS"
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
