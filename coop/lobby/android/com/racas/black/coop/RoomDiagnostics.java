@@ -75,7 +75,7 @@ public final class RoomDiagnostics {
             try(OutputStream stream=resolver.openOutputStream(created,"w")){
                 if(stream==null)throw new java.io.IOException("MediaStore stream unavailable");
                 byte[] bytes=contents.getBytes(StandardCharsets.UTF_8);
-                if(bytes.length>65536)throw new java.io.IOException("Oversized diagnostics");
+                if(bytes.length>131072)throw new java.io.IOException("Oversized diagnostics");
                 stream.write(bytes);stream.flush();
             }
             ContentValues ready=new ContentValues();
@@ -88,21 +88,42 @@ public final class RoomDiagnostics {
             return false;
         }
     }
+    private static String readSegment(File segment)throws java.io.IOException{
+        if(segment==null||!segment.isFile())return "";
+        // Only files written by our code-filtered reporter are eligible.
+        if(segment.length()>65536)throw new java.io.IOException("Oversized room log segment");
+        try(FileInputStream in=new FileInputStream(segment)){
+            byte[] bytes=new byte[(int)segment.length()];
+            int count=0;
+            while(count<bytes.length){
+                int n=in.read(bytes,count,bytes.length-count);
+                if(n<0)break;
+                if(n==0)throw new java.io.IOException("Short room diagnostics read");
+                count+=n;
+            }
+            if(count!=bytes.length)throw new java.io.IOException("Truncated room log");
+            return new String(bytes,StandardCharsets.UTF_8);
+        }
+    }
+    /** One combined export keeps the previous rotated segment and current
+     *  safe codes. No extra owner phone test is needed for the earlier events. */
     public static String read(){
         synchronized(lock){
-            File file=path();
-            if(file==null||!file.isFile())return "No BLACK Co-op room log exists yet.";
-            if(file.length()>65536)return "Room log exceeds safe export size.";
-            try(FileInputStream in=new FileInputStream(file)){
-                byte[] bytes=new byte[(int)file.length()];
-                int count=0;
-                while(count<bytes.length){
-                    int n=in.read(bytes,count,bytes.length-count);
-                    if(n<=0)break;
-                    count+=n;
-                }
-                return new String(bytes,0,count,StandardCharsets.UTF_8);
-            }catch(Exception ignored){return "Unable to read BLACK Co-op room log.";}
+            File current=path();
+            if(current==null)return "No BLACK Co-op room log exists yet.";
+            File older=new File(current.getParentFile(),"coop_room_events.old.log");
+            try{
+                String previous=readSegment(older);
+                String active=readSegment(current);
+                if(previous.isEmpty()&&active.isEmpty())
+                    return "No BLACK Co-op room log exists yet.";
+                String joined=previous+active;
+                if(joined.getBytes(StandardCharsets.UTF_8).length>131072)
+                    return "Room log exceeds safe export size.";
+                return joined;
+            }catch(java.io.IOException error){
+                return "Unable to read BLACK Co-op room log.";
+            }
         }
     }
 }
