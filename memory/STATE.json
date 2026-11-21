@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-37-cloud-handoff.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-38-firstperson-remote-ally-shared-mission.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -702,6 +702,31 @@
       "evidence": "CL22:47 host HOSTING and guest JOINED both2/4; guest JOIN_AUTHENTICATED",
       "automaticBuildPhoneTested": false,
       "gameplay": false
+    },
+    "DEFAULT_PLAYER_OWNER_PRIMARY_MODEL_20261122": {
+      "status": "REAL_OWNER_ANDROID15_8_COMPLETE_MODEL_READS",
+      "source": "alwansan/CL main BLACK-Probe-20261121-235407-267/coop_probe.txt",
+      "sha": "a9ade07f8ffecb051969d3dc00a092c5459bf2ad",
+      "records": 8,
+      "bones": 44,
+      "buffers": 2,
+      "drawListMask": 32,
+      "arms": true,
+      "head": false,
+      "torso": false,
+      "legs": false,
+      "limitedToPrimaryModel": true,
+      "phone2GameLogExists": true,
+      "evidence": "memory/evidence/DEFAULT-PLAYER-owner-20261122-235407-safe-summary.json"
+    },
+    "REMOTE_ALLY_AND_HOST_MISSION_CONTRACT_CI": {
+      "status": "PASS_SOURCE_ONLY",
+      "run": 44951425780,
+      "source": "9938283748ad1bdb06f15259d7e4fcb791a47574",
+      "newRemoteAllyRoster": true,
+      "newMissionBarrier": true,
+      "realBlackRemoteActor": false,
+      "actualSharedStory": false
     }
   },
   "pending": {
@@ -807,14 +832,17 @@
     },
     "REAL_PLAYER_BODY": {
       "status": "NATIVE_ACTOR_CONTROLLER_ACQUISITION_UNIMPLEMENTED",
-      "required": "independent full body for each human, including host representation on peers",
+      "required": "Independently owned ally-looking full-body visual for OTHER human peers including host on guest phone; local original first person retained",
       "localVtableDraw": "1D25D0",
       "npcVtableDraw": "1C6150",
       "localDrawWritesThrough": "actor+49F; outside NPC stride3C0",
       "fullMainCharacterBodyAssetVerified": false,
       "nullBrainRegisteredProxy": "REJECTED_DAMAGE_NULL_DEREFERENCE",
       "brainPool": "16 preconstructed, stride1FE0, not player capacity proof",
-      "noTwoPhoneTestYet": true
+      "noTwoPhoneTestYet": true,
+      "allyVisualApprovedByOwner": true,
+      "actualBodyRendered": false,
+      "gameActorOwned": false
     },
     "QUIT_FE_AUDIO": {
       "status": "ONE_OWNER_LOG_EVENT_ROOT_CAUSE_UNPROVEN",
@@ -837,35 +865,34 @@
     }
   },
   "apk": {
-    "kind": "Native title CO-OP UI test; host/join unavailable",
-    "run": 44913654405,
-    "artifact": 14710883570,
-    "package": "org.bocoop.black.roomui",
-    "sha256": "af133c9b2a74a9714d62ca943bdd209ffc552267a053951085980ad7addfebfe",
-    "bytes": 21753039,
-    "sourceCommit": "96f69b6c8e912760fedaf5d7add52928f3b212f7",
-    "deviceAccepted": true,
-    "gameplayCoop": false
+    "kind": "BLACK original protagonist model + automatic room test (NOT gameplay)",
+    "run": 44946597973,
+    "artifact": 14724535514,
+    "package": "org.bocoop.black.defaultplayer",
+    "sha256": "94400c2d650d772293ab5f3a1d0c72e91d1974dea64a3004d18404e90ccb02d0",
+    "bytes": 21860751,
+    "sourceCommit": "8bc7f92e17c1d35c6c125013bc4057afe320527f",
+    "deviceAccepted": false,
+    "gameplayCoop": false,
+    "deviceTested": true,
+    "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "Inspect Windows isolated game network APK workflow 44924346601; fix packaging or JNI build failures without bypassing owner image check; verify signed APK identity and artifact before phone test. Keep accepted room UI/Probe4 intact; real humans/body, guest actor+324 ownership, mission/combat sync remain open.",
+  "next": "Actual TLS host mission PREPARE/READY/COMMIT messages, game-thread host-authoritative real mission load and READY, independently-owned human-controlled remote ally body and input/world sync. No fake separate solo starts, no new ISO request.",
   "latestHandoff": {
-    "date": "2026-11-21",
-    "session": 32,
-    "kind": "flash_room_to_android_tls_lobby_separate_apk_source_preflight",
-    "newApk": false,
-    "newCI": true,
-    "sourceCommit": "ead146ffc1f3f6fca1ee540330cbaaea02c9a3c0",
-    "tlsPlatformPass": 44922935535,
-    "formPlatformPass": 44923426931,
-    "sourcePreflightPass": 44924220185,
-    "isolatedGameApkBuild": 44924346601,
-    "next": "Inspect Windows isolated game network APK workflow 44924346601; fix packaging or JNI build failures without bypassing owner image check; verify signed APK identity and artifact before phone test. Keep accepted room UI/Probe4 intact; real humans/body, guest actor+324 ownership, mission/combat sync remain open."
+    "date": "2026-11-22",
+    "session": 38,
+    "kind": "new_owner_primary_model_capture_and_remote_ally_visual_override",
+    "plan": "docs/superpowers/plans/2026-11-22-host-story-remote-ally.md",
+    "sourceCiRun": 44951425780,
+    "latestVerifiedAndroidBuild": 44946597973,
+    "artifact": 14724535514,
+    "sourceOnlyNoNewApk": true
   },
-  "executionStatus": "android29_tls_and_room_form_pass_game_flash_android_bridge_source_verified_windows_apk_build_running",
+  "executionStatus": "owner_defaultplayer_model_capture_verified_primary_arms_only; source_ally_and_host_barrier_ci_PASS; TLS_story/BLACK_mission_loader/remote_render/world_sync_OPEN",
   "ownerClarifications": {
     "session": 28,
-    "previousPhoneTests": "solo local human plus enemy/friendly NPCs only; never two phones",
-    "realHumans": "each needs independent full body; host also visible to peers",
+    "previousPhoneTests": "Solo gameplay and two-phone real LAN lobby now confirmed, but no two-phone SAME WORLD gameplay",
+    "realHumans": "Local original first-person per phone, other humans visibly full-body ally models with independent human-controlled state",
     "campaign": "host selects missions; connected humans follow mission transitions",
     "npcPolicy": "preserve existing NPC behavior; multiplayer targeting is an explicit verification/integration task",
     "bisoAuthorization": "new experimental branch and ISO content changes/repack via Actions when necessary; main unchanged",
@@ -873,35 +900,18 @@
   },
   "integrationRoadmap": "docs/COOP_INTEGRATION_ROADMAP_AR.md",
   "currentWork": {
-    "session": 34,
-    "base": "3608ac51b43a9cfd99eb91a47d9de4148293f285",
-    "task": "original protagonist only, verify runtime bound default model before independent remote context and shared Start; no NPC/ally body substitution",
-    "status": "original-player diagnostic APK ready and verified; await new phone capture of actual default primary model before independent actor/context writes; shared Start and gameplay incomplete",
-    "tcpPort": 24872,
-    "presenceUdpPort": 1511,
-    "wireVersion": 2,
-    "profile": 2,
-    "phoneJoinProven": true,
-    "gameplayCoopProven": false,
-    "code": "4c9f8bb3ad0285931d3278a855f109a6f1ad59b7",
-    "runs": {
-      "core": 44942174361,
-      "sourcePreflight": 44942174338,
-      "androidPlatform": 44942174364,
-      "apk": 44942892701
-    },
-    "latestBuildCode": "552161df57031f6ee98d218a16b0532dee0928d4",
-    "failedWindowsRuns": [
-      44942174355,
-      44942585121
-    ],
-    "phoneJoinScope": "old PIN APK LAN only; automatic build and VPN not device-tested",
-    "apk": {
-      "run": 44942892701,
-      "artifact": 14722613067,
-      "sha256": "b149bc2cbc96b8ea9ff072841878d09ca58334338ea5cee49a6c3b6ab1e1f6d1",
-      "bytes": 21854231
-    }
+    "session": 38,
+    "task": "host-owned shared mission and remote full-body ally visual for OTHER human peers",
+    "status": "new owner primary-model phone evidence parsed, source-only contract CI PASS; no actual game actor or TLS story",
+    "sourceCi": 44951425780,
+    "sourceCode": "9938283748ad1bdb06f15259d7e4fcb791a47574",
+    "latestOwnerTestedAndroidApkRun": 44946597973,
+    "latestArtifact": 14724535514,
+    "plan": "docs/superpowers/plans/2026-11-22-host-story-remote-ally.md",
+    "androidSharedGameplayVerified": false,
+    "remoteBodyRenderedOnPhone": false,
+    "ownerPrimaryModelCaptureAvailable": true,
+    "imagePixelsInspected": false
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
@@ -930,32 +940,57 @@
     "evidence": "memory/evidence/OWNER-MODEL-CANDIDATES-20261121.json"
   },
   "ownerSteering": {
-    "defaultProtagonistOnly": true,
-    "npcAllyBodySubstitutionAllowed": false,
-    "nextPhoneTest": "original local player runtime model capture, not NPC factory replay",
-    "sharedStoryStartProven": false
+    "localOriginalFirstPerson": true,
+    "localOriginalHandsCameraWeaponHud": true,
+    "remoteHumanVisual": "ALLY_FULL_BODY_LOOK_ONLY",
+    "remoteAllyVisualAllowed": true,
+    "remoteNpcAiActorAllowed": false,
+    "borrowingLiveNpcBrainAllowed": false,
+    "oldSession36NoAllyRestrictionSuperseded": true,
+    "hostOneSharedStoryWorldRequired": true,
+    "remoteBodyGameplayProven": false,
+    "sharedStoryStartProven": false,
+    "avoidRepeatOriginalModelCapture": true
   },
   "originalPlayerDiagnostic": {
     "package": "org.bocoop.black.defaultplayer",
     "maxRecords": 8,
     "maxHz": 1,
     "scope": "read-only original local player model metadata; no remote actor or gameplay sync",
-    "status": "APK built, downloaded and independently CRC/SHA256 verified; necessary original-player phone capture pending",
+    "status": "OWNER_PHONE_PRIMARY_MODEL_CAPTURE_RECEIVED_READ_8_OF_8",
     "code": "8bc7f92e17c1d35c6c125013bc4057afe320527f",
     "run": 44946597973,
     "artifact": 14724535514,
     "apkSha256": "94400c2d650d772293ab5f3a1d0c72e91d1974dea64a3004d18404e90ccb02d0",
     "apkBytes": 21860751,
-    "evidence": "memory/evidence/DEFAULT-PLAYER-APK-44946597973.json",
-    "deviceTested": false
+    "evidence": "memory/evidence/DEFAULT-PLAYER-owner-20261122-235407-safe-summary.json",
+    "deviceTested": true,
+    "phoneLogsReceived": true,
+    "ownerCapturePath": "black log/logs/BLACK-Probe-20261121-235407-267/coop_probe.txt",
+    "ownerCaptureRecords": 8,
+    "primaryModel": {
+      "valid": 8,
+      "complete": 8,
+      "bones": 44,
+      "buffers": 2,
+      "drawListMask": 32,
+      "arms": true,
+      "head": false,
+      "torso": false,
+      "legs": false,
+      "bodyCandidate": false
+    },
+    "primaryModelOnly": true,
+    "secondPhoneGameLogReceived": true,
+    "secondPhoneDefaultModelCaptureReceived": false
   },
   "handoff": {
     "date": "2026-11-22",
     "reason": "owner temporarily continues in another cloud session",
     "guide": "docs/CLOUD_HANDOFF_AR.md",
     "allRequiredSourceToolsCommitted": true,
-    "latestCode": "8bc7f92e17c1d35c6c125013bc4057afe320527f",
-    "phoneCaptureReceivedAfterLatestRequest": false,
-    "next": "inspect live CL for new original-player capture, then continue original protagonist/shared story work; no NPC substitution"
+    "latestCode": "9938283748ad1bdb06f15259d7e4fcb791a47574",
+    "phoneCaptureReceivedAfterLatestRequest": true,
+    "next": "Continue Session38 remote ally and host story, no model capture rerun."
   }
 }
