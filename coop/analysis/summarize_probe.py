@@ -27,6 +27,10 @@ def summarize(path):
     kinds=collections.Counter()
     threads=set()
     epochs={}
+    # These are bounded, in-memory correlation keys only. Neither IDs nor
+    # associated kinds are exported as raw values or treated as actor lifetimes.
+    kinds_by_correlation={}
+    local_player_correlations=set()
     valid_position=collections.Counter()
     valid_health=collections.Counter()
     local=collections.Counter()
@@ -74,6 +78,10 @@ def summarize(path):
             kinds[event]+=1
             threads.add(thread)
             epochs.setdefault(epoch,set()).add(id_)
+            key=(epoch,id_)
+            kinds_by_correlation.setdefault(key,set()).add(event)
+            if event=="player" and rec["local"]:
+                local_player_correlations.add(key)
             valid_position[event]+=int(rec["position_valid"])
             valid_health[event]+=int(rec["health_valid"])
             local[event]+=int(rec["local"])
@@ -88,6 +96,29 @@ def summarize(path):
     if not kinds["animation"]: flags.append("no_animation_samples")
     if reasons["world_read_unavailable"]: flags.append("reader_unavailable")
     if reasons["write_failed"] or reasons["open_failed"]: flags.append("local_output_error")
+    # Overlap is only a within-epoch correlation of observed values. A shared
+    # slot can be reused after respawn or promoted from a render hook; neither
+    # overlap nor its absence proves that a player model/factory exists.
+    overlap={
+        "player_lod":0,
+        "player_animation":0,
+        "lod_animation":0,
+        "all_three":0,
+        "local_player_lod":0,
+        "local_player_animation":0,
+    }
+    for key, kinds_seen in kinds_by_correlation.items():
+        if "player" in kinds_seen and "lod" in kinds_seen:
+            overlap["player_lod"]+=1
+        if "player" in kinds_seen and "animation" in kinds_seen:
+            overlap["player_animation"]+=1
+        if "lod" in kinds_seen and "animation" in kinds_seen:
+            overlap["lod_animation"]+=1
+        if len(kinds_seen)==3: overlap["all_three"]+=1
+        if key in local_player_correlations and "lod" in kinds_seen:
+            overlap["local_player_lod"]+=1
+        if key in local_player_correlations and "animation" in kinds_seen:
+            overlap["local_player_animation"]+=1
     # No epoch numbers, pointer IDs or thread IDs in the report.
     return {
         "diagnostic_flags": flags,
@@ -101,6 +132,8 @@ def summarize(path):
         "valid_position_count":{k:valid_position[k] for k in KINDS},
         "valid_health_count":{k:valid_health[k] for k in KINDS},
         "local_player_sample_count":local["player"],
+        "correlation_overlap_counts":overlap,
+        "correlation_overlap_is_actor_proof":False,
         "unknown_or_malformed_line_count":rejected,
         "end_event_count":end,
         "end_reasons":dict(sorted(reasons.items())),

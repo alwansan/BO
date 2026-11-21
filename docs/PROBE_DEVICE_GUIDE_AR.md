@@ -48,3 +48,19 @@ python3 coop/analysis/summarize_probe.py /private/path/coop_probe.jsonl --output
 - Device test still only first Probe1 read-only run, not accepted baseline retest or actual multiplayer.
 
 HOOK001 fairness v4: source e9ad056/host preflight44856368591 PASS. **Do not choose this build before Windows run44856368592 completes successfully with APK metadata.** Previous run44855984997 on f7 source is separate. Neither is phone-tested.
+
+## ACTOR-001 prep: anonymous correlation overlap (session12)
+The local-only `coop/analysis/summarize_probe.py` now reports aggregate
+`correlation_overlap_counts` (player↔LOD, player↔animation, LOD↔animation,
+all three, and local-player overlap) for **the same temporary (world epoch, ID)**
+in the raw private log. The raw epoch/ID, guest address, positions, animation
+names, thread IDs, render pointers and saves are **never included** in the report.
+Counts are bounded by the sampler's max records. The new field
+`correlation_overlap_is_actor_proof` is always false.
+
+This is a *triage signal*, NOT proof of a full-body model, animation ownership,
+actor lifetime, or safe factory: (epoch, ID) may be re-used on respawn, promoted
+from an NPC slot, or not captured due to hook scheduling. Zero overlap must
+not be interpreted as absence of a model. Synthetic tests deliberately check
+both overlap and non-overlap with no identity leakage. This analysis tool
+does not require rebuilding the already CI-verified Android Probe APK.

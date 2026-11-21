@@ -80,6 +80,50 @@ class SummaryChecks(unittest.TestCase):
         self.assertNotIn("private",json.dumps(result))
         self.assertNotIn("9988123",json.dumps(result))
 
+    def test_correlations_are_aggregates_not_actor_identifiers(self):
+        def rec(event,epoch,id_,local=False):
+            return {
+                "event":event, "epoch":epoch, "id":id_, "thread":12345678,
+                "local":local, "position_valid":event!="animation",
+                "health_valid":event=="player", "position":[1234.5,6,7],
+                "vtable":9988123, "anim_name":"PRIVATE_ANIMATION_NAME"
+            }
+        p=self.fixture([HEADER,
+            rec("player",1,1,True), rec("lod",1,1), rec("animation",1,1),
+            rec("lod",1,2), rec("animation",1,2),
+            rec("player",2,1,True), rec("lod",2,3),
+            {"event":"end","reason":"time_or_record_limit","records":7,
+             "attempts":14,"read_failures":0}
+        ])
+        out=summarize(p)
+        self.assertEqual(out["correlation_overlap_counts"],{
+            "player_lod":1, "player_animation":1,"lod_animation":2,
+            "all_three":1,"local_player_lod":1,"local_player_animation":1
+        })
+        self.assertFalse(out["correlation_overlap_is_actor_proof"])
+        self.assertEqual(out["world_epoch_count"],2)
+        exported=json.dumps(out)
+        for private in ("PRIVATE_ANIMATION_NAME","9988123","1234.5",
+                        "12345678"):
+            self.assertNotIn(private,exported)
+        self.assertNotIn('"id"',exported)
+        self.assertNotIn('"epoch"',exported)
+
+    def test_nonoverlap_cannot_claim_missing_actor(self):
+        p=self.fixture([HEADER,
+            {"event":"player","epoch":1,"id":1,"thread":100,
+             "position_valid":True,"health_valid":True,"local":True},
+            {"event":"lod","epoch":1,"id":2,"thread":100,
+             "position_valid":True,"health_valid":False,"local":False},
+            {"event":"animation","epoch":2,"id":1,"thread":100,
+             "position_valid":False,"health_valid":False,"local":False}
+        ])
+        out=summarize(p)
+        self.assertTrue(all(x==0 for x in out["correlation_overlap_counts"].values()))
+        self.assertFalse(out["runtime_actor_factory_proven"])
+        self.assertFalse(out["correlation_overlap_is_actor_proof"])
+        self.assertFalse(out["in_game_multiplayer_proven"])
+
     def test_integer_and_bool_guards(self):
         p=self.fixture([HEADER,
           {"event":"player","epoch":1,"id":1,"thread":5,"position_valid":1,"health_valid":True,"local":True},
