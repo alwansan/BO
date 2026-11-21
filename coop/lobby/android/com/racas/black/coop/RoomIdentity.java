@@ -28,7 +28,11 @@ public final class RoomIdentity {
             KeyPairGenerator generator=KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA,"AndroidKeyStore");
             generator.initialize(new KeyGenParameterSpec.Builder(ALIAS,KeyProperties.PURPOSE_SIGN|KeyProperties.PURPOSE_VERIFY)
                 .setKeySize(2048)
-                .setDigests(KeyProperties.DIGEST_SHA256,KeyProperties.DIGEST_SHA384,KeyProperties.DIGEST_SHA512)
+                // TLS Conscrypt hashes the handshake transcript itself and may ask
+                // AndroidKeyStore to sign a PREHASHED value. Official
+                // KeyGenParameterSpec docs require DIGEST_NONE for this.
+                .setDigests(KeyProperties.DIGEST_NONE,KeyProperties.DIGEST_SHA256,
+                            KeyProperties.DIGEST_SHA384,KeyProperties.DIGEST_SHA512)
                 .setSignaturePaddings(KeyProperties.SIGNATURE_PADDING_RSA_PKCS1,KeyProperties.SIGNATURE_PADDING_RSA_PSS)
                 .setCertificateSubject(new X500Principal("CN=BLACK Co-op Room"))
                 .setCertificateSerialNumber(new java.math.BigInteger(128,new SecureRandom()).setBit(127))
