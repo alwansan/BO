@@ -1,0 +1,150 @@
+"""Stage an opt-in *separate* BLACK title+TLS room APK without changing owner files.
+
+This bridge does NOT create game actors, change saves, or make story co-op playable.
+All anchors are checked in a disposable directory before writing any destination.
+"""
+import argparse
+import hashlib
+import json
+import pathlib
+import tempfile
+from prepare_probe import BASE_FILES, GAME_FILES, once
+from prepare_room_ui import prepare as prepare_room_ui
+
+HERE = pathlib.Path(__file__).resolve().parent
+PACKAGE = 'org.bocoop.black.roomnet'
+INPUTS = BASE_FILES + GAME_FILES + ('src/game/exit_menu.cpp',)
+
+
+def prepare(root: pathlib.Path):
+    root = root.resolve()
+    originals = {name: (root / name).read_bytes() for name in INPUTS}
+    with tempfile.TemporaryDirectory(prefix='bo-room-net-stage-') as directory:
+        stage = pathlib.Path(directory)
+        for name, data in originals.items():
+            path = stage / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(data)
+        changed = prepare_room_ui(stage)
+        pending = {name: (stage / name).read_text(encoding='utf-8') for name in changed}
+
+    for name in pending:
+        pending[name] = pending[name].replace('org.bocoop.black.roomui', PACKAGE)
+        pending[name] = pending[name].replace('BLACK Co-op UI TEST', 'BLACK Co-op NETWORK TEST')
+
+    # The read-only probe intentionally removed network access. Restore it only
+    # to the separate, opt-in, authenticated room build; not the accepted UI APK.
+    manifest = 'app/src/main/AndroidManifest.xml'
+    text = pending[manifest]
+    text = once(text, '    <application',
+                '    <uses-permission android:name="android.permission.INTERNET" />\n'
+                '    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />\n'
+                '    <application', manifest)
+    text = once(text, '    </application>',
+                '''        <activity android:name="com.racas.black.coop.RoomLobbyActivity"
+            android:exported="false" android:screenOrientation="unspecified" />
+    </application>''', manifest)
+    pending[manifest] = text
+
+    java = 'app/src/main/java/com/racas/black/BlackActivity.java'
+    text = pending[java]
+    text = once(text, 'public class BlackActivity extends SDLActivity {',
+                '''public class BlackActivity extends SDLActivity {
+    // Invoked on the game UI thread through a narrow, no-guest-write JNI bridge.
+    // HOST/JOIN are merely input forms; actual humans appear in a TLS roster.
+    public void openCoopRoom(int row) {
+        if (row != -102 && row != -103) return;
+        runOnUiThread(() -> {
+            if (isFinishing() || isDestroyed()) return;
+            Intent intent = new Intent(this, com.racas.black.coop.RoomLobbyActivity.class);
+            intent.putExtra("roomAction", row);
+            startActivity(intent);
+        });
+    }
+    public String coopRoomStatusLine(int row) {
+        return com.racas.black.coop.RoomAppRooms.statusLine(row);
+    }
+''', java)
+    text = once(text, '    @Override\n    protected void onPause() {',
+                '''    @Override
+    protected void onDestroy() {
+        com.racas.black.coop.RoomAppRooms.shutdown();
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {''', java)
+    pending[java] = text
+
+    # Host/Join in the accepted Flash page dispatch to the Android UI, which
+    # owns TLS; no guest actor is created and no network worker touches Flash.
+    menu = 'src/game/options_menu.cpp'
+    text = pending[menu]
+    text = once(text, '#include "coop/room_ui.h"',
+                '#include "coop/room_ui.h"\n#include "coop/room_net_ui.hpp"', menu)
+    values = {
+        '-101': 'OFFLINE / PREVIEW',
+        '-102': 'NOT AVAILABLE',
+        '-103': 'NOT AVAILABLE',
+        '-104': '2-4 PLANNED',
+        '-105': 'LAN / VPN PLANNED',
+    }
+    for ident,old in values.items():
+        text = once(text, f'case {ident}: return "{old}";',
+                    f'case {ident}: return blackcoop::AndroidRoomRow({ident});', menu)
+    needle = '    const Row* row = p.rows[p.top + slot];\n    if (IsHeading(row)) return;\n    bool value = row && row->kind == app::rows::Kind::Value;'
+    replacement = '''    const Row* row = p.rows[p.top + slot];
+    if (IsHeading(row)) return;
+    if (p.mode == kEntries && row && (row->id == -102 || row->id == -103)) {
+        if (id == kInputConfirm) blackcoop::OpenAndroidLobby(row->id);
+        return;
+    }
+    bool value = row && row->kind == app::rows::Kind::Value;'''
+    text = once(text, needle, replacement, menu)
+    pending[menu] = text
+
+    # Compile Java sources in the game APK's existing com.racas.black namespace.
+    java_sources = {
+        'RoomWire.java': 'lobby/java/com/racas/black/coop/RoomWire.java',
+        'RoomTls.java': 'lobby/java/com/racas/black/coop/RoomTls.java',
+        'RoomDirect.java': 'lobby/java/com/racas/black/coop/RoomDirect.java',
+        'RoomDiscovery.java': 'lobby/java/com/racas/black/coop/RoomDiscovery.java',
+        'RoomSession.java': 'lobby/java/com/racas/black/coop/RoomSession.java',
+        'RoomIdentity.java': 'lobby/android/com/racas/black/coop/RoomIdentity.java',
+        'RoomAppRooms.java': 'lobby/android/com/racas/black/coop/RoomAppRooms.java',
+        'RoomLobbyActivity.java': 'lobby/platform/RoomLobbyActivity.java',
+    }
+    for name, source in java_sources.items():
+        destination = 'app/src/main/java/com/racas/black/coop/' + name
+        content = (HERE / source).read_text(encoding='utf-8')
+        if name == 'RoomLobbyActivity.java':
+            content = once(content, 'session=RoomSession.create();',
+                           'session=RoomAppRooms.obtain();', name)
+            content = once(content, 'if(session!=null)session.stop();\n        super.onStop();',
+                           '// Retain the authenticated room while game resumes.\n        super.onStop();', name)
+            content = once(content, 'if(session!=null){session.close();session=null;}',
+                           'session=null; // process owner shuts down on game Activity destruction', name)
+            content = once(content, 'setTitle("BLACK CO-OP — Room connection test");',
+                           '''int action=getIntent()==null?0:getIntent().getIntExtra("roomAction",0);
+        setTitle(action==-102?"BLACK CO-OP — HOST":action==-103?"BLACK CO-OP — JOIN":"BLACK CO-OP — ROOM");''', name)
+        pending[destination] = content
+
+    pending['src/coop/room_net_ui.hpp'] = (HERE / 'room_network/room_net_ui.hpp').read_text(encoding='utf-8')
+    for name in pending:
+        if name not in originals and (root / name).exists():
+            raise ValueError('Refusing preexisting addition: ' + name)
+        if name in originals and originals[name].decode('utf-8').replace('\r\n','\n') == pending[name]:
+            raise ValueError('Staged patch did not change existing file: ' + name)
+    # Do not publish any source/assets from the actual ISO. Stages are source-only.
+    for name, content in pending.items():
+        path = root / name
+        path.parent.mkdir(parents=True,exist_ok=True)
+        path.write_text(content,encoding='utf-8',newline='\n')
+    return {name: hashlib.sha256((root / name).read_bytes()).hexdigest() for name in pending}
+
+
+if __name__ == '__main__':
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('root',type=pathlib.Path)
+    args=parser.parse_args()
+    print(json.dumps({'package':PACKAGE,'changed_files':prepare(args.root)},indent=2))
