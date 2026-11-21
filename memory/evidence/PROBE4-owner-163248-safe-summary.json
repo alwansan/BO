@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "events": {
+    "animation": 93,
+    "lod": 126,
+    "player": 108,
+    "pool": 111,
+    "start": 1
+  },
+  "pool": {
+    "total": 111,
+    "valid": 111,
+    "invalid": 0
+  },
+  "instances": {
+    "frames": 111,
+    "rows": 548,
+    "valid": 548,
+    "invalid": 0,
+    "npcValid": 437,
+    "localValid": 111,
+    "maxDistinctNpcControllersPerFrame": 4,
+    "framesWithRepeatedNpcControllerValues": 0,
+    "framesWithLocalNpcSharedControllerValue": 0,
+    "validWithNonzeroRuntimePointer": 548,
+    "validWithNonzeroScratchPointers": 548
+  },
+  "captureComplete": false,
+  "durationMs": 115107,
+  "scopeCount": 1,
+  "scopeChanges": 0,
+  "groupTransitions": {
+    "0->1": 26,
+    "1->0": 2,
+    "1->2": 23,
+    "2->3": 23,
+    "3->0": 14,
+    "3->1": 1
+  },
+  "stateTransitions": {
+    "0->0": 601,
+    "0->1": 23,
+    "1->1": 58,
+    "1->2": 23,
+    "2->0": 1,
+    "2->2": 606
+  },
+  "occupiedSerialChanges": 2,
+  "resourceChangesWithSerialChange": 0,
+  "observedSlotGenerations": 30,
+  "counterDecreasesWithinScope": 0,
+  "groupStateMismatches": 0,
+  "maxDistinctResource320PerSnapshot": 4,
+  "maxDistinctResource35cPerSnapshot": 1,
+  "snapshotsWithSharedOrZeroResource320": 110,
+  "snapshotsWithSharedOrZeroResource35c": 111,
+  "provesPlayableCoop": false,
+  "limitations": [
+    "sampled observations, not exact spawn/death callbacks",
+    "no atomicity or ABA proof",
+    "resource pointers are not model-instance ownership proof",
+    "raw identities and private positions omitted"
+  ],
+  "source": {
+    "repository": "alwansan/CL",
+    "path": "black log/logs/BLACK-Probe-20261121-163248-271/coop_probe.txt",
+    "gitBlobSha": "b9771b23aec3dc6af350818915da46e2ef9af946",
+    "bytes": 239490,
+    "sha256": "3bda968f49790ff2f7254a6d8f860eb4891367edf849fc941be83b8b83496d0c"
+  },
+  "ownerReportedNoProblems": true
+}

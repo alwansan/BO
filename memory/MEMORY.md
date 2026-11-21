@@ -269,3 +269,7 @@ APK44876183662SUCCESS؛artifact14696342069 نُزلوفُحصhash. راجع memo
 
 ### محلل instance graph — CI مثبت
 44908343745SUCCESS على399cf730؛لاrunجارٍلهذهالدفعة. Probe4APK44876183662/artifact14696342069جاهز،التاليphonegraphcaptureفقطقبلbody/proxyتجريبيحقيقي.
+
+
+## تحديث جلسة27 — Probe4
+قُبل سجل المالك الجديد ضمن الرصد:111/111 pool و548/548 links صالحة،لا مشاكل حسب المالك،لا reload proof أوco-op. لا إعادة Probe4. الخطوة الحالية تدقيق تسجيل/إزالة مجسم إضافي ومسارات إصابته؛full factory مع null controller غير آمن. التفاصيل في `memory/sessions/2026-11-21_bo-coop-27-probe4-owner-graph.md`.

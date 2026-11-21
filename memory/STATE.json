@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-26-probe4-ready.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-27-probe4-owner-graph.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -485,7 +485,7 @@
       "noNetworkPermission": true,
       "noOriginalGameAssetsInApk": true,
       "downloadedAndIndependentlyHashed": true,
-      "deviceTested": false,
+      "deviceTested": true,
       "playableCoop": false,
       "localOutput": "/home/a/Desktop/black/Probe4-44876183662"
     },
@@ -495,7 +495,13 @@
       "job": 136858618002,
       "code": "399cf730f95dfb6a52c76f02cca30b353545cadd",
       "poolTests": 10,
-      "phoneGraphDataAnalyzed": false
+      "phoneGraphDataAnalyzed": true
+    },
+    "PROBE4_OWNER_INSTANCE_OBSERVATION": {
+      "status": "PASS_111_POOL_548_INSTANCE_LINKS_PARTIAL_CAPTURE",
+      "evidence": "memory/evidence/PROBE4-owner-163248-safe-summary.json",
+      "ownerReportedNoProblems": true,
+      "playableCoop": false
     }
   },
   "pending": {
@@ -506,7 +512,7 @@
     },
     "ACTOR_001": "Real Probe2 13 LOD+animation correlations, 9 first observed late, 2 10s sampling gaps; NOT NPC death/spawn or ownership proof. ACTOR001A analyzer and value-only mock remote roster pass isolated CI, actual game actor factory/proxy unimplemented.",
     "COMBAT_001": "not_started",
-    "DEVICE": "Probe3 owner pool capture accepted within sampled scope; Probe4 APK verified, owner instance graph capture now required. No baseline/Probe3 retest.",
+    "DEVICE": "Probe4 owner capture accepted. No repeated passive probe requested; next meaningful test requires real local body experiment.",
     "SRC_002": "Separate candidate build and owner baseline runtime accepted for this limited device test; not original Arabic source equivalence/full campaign proof.",
     "NET_004": "Synthetic host+scene inbox composition PASS. Real Android LAN/ZeroTier, secure session auth, actor mapping and game-thread integration NOT tested.",
     "SRC_002B": {
@@ -585,7 +591,7 @@
       "artifact": 14695275729
     },
     "PROBE4_DEVICE_BUILD": {
-      "status": "BUILD_SUCCESS_OWNER_PHONE_INSTANCE_CAPTURE_REQUIRED",
+      "status": "OWNER_CAPTURE_READ_111_POOL_548_INSTANCE_LINKS_VALID",
       "package": "org.bocoop.black.probe4",
       "workflow": ".github/workflows/black-coop-probe4-apk.yml",
       "protocol": "docs/PROBE4_DEVICE_TEST_AR.md",
@@ -603,24 +609,24 @@
     "sha256": "bfd7968b04851d8c814bdb88563b1efb8e8b9b88695d2c161c077111bd3c9897",
     "bytes": 21749755,
     "sourceCommit": "1b27ecc26e5417b91eb84208479e039e9b792521",
-    "deviceAccepted": false,
+    "deviceAccepted": true,
     "gameplayCoop": false
   },
-  "next": "Focused Probe4 phone instance graph capture according to docs/PROBE4_DEVICE_TEST_AR.md; do not repeat Probe3 or baseline",
+  "next": "Audit spatial registration, null-brain damage paths and cleanup, then implement isolated temporary local body experiment; no null-controller full factory call.",
   "latestHandoff": {
     "date": "2026-11-21",
-    "session": 26,
-    "kind": "documentation_and_static_analysis_only",
+    "session": 27,
+    "kind": "owner_capture_analysis_and_static_lifecycle_audit",
     "newApk": false,
     "newCI": false,
     "actorPoolEvidence": "memory/sessions/2026-11-21_bo-coop-19-cloud-handoff.md",
-    "next": "Owner Probe4 instance graph capture, then real actor body/proxy experiment with verified lifecycle and game-thread guards",
+    "next": "Audit spatial registration, null-brain damage paths and cleanup, then implement isolated temporary local body experiment; no null-controller full factory call.",
     "cloudFilesRequiredFromOwner": false,
     "actorPoolContracts": "docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md",
     "fullOwnerObjective": "docs/OWNER_PROJECT_OBJECTIVE_AR.md",
     "serialReset": "1D5E00 successful AL1 path restores pool and sets counter8524=1; instrument return without changing context",
     "poolReader": "coop/probe3/pool_snapshot.hpp",
-    "poolReaderStatus": "PROBE3_APK_READY_WAITING_OWNER_PHONE_CAPTURE"
+    "poolReaderStatus": "OWNER_PROBE3_AND_PROBE4_CAPTURE_ACCEPTED"
   },
-  "executionStatus": "probe4_apk_verified_owner_instance_capture_required"
+  "executionStatus": "probe4_owner_capture_accepted_real_body_lifecycle_audit"
 }
