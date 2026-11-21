@@ -905,10 +905,28 @@
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
-    "status": "local tests and independent review passed; CI pending",
+    "status": "observer core and generated original ABI gate passed; APK compiling",
     "maxFactoryRecords": 32,
     "guestWrites": false,
     "createsActor": false,
-    "plan": "docs/superpowers/plans/2026-11-21-actor-factory-observation.md"
+    "plan": "docs/superpowers/plans/2026-11-21-actor-factory-observation.md",
+    "code": "96413485bdde48981c7000ff9f9ff6019740fa7b",
+    "run": 44944691802
+  },
+  "newReference": {
+    "repository": "portingpete/Black-2006-Recomp",
+    "pin": "b2512fafd3e181e4febfb298f297245b845ef628",
+    "license": "MIT, read",
+    "scope": "PC split-screen source and asset format documentation; no copied runtime code; not Android or network-ready",
+    "document": "docs/REFERENCE_BLACK_PC_COOP_AR.md"
+  },
+  "ownerModelInventory": {
+    "files": 271,
+    "modelOccurrences": 4286,
+    "bodyCandidateOccurrences": 76,
+    "uniqueBodyCandidateKeys": 10,
+    "protagonistBodyProven": false,
+    "geometryExported": false,
+    "evidence": "memory/evidence/OWNER-MODEL-CANDIDATES-20261121.json"
   }
 }

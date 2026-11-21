@@ -1,3 +1,8 @@
+
+## مرجع وتقدم أصول جديد بعد رفع جلسة35
+اكتشفنا portingpete/Black-2006-Recomp@b2512fafd3e181e4febfb298f297245b845ef628،LICENSE MIT قرئ. راجع docs/REFERENCE_BLACK_PC_COOP_AR.md؛PC split-screen لديه player-context وpuppets لكنAIلايستهدفP2 بعد،وليسAndroid/network coop. لا نقل أعمىلـslotcopy؛+250عضويةالمجموعةيحتاجحماية. أداةBOالأصليةmodel_inventory.pyقرأَت271ملفاًمحلياًو4286MODEL،76مرشحbodyبـ10keysفريدة؛protagonistغيرمثبت.3اختباراتحدودوتصنيفPASS،لاgeometry/أصولمصدرة. نتائجآمنةفيOWNER-MODEL-CANDIDATES-20261121.json. تبقىخطةactualactor/control/AI/story،ولاStartوهمي.
+
+FactoryAPK run44944691802 على96413485bdde48981c7000ff9f9ff6019740fa7b:coreنجحوالـgeneratedABIguardنجحوبناءARM64قيدالتجميعوقتكتابةهذاالتحديث. لا تطلبهاتفاًحتىنجاحartifactوفحصه.
 # تحديث الاستعادة — جلسة35 أولاً
 اقرأ memory/sessions/2026-11-21_bo-coop-35-owner-lan-pass-factory-contract.md وSTATE الحالية والخطةdocs/superpowers/plans/2026-11-21-actor-factory-observation.md قبل بقية النص أدناه. المالك أرسل تجربة ناجحة جديدة بالـAPKالقديمة: صور HOSTING/JOINED و2/4 على الطرفين وسجل guest JOIN_AUTHENTICATED؛ LANالقديم مقبول. لا تطلب تكراره لمجرد الانتظار. النسخة التلقائية الجديدة44942892701 ناجحة ومفحوصة،artifact14722613067 وSHA256b149bc2cbc96b8ea9ff072841878d09ca58334338ea5cee49a6c3b6ab1e1f6d1،لكن لا هاتف بعد. المالك طلب متابعة التطوير نحو shared Start وأجسام حقيقية، لا الوقوف عند اللوبي.
 

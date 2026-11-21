@@ -368,3 +368,8 @@ APK44876183662SUCCESS؛artifact14696342069 نُزلوفُحصhash. راجع memo
 - [ ] Build complete isolated Windows ARM64 APK via [44924346601](https://github.com/alwansan/BO/actions/runs/44924346601), verify Gradle, symbol/image SHA, permission allowlist, APK SHA, artifact availability. Not a phone-tested build yet.
 - [ ] Test 2 real Android devices on trusted LAN/VPN with full verified SHA-256 host fingerprint, PIN, roster join/leave and return to Flash. No public forwarded ports. Capture sanitized logs only.
 - [ ] Separately ACTOR+324 full-body/ownership, game-thread state apply, AI/combat/quest/mission sync; only then real story co-op.
+
+## مرجع وتقدم أصول جديد بعد رفع جلسة35
+اكتشفنا portingpete/Black-2006-Recomp@b2512fafd3e181e4febfb298f297245b845ef628،LICENSE MIT قرئ. راجع docs/REFERENCE_BLACK_PC_COOP_AR.md؛PC split-screen لديه player-context وpuppets لكنAIلايستهدفP2 بعد،وليسAndroid/network coop. لا نقل أعمىلـslotcopy؛+250عضويةالمجموعةيحتاجحماية. أداةBOالأصليةmodel_inventory.pyقرأَت271ملفاًمحلياًو4286MODEL،76مرشحbodyبـ10keysفريدة؛protagonistغيرمثبت.3اختباراتحدودوتصنيفPASS،لاgeometry/أصولمصدرة. نتائجآمنةفيOWNER-MODEL-CANDIDATES-20261121.json. تبقىخطةactualactor/control/AI/story،ولاStartوهمي.
+
+FactoryAPK run44944691802 على96413485bdde48981c7000ff9f9ff6019740fa7b:coreنجحوالـgeneratedABIguardنجحوبناءARM64قيدالتجميعوقتكتابةهذاالتحديث. لا تطلبهاتفاًحتىنجاحartifactوفحصه.

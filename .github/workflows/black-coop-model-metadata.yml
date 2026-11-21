@@ -1,0 +1,20 @@
+name: BO-COOP bounded model metadata reader
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths: ['coop/analysis/model_inventory.py', 'coop/analysis/test_model_inventory.py', '.github/workflows/black-coop-model-metadata.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-metadata:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Bounds, owning bases and body candidate classification only
+        run: python3 -m unittest discover -s coop/analysis -p test_model_inventory.py -v

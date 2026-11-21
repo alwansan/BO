@@ -1,3 +1,6 @@
+## جلسة35 — مرجع PC ومعلومات أجسام جديدة
+اقرأ docs/REFERENCE_BLACK_PC_COOP_AR.md: مصدر portingpete المرخصMIT والمثبتb2512fa،وتحليلmetadataلملفاتالمالكبالقارئBOالأصلي. PC player-context لا يعنيAndroid co-opجاهزاً؛AIالثانيلمُيستكملفيالمرجع،وملكيةpool+250تحتاجحماية. لا تنقل offsetsأوABI بلا تحققصورةc5.
+
 # خريطة المصدر
 مرجع مثبت: https://github.com/RanggaCasper/Black-Android/tree/8e9c6fc7d570503ea68d039cff16c09339ee6d30
 | الملف | الدليل |

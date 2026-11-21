@@ -1,0 +1,160 @@
+{
+  "source": "owner extracted biso files, read locally without modification",
+  "reference": "portingpete/Black-2006-Recomp@b2512fafd3e181e4febfb298f297245b845ef628/docs/file-formats",
+  "method": "Original bounded signature-candidate dictionary/model metadata reader; not exhaustive container or skinning validation",
+  "files_examined": 271,
+  "files_skipped_size": 0,
+  "model_occurrences": 4286,
+  "full_body_candidate_occurrences": 76,
+  "unique_full_body_candidate_keys": 10,
+  "candidate_metadata": [
+    {
+      "model_version": 35,
+      "bone_names": 25,
+      "buffers": 3,
+      "bone_tags": [
+        "head",
+        "legs",
+        "torso"
+      ],
+      "full_body_candidate": true,
+      "resource_key": "BC1_CAE",
+      "resource_key_hex": "53b10fbca8f68000",
+      "file": "levels/level_07/stg_0001/StLevel.bin"
+    },
+    {
+      "model_version": 35,
+      "bone_names": 25,
+      "buffers": 3,
+      "bone_tags": [
+        "head",
+        "legs",
+        "torso"
+      ],
+      "full_body_candidate": true,
+      "resource_key": "BC1_MAT",
+      "resource_key_hex": "53b1113a7cc40000",
+      "file": "levels/level_00/stg_0001/StLevel.bin"
+    },
+    {
+      "model_version": 35,
+      "bone_names": 25,
+      "buffers": 3,
+      "bone_tags": [
+        "head",
+        "legs",
+        "torso"
+      ],
+      "full_body_candidate": true,
+      "resource_key": "BC1_TOM",
+      "resource_key_hex": "53b11252b3628000",
+      "file": "levels/level_07/stg_0001/StLevel.bin"
+    },
+    {
+      "model_version": 35,
+      "bone_names": 25,
+      "buffers": 3,
+      "bone_tags": [
+        "head",
+        "legs",
+        "torso"
+      ],
+      "full_body_candidate": true,
+      "resource_key": "COM",
+      "resource_key_hex": "5b54da6da8000000",
+      "file": "levels/level_08/stg_0001/StLevel.bin"
+    },
+    {
+      "model_version": 35,
+      "bone_names": 25,
+      "buffers": 3,
+      "bone_tags": [
+        "head",
+        "legs",
+        "torso"
+      ],
+      "full_body_candidate": true,
+      "resource_key": "ELT",
+      "resource_key_hex": "668fd89500000000",
+      "file": "levels/level_08/stg_0001/StLevel.bin"
+    },
+    {
+      "model_version": 35,
+      "bone_names": 25,
+      "buffers": 3,
+      "bone_tags": [
+        "head",
+        "legs",
+        "torso"
+      ],
+      "full_body_candidate": true,
+      "resource_key": "LRG",
+      "resource_key_hex": "902211af78000000",
+      "file": "levels/level_08/stg_0001/StUnit07.bin"
+    },
+    {
+      "model_version": 35,
+      "bone_names": 25,
+      "buffers": 3,
+      "bone_tags": [
+        "head",
+        "legs",
+        "torso"
+      ],
+      "full_body_candidate": true,
+      "resource_key": "REG",
+      "resource_key_hex": "b12a7a6238000000",
+      "file": "levels/level_08/stg_0001/StUnit07.bin"
+    },
+    {
+      "model_version": 35,
+      "bone_names": 25,
+      "buffers": 3,
+      "bone_tags": [
+        "head",
+        "legs",
+        "torso"
+      ],
+      "full_body_candidate": true,
+      "resource_key": "SHD",
+      "resource_key_hex": "b7698f1580000000",
+      "file": "levels/level_08/stg_0001/StLevel.bin"
+    },
+    {
+      "model_version": 35,
+      "bone_names": 25,
+      "buffers": 3,
+      "bone_tags": [
+        "head",
+        "legs",
+        "torso"
+      ],
+      "full_body_candidate": true,
+      "resource_key": "SHK",
+      "resource_key_hex": "b770140398000000",
+      "file": "levels/level_08/stg_0001/StLevel.bin"
+    },
+    {
+      "model_version": 35,
+      "bone_names": 25,
+      "buffers": 3,
+      "bone_tags": [
+        "head",
+        "legs",
+        "torso"
+      ],
+      "full_body_candidate": true,
+      "resource_key": "SOL",
+      "resource_key_hex": "b875c7a280000000",
+      "file": "levels/level_08/stg_0001/StUnit07.bin"
+    }
+  ],
+  "protagonist_body_proven": false,
+  "geometry_or_assets_exported": false,
+  "limitations": [
+    "Head+torso+leg bone name tags are a candidate classifier, not an identity or rendering test",
+    "No KELL substring among parsed resource keys does not prove absence of a protagonist body",
+    "Counts contain duplicated resources across levels",
+    "No meshes, transforms, vertex data, bone name arrays or raw descriptors published"
+  ]
+}
