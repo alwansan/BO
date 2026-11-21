@@ -59,6 +59,10 @@ public final class SessionTest {
         // These calls simulate a future verified engine callback; no BLACK
         // level, game-thread hook or remote actor runs in this JVM test.
         try(RoomSession owner=RoomSession.create();RoomSession remote=RoomSession.create()){
+            java.util.concurrent.CopyOnWriteArrayList<String> hostEvents=new java.util.concurrent.CopyOnWriteArrayList<>();
+            java.util.concurrent.CopyOnWriteArrayList<String> guestEvents=new java.util.concurrent.CopyOnWriteArrayList<>();
+            owner.setReporter(hostEvents::add);
+            remote.setReporter(guestEvents::add);
             owner.startHost(source,loop,0,"Story host","Story room");
             until(()->owner.snapshot().phase==RoomSession.Phase.HOSTING);
             RoomSession.Status endpoint=owner.snapshot();
@@ -90,9 +94,18 @@ public final class SessionTest {
             check(!owner.storyStatus().committed);
             check(remote.reportSceneLoadedFromGameThread(0,0,17)); // hypothetical real load
             until(()->owner.storyStatus().committed&&remote.storyStatus().committed);
+            until(()->hostEvents.contains("STORY_HOST_PREPARED")&&
+                     hostEvents.contains("STORY_HOST_SCENE_READY")&&
+                     hostEvents.contains("STORY_HOST_PEER_READY")&&
+                     hostEvents.contains("STORY_HOST_COMMITTED")&&
+                     guestEvents.contains("STORY_GUEST_PREPARED")&&
+                     guestEvents.contains("STORY_GUEST_READY_SENT")&&
+                     guestEvents.contains("STORY_GUEST_COMMITTED"));
             check(!remote.reportSceneLoadedFromGameThread(0,0,17)); // no duplicate READY
             check(owner.cancelStoryFromGameThread());
             until(()->remote.storyStatus().ticket==null);
+            until(()->hostEvents.contains("STORY_HOST_ABORTED")&&
+                     guestEvents.contains("STORY_GUEST_ABORTED"));
             check(!remote.storyStatus().committed);
             RoomStoryWire.Ticket second=owner.prepareStoryFromGameThread(1,0,18);
             check(second.token!=first.token);
@@ -102,7 +115,12 @@ public final class SessionTest {
             remote.stop();
             check(!remote.bindStoryGameThread());
             check(!remote.reportSceneLoadedFromGameThread(1,0,18));
+            for(String code:hostEvents)check(code.matches("[A-Z0-9_]{1,70}")&&
+                !code.contains("Story room")&&!code.contains("127.0.0.1"));
+            for(String code:guestEvents)check(code.matches("[A-Z0-9_]{1,70}")&&
+                !code.contains("Story guest")&&!code.contains("127.0.0.1"));
         }
+        System.out.println("STORY_DIAGNOSTICS_PASS: authenticated TLS lifecycle emits only bounded safe codes even without room UI");
         System.out.println("SESSION_STORY_BRIDGE_PASS: authenticated TLS ticket via pinned game-thread facade, no implicit READY, host-only prepare, replay and cancel fences");
         System.out.println("ROOM_SESSION_PASS: real host/join, immutable roster, reject, cancellation, lifecycle");
     }
