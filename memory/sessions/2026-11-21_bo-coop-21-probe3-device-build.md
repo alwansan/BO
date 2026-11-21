@@ -16,3 +16,7 @@ strictClang21 C++20 -Wall -Wextra -Werror -pedantic:pooltestPASS،observerالح
 
 ## التالي الحتمي
 تابعActionsبعدpush حتىنهايةcore+APK؛عندفشلgeneratedguardافحصbodyالمؤقتعلىrunnerبلاpublishgamecodeولاخفضشروطهعشوائياً. عندنجاحAPKاطلباختبارمالكواحدمحدد: ابدأcaptureفيProbe3،شاهدظهورأعداءواقتلواحداً،أعدcheckpoint/المهمةثمصدّرالسجل. حافظعلىbaseline/Probe2؛لااختبارnetworkالآن. لاcoopفعليولاISOمعدلجديدبهذهالدفعة؛هذهبوابةACTORlifetime/model evidenceلإكمالremoteactorلاحقاً.
+
+
+## تشغيل CI الفعلي
+الكود 96b9c8366a80dd321be47857dc67f1000213fe7f؛ APKrun44872596889 وcorerun44872596855 ظهراqueuedبـGitHubAPIبعدالدفع. تابعنفسrunhandlesولا تبدأبناءبديلبسبببطءالمراقبة. لاAPKsuccessحتىخروجالـworkflowمعفحوصartifact.

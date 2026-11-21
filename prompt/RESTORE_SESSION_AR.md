@@ -1,3 +1,5 @@
+**Actions قيد المتابعة:** APK44872596889 وcore44872596855،source96b9c8366a80dd321be47857dc67f1000213fe7f. تحقّقمنحالتهمانفسهماأولاً؛لمتثبتنتيجةAPKبعد.
+
 # أحدث متابعة — جلسة21: Probe3 مدمج بالمصدر، بناء APK لم يُثبت بعد
 اقرأ memory/sessions/2026-11-21_bo-coop-21-probe3-device-build.md. CoreCI44871689814 SUCCESS بكلاjob. أضيفprepare_probe3.py وpool_observer.inc وworkflowblack-coop-probe3-apk.yml؛محلياًC++/Python/JSONtestsPASS ومراجعةمستقلةدونملاحظاتمهمةمتبقية. **تابعActionsالحيقبلطلباختبارالهاتف**؛لاAPKProbe3موثوقحتىنجاحالبناءوالفحوص. tuplepool=[slot,group,serial,state,resource320,resource35c]؛resourcepointersإشاراتمرصودةفقط،لاmodelownershipproof. resetcounterAL1بعدoriginal. Probe2/Baselineمحفوظان. لاتكررإنشاءcoreمنالصفر.
 
