@@ -1,3 +1,12 @@
+## Session38 current residuals after real story TLS tests
+- FIXED in source/CI: strict STORY PREPARE/READY/COMMIT/ABORT control carried by actual TLS; JVM44952822531 and Android29 KeyStore44952822499 PASS. NOT coupled to BLACK mission selection/loaded scene, so no playable co-op Start.
+- MITIGATED in source and isolated test: CL ERROR_BINDEXCEPTION after quick Host/Leave/Host; bound 1.5s TCP retry + SO_REUSEADDR while disallowing simultaneous host, JVM44953176046/Android29_44953176054 PASS. Not yet proven on owner Xiaomi/Huawei; original event code cannot determine all contributing router/OS causes.
+- INCOMPATIBILITY INTENTIONAL: RoomWire VERSION/PROFILE now3 to reject old room-only v2 clients; both real phones must run matching future build, do not mix with previous owner accepted APK.
+- OPEN: actual host mission-select hook and game-thread scene load/ready, engine world snapshot, independent human-controlled FULLBODY ALLY render on other phones, AI/quest/combat/weapon animation and multi-phone same-world. 2/4 room and source/JVM/Android socket tests are not gameplay.
+- OPEN: original JPG assets in CL indexed but GitHub connector refuses binary image content; don't pretend pixels verified.
+
+---
+
 # ACTIVE Session38 — Open and resolved distinctions (historical issues below)
 - RESOLVED: Latest original-player primary-model phone test was received: 8 complete arms-only primary model samples, not absent. It is NOT proof all game model resources lack a fullbody.
 - OVERRIDDEN: Session36 prohibited ally substitutes; owner now approves independent ALLY VISUAL mesh for remote real-human player ONLY, while everyone's ORIGINAL local first-person experience remains unchanged. Do not reuse AI-controlled NPC brains/actors.
