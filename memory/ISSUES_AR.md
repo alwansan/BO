@@ -106,3 +106,5 @@ AOSP Android15 SYSCALLS.TXT يحتوي process_vm_readv all، app/common blockli
 - Old reserved-slot registry fails to promote previously NPC-classified local object; fixed with slot serial in f7abf7de, host tests pass44855984868. Android current run44855984997 in_progress; runtime unproven until phone.
 - Serial prevents stale per-slot cooldown but **does not establish actor lifetime**. Registry matches address/vtable and resets on changed world pointer; same-pointer reload reuse may go unnoticed.
 - New NET-004 inbox is isolated and not connected to guest/thread hooks. No secure session identity, delivery reliability, overflow recovery, or real-world scene epoch yet. Must not be treated as production co-op.
+
+HOOK001 starvation under LOD: reserved per-second/lifetime player opportunity without expanding global limits in e9ad056; host CI44856368591 PASS. Android run44856368592 pending. User phone runtime still unverified; sample absence may be caused by no hook, reader restriction, vtable check or timing.

@@ -46,3 +46,6 @@ User interrupted implementation to move work to another session. Core tests pass
 - [ ] Check completion 44855984997, new metadata/sha, then release only a verified candidate for first Probe1 phone run.
 - [x] Add isolated NET-004 game-thread inbox and sanitizer tests (44856160545), not connected to game.
 - [ ] Collect actual phone HOOK001 observations before ACTOR-001 spawn research changes.
+
+- [x] Close LOD/animation budget starvation by reserving 64 attempts/s, 8 records/s and 256 total opportunities for player. Host CI44856368591 PASS, source e9ad056.
+- [ ] Check Android v4 run44856368592 and verify artifact before choosing latest Probe1 for phone.

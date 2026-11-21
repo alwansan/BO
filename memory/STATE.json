@@ -173,6 +173,12 @@
       "deviceTested": false,
       "gameIntegrated": false,
       "source": "coop/bridge/scene_inbox.hpp"
+    },
+    "HOOK001_PLAYER_FAIRNESS_PREFLIGHT": {
+      "status": "pass_host_sanitizer_and_pinned_source",
+      "run": 44856368591,
+      "code": "e9ad056805cabacadcf3882d5ff7aeb5f45df914",
+      "scope": "Synthetic host only, not phone"
     }
   },
   "pending": {
@@ -199,17 +205,18 @@
     },
     "DEVICE_BASELINE": "Already accepted by owner; do not ask to repeat.",
     "HOOK_001": {
-      "status": "Latest local-promotion Android run in_progress",
-      "workflowRun": 44855984997,
+      "status": "Latest fairness source host PASS; Android queued behind f7 build",
+      "workflowRun": 44856368592,
       "package": "org.bocoop.black.probe1",
       "baselineAccepted": true,
       "appBuildConfirmed": false,
       "deviceTest": false,
       "previousCandidateRun": 44854667587,
       "previousCandidateStatus": "CI_PASS",
-      "plan": "docs/superpowers/plans/2026-11-21-readonly-probe.md"
+      "plan": "docs/superpowers/plans/2026-11-21-readonly-probe.md",
+      "intermediateRun": 44855984997
     }
   },
   "apk": null,
-  "next": "Verify Android build 44855984997 against code f7abf7de; record artifact if PASS, then optional first Probe1-only phone capture. Continue safe isolated network and ACTOR design, no baseline retest."
+  "next": "Check 44855984997 and 44856368592 final statuses independently. Prefer e9ad056 fairness APK only after verified Windows artifact. Then one optional Probe1-only phone capture; no baseline repeat."
 }

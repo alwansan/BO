@@ -132,3 +132,5 @@ Owner ISO uploaded 5 parts and fully SHA-verified. See docs/OWNER_ISO_UPLOAD_AR.
 - [x] Game-neutral scene inbox [44856160545](https://github.com/alwansan/BO/actions/runs/44856160545) PASS; no device/BLACK integration.
 - [ ] Verify latest APK and optionally first HOOK001 device capture (not baseline re-test).
 - [ ] Validate actor lifetimes/full-body before ACTOR-001; no guest writes or production auth claims.
+
+HOOK001 fairness source e9ad056: host sanitizer + pinned-source [44856368591](https://github.com/alwansan/BO/actions/runs/44856368591) PASS, Android [44856368592](https://github.com/alwansan/BO/actions/runs/44856368592) pending. Next verify APK SHA/artifact; older f7 build 44855984997 still running. No device acceptance.
