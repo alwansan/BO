@@ -33,6 +33,7 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('public void coopRecordWorldTick(int code)',java)
             self.assertIn('WORLD_LOCAL_PLAYER_UPDATE_SEEN',java)
             self.assertIn('WORLD_POINTER_CHANGED_UNVERIFIED',java)
+            self.assertIn('WORLD_MISSION_LAUNCH_ATTEMPT',java)
             self.assertIn('RoomAppRooms.shutdown()',java)
             overlay=(root/'app/src/main/java/com/racas/black/coop/RoomOverlay.java').read_text(encoding='utf-8')
             self.assertIn('RoomAppRooms.obtain()',overlay)
