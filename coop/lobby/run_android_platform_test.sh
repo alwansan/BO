@@ -46,22 +46,39 @@ if [[ -e /dev/kvm ]]; then sudo chmod 666 /dev/kvm; ls -l /dev/kvm; fi
 "$ANDROID_HOME/emulator/emulator" -avd black_tls -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim -no-snapshot -memory 2048 -cores 2 -wipe-data > "$out/emulator.log" 2>&1 &
 emulator_pid=$!
 adb="$ANDROID_HOME/platform-tools/adb"
-timeout 120s "$adb" -s emulator-5554 wait-for-device
+# ADB can hang indefinitely if a launched emulator never becomes ONLINE.
+# Every adb invocation MUST be bounded with TERM and a hard KILL fallback.
+timeout -k 3s 12s "$adb" start-server
 booted=false
-for ((i=0;i<120;i++)); do
-    if [[ "$("$adb" -s emulator-5554 shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" == 1 ]]; then booted=true; break; fi
-    if ! kill -0 "$emulator_pid" 2>/dev/null; then tail -60 "$out/emulator.log"; exit 1; fi
+for ((i=0;i<65;i++)); do
+    if ! kill -0 "$emulator_pid" 2>/dev/null; then
+        echo "Emulator exited before boot"; tail -100 "$out/emulator.log"; exit 1
+    fi
+    state="$(timeout -k 2s 5s "$adb" -s emulator-5554 get-state 2>/dev/null || true)"
+    if [[ "$state" == device ]]; then
+        completed="$(timeout -k 2s 5s "$adb" -s emulator-5554 shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)"
+        if [[ "$completed" == 1 ]]; then booted=true; break; fi
+    fi
+    if (( i % 10 == 0 )); then
+        echo "Emulator boot poll $i/65: ADB state=${state:-unavailable}"
+        timeout -k 2s 5s "$adb" devices -l || true
+        tail -12 "$out/emulator.log" || true
+    fi
     sleep 2
 done
-[[ "$booted" == true ]]
-"$adb" -s emulator-5554 install -t "$out/test.apk"
-timeout 60s "$adb" -s emulator-5554 shell am instrument -w -r org.bocoop.black.tlsplatform/com.racas.black.coop.PlatformInstrumentation | tee "$out/result.txt"
+if [[ "$booted" != true ]]; then
+    echo "Emulator failed to boot in bounded ADB poll"
+    tail -120 "$out/emulator.log"
+    exit 1
+fi
+timeout -k 5s 90s "$adb" -s emulator-5554 install -t "$out/test.apk"
+timeout -k 5s 90s "$adb" -s emulator-5554 shell am instrument -w -r org.bocoop.black.tlsplatform/com.racas.black.coop.PlatformInstrumentation | tee "$out/result.txt"
 if command -v rg >/dev/null 2>&1; then
     passed=$(rg -c 'TLS_PLATFORM_PASS' "$out/result.txt" || true)
 else
     passed=$(grep -c 'TLS_PLATFORM_PASS' "$out/result.txt" || true)
 fi
 if [[ "$passed" != 1 ]]; then
-    "$adb" -s emulator-5554 logcat -d -s BlackTlsPlatform:E AndroidRuntime:E
+    timeout -k 3s 10s "$adb" -s emulator-5554 logcat -d -s BlackTlsPlatform:E AndroidRuntime:E || true
     exit 1
 fi
