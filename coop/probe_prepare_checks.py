@@ -46,6 +46,8 @@ class ProbePrepareTests(unittest.TestCase):
             m=ET.parse(dest/"app/src/main/AndroidManifest.xml")
             permissions={e.get('{http://schemas.android.com/apk/res/android}name') for e in m.findall("uses-permission")}
             self.assertFalse(any("EXTERNAL_STORAGE" in (p or "") for p in permissions))
+            self.assertNotIn("android.permission.INTERNET", permissions)
+            self.assertNotIn("android.permission.ACCESS_NETWORK_STATE", permissions)
             self.assertEqual(m.find(".//activity").get('{http://schemas.android.com/apk/res/android}name'),
                             "com.racas.black.BlackActivity")
             self.assertTrue(old.keys() <= {p for p in dest.rglob("*") if p.is_file()})

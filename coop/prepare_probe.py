@@ -66,6 +66,14 @@ def prepare(root: pathlib.Path, probe_dir: pathlib.Path):
         if "org.bocoop.black.baseline" in pending[name] or PACKAGE not in pending[name]:
             raise ValueError(f"Did not fully isolate new probe package in {name}")
 
+    # Capturing is completely local; unlike the original game and baseline,
+    # the separate probe has no INTERNET or NETWORK_STATE permission.
+    manifest = "app/src/main/AndroidManifest.xml"
+    pending[manifest] = once(pending[manifest],
+        '<uses-permission android:name="android.permission.INTERNET" />', "", manifest)
+    pending[manifest] = once(pending[manifest],
+        '<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />', "", manifest)
+
     label = "app/src/main/res/values/strings.xml"
     pending[label] = once(pending[label], "BLACK Baseline - NO CO-OP",
                           "BLACK Probe 1 - READ ONLY", label)
