@@ -46,6 +46,7 @@ public final class RoomSession implements AutoCloseable {
     private Phase phase=Phase.IDLE;
     private String description="",fingerprint="";
     private RoomTls.Server host;
+    private RoomDiscovery.Host announcer;
     private RoomTls.Client client;
     private RoomSession(){}
     public static RoomSession create(){return new RoomSession();}
@@ -54,16 +55,17 @@ public final class RoomSession implements AutoCloseable {
     }
     private long begin() {
         RoomTls.Server oldHost;
+        RoomDiscovery.Host oldAnnouncer;
         RoomTls.Client oldClient;
         long token;
         synchronized(lock) {
             if(closed)throw new IllegalStateException("RoomSession was destroyed");
             token=++generation;
-            oldHost=host;oldClient=client;
-            host=null;client=null;phase=Phase.CONNECTING;
+            oldHost=host;oldClient=client;oldAnnouncer=announcer;
+            host=null;client=null;announcer=null;phase=Phase.CONNECTING;
             description="Connecting";fingerprint="";
         }
-        closeQuietly(oldClient);closeQuietly(oldHost);
+        closeQuietly(oldAnnouncer);closeQuietly(oldClient);closeQuietly(oldHost);
         return token;
     }
     private boolean current(long token) {
@@ -94,25 +96,32 @@ public final class RoomSession implements AutoCloseable {
         long token=begin();
         submit(()->{
             RoomTls.Server candidate=null;
+            RoomDiscovery.Host broadcast=null;
             try {
                 // Port 0 is reserved for localhost-only isolated instrumentation.
                 if(port>65535 || (port<1024 && !(port==0 && bind.isLoopbackAddress())))
                     throw new IOException("Invalid listener port");
                 HostIdentity key=identity.load();
                 candidate=RoomTls.Server.start(key.tls,bind,port,displayName,roomName,pin);
+                boolean discoverable=true;
+                if(!bind.isLoopbackAddress()&&port!=0){
+                    try{broadcast=RoomDiscovery.Host.start(candidate,bind,RoomDiscovery.PORT,key.fingerprint);}
+                    catch(IOException unavailable){discoverable=false;}
+                }
                 boolean owned;
                 synchronized(lock){
                     owned=!closed&&generation==token;
                     if(owned) {
-                        host=candidate;phase=Phase.HOSTING;description="Hosting";
+                        host=candidate;announcer=broadcast;phase=Phase.HOSTING;
+                        description=discoverable?"Hosting":"Hosting (LAN discovery unavailable)";
                         StringBuilder hex=new StringBuilder(64);
                         for(byte b:key.fingerprint)hex.append(String.format(java.util.Locale.ROOT,"%02X",b&255));
                         fingerprint=hex.toString();
                     }
                 }
-                if(!owned)closeQuietly(candidate);
+                if(!owned){closeQuietly(broadcast);closeQuietly(candidate);}
             } catch(Exception e) {
-                closeQuietly(candidate);
+                closeQuietly(broadcast);closeQuietly(candidate);
                 failure(token,e);
             }
         },token);
@@ -156,12 +165,13 @@ public final class RoomSession implements AutoCloseable {
     }
     public void stop(){
         RoomTls.Server oldHost;
+        RoomDiscovery.Host oldAnnouncer;
         RoomTls.Client oldClient;
         synchronized(lock){
-            ++generation;oldHost=host;oldClient=client;
-            host=null;client=null;phase=Phase.IDLE;description="";fingerprint="";
+            ++generation;oldHost=host;oldClient=client;oldAnnouncer=announcer;
+            host=null;client=null;announcer=null;phase=Phase.IDLE;description="";fingerprint="";
         }
-        closeQuietly(oldClient);closeQuietly(oldHost);
+        closeQuietly(oldAnnouncer);closeQuietly(oldClient);closeQuietly(oldHost);
     }
     @Override public void close(){
         synchronized(lock){if(closed)return;closed=true;}

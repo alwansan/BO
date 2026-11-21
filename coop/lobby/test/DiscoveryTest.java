@@ -7,9 +7,9 @@ public final class DiscoveryTest {
  public static void main(String[]args)throws Exception{
   InetAddress loop=InetAddress.getByName("127.0.0.1");Path identity=Paths.get(args[0]);
   try(RoomTls.Server server=RoomTls.Server.start(TlsRoomTest.host(identity),loop,0,"Host","غرفة","01234567");
-      RoomDiscovery.Host discovery=RoomDiscovery.Host.start(server,loop,0)){
+      RoomDiscovery.Host discovery=RoomDiscovery.Host.start(server,loop,0,TlsRoomTest.fingerprint(identity))){
    var found=RoomDiscovery.scan(List.of(loop),discovery.port(),1200,new AtomicBoolean());
-   TlsRoomTest.check(found.size()==1&&found.get(0).port==server.port()&&found.get(0).occupied==1&&found.get(0).compatible&&found.get(0).room.equals("غرفة"));
+   TlsRoomTest.check(found.size()==1&&found.get(0).port==server.port()&&found.get(0).occupied==1&&found.get(0).compatible&&found.get(0).room.equals("غرفة")&&Arrays.equals(found.get(0).fingerprint,TlsRoomTest.fingerprint(identity)));
    try(RoomTls.Client peer=RoomTls.Client.connect(RoomTls.pinnedContext(TlsRoomTest.fingerprint(identity)),loop,server.port(),"Client","01234567")){
     found=RoomDiscovery.scan(List.of(loop),discovery.port(),1200,new AtomicBoolean());
     TlsRoomTest.check(found.size()==1&&found.get(0).occupied==2);
@@ -19,7 +19,7 @@ public final class DiscoveryTest {
    TlsRoomTest.check(RoomDiscovery.scan(List.of(loop),discovery.port(),5000,cancel).isEmpty());
    TlsRoomTest.check(System.nanoTime()-before<500_000_000L);
   }
-  byte[] reply=RoomDiscovery.reply(7,1508,1,"Room");
+  byte[] reply=RoomDiscovery.reply(7,1508,1,"Room",TlsRoomTest.fingerprint(identity));
   var decoded=RoomDiscovery.parseReply(reply,loop);TlsRoomTest.check(decoded.compatible&&decoded.challenge==7);
   byte[] wrong=reply.clone();wrong[15+4]^=1;TlsRoomTest.check(!RoomDiscovery.parseReply(wrong,loop).compatible);
   try{RoomDiscovery.parseReply(Arrays.copyOf(reply,reply.length+1),loop);throw new AssertionError();}catch(java.io.IOException expected){}

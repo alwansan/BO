@@ -12,16 +12,17 @@ import java.util.concurrent.atomic.*;
 /** BCLN-v2 discovery. Replies are untrusted hints, never authenticated room membership. */
 public final class RoomDiscovery {
     private RoomDiscovery() {}
-    public static final int PORT=1510, VERSION=2, MAX_PACKET=69;
+    public static final int PORT=1510, VERSION=2, MAX_PACKET=101;
     private static final AtomicInteger THREADS=new AtomicInteger();
     private static long now(){return System.nanoTime()/1_000_000L;}
     public static final class Found {
         public final InetAddress address;
         public final int port,occupied,challenge;
         public final String room;
+        public final byte[] fingerprint;
         public final boolean compatible;
-        Found(InetAddress address,int port,int occupied,int challenge,String room,boolean compatible){
-            this.address=address;this.port=port;this.occupied=occupied;this.challenge=challenge;this.room=room;this.compatible=compatible;
+        Found(InetAddress address,int port,int occupied,int challenge,String room,boolean compatible,byte[] fingerprint){
+            this.address=address;this.port=port;this.occupied=occupied;this.challenge=challenge;this.room=room;this.compatible=compatible;this.fingerprint=fingerprint.clone();
         }
     }
     private static boolean ipv4(InetAddress address){return address instanceof Inet4Address&&!address.isMulticastAddress()&&!address.isAnyLocalAddress();}
@@ -40,37 +41,39 @@ public final class RoomDiscovery {
     private static int parseQuery(byte[] raw)throws IOException{
         if(raw.length!=10)throw new IOException("Query length");ByteBuffer b=header(raw,1);return b.getInt(6);
     }
-    static byte[] reply(int challenge,int port,int occupied,String room)throws IOException{
+    static byte[] reply(int challenge,int port,int occupied,String room,byte[] fingerprint)throws IOException{
         byte[] name=RoomWire.name(room).getBytes(StandardCharsets.UTF_8);
-        if(port<1024||port>65535||occupied<1||occupied>4)throw new IOException("Discovery room fields");
-        ByteBuffer b=prefix(2,challenge,37+name.length);
+        if(port<1024||port>65535||occupied<1||occupied>4||fingerprint==null||fingerprint.length!=32)throw new IOException("Discovery room fields");
+        ByteBuffer b=prefix(2,challenge,69+name.length);
         b.putShort((short)port).put((byte)occupied).put((byte)4).put((byte)name.length).put(name)
-            .put(RoomWire.image()).putShort((short)RoomWire.PROFILE);return b.array();
+            .put(RoomWire.image()).putShort((short)RoomWire.PROFILE).put(fingerprint);return b.array();
     }
     static Found parseReply(byte[] raw,InetAddress source)throws IOException{
-        ByteBuffer b=header(raw,2);if(!ipv4(source)||raw.length<38)throw new IOException("Invalid reply source or size");
+        ByteBuffer b=header(raw,2);if(!ipv4(source)||raw.length<70)throw new IOException("Invalid reply source or size");
         int challenge=b.getInt(6),port=b.getShort()&65535,occupied=b.get()&255,capacity=b.get()&255,n=b.get()&255;
-        if(port<1024||capacity!=4||occupied<1||occupied>capacity||n<1||n>32||b.remaining()!=n+22)throw new IOException("Invalid reply fields");
+        if(port<1024||capacity!=4||occupied<1||occupied>capacity||n<1||n>32||b.remaining()!=n+54)throw new IOException("Invalid reply fields");
         byte[] bytes=new byte[n];b.get(bytes);
         String name=StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT)
             .onUnmappableCharacter(CodingErrorAction.REPORT).decode(ByteBuffer.wrap(bytes)).toString();
         if(!RoomWire.name(name).equals(name))throw new IOException("Noncanonical room name");
         byte[] image=new byte[20];b.get(image);int profile=b.getShort()&65535;
-        return new Found(source,port,occupied,challenge,name,MessageDigest.isEqual(image,RoomWire.image())&&profile==RoomWire.PROFILE);
+        byte[] fp=new byte[32];b.get(fp);
+        return new Found(source,port,occupied,challenge,name,MessageDigest.isEqual(image,RoomWire.image())&&profile==RoomWire.PROFILE,fp);
     }
     public static final class Host implements AutoCloseable {
         private final RoomTls.Server room;
+        private final byte[] fingerprint;
         private final DatagramSocket socket;
         private final Thread reader;
         private final AtomicBoolean closed=new AtomicBoolean();
         private final Map<String,Long> seen=new HashMap<>(); // receiver thread only, maximum sixteen IPs
         private long window;
         private int sent;
-        public static Host start(RoomTls.Server room,InetAddress bind,int port)throws IOException{return new Host(room,bind,port);}
-        private Host(RoomTls.Server room,InetAddress bind,int port)throws IOException{
-            if(room==null||!room.isRunning()||!(bind instanceof Inet4Address)||bind.isMulticastAddress()||port<0||port>65535||(port!=0&&port<1024))
+        public static Host start(RoomTls.Server room,InetAddress bind,int port,byte[] fingerprint)throws IOException{return new Host(room,bind,port,fingerprint);}
+        private Host(RoomTls.Server room,InetAddress bind,int port,byte[] fingerprint)throws IOException{
+            if(room==null||!room.isRunning()||fingerprint==null||fingerprint.length!=32||!(bind instanceof Inet4Address)||bind.isMulticastAddress()||port<0||port>65535||(port!=0&&port<1024))
                 throw new IOException("Invalid discovery listener");
-            this.room=room;
+            this.room=room;this.fingerprint=fingerprint.clone();
             DatagramSocket candidate=null;
             try{
                 for(int i=0;i<8;i++){
@@ -100,7 +103,7 @@ public final class RoomDiscovery {
                 if(packet.getLength()>MAX_PACKET||packet.getPort()<1024||!ipv4(packet.getAddress()))continue;
                 byte[] raw=Arrays.copyOf(packet.getData(),packet.getLength());int challenge=parseQuery(raw);
                 if(!allow(packet.getAddress()))continue;
-                RoomWire.State current=room.snapshot();byte[] response=reply(challenge,room.port(),current.players.size(),current.room);
+                RoomWire.State current=room.snapshot();byte[] response=reply(challenge,room.port(),current.players.size(),current.room,fingerprint);
                 socket.send(new DatagramPacket(response,response.length,packet.getAddress(),packet.getPort()));
             }catch(SocketTimeoutException expected){}
              catch(IOException|RuntimeException ignored){if(closed.get()||!room.isRunning())break;}
