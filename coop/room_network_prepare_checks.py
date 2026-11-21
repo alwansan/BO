@@ -30,6 +30,9 @@ class RoomNetPrepareTests(unittest.TestCase):
             java=(root/'app/src/main/java/com/racas/black/BlackActivity.java').read_text(encoding='utf-8')
             self.assertIn('public void openCoopRoom(int row)',java)
             self.assertIn('RoomAppRooms.statusLine(row)',java)
+            self.assertIn('public void coopRecordWorldTick(int code)',java)
+            self.assertIn('WORLD_LOCAL_PLAYER_UPDATE_SEEN',java)
+            self.assertIn('WORLD_POINTER_CHANGED_UNVERIFIED',java)
             self.assertIn('RoomAppRooms.shutdown()',java)
             overlay=(root/'app/src/main/java/com/racas/black/coop/RoomOverlay.java').read_text(encoding='utf-8')
             self.assertIn('RoomAppRooms.obtain()',overlay)
@@ -57,6 +60,18 @@ class RoomNetPrepareTests(unittest.TestCase):
             header=(root/'src/coop/room_net_ui.hpp').read_text(encoding='utf-8')
             self.assertIn('std::chrono::milliseconds(500)',header)
             self.assertIn('SDL_GetAndroidJNIEnv()',header)
+            # A sampled local game-player update is not proof of an actually
+            # loaded campaign stage. Source-only witness; never sends READY.
+            native=(root/'src/game/cheats.cpp').read_text(encoding='utf-8')
+            self.assertIn('blackcoop::ObserveLocalWorldTick(R32(kWorld))',native)
+            self.assertIn('#include "coop/room_world_tick.hpp"',native)
+            witness=(root/'src/coop/room_world_tick.hpp').read_text(encoding='utf-8')
+            guard=(root/'src/coop/world_tick_contract.hpp').read_text(encoding='utf-8')
+            self.assertIn('WorldTickObserver observer;',witness)
+            self.assertIn('SDL_GetAndroidJNIEnv()',witness)
+            self.assertIn('std::atomic<uint32_t>',guard)
+            self.assertNotIn('reportSceneLoadedFromGameThread',witness)
+            self.assertNotIn('acknowledgeSceneLoaded',witness)
     def test_fail_closed_on_changed_anchor(self):
         with tempfile.TemporaryDirectory() as directory:
             root=pathlib.Path(directory)
