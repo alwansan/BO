@@ -18,7 +18,11 @@ bt="$ANDROID_HOME/build-tools/34.0.0"
 javac --release 8 -Xlint:all,-options -Werror -cp "$jar" -d "$out/classes" \
     coop/lobby/java/com/racas/black/coop/*.java \
     coop/lobby/android/com/racas/black/coop/RoomIdentity.java \
+    coop/lobby/android/com/racas/black/coop/RoomAppRooms.java \
+    coop/lobby/android/com/racas/black/coop/RoomDiagnostics.java \
+    coop/lobby/android/com/racas/black/coop/RoomOverlay.java \
     coop/lobby/platform/PlatformInstrumentation.java \
+    coop/lobby/platform/RoomHarnessActivity.java \
     coop/lobby/platform/RoomLobbyActivity.java
 if command -v rg >/dev/null 2>&1; then
     rg --files "$out/classes" -g '*.class' > "$out/class-list.txt"
