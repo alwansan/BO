@@ -33,7 +33,11 @@ def summarize(path):
     local_player_correlations=set()
     valid_position=collections.Counter()
     valid_health=collections.Counter()
+    valid_resource=collections.Counter()
+    valid_render=collections.Counter()
+    nonzero_clip_hash=collections.Counter()
     local=collections.Counter()
+    sample_ms_min=None;sample_ms_max=None
     rejected=0
     start=0;end=0;reasons=collections.Counter()
     last_meta={}
@@ -84,6 +88,19 @@ def summarize(path):
                 local_player_correlations.add(key)
             valid_position[event]+=int(rec["position_valid"])
             valid_health[event]+=int(rec["health_valid"])
+            # Optional strictly-typed fields: older probe versions may omit
+            # them. Never include raw resource IDs, clip hashes, or timestamps.
+            if type(rec.get("resource_valid")) is bool:
+                valid_resource[event]+=int(rec["resource_valid"])
+            if type(rec.get("render_valid")) is bool:
+                valid_render[event]+=int(rec["render_valid"])
+            clip=rec.get("clip_hash")
+            if type(clip) is int and 0<clip<=0xffffffff:
+                nonzero_clip_hash[event]+=1
+            ms=rec.get("ms")
+            if type(ms) is int and 0<=ms<=1800000:
+                sample_ms_min=ms if sample_ms_min is None else min(ms,sample_ms_min)
+                sample_ms_max=ms if sample_ms_max is None else max(ms,sample_ms_max)
             local[event]+=int(rec["local"])
     if not start: raise ValueError("missing capture header")
     # Only diagnostic reason codes are exposed; never propagate raw payloads.
@@ -106,6 +123,8 @@ def summarize(path):
         "all_three":0,
         "local_player_lod":0,
         "local_player_animation":0,
+        "player_animation_without_lod":0,
+        "lod_animation_without_player":0,
     }
     for key, kinds_seen in kinds_by_correlation.items():
         if "player" in kinds_seen and "lod" in kinds_seen:
@@ -119,6 +138,15 @@ def summarize(path):
             overlap["local_player_lod"]+=1
         if key in local_player_correlations and "animation" in kinds_seen:
             overlap["local_player_animation"]+=1
+        if "player" in kinds_seen and "animation" in kinds_seen and "lod" not in kinds_seen:
+            overlap["player_animation_without_lod"]+=1
+        if "lod" in kinds_seen and "animation" in kinds_seen and "player" not in kinds_seen:
+            overlap["lod_animation_without_player"]+=1
+    # An end event can be absent from periodic MediaStore snapshots. Use this
+    # only to describe a partial observation window, not the actual session
+    # duration or a game state/lifetime. No raw ms values leave this process.
+    sampled_span_seconds=(sample_ms_max-sample_ms_min)//1000 if (
+        sample_ms_min is not None and sample_ms_max is not None) else None
     # No epoch numbers, pointer IDs or thread IDs in the report.
     return {
         "diagnostic_flags": flags,
@@ -131,6 +159,11 @@ def summarize(path):
         "distinct_thread_count":len(threads),
         "valid_position_count":{k:valid_position[k] for k in KINDS},
         "valid_health_count":{k:valid_health[k] for k in KINDS},
+        "valid_resource_count":{k:valid_resource[k] for k in KINDS},
+        "valid_render_count":{k:valid_render[k] for k in KINDS},
+        "nonzero_animation_clip_hash_count":{k:nonzero_clip_hash[k] for k in KINDS},
+        "sample_observation_span_seconds":sampled_span_seconds,
+        "capture_is_partial_snapshot":end==0,
         "local_player_sample_count":local["player"],
         "correlation_overlap_counts":overlap,
         "correlation_overlap_is_actor_proof":False,

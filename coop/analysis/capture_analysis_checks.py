@@ -98,7 +98,9 @@ class SummaryChecks(unittest.TestCase):
         out=summarize(p)
         self.assertEqual(out["correlation_overlap_counts"],{
             "player_lod":1, "player_animation":1,"lod_animation":2,
-            "all_three":1,"local_player_lod":1,"local_player_animation":1
+            "all_three":1,"local_player_lod":1,"local_player_animation":1,
+            "player_animation_without_lod":0,
+            "lod_animation_without_player":1
         })
         self.assertFalse(out["correlation_overlap_is_actor_proof"])
         self.assertEqual(out["world_epoch_count"],2)
@@ -123,6 +125,53 @@ class SummaryChecks(unittest.TestCase):
         self.assertFalse(out["runtime_actor_factory_proven"])
         self.assertFalse(out["correlation_overlap_is_actor_proof"])
         self.assertFalse(out["in_game_multiplayer_proven"])
+
+    def test_probe2_mediastore_txt_pattern_is_privacy_safe(self):
+        # Synthetic coverage inspired by categories seen in an actual opt-in
+        # Android capture; it contains NO copied owner samples or addresses.
+        entries=[HEADER]
+        entries.append({"event":"player","epoch":1,"id":1,"thread":999008,
+                        "ms":200,"local":True,"position_valid":True,
+                        "health_valid":True,"position":[888.333,1,2],
+                        "resource_valid":False,"render_valid":False,
+                        "clip_hash":0})
+        entries.append({"event":"animation","epoch":1,"id":1,"thread":999008,
+                        "ms":900,"local":True,"position_valid":False,
+                        "health_valid":False,"resource_valid":False,
+                        "render_valid":False,"clip_hash":101011,
+                        "anim_name":"NEVER_EXPORT_PRIVATE_NAME"})
+        for i in range(2,15):
+            entries.append({"event":"lod","epoch":1,"id":i,"thread":999008,
+                            "ms":1100+i,"local":False,"position_valid":True,
+                            "health_valid":False,"resource_valid":True,
+                            "render_valid":True,"resource320":991001,
+                            "render35c":881122})
+            entries.append({"event":"animation","epoch":1,"id":i,"thread":999008,
+                            "ms":139502,"local":False,"position_valid":False,
+                            "health_valid":False,"resource_valid":False,
+                            "render_valid":False,"clip_hash":303333,
+                            "anim_name":"NEVER_EXPORT_PRIVATE_NAME"})
+        p=self.fixture(entries)
+        copy=p.with_suffix(".txt")
+        copy.write_bytes(p.read_bytes())
+        report=summarize(copy)
+        self.assertEqual(report["events"],{"player":1,"lod":13,"animation":14})
+        self.assertEqual(report["correlation_overlap_counts"]["player_animation_without_lod"],1)
+        self.assertEqual(report["correlation_overlap_counts"]["lod_animation_without_player"],13)
+        self.assertEqual(report["correlation_overlap_counts"]["player_lod"],0)
+        self.assertEqual(report["valid_resource_count"]["lod"],13)
+        self.assertEqual(report["valid_render_count"]["lod"],13)
+        self.assertEqual(report["nonzero_animation_clip_hash_count"]["animation"],14)
+        self.assertEqual(report["sample_observation_span_seconds"],139)
+        self.assertEqual(report["distinct_thread_count"],1)
+        self.assertTrue(report["capture_is_partial_snapshot"])
+        self.assertIn("capture_end_not_seen",report["diagnostic_flags"])
+        self.assertFalse(report["runtime_actor_factory_proven"])
+        self.assertFalse(report["in_game_multiplayer_proven"])
+        output=json.dumps(report)
+        for secret in ("NEVER_EXPORT_PRIVATE_NAME","888.333","991001",
+                       "881122","999008","101011","303333","139502"):
+            self.assertNotIn(secret,output)
 
     def test_integer_and_bool_guards(self):
         p=self.fixture([HEADER,
