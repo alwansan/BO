@@ -24,3 +24,7 @@ Owner requests NO fragmented small phone tests. GitHub Actions static/synthetic/
 
 ## Session restoration
 Read AGENTS.md, RESTORE, STATE, docs/MAJOR_DEVICE_TEST_GATE_AR.md, this Session40, BLACK_STORY_ENTRY_AUDIT, docs/ROOM_STORY_TLS_PROTOCOL_AR.md, then Session39/38; check live HEAD and Actions. Write ONLY `alwansan/BO:experiment/black-coop`; no main, ISO, save modification, keys, copied unlicensed binaries. Update state and RESTORE after further work.
+## Android29 transient CI infrastructure regression and repair (Session40 continuation)
+- On source `aa802da8`, JVM `44956473684 SUCCESS` with `STORY_DIAGNOSTICS_PASS`, source `44956473685 SUCCESS`. Android29 `44956473707 FAILURE` **before instrumentation**: APK staged to emulator successfully, then `adb shell pm install` timed out after 60s (exit124), on a cold emulator with PackageManager not demonstrably ready. No game code ran. This is not evidence of a TLS gameplay regression.
+- Code `449cc1d78f6d84dbc6876baf113e7de73ed27c44` fixes `coop/lobby/run_android_platform_test.sh`: bounded `cmd package` readiness poll, bounded retry of `pm install`, fallback verify `pm path`, hard fail if never ready. Original Android game/ISO/saves untouched. New Android29 CI `44956739205` running at this writing; verify final status and repair further if needed. JVM source `44956739261 SUCCESS`, source-preflight `44956739276 SUCCESS`, isolated UDP `44956739238 SUCCESS`; Android room-only APK `44956739241` in progress.
+- Do NOT request an owner phone trial for an emulator PackageManager stall.
