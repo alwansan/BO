@@ -1,0 +1,42 @@
+{
+  "schema": "BO-COOP-story-entry-owner-static-safe-evidence-v1",
+  "observedOn": "2026-11-22",
+  "workflowRun": 44956138064,
+  "workflowUrl": "https://github.com/alwansan/BO/actions/runs/44956138064",
+  "safeMetadataArtifactId": 14727458498,
+  "codeCommit": "38f7fd9eab9d6929dab20b7545423c3da7d6207f",
+  "verification": {
+    "synthetic": "SUCCESS",
+    "ownerStatic": "SUCCESS",
+    "ownerXbeSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+    "ownerXbeHashMatched": true,
+    "executableSections": 10,
+    "fixedWindowBytes": 160
+  },
+  "summary": {
+    "mission_launch_candidate_00124CF0": {
+      "instructions": 46,
+      "calls": 0,
+      "conditionalBranches": 7,
+      "unconditionalJumps": 0,
+      "returnInstructions": 0
+    },
+    "level_selection_ticks_0011B890": {
+      "instructions": 44,
+      "calls": 2,
+      "conditionalBranches": 5,
+      "unconditionalJumps": 1,
+      "returnInstructions": 0
+    },
+    "difficulty_selection_ticks_00124F30": {
+      "instructions": 35,
+      "calls": 6,
+      "conditionalBranches": 0,
+      "unconditionalJumps": 0,
+      "returnInstructions": 0
+    }
+  },
+  "caveat": "Counts from fixed 160-byte windows; may include adjacent functions/data. Does not prove entry ABI, mission ID semantics, true scene loaded, game-thread identity, safe hook, or co-op gameplay. No owner code/image bytes or disassembly were committed.",
+  "actualBlackSceneLoadedHookVerified": false,
+  "nextStep": "Resolve full function shape and authoritative stage loading/epoch on owner's c5 XBE, then attach RoomSession story callbacks only from verified engine/game thread."
+}
