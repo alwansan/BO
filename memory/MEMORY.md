@@ -1,3 +1,8 @@
+## Session41 latest CL owner evidence + CI-first no-phone-scan repair (2026-11-22)
+Owner CL main pin82b2c46f two phone logs reviewed directly. Safe automated CI44959212836 PASS (artifact14728782486) counted 4 first-device BindException and 103 second-device post-JOIN scans, plus 19 join events (not 19 distinct game sessions). 8/8 default-player model captures 44 bones arms-only; no full-body local model. `RoomScanGate` and RoomOverlay active-state cancellation/double HOST/JOIN prevention, process-start RoomDiagnostics, staged Java and checks implemented. CI Java JVM44959047515 PASS `ROOM_SCAN_GATE_PASS`, Android29 44959047461 PASS `ROOM_ACTIVE_SCAN_GATE_PASS`, staging44959047532 PASS; room-only Android APK44959047454 check live. Historical logs are not evidence of current TLS v3 phone behaviour. Real scene game-thread hook and human remote AllyBody / host-world sync open. No small owner tests. Full note session41 and docs/CL_20261122_TWO_DEVICE_LOG_EVIDENCE_AR.md.
+
+---
+
 ## Session40 final CI proof
 Android29 run44957104337 **SUCCESS** with `ROOM_LOG_ROTATION_PASS` and `TLS_PLATFORM_PASS`; safe rotated room logs and one MediaStore export verified on emulator, not phone. JVM44957104351, source44957104363, UDP44957104323 SUCCESS. Owner preference CI-only for minor concerns is saved to AGENTS, STATE, RESTORE and MAJOR_DEVICE_TEST_GATE_AR; no phone test requested. Real BLACK scene/remote-human rig/shared world still OPEN.
 
