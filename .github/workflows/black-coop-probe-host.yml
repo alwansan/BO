@@ -1,0 +1,63 @@
+name: BO-COOP HOOK001 read-only probe preflight
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/probe/**'
+      - 'coop/prepare_probe.py'
+      - 'coop/probe_prepare_checks.py'
+      - '.github/workflows/black-coop-probe-host.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  linux-probe-sanitizers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Strict C++20 ASAN/UBSAN read-only core
+        run: |
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -fno-omit-frame-pointer -fsanitize=address,undefined -pthread coop/probe/test_probe.cpp -o /tmp/bo-readonly-probe-core
+          /tmp/bo-readonly-probe-core
+      - name: Python static syntax
+        run: python3 -m py_compile coop/prepare_baseline.py coop/prepare_probe.py coop/probe_prepare_checks.py
+  pinned-source-preparer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: bo
+          sparse-checkout: coop
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - uses: actions/checkout@v4
+        with:
+          repository: RanggaCasper/Black-Android
+          ref: f3754d6985a8c35204e7df071546e586b10f1806
+          persist-credentials: false
+          path: reference
+      - name: Verify pinned source and fail-closed package/Java/hook integration
+        env:
+          BO_UPSTREAM_REFERENCE: ${{ github.workspace }}/reference
+        run: |
+          python3 -m unittest discover -s bo/coop -p probe_prepare_checks.py -v
+          python3 bo/coop/prepare_probe.py reference --probe-dir bo/coop/probe > /tmp/preparer-metadata.json
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+          changed=set(subprocess.check_output(['git','-C','reference','diff','--name-only','--','app','native','src','config','CMakeLists.txt'],text=True).splitlines())
+          allowed={'app/build.gradle','app/src/main/AndroidManifest.xml',
+                   'app/src/main/java/com/racas/black/BlackActivity.java',
+                   'app/src/main/java/com/racas/black/UpdateChecker.java',
+                   'app/src/main/res/values/strings.xml',
+                   'src/game/cheats.cpp','src/game/hooks.cpp'}
+          assert changed==allowed, (changed,allowed)
+          assert {p.name for p in Path('reference/src/coop').iterdir()}=={'probe_core.hpp','probe.h','probe.cpp'}
+          print('PASS: 7 modified existing files + 3 added; native/config untouched')
+          PY
