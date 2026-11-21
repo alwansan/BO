@@ -1,3 +1,9 @@
+## Session43 progress and next explicit real co-op milestone
+DONE: pinned real owner c5 XBE private xref control metadata CI44961768279 PASS: world writer EAX at0020BF48, EBX at0020BF51; branch bypass means zero not proven, no loaded-scene proof. DONE: source-only bounded native witness on original difficulty launch *attempt* and local player update with fixed-code asynchronous logs; user does not test minor features. C++ sanitizer run44962215874 PASS, staging run44962275672 PASS. TODO verify full Android APK44962275637; if failure fix compiler/JNI and re-run via Actions.
+NEXT: (1) derive actual mission ID, stage completion and genuine scene epoch from game thread independent of UI, (2) connect only attested loader callback to RoomSession host PREPARE and guest READY, (3) real full-body human-operated remote ALLY renderer, keep each original first-person player local, (4) host-authoritative movement/input/world enemies/AI/quest/combat, then comprehensive CI and ONE meaningful future two-phone owner acceptance with all minor safe diagnostics. No fake solo games or undocumented guest-memory writes.
+
+---
+
 ## Session42 PASS update and real engine research priority
 1. Accepted: guest READY off actual socket writer game thread (JVM44960452007 PASS, Android29 44960451936 and 44961110132 PASS), capacity-one bounded worker with stale checks.
 2. Accepted: room event disk writes off game/network/UI threads via bounded 2048-item diagnostic queue, flush for combined safe MediaStore export; Android29 44961110132 PASS `ROOM_LOG_ASYNC_PASS`, `ROOM_LOG_ROTATION_PASS`. Source staging44961110163 PASS.
