@@ -1,3 +1,11 @@
+## Session42 residual engine and diagnostics blockers — 2026-11-22
+- RESOLVED for synthetic host/guest TLS: synchronous guest READY write on future BLACK game thread replaced with capacity-one async writer and stale ticket checks. JVM44960452007/Android29 44960451936 SUCCESS. No actual BLACK scene callback yet.
+- CI issue: Android29 44960759104 FAILED because instrumentation asserted files before asynchronous writer export barrier. Fixed 0de18eb19. Android29 44960934419 FAILED because persistent diagnostic thread named bo-room-safe-log-io collided with bo-room-* network worker leak assertion; renamed to bo-diagnostic-io 367052097. Check fresh run44961110132. Not a gameplay failure or request for phone trial.
+- Private owner c5 XBE world global `0x2D45D4` xref audit: 892 read/write candidates, only 2 register-sourced potential writers `0x20BF48`, `0x20BF51`, not proven real world stage loader, epoch, actual mission ID or safe hook. Source docs BLACK_WORLD_POINTER_XREF_AUDIT_AR.
+- OPEN: true host-owned campaign in one world, actual loaded mission scene in BOTH clients, fullbody remote human AllyBody not NPC AI, real movement/weapon/AI/quest/combat sync; no current v3 gameplay acceptance, no owner phone test until major milestone.
+
+---
+
 ## Session41 CL-derived issues and current verification
 - Historical CL roomnet logs: first-device `ERROR_BINDEXCEPTION=4` across 9 files; second 103 `SCAN_STARTED` after joining within 6 event files. New code prevents background discovery while active and duplicate HOST/JOIN, staged into APK. JVM+Android29 and source passed; NOT physically confirmed on current phones. Existing TLS Server also has setReuseAddress/1.5s bounded bind retries; don't mark all real device port behavior proven.
 - Historical original player model `8/8 valid` **44 bones with arms only**, NOT an entire character; must render separate human-controlled ally body for remote players, with no NPC AI ownership. Remaining game scene loader and actor lifetime unknown. CL 22 Nov HOOK001 captured single world epoch per file and no nonlocal player samples; not evidence of remote absence from every engine path.
