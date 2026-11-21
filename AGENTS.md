@@ -9,3 +9,6 @@
 
 ## مصادر اللعبة المؤكدة من المالك — جلسة16
 المالك رفع صورة game.iso في خمسة أجزاء ويحتفظ بها المشروع أيضاً حسب `BLACK_FILE_MANIFEST.json`، ورفع نسخة **مفككة** في <https://github.com/alwansan/biso> (`main` للقراءة فقط، pin `9ceb6a65fb5a4414c106ca3961295a1f8f7e558b`). اقرأ `docs/OWNER_BISO_SOURCE_AR.md` و`docs/ACTOR_BISO_ASSET_INDEX_AR.md` و`memory/STATE.json` قبل أي استخراج/طلب رفع جديد. بعض ملفات biso مقسمة إلى `part-0000N`؛ سكربت `restore_github_upload.py` يعيد تركيبها والتحقق من SHA256. لا تتعامل مع مجلد /mnt/data الحالي كذاكرة ملفات دائمة، وافحص المصادر المتاحة قبل مطالبة المالك بإعادة الرفع. لا تضع أصول اللعبة أو ISO/XBE في commits أو CI artifacts.
+
+## مصدر Multiplayer مرجعي إلزامي (جلسة18)
+المالك وجد `https://github.com/Peterson047/BLACK-XBEMultiplayer` (للقراءة فقط)، pin `0ee3ae6411c7f0989c62cbe36b224d3f55043923`. ارجع إلى `docs/REFERENCE_BLACK_XBEMULTIPLAYER_AR.md` و`memory/evidence/REFERENCE-BLACK-XBEMultiplayer-20261121.json` عند دراسة multiplayer/actor/animation/net/ISO/menu. هذا **Windows TDM binary-only** وليس co-op story source؛ كود `Peterson047/BLACK-Coop` المشار إليه بالـREADME أعاد 404. لا LICENSE شامل، و`body.bca` مقيد بترخيص للمود فقط. **لا تنسخ ملفات EXE/DLL أو ملفات الأنيميشن أو الشفرات غير المرخصة**. الاستفادة مسموحة من أفكار البنية وبيانات متطلبات الموارد مع كتابة كود أصلي واختبارات، وكتابة فقط في `experiment/black-coop`.

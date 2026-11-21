@@ -1,0 +1,51 @@
+{
+  "schema": "BO-COOP-reference-repository-review-v1",
+  "reference": "Peterson047/BLACK-XBEMultiplayer",
+  "defaultBranch": "main",
+  "pinnedCommit": "0ee3ae6411c7f0989c62cbe36b224d3f55043923",
+  "treeComplete": true,
+  "repoEntries": 91,
+  "repositoryDistribution": "Windows x64 executable, two OpenSSL DLLs, embedded Python, small scripts, animation/killmark assets, readme. This repository does not ship native TDM C++ source.",
+  "upstreamClaimedSource": "Peterson047/BLACK-Coop feat/windows-multiplayer @095488c",
+  "upstreamSourceAccessible": "NOT_FOUND 404 on GitHub connector on date checked; might be private/deleted; not confirmed",
+  "license": {
+    "topLevelLicense": false,
+    "thirdPartyNotices": true,
+    "animation": "converted Human Soldier Animations 2.0 FREE licensed within mod only; cannot redistribute separately",
+    "derivedCodeReuseClear": false
+  },
+  "documentedFeatures": [
+    "Team Deathmatch Black Ops v Seventh Wave up to 8 on Veblensk",
+    "Windows x64 / Vulkan1.2",
+    "host UDP port1508, LAN discovery UDP1510 configurable",
+    "dedicated server optional",
+    "standalone network thread separated from render",
+    "direct IP and local server browser",
+    "remote footstep audio",
+    "remote player animations via body.bca",
+    "version mismatch rejects",
+    "first-run extraction from user's own retail ISO",
+    "voice/weapon packs",
+    "killmarks and scoreboard"
+  ],
+  "notDemonstrated": [
+    "Android",
+    "story campaign cooperation",
+    "shared NPC/mission/checkpoints/save state",
+    "actor factory ABI compatible with existing Android port",
+    "verified Windows source access",
+    "permissive top-level reuse license"
+  ],
+  "ownerAssetCompatibility": {
+    "source": "alwansan/biso pinned 9ceb6a65fb5a4414c106ca3961295a1f8f7e558b",
+    "requiredFiles": 13,
+    "matchingSizes": 13,
+    "dbWddPairs": 16,
+    "sourceData": "owner original ISO manifest only",
+    "matchingCI": 44868801462,
+    "status": "SUCCESS",
+    "integrationRuntimeProven": false
+  },
+  "safeReusePrinciple": "Ideas, data descriptions and independently implemented protocols only; no copying binaries, restricted assets or unlicensed source.",
+  "docs": "docs/REFERENCE_BLACK_XBEMULTIPLAYER_AR.md"
+}

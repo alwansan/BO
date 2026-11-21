@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-17-actor-lifecycle-gaps-proxy-roster.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-18-thirdparty-black-multiplayer.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -355,6 +355,38 @@
       "actorSpawned": false,
       "hostLANDeviceTested": false,
       "authenticatedTransport": false
+    },
+    "REFERENCE_PETERSON047_BLACK_XBEMULTIPLAYER": {
+      "status": "READ_TEXT_AND_ALL_TREE_ENTRIES_SOURCE_REPO_404_NO_CODE_COPY",
+      "repository": "Peterson047/BLACK-XBEMultiplayer",
+      "ref": "main",
+      "pinnedCommit": "0ee3ae6411c7f0989c62cbe36b224d3f55043923",
+      "docs": "docs/REFERENCE_BLACK_XBEMULTIPLAYER_AR.md",
+      "evidence": "memory/evidence/REFERENCE-BLACK-XBEMultiplayer-20261121.json",
+      "runtime": "Windows TDM binary-only alpha (up to 8, not campaign co-op)",
+      "fullSourceHint": "Peterson047/BLACK-Coop feat/windows-multiplayer @095488c",
+      "fullSourceReadable": false,
+      "topLevelLicensePresent": false,
+      "restrictedRemoteAnimationAsset": true,
+      "safeIdeas": [
+        "TDM map preflight",
+        "remote player animation architecture",
+        "LAN discovery ports",
+        "independent network thread",
+        "version mismatch rejection",
+        "direct IP and server browser",
+        "remote footstep sound"
+      ],
+      "directCodeOrBinaryCopied": false
+    },
+    "REFERENCE_PETERSON_ASSET_PROFILE": {
+      "status": "PASS_CI_MANIFEST_ONLY",
+      "run": 44868801462,
+      "commit": "49d987bc5b8afcff0b796dfda087a80e4422d9cf",
+      "requiredStageFiles": 13,
+      "correctSizeCount": 13,
+      "matchedWeaponPairs": 16,
+      "provesRuntime": false
     }
   },
   "pending": {
@@ -435,5 +467,5 @@
     "gameplayCoop": false,
     "sourceCommit": "d8dba8d8da2da69c62718a87f3e6f03f16be0d2f"
   },
-  "next": "ACTOR-001A: identify and test safe read-only NPC creation/death/scene transition observation hook after proving ABI/owner; do not infer death from coverage gaps. RemoteProxyRoster already passes host integration mock, no real actor. Separately prepare in-game top-level CO-OP button from pinned Flash menu without touching Probe2. No baseline retest."
+  "next": "ACTOR-001A actor lifetime/owner/rig proof remains the gate. Apply only independently written ideas from Peterson047 TDM Windows alpha; add LAN discovery port separation/bounded parser in isolated native CI, then top-level room UI later. Do not copy restricted body.bca/binaries/scripts. No baseline retest."
 }
