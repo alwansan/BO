@@ -20,3 +20,6 @@
 6. واجهة CO-OP أسفل الإعدادات في القائمة الرئيسية ما زالت في مرحلة خطة `docs/ROOM_TOP_LEVEL_FEASIBILITY_AR.md`؛ لا تستدعِ HOST/JOIN قبل backend الحقيقي.
 
 **لا تكرر تجربة الـBaseline/Probe2 فقط لمجرد التصدير.** إن احتجنا إلى رصد دورة الحياة لاحقاً، سننتج Probe معزولة فقط بعد تحديد hooks آمنة ومثبتة وبناء ناجح.
+
+## ACTOR-001A integrated synthetic pipeline CI closure
+- [44867924228](https://github.com/alwansan/BO/actions/runs/44867924228) completed SUCCESS for source `15092111638cd68ba38715712ebe0b0399b8630f`, job136735683825. Verified job log explicitly prints PASS for bounded SceneInbox, toy UDP Host→ProxyRoster+SceneInbox→mock scene, and value-only remote roster scene/owner/generation/stale tests. C++20 strict `-Wall -Wextra -Werror -pedantic`, ASAN/UBSAN on Ubuntu. **No Android build, no BLACK runtime, no real-player actor, no authenticated transport, no host+phone session**. New tests do not justify declaring ACTOR-001 complete.

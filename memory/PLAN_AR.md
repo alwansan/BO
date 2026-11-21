@@ -203,3 +203,6 @@ HOOK001 fairness source e9ad056: host sanitizer + pinned-source [44856368591](ht
 - [ ] Integrated toy network→proxy+SceneInbox CI44867924228 pending; inspect logs and fix on branch if failure.
 - [ ] Prove actual NPC lifetime/ownership before applying any proxy into BLACK, design minimally invasive opt-in hook for death/reload proof.
 - [ ] Implement main-menu CO-OP entry under Settings via separate isolated source-gated experiment; don't touch accepted Probe2.
+
+## ACTOR-001A integrated synthetic pipeline CI closure
+- [44867924228](https://github.com/alwansan/BO/actions/runs/44867924228) completed SUCCESS for source `15092111638cd68ba38715712ebe0b0399b8630f`, job136735683825. Verified job log explicitly prints PASS for bounded SceneInbox, toy UDP Host→ProxyRoster+SceneInbox→mock scene, and value-only remote roster scene/owner/generation/stale tests. C++20 strict `-Wall -Wextra -Werror -pedantic`, ASAN/UBSAN on Ubuntu. **No Android build, no BLACK runtime, no real-player actor, no authenticated transport, no host+phone session**. New tests do not justify declaring ACTOR-001 complete.

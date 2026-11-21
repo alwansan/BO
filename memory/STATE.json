@@ -346,6 +346,15 @@
       "code": "33f08e654ba624d4fb44cbdb562128f65fb44894",
       "secureSession": false,
       "gameIntegrated": false
+    },
+    "ACTOR001A_TOY_HOST_PROXY_INTEGRATION": {
+      "status": "PASS_SYNTHETIC_ASAN_UBSAN_ONLY",
+      "run": 44867924228,
+      "job": 136735683825,
+      "code": "15092111638cd68ba38715712ebe0b0399b8630f",
+      "actorSpawned": false,
+      "hostLANDeviceTested": false,
+      "authenticatedTransport": false
     }
   },
   "pending": {
@@ -410,10 +419,9 @@
     },
     "OWNER_BISO_FULL_SHA": "COMPLETE: owner's actual ISO all 574 per-file SHA256 were streamed and hashed; their lexicographically ordered 256-bit rolling digest matches pinned biso manifest; all relative paths and sizes canonical digest matches. STILL OPEN: bytes of split part blobs in GitHub biso not independently downloaded/hashed. Use restore_github_upload.py locally if required.",
     "ACTOR001A_TOY_HOST_PROXY_INTEGRATION": {
-      "status": "CI_PENDING",
+      "status": "PASSED_MOCK_ONLY_NEXT_GATE_GAME_ACTOR_LIFETIME",
       "run": 44867924228,
-      "code": "15092111638cd68ba38715712ebe0b0399b8630f",
-      "scope": "Synthetic toy Host snapshots to proxy roster/game thread inbox only"
+      "realGameplay": false
     }
   },
   "apk": {
@@ -427,5 +435,5 @@
     "gameplayCoop": false,
     "sourceCommit": "d8dba8d8da2da69c62718a87f3e6f03f16be0d2f"
   },
-  "next": "Verify integrated game-thread bridge CI44867924228, then ACTOR-001A explicit NPC lifetime/owner hook design and in-game top-level CO-OP UI (separate experiment). No rerun of successful Baseline/Probe2. Never use sampling gaps as despawn evidence."
+  "next": "ACTOR-001A: identify and test safe read-only NPC creation/death/scene transition observation hook after proving ABI/owner; do not infer death from coverage gaps. RemoteProxyRoster already passes host integration mock, no real actor. Separately prepare in-game top-level CO-OP button from pinned Flash menu without touching Probe2. No baseline retest."
 }

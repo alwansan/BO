@@ -164,3 +164,6 @@ HOOK001 starvation under LOD: reserved per-second/lifetime player opportunity wi
 - Sample first-appearance and gaps do not identify actor spawn/death; limited round-robin samples and one incomplete epoch are confounders.
 - RemoteProxyRoster is a bounded **toy value store** (slots2-4), not a real actor handle or render proxy; existing toy transport lacks secure authentication, no host/client game integration. Only ApplyTrustedSnapshot after eventual verified host/transport validation.
 - Room menu top-level placement and co-op mission synchronization remain open.
+
+## ACTOR-001A integrated synthetic pipeline CI closure
+- [44867924228](https://github.com/alwansan/BO/actions/runs/44867924228) completed SUCCESS for source `15092111638cd68ba38715712ebe0b0399b8630f`, job136735683825. Verified job log explicitly prints PASS for bounded SceneInbox, toy UDP Host→ProxyRoster+SceneInbox→mock scene, and value-only remote roster scene/owner/generation/stale tests. C++20 strict `-Wall -Wextra -Werror -pedantic`, ASAN/UBSAN on Ubuntu. **No Android build, no BLACK runtime, no real-player actor, no authenticated transport, no host+phone session**. New tests do not justify declaring ACTOR-001 complete.
