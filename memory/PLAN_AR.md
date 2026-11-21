@@ -1,3 +1,10 @@
+## Session40 Android29 CI corrective gate
+- JVM host/guest story safe events PASS44956904362; room source staging PASS44956904317; UDP PASS44956904308.
+- Android29 previously blocked before instrumentation: 44956473707 emulator pm install timeout; 44956739205 malformed Bash retry caused unexpected EOF. Fixed in commits5dd84a4a and c8c734bc, with fast syntax gate before SDK boot. **Verify current run44956919973**, inspect `TLS_PLATFORM_PASS` before acceptance. Room-only APK44956904350 check live.
+- No changes to game ISO, save, game-thread scene/remote actors; no physical owner trial required. Next game milestone remains actual shared stage and human remote AllyBody.
+
+---
+
 ## Session40 active next engine gate after CI-first progress — 2026-11-22
 1. Done: owner directive committed: minimize user phone tests; use CI emulator and one consolidated major two-phone acceptance only with safe logs (docs/MAJOR_DEVICE_TEST_GATE_AR.md).
 2. Done: read-only owned c5 XBE executable candidate audit with 3×160B windows: CI44956138064 SUCCESS; exact safe counts in memory/evidence/STORY-ENTRY-XBE-STATIC-44956138064.json. Mission-entry candidate 00124CF0 mapping alone does NOT identify mission ID or actual loaded scene.
