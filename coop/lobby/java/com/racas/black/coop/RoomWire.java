@@ -47,6 +47,7 @@ public final class RoomWire {
     public static State copy(State value){
         return new State(value.session,value.nonce,value.self,value.revision,value.room,value.players);
     }
+    static byte[] image(){return IMAGE.clone();}
     static byte[] hex(String s){
         byte[] b=new byte[s.length()/2];
         for(int i=0;i<b.length;i++)b[i]=(byte)Integer.parseInt(s.substring(i*2,i*2+2),16);

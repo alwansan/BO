@@ -585,6 +585,15 @@
       "logsRead": true,
       "androidRuntime": false,
       "playableCoop": false
+    },
+    "ROOM_DISCOVERY_LOCAL": {
+      "status": "PASS_REAL_UDP_AND_REAL_TLS_ROSTER_COUNTS",
+      "version": "BCLN-v2",
+      "defaultPort": 1510,
+      "utf8Names": true,
+      "untrustedUntilTls": true,
+      "androidLanVerified": false,
+      "file": "coop/lobby/java/com/racas/black/coop/RoomDiscovery.java"
     }
   },
   "pending": {
@@ -705,12 +714,12 @@
       "ownerReportedCrash": false
     },
     "ANDROID_KEYSTORE_PLATFORM": {
-      "status": "JAVA_PLATFORM_COMPILE_PASSED_PACKAGING_FAILED_MISSING_RUNNER_RG_FALLBACK_FIXED_RETRY_PENDING",
-      "run": 44917717978,
-      "job": 136886809488,
-      "sourceCommit": "3ffa44969bd491b7b70dc287167b30635b999f2a",
+      "status": "TEST_APK_COMPILE_AND_PACKAGING_PASSED_EMULATOR_DEVICE_WAIT_FAILED_DIAGNOSTICS_RETRY",
+      "run": 44917922246,
+      "job": 136887416486,
+      "sourceCommit": "8125aae7f1fa6c2798a793689d8c8325293bddc7",
       "runtimeVerified": false,
-      "failure": "rg absent; empty class list yielded no DEX; find/grep fallback and nonempty inventory check added"
+      "failure": "adb wait-for-device timed out after120s; emulator log was not printed before cleanup. Diagnostics and accel-check added, root cause not yet known."
     }
   },
   "apk": {
@@ -740,7 +749,7 @@
     "poolReader": "coop/probe3/pool_snapshot.hpp",
     "poolReaderStatus": "OWNER_PROBE3_AND_PROBE4_CAPTURE_ACCEPTED"
   },
-  "executionStatus": "android_keystore_platform_runner_inventory_fix_retry_pending",
+  "executionStatus": "tls_core_ci_green_discovery_local_green_android_emulator_startup_audit",
   "ownerClarifications": {
     "session": 28,
     "previousPhoneTests": "solo local human plus enemy/friendly NPCs only; never two phones",

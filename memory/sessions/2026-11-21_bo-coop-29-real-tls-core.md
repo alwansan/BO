@@ -24,3 +24,7 @@ run44917272041/job136885459965 **SUCCESS** على591372ba4819fd001ebb354dced2717
 
 ## أول فشل لاختبار Android
 run44917717978/job136886809488 على3ffa4496 فشل في packaging:ترجمةJava/Androidنجحت،لكنrgغيرمثبتفيrunner،فأصبحتقائمةclassesفارغةولمينتجDEX. قرئالسجل؛أضيفfallbackfind/grepوفحصnonemptyقبلD8. هذافشلبنيةCIولميصلإلىKeystore runtime. يلزمretry،ولايدعيAndroidPASSبعد.
+
+## UDP فعلي وفشل تشغيل المحاكي
+RoomDiscovery/DiscoveryTestالجديداننجحامحلياًبـUDPsocketفعلي،معportTCPوعددأعضاءمنغرفةTLSالحقيقية،أسماءUTF8وmetadataتوافقوإلغاءوحدودثابتة. BCLN-v2 لأنv1القديمASCII-onlyولايحملاسمUTF8أوبياناتالصورة/profile. الاكتشافغيرموثوقولاينشئعضويةدونTLS. لم يُختبرLANعلىAndroidبعد.
+run44917922246/job136887416486على8125aae7نجحفيالترجمةوتجهيزtestAPK،ثمadbwait-for-deviceفشل120s؛لمتُطبعemulator.logقبلcleanup. لا يُعرفسبببدءالمحاكيبعد. أضيفtailللسجلعندالفشلوaccel-checkللتشخيصالقادم؛لاإصلاحعشوائيلـKeystoreولاطلبهاتف.

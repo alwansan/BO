@@ -5,6 +5,8 @@ set -euo pipefail
 out="$RUNNER_TEMP/black-tls-platform"
 mkdir -p "$out/classes" "$out/dex"
 cleanup() {
+    code=$?
+    if [[ "$code" != 0 && -f "$out/emulator.log" ]]; then tail -100 "$out/emulator.log"; fi
     if [[ -n "${emulator_pid:-}" ]]; then kill "$emulator_pid" 2>/dev/null || true; fi
     rm -f "$out/signing.p12"
 }
@@ -32,7 +34,8 @@ keytool -genkeypair -alias test -keyalg RSA -keysize 2048 -validity 2 -dname CN=
 "$bt/apksigner" sign --ks "$out/signing.p12" --ks-pass pass:test-only --key-pass pass:test-only --out "$out/test.apk" "$out/aligned.apk"
 # All files are synthetic test code. No game data or production identities enter this job.
 printf 'no\n' | "$sdk/avdmanager" create avd --force -n black_tls -k 'system-images;android-29;default;x86_64'
-if [[ -e /dev/kvm ]]; then sudo chmod 666 /dev/kvm; fi
+if [[ -e /dev/kvm ]]; then sudo chmod 666 /dev/kvm; ls -l /dev/kvm; fi
+"$ANDROID_HOME/emulator/emulator" -accel-check || true
 "$ANDROID_HOME/emulator/emulator" -avd black_tls -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim -no-snapshot -memory 2048 -cores 2 -wipe-data > "$out/emulator.log" 2>&1 &
 emulator_pid=$!
 adb="$ANDROID_HOME/platform-tools/adb"
