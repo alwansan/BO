@@ -1010,6 +1010,24 @@
       "previousApkRun": 44962275637,
       "previousApkFailure": "EXPECTED_STRICT_SOURCE_ALLOWLIST_UPDATED",
       "allowlistRepairCommit": "561eacc0362ec2a1a730e7d85f68511e0c8d5b82"
+    },
+    "PETERSON047_PUBLIC_TDM_REFERENCE_20261122": {
+      "status": "README_PUBLIC_REVIEWED_SOURCE_NOT_ACCESSIBLE",
+      "publicRepository": "Peterson047/BLACK-XBEMultiplayer",
+      "publicRepoMode": "BINARY_ONLY_WINDOWS_TEAM_DEATHMATCH_ALPHA",
+      "sourceClaimedByUpstream": "Peterson047/BLACK-Coop feat/windows-multiplayer",
+      "sourceAccess": "GITHUB_404_THIS_SESSION",
+      "usableIdeas": [
+        "SEPARATE_NETWORK_FROM_RENDER_THREAD",
+        "SEPARATE_GAME_AND_DISCOVERY_UDP_PORTS",
+        "REMOTE_PLAYER_BODY_VISUAL_CONCEPT",
+        "PROTOCOL_VERSION_COMPATIBILITY"
+      ],
+      "externalAnimationFile": "assets/anim/body.bca",
+      "externalAnimationUseAllowedInBO": false,
+      "ownerGameFullBodyAllyAssetNeeded": true,
+      "actualCampaignCoopDemonstratedByReference": false,
+      "documentation": "docs/REFERENCE_BLACK_XBEMULTIPLAYER_20261122_AR.md"
     }
   },
   "pending": {
@@ -1183,7 +1201,7 @@
     "deviceTested": true,
     "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "Verify BO room-only native-witness Android APK build44962611024; previous44962275637 failed only Windows staging allowlist missing difficulty.cpp and two new source-only headers; corrected commit561eacc0. The actual owner pinned XBE world-writer flow44961768279 PASS and C++ native event guard44962215874 and source preflight44962275672 PASS. NO owner phone test until genuine BLACK co-op single shared stage and human remote ally body.",
+  "next": "Verify BO room-only Android APK44962611024 after strict Windows staging allowlist repair commit561eacc0. Pinned owner XBE world-store flow44961768279 PASS, original local player/mission attempt source witness C++44962215874 and Python staging44962275672 PASS. External Peterson047 TDM source not accessible and third-party animations not reusable; reference docs/REFERENCE_BLACK_XBEMULTIPLAYER_20261122_AR.md. Actual stage loader mission identity game-thread hook, fullbody human remote ally and host world sync remain OPEN. NO minor owner phone test.",
   "latestHandoff": {
     "date": "2026-11-22",
     "session": 43,
@@ -1248,7 +1266,10 @@
     "ownerPhoneTestRequested": false,
     "latestRoomApkStatus": "CHECK_LIVE",
     "previousRoomApkFailure": 44962275637,
-    "ciAllowlistRepaired": true
+    "ciAllowlistRepaired": true,
+    "externalTdmReferenceReviewed": true,
+    "externalSourceAccessible": false,
+    "externalAnimationReuseProhibited": true
   },
   "executionStatus": "Session43 private pinned c5 XBE world-writer flow PASS44961768279; C++ observer ASan/UBSan PASS44962215874; staging PASS44962275672. Android full packaging44962275637 failed from old strict allowlist only; updated exactly approved difficulty.cpp + two world witness headers at commit561eacc0, new44962611024 in progress. Existing older lobby-only APK44961110208 SUCCESS. Real BLACK scene-loaded/remote ally gameplay unproven; no physical phone test.",
   "ownerClarifications": {
@@ -1340,7 +1361,7 @@
     "nativeRoomStagingTestRun": 44962275672,
     "nativeRoomStagingStatus": "SUCCESS",
     "androidCandidateWithWitnessRun": 44962611024,
-    "androidCandidateWithWitnessStatus": "IN_PROGRESS_AFTER_STRICT_ALLOWLIST_FIX",
+    "androidCandidateWithWitnessStatus": "CHECK_LIVE_AFTER_WINDOWS_ALLOWLIST_FIX",
     "realMissionStageIdentityProven": false,
     "realSceneLoadedGameThreadHookProven": false,
     "storyReadyFromActualBlackScene": false,
@@ -1348,7 +1369,10 @@
     "ownerPhoneTestRequiredNow": false,
     "previousAndroidRun": 44962275637,
     "previousAndroidFailure": "WINDOWS_CI_ALLOWED_NATIVE_DIFF_MISSING_DIFFICULTY_CPP_AND_TWO_HEADERS",
-    "nativeStagingPassRun": 44962275672
+    "nativeStagingPassRun": 44962275672,
+    "referenceReviewed": "Peterson047/BLACK-XBEMultiplayer",
+    "externalSourceAccessible": false,
+    "externalThirdPartyAnimationReusable": false
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
