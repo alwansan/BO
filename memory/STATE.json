@@ -510,13 +510,13 @@
       "next": "Android opt-in room browser & LAN interface binding, 2-device discovery; authenticated session before gameplay; no game actor use yet"
     },
     "PROBE3_DEVICE_BUILD": {
-      "status": "FIRST_APK_FAILED_GUARD_FORMAT_LOCAL_FIX_VERIFIED_REBUILD_PENDING",
+      "status": "CORRECTED_GUARD_APK_RUN_IN_PROGRESS",
       "workflow": ".github/workflows/black-coop-probe3-apk.yml",
       "package": "org.bocoop.black.probe3",
       "session": "memory/sessions/2026-11-21_bo-coop-21-probe3-device-build.md",
-      "sourceCommit": "96b9c8366a80dd321be47857dc67f1000213fe7f",
-      "apkRun": 44872596889,
-      "coreRun": 44872596855,
+      "sourceCommit": "678536b205506be6cfcc4ca86a18afe3391e0aa9",
+      "apkRun": 44872995034,
+      "coreRun": 44872995111,
       "deviceProtocol": "docs/PROBE3_DEVICE_TEST_AR.md",
       "failedApkRun": 44872596889,
       "failedJob": 136750222861,

@@ -1,3 +1,5 @@
+**التشغيل الحالي بعد الإصلاح:** APK44872995034in_progress،core44872995111،source678536b205506be6cfcc4ca86a18afe3391e0aa9. تابعهمابدلاًمن44872596889الفاشل.
+
 # أحدث نتيجة — جلسة22
 APK44872596889 **FAILED قبلGradle**: فاحصنا كانيتوقعinlineaddress،لكنSDKالمثبتينشئeaثمstore. أصلحverify_probe3_reset.py والfixture،واختباراتسالبة/مراجعةPASS. اقرأmemory/sessions/2026-11-21_bo-coop-22-reset-guard-format.md. يجبمتابعةrunجديدعلىcommitالإصلاح؛لاrerunللقديم. Core44872596855SUCCESS؛لاAPKProbe3موثوقبعد. لاطلبهاتفحتىنجاحالبناء.
 
