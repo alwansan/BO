@@ -40,10 +40,6 @@ def prepare(root: pathlib.Path):
                 '    <uses-permission android:name="android.permission.INTERNET" />\n'
                 '    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />\n'
                 '    <application', manifest)
-    text = once(text, '    </application>',
-                '''        <activity android:name="com.racas.black.coop.RoomLobbyActivity"
-            android:exported="false" android:screenOrientation="unspecified" />
-    </application>''', manifest)
     pending[manifest] = text
 
     java = 'app/src/main/java/com/racas/black/BlackActivity.java'
@@ -56,9 +52,8 @@ def prepare(root: pathlib.Path):
         if (row != -102 && row != -103) return;
         runOnUiThread(() -> {
             if (isFinishing() || isDestroyed()) return;
-            Intent intent = new Intent(this, com.racas.black.coop.RoomLobbyActivity.class);
-            intent.putExtra("roomAction", row);
-            startActivity(intent);
+            // Keeping SDL Activity foreground avoids the old pause/quit path.
+            com.racas.black.coop.RoomOverlay.show(this,row);
         });
     }
     public String coopRoomStatusLine(int row) {
@@ -76,7 +71,7 @@ def prepare(root: pathlib.Path):
     protected void onPause() {''', java)
     pending[java] = text
 
-    # Host/Join in the accepted Flash page dispatch to the Android UI, which
+    # Host/Join in the accepted Flash page dispatch to a same-Activity dialog, which
     # owns TLS; no guest actor is created and no network worker touches Flash.
     menu = 'src/game/options_menu.cpp'
     text = pending[menu]
@@ -124,21 +119,12 @@ def prepare(root: pathlib.Path):
         'RoomSession.java': 'lobby/java/com/racas/black/coop/RoomSession.java',
         'RoomIdentity.java': 'lobby/android/com/racas/black/coop/RoomIdentity.java',
         'RoomAppRooms.java': 'lobby/android/com/racas/black/coop/RoomAppRooms.java',
-        'RoomLobbyActivity.java': 'lobby/platform/RoomLobbyActivity.java',
+        'RoomOverlay.java': 'lobby/android/com/racas/black/coop/RoomOverlay.java',
+        'RoomDiagnostics.java': 'lobby/android/com/racas/black/coop/RoomDiagnostics.java',
     }
     for name, source in java_sources.items():
         destination = 'app/src/main/java/com/racas/black/coop/' + name
         content = (HERE / source).read_text(encoding='utf-8')
-        if name == 'RoomLobbyActivity.java':
-            content = once(content, 'session=RoomSession.create();',
-                           'session=RoomAppRooms.obtain();', name)
-            content = once(content, 'if(session!=null)session.stop();\n        super.onStop();',
-                           '// Retain the authenticated room while game resumes.\n        super.onStop();', name)
-            content = once(content, 'if(session!=null){session.close();session=null;}',
-                           'session=null; // process owner shuts down on game Activity destruction', name)
-            content = once(content, 'setTitle("BLACK CO-OP — Room connection test");',
-                           '''int action=getIntent()==null?0:getIntent().getIntExtra("roomAction",0);
-        setTitle(action==-102?"BLACK CO-OP — HOST":action==-103?"BLACK CO-OP — JOIN":"BLACK CO-OP — ROOM");''', name)
         pending[destination] = content
 
     pending['src/coop/room_net_ui.hpp'] = (HERE / 'room_network/room_net_ui.hpp').read_text(encoding='utf-8')
