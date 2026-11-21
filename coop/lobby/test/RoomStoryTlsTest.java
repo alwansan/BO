@@ -40,6 +40,15 @@ public final class RoomStoryTlsTest {
             // Story host barrier cannot silently start a second mission.
             try{host.prepareStory(1,0,2);throw new AssertionError("Duplicate story accepted");}
             catch(java.io.IOException expected){}
+            ok(host.cancelStory());
+            until(()->guest.storyTicket()==null);
+            var second=host.prepareStory(1,0,2);
+            ok(second.token!=ticket.token);
+            until(()->guest.storyTicket()!=null&&second.same(guest.storyTicket()));
+            ok(!host.hostSceneLoaded(1,0,2)); // waits for guest's actual second stage
+            ok(guest.acknowledgeSceneLoaded(1,0,2));
+            until(()->host.storyCommitted()&&guest.storyCommitted());
+            ok(second.same(guest.storyTicket()));
         }
         // A peer exit during PREPARE must revoke the barrier and refuse COMMIT.
         try(RoomTls.Server host=RoomTls.Server.start(hostContext,loop,0,"Host","Campaign")){
