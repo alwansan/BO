@@ -115,6 +115,7 @@ def prepare(root: pathlib.Path):
     # Compile Java sources in the game APK's existing com.racas.black namespace.
     java_sources = {
         'RoomWire.java': 'lobby/java/com/racas/black/coop/RoomWire.java',
+        'RoomStoryWire.java': 'lobby/java/com/racas/black/coop/RoomStoryWire.java',
         'RoomTls.java': 'lobby/java/com/racas/black/coop/RoomTls.java',
         'RoomDirect.java': 'lobby/java/com/racas/black/coop/RoomDirect.java',
         'RoomDiscovery.java': 'lobby/java/com/racas/black/coop/RoomDiscovery.java',
