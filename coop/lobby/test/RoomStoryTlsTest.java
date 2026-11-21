@@ -1,0 +1,75 @@
+package com.racas.black.coop;
+import java.net.InetAddress;
+import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BooleanSupplier;
+import javax.net.ssl.SSLContext;
+
+/** Real encrypted loopback SOCKETS; story frames only, no game scene or actor. */
+public final class RoomStoryTlsTest {
+    static void ok(boolean v){if(!v)throw new AssertionError("TLS story preflight");}
+    static void until(BooleanSupplier predicate)throws Exception{
+        long deadline=System.nanoTime()+TimeUnit.SECONDS.toNanos(8);
+        while(!predicate.getAsBoolean()){
+            if(System.nanoTime()>deadline)throw new AssertionError("Story handshake timeout");
+            Thread.sleep(15);
+        }
+    }
+    public static void main(String[]args)throws Exception{
+        var identity=Paths.get(args[0]);
+        SSLContext hostContext=TlsRoomTest.host(identity);
+        SSLContext guestContext=RoomTls.pinnedContext(TlsRoomTest.fingerprint(identity));
+        InetAddress loop=InetAddress.getByName("127.0.0.1");
+        try(RoomTls.Server host=RoomTls.Server.start(hostContext,loop,0,"Host","Campaign");
+            RoomTls.Client guest=RoomTls.Client.connect(guestContext,loop,host.port(),"Remote human")){
+            until(()->guest.snapshot()!=null&&guest.snapshot().players.size()==2);
+            RoomStoryWire.Ticket ticket=host.prepareStory(0,0,1);
+            ok(ticket.mission==0&&ticket.stage==0&&ticket.sceneEpoch==1&&ticket.participants==3);
+            ok(!host.storyCommitted()&&!guest.storyCommitted());
+            until(()->guest.storyTicket()!=null);
+            ok(ticket.same(guest.storyTicket()));
+            ok(!host.hostSceneLoaded(0,1,1)); // wrong stage
+            ok(!guest.acknowledgeSceneLoaded(7,0,1));
+            ok(!guest.acknowledgeSceneLoaded(0,0,2));
+            ok(!host.hostSceneLoaded(0,0,1)); // locally loaded but guest not yet READY
+            ok(!host.storyCommitted());
+            ok(guest.acknowledgeSceneLoaded(0,0,1)); // EXTERNAL hypothetical loader proof
+            ok(!guest.acknowledgeSceneLoaded(0,0,1)); // duplicate
+            until(()->host.storyCommitted()&&guest.storyCommitted());
+            ok(ticket.same(guest.storyTicket()));
+            // Story host barrier cannot silently start a second mission.
+            try{host.prepareStory(1,0,2);throw new AssertionError("Duplicate story accepted");}
+            catch(java.io.IOException expected){}
+        }
+        // A peer exit during PREPARE must revoke the barrier and refuse COMMIT.
+        try(RoomTls.Server host=RoomTls.Server.start(hostContext,loop,0,"Host","Campaign");
+            RoomTls.Client guest=RoomTls.Client.connect(guestContext,loop,host.port(),"Remote")){
+            until(()->guest.snapshot()!=null&&guest.snapshot().players.size()==2);
+            host.prepareStory(0,0,11);
+            until(()->guest.storyTicket()!=null);
+            guest.close();
+            until(()->host.snapshot().players.size()==1);
+            ok(host.storyTicket()==null&&!host.storyCommitted());
+        }
+        // Compacted participant slots must NOT rely on permanently increasing
+        // room player IDs; old ID is never reused across disconnects.
+        try(RoomTls.Server host=RoomTls.Server.start(hostContext,loop,0,"Host","Campaign")){
+            int old;
+            try(RoomTls.Client first=RoomTls.Client.connect(guestContext,loop,host.port(),"First")){
+                old=first.snapshot().self;
+            }
+            until(()->host.snapshot().players.size()==1);
+            try(RoomTls.Client later=RoomTls.Client.connect(guestContext,loop,host.port(),"Later")){
+                ok(later.snapshot().self>old);
+                var ticket=host.prepareStory(7,0,33);
+                until(()->later.storyTicket()!=null);
+                ok(ticket.participants==3&&ticket.same(later.storyTicket()));
+                ok(!host.hostSceneLoaded(7,0,33));
+                ok(later.acknowledgeSceneLoaded(7,0,33));
+                until(()->host.storyCommitted()&&later.storyCommitted());
+            }
+        }
+        System.out.println("STORY_TLS_PASS: real authenticated host PREPARE, guest scene READY, host COMMIT, abort on leave, compact slots after rejoin");
+        System.out.println("NO BLACK engine scene loading, gameplay actor or phone co-op executed");
+    }
+}
