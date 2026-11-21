@@ -928,7 +928,7 @@
       "documentation": "docs/BLACK_WORLD_POINTER_XREF_AUDIT_AR.md"
     },
     "ROOM_DIAGNOSTICS_NO_GAME_THREAD_IO_20261122": {
-      "status": "SOURCE_CODE_AND_JVM_GATE_PASS_ANDROID29_EMULATOR_RECHECK_PENDING",
+      "status": "SUCCESS_ANDROID29_ASYNC_ROTATION_TLS_AND_EXPORT_BARRIER",
       "sourceCommit": "28289cc8e187de7ad5f4393d617721ce50f488fc",
       "androidAsyncTestFixCommit": "0de18eb19a22dbc5b44a1e49c177271483873bea",
       "persistentLoggerNamespaceFix": "3670520976394d54cfcebb3d1694b4393a1e37bd",
@@ -942,8 +942,18 @@
       "nextAndroidFailureRun": 44960934419,
       "secondFailure": "PERSISTENT_DIAGNOSTIC_THREAD_NAME_COLLIDED_WITH_ROOM_THREAD_LEAK_ASSERTION",
       "verifyAndroidRun": 44961110132,
-      "verifyAndroidStatus": "CHECK_LIVE",
-      "actualGameSceneAndActorsLogged": false
+      "verifyAndroidStatus": "SUCCESS",
+      "actualGameSceneAndActorsLogged": false,
+      "verifyMarkers": [
+        "BO_TLS_ANDROID_PACKAGE_INSTALL_PASS",
+        "TLS_PLATFORM_PASS",
+        "STORY_READY_ASYNC_ANDROID_PASS",
+        "ROOM_LOG_ROTATION_PASS",
+        "ROOM_LOG_ASYNC_PASS"
+      ],
+      "sourcePreflightRun": 44961110163,
+      "sourcePreflightStatus": "SUCCESS",
+      "phoneAcceptance": false
     }
   },
   "pending": {
@@ -1117,7 +1127,7 @@
     "deviceTested": true,
     "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "Session42: verify Android29 log async fix run44961110132 and source/APK status. Follow 0x0020BF48 and 0x0020BF51 world-pointer assignments in owner c5 via private static control-flow; do not mistake pointer store for scene loaded. Establish actual mission ID stage epoch and verified game-thread callback then connect RoomSession TLS bridge and human remote AllyBody/host-world replication. No physical owner test until substantial genuine gameplay acceptance.",
+  "next": "Session42 latest: Android29 full async SAFE logs + TLS PASS44961110132, source preflight PASS44961110163. Check room-only APK44961110208 live but do not ask owner to test. Focus static caller/control flow of owner c5 world pointer writes at 0020BF48/0020BF51 and true mission/stage loaded game-thread source before linking real scene READY. Then independent remote full-body human AllyBody and host world/AI/quest sync. CI-first; major device test only later.",
   "latestHandoff": {
     "date": "2026-11-22",
     "session": 42,
@@ -1169,9 +1179,14 @@
     "realBlackSceneLoadFound": false,
     "gameThreadReadyAttested": false,
     "sharedStory": false,
-    "ownerDeviceTestRequested": false
+    "ownerDeviceTestRequested": false,
+    "roomLogAndroidRun": 44961110132,
+    "roomLogAndroidStatus": "SUCCESS",
+    "sourceRun": 44961110163,
+    "sourceStatus": "SUCCESS",
+    "engineActualSharedStory": false
   },
-  "executionStatus": "Session42: original c5 owner XBE world xref metadata CI44960617668, typed CI44960876328, tests44960893099 SUCCESS: 892 references/2 register-derived writers. TLS guest READY off game thread JVM44960452007 and Android29 44960451936 SUCCESS. Bounded async room diagnostic log source staged; Android29 first test failure from premature file assertion, second from thread naming in cleanup check; fixed via commits0de18eb19 and367052097, rerun44961110132 pending. Real BLACK scene/actor/world not yet implemented. No user trial.",
+  "executionStatus": "Session42: owner pinned c5 xref CI44960617668/44960876328/44960893099 PASS 892 refs/two register-sourced possible world writes; JVM44960452007 and Android29 44960451936 guest READY async PASS; Android29 latest44961110132 SUCCESS for async diagnostic disk writer, TLS + rotation; source44961110163 PASS. Room-only APK44961110208 still pending. No shared BLACK campaign, no remote human body rendering, no owner phone test.",
   "ownerClarifications": {
     "session": 28,
     "previousPhoneTests": "Solo gameplay and two-phone real LAN lobby now confirmed, but no two-phone SAME WORLD gameplay",
@@ -1185,7 +1200,7 @@
   "currentWork": {
     "session": 42,
     "task": "real host campaign scene-load investigation on pinned owner XBE + async TLS guest READY and bounded game-thread-safe event logging",
-    "status": "World pointer xref private CI pinned owner c5 PASS; guest READY off game thread JVM/Android29 PASS; no game scene callback; async room log Android29 rerun pending after test assumption/thread-name fixes",
+    "status": "Owner c5 world pointer static audit and async TLS READY validated; Android29 asynchronous room diagnostics now SUCCESS. Actual BLACK stage-loaded game hook and remote human AllyBody/world replication still OPEN",
     "sourceCi": 44951425780,
     "sourceCode": "9938283748ad1bdb06f15259d7e4fcb791a47574",
     "latestOwnerTestedAndroidApkRun": 44946597973,
@@ -1245,11 +1260,14 @@
     "latestReadyAsyncJvmRun": 44960452007,
     "latestReadyAsyncAndroid29Run": 44960451936,
     "latestRoomLogAsyncAndroid29Run": 44961110132,
-    "latestRoomLogAsyncAndroid29Status": "CHECK_LIVE",
+    "latestRoomLogAsyncAndroid29Status": "SUCCESS_ROOM_LOG_ASYNC_PASS_AND_TLS",
     "currentRoomOnlyApkRun": 44961110208,
     "actualSceneLoadedEngineHook": false,
     "remoteHumanFullBodyRendered": false,
-    "phoneTestRequiredNow": false
+    "phoneTestRequiredNow": false,
+    "latestSourcePreflightRun": 44961110163,
+    "latestSourcePreflightStatus": "SUCCESS",
+    "currentRoomOnlyApkStatus": "CHECK_LIVE"
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
