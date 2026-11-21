@@ -35,6 +35,7 @@ jobs:
           javac --release 17 -Xlint:all -Werror -cp "$out/classes" -d "$out/classes" coop/lobby/test/*.java
           # Ephemeral TEST identity only. Never bundled, committed, or uploaded.
           keytool -genkeypair -alias room -keyalg RSA -keysize 2048 -validity 2 -dname CN=localhost -storetype PKCS12 -keystore "$out/test-identity.p12" -storepass test-only -keypass test-only -noprompt
+          timeout 30s java -ea -cp "$out/classes" com.racas.black.coop.RoomScanGateTest
           timeout 30s java -ea -cp "$out/classes" com.racas.black.coop.WireTest
           timeout 30s java -ea -cp "$out/classes" com.racas.black.coop.RoomStoryWireTest
           timeout 60s java -ea -cp "$out/classes" com.racas.black.coop.TlsRoomTest "$out/test-identity.p12"
