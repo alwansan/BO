@@ -1,3 +1,8 @@
+## CLOUD HANDOFF UPDATE — Session38 (2026-11-22)
+Read newest Session38 and plan 2026-11-22-host-story-remote-ally.md BEFORE older Session37/36. New owner test EXISTS in CL (BLACK-Probe-20261121-235407-267/coop_probe.txt): 8 valid first-person arms primary-model samples; owner now explicitly permits full-body ALLY appearance for OTHER human network players, while each local user stays original first-person. This overrides prior no-ally-for-anyone directive. Host must start the SINGLE shared campaign stage; no separate solo mission Start. Pure C++ ally view + host mission barrier source and sanitizer workflow run44951425780 PASS, NO rendering/engine/TLS mission integration or updated APK yet. Current owner-tested last APK44946597973/artifact14724535514. Huawei Android10 defaultplayer log arrived, no second model capture. Pixel images inaccessible through current GitHub text-only connector; do not pretend to have viewed images. No ISO request; all tools live on GitHub.
+
+---
+
 # بدء العمل من جلسة سحابية — 2026-11-22
 
 المستودع https://github.com/alwansan/BO والفرع experiment/black-coop. ابدأ من prompt/RESTORE_SESSION_AR.md وجلسة37 ثم36 وSTATE والخطة. جميع أدوات المصدر التالية موجودة فيGitHub،ولا تحتاج ملفات الجهاز المحلي أوحزمPythonالمترجمة:
