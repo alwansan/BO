@@ -193,7 +193,7 @@ jobs:
               raise SystemExit('Broad storage permission leaked into probe APK')
           for p in ('INTERNET','ACCESS_NETWORK_STATE'):
               if "uses-permission: name='android.permission." + p + "'" not in badging:
-                  raise SystemExit('Authenticated TLS room requires network permission: '+p)
+                  raise SystemExit('Automatic TLS room requires network permission: '+p)
           if "BLACK Co-op NETWORK TEST" not in badging:
               raise SystemExit('Incorrect visible probe app label')
           signature = subprocess.check_output([str(bt / 'apksigner.bat'), 'verify', '--verbose', '--print-certs', str(apk)], text=True)
@@ -218,7 +218,7 @@ jobs:
           if 'Java_com_racas_black_BlackActivity_nativeCoopProbeEnable' not in symbol_dump:
               raise SystemExit('Optional JNI entry not exported in Android ELF')
           report.update(probe_jni_export_verified=True, package_label='BLACK Co-op NETWORK TEST',
-                        internet_and_network_state_permission=True, authenticated_lobby_only=True, apk_built=True, apk_sha256=hashlib.sha256(apk.read_bytes()).hexdigest(),
+                        internet_and_network_state_permission=True, authenticated_lobby_only=False, automatic_lobby_only=True, manual_pin_required=False, manual_fingerprint_required=False, room_wire_version=2, room_profile=2, default_tcp_port=24872, presence_udp_port=1511, apk_built=True, apk_sha256=hashlib.sha256(apk.read_bytes()).hexdigest(),
                         apk_bytes=apk.stat().st_size, native=identity, debug_signature_verified=True,
                         package_and_activity_verified=True, no_original_assets_in_apk=True,
                         device_tested=False, multiplayer=False, lobby_networking=True, gameplay_coop=False, probe_device_tested=False, baseline_owner_test_already_accepted=True)
@@ -227,7 +227,7 @@ jobs:
           artifact.mkdir()
           shutil.copy2(apk, artifact / 'black-room-network-NO-GAMEPLAY-COOP.apk')
           shutil.copy2(report_path, artifact / 'probe-metadata.json')
-          notices = ['AUTHENTICATED LOBBY ONLY. Real TLS Host/Join forms; NO second gameplay actor, combat, quests, mission sync or playable coop. APK untested on phone; original ISO unchanged.\n',
+          notices = ['AUTOMATIC LAN LOBBY ONLY. Names-only Host/Join, opportunistic TLS and nearby device discovery; NO second gameplay actor, combat, quests, mission sync or playable coop. APK untested on phone; original ISO unchanged.\n',
                      'Game image/assets are not included and are not licensed by the open source MIT notices.\n']
           for source in ('reference/LICENSE', 'reference/sdk/LICENSE'):
               p = pathlib.Path(source)

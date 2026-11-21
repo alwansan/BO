@@ -1,3 +1,6 @@
+## الحالة الحالية — جلسة34
+الواجهة تستخدم RoomDirect.joinAutomatic: اسم وIP فقط في الاتصال اليدوي، TCP24872 تلقائي. لا PIN في البروتوكول ولا بصمة يدوية. يُلتقط certificate تلقائياً ويُثبت على اتصالTLS جديد؛ لا تحقق هوية خارج القناة. بقية النص أدناه تاريخ Session32 متجاوز في شروط المستخدم. اقرأ docs/ROOM_NETWORK_DEVICE_TEST_AR.md وجلسة34.
+
 # BO-COOP — Direct IPv4 + pinned TLS join and platform test gate
 Latest dated 2026-11-21, session30.
 
