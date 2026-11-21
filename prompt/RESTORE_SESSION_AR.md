@@ -1,3 +1,9 @@
+# أحدث جلسة24 — سجل Probe3 وصل، لا تنتظر الاختبار القديم
+اقرأmemory/sessions/2026-11-21_bo-coop-24-probe3-owner-analysis.md والملخصmemory/evidence/PROBE3-owner-090753-safe-summary.json. 56/56لقطةpoolصالحة،2تبدلserialفيالخانةنفسها،17ملاحظةslot/generation؛الموارد320/35Cمشتركة. لاendأوreloadمرصودفياللقطةالجزئية. **توقفالانتظارالسابقحُلّبوصولالسجل؛لاتطلبProbe3نفسهمجدداً**.
+التاليdocs/ACTOR_INSTANCE_OWNERSHIP_AR.md:staticbacklinkactor328↔controller.owner+0مثبتبـ17E420،draw1C6150يستخدمه. أكملخطةinstancegraphثمrealremoteactor. مرجعPetersonhead0ee3ae6لميَتغير؛محفوظومقروء،ولاcopyللأصولالمقيدة. لاco-opجاهزبعد. ما أدناهتاريخفقطولايتغلبعلىجلسة24.
+
+---
+
 # حالة التنفيذ الحالية: انتظار اختبار المالك
 Probe3APKموثوقومرفوع؛الهدفالكاملمعلّقعلىسجلProbe3منالهاتفبعدNPCdeath/checkpointreload. فُحصCLوالـattachmentsمجدداً؛الموجودسجلProbe2القديمفقط. راجعdocs/PROBE3_DEVICE_TEST_AR.md والجلسة23. لاتكررالبناءأوالـbaseline،ولا تدّعmultiplayerأوإثباتlifetimeمنالاختباراتالمصطنعة. الاستئنافعندنتيجةاختبارالمالك،وجميعالمعلوماتمحفوظةأدناه.
 

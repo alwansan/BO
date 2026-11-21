@@ -279,3 +279,7 @@ APK44872995034SUCCESS/core44872995111SUCCESS،artifact14695275729 نُزلوفُ
 
 ### بوابة الجهاز الحالية
 Probe3جاهز؛بعد3goalturnsلايزالcoop_probe.txtالجديدغيرمتاحفيCL/attachments. التنفيذblockedانتظاراختبارمالكNPCdeath/reloadوفقdocs/PROBE3_DEVICE_TEST_AR.md،وليسبناءنسخةمطابقةأوتوسيعmocknet. الهدفالكاملغيرمكتمل.
+
+
+## جلسة24 — حل انتظار Probe3
+وصلcapture090753،56/56poolvalid و2serialreplacements؛الملخصالآمنوالخطةفيmemory/sessions/2026-11-21_bo-coop-24-probe3-owner-analysis.md. actor328controllerbacklinkودخولهdrawمثبتانثابتاً؛التاليinstancegraph. لاتكررطلبProbe3أوbaseline؛لاspawn/render/coopمقبولبعد.

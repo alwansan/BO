@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "events": {
+    "animation": 47,
+    "lod": 38,
+    "player": 54,
+    "pool": 56,
+    "start": 1
+  },
+  "pool": {
+    "total": 56,
+    "valid": 56,
+    "invalid": 0
+  },
+  "captureComplete": false,
+  "durationMs": 59688,
+  "scopeCount": 1,
+  "scopeChanges": 0,
+  "groupTransitions": {
+    "0->1": 13,
+    "1->0": 1,
+    "1->2": 9,
+    "2->3": 8
+  },
+  "stateTransitions": {
+    "0->0": 283,
+    "0->1": 9,
+    "1->1": 16,
+    "1->2": 8,
+    "2->2": 185
+  },
+  "occupiedSerialChanges": 2,
+  "resourceChangesWithSerialChange": 1,
+  "observedSlotGenerations": 17,
+  "counterDecreasesWithinScope": 0,
+  "groupStateMismatches": 0,
+  "maxDistinctResource320PerSnapshot": 4,
+  "maxDistinctResource35cPerSnapshot": 1,
+  "snapshotsWithSharedOrZeroResource320": 55,
+  "snapshotsWithSharedOrZeroResource35c": 56,
+  "provesPlayableCoop": false,
+  "limitations": [
+    "sampled observations, not exact spawn/death callbacks",
+    "no atomicity or ABA proof",
+    "resource pointers are not model-instance ownership proof",
+    "raw identities and private positions omitted"
+  ],
+  "source": {
+    "repository": "alwansan/CL",
+    "path": "black log/logs/BLACK-Probe-20261121-090753-249/coop_probe.txt",
+    "blobSha": "02ab58b296a4ae09f27f8ef173e244936423a7ba",
+    "sha256": "d95bddaedf2edcbe4d670f3aa776060fabc622982e6a17862574477a4e803e0e",
+    "bytes": 89203
+  },
+  "devicePackageConfirmed": "org.bocoop.black.probe3",
+  "ownerImageConfirmed": "c5bfed25449c8212d7a976f15246e87ead57713f"
+}

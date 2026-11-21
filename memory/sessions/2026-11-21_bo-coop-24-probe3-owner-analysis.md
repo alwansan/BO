@@ -1,0 +1,9 @@
+# جلسة24 — وصل سجل Probe3 واستؤنف العمل
+
+المالكأرسلCL/black log/logs/BLACK-Probe-20261121-090753-249 وذكّربمرجعPeterson. قرئالملفانفعلياًبالموصل؛packageProbe3وصورةc5مؤكدتانمنlogالاستيراد. rawcaptureفي/tmp/black-probe3-090753-249فقط،ومصدرCLللاستعادة؛ممنوعنشرهفيBO. 89203bytesSHA256d95bddaedf2edcbe4d670f3aa776060fabc622982e6a17862574477a4e803e0e. الملخصالآمنmemory/evidence/PROBE3-owner-090753-safe-summary.json.
+
+56/56poolvalid،196records،حوالي59.7s،2serialreplacementsفيالخانةنفسهاو17slot/generationobservations؛المشاركة320/35Cمؤكدةضمنالعينات. لاendولاغيرepoch/resetداخلنافذةالبيانات،فلاreloadproofكاملولاmultiplayer. لا دليلتعطللاحقمنهذهاللقطةالجزئية،ولا ادعاءfullcampaignacceptance.
+
+أضيفpool_capture.pyprivacyanalyzerمع7testsRED→GREEN،وجميع16analysistest_*.pyPASS. يرفضschema/counts/duplicate/time/booleaninteger/free-stale errors،يكسرcomparisonعلىinvalid/resetboundary،ويخرجaggregatesبدونrawIDs/pointers/positions. مراجعةpool_core_reviewلمتجدعيباًمهماً. workflowanalyzerأضيفلهtestالجديد؛CIلميطلقبعدعندكتابةهذهالدفعة.
+
+اكتشافثابت مهم:actor+328هوcontrollerذوownerbacklinkمثبتبـ17E420،ومسارdraw1C6150يستهلكه. تفاصيلdocs/ACTOR_INSTANCE_OWNERSHIP_AR.md. مصدرPetersonheadظل0ee3ae6المحفوظ؛لاnativecodeجديدأصولمرخصةللنسخ. التالياستمرارالخطةdocs/superpowers/plans/2026-11-21-probe3-evidence-and-instance.md نحوinstancegraphمتحقق،دونطلبإعادةbaselineأوProbe3نفسه. توقفالانتظارالسابقحُلّبوصولالسجل؛رسالةالاستعادةينبغيأنتقودللعملالحاليلاwaitingالقديم.

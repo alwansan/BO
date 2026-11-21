@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-23-probe3-apk-ready.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-24-probe3-owner-analysis.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -451,6 +451,12 @@
       "deviceTested": false,
       "multiplayer": false,
       "evidence": "memory/evidence/PROBE3-apk-44872995034.json"
+    },
+    "PROBE3_OWNER_POOL_OBSERVATION": {
+      "status": "PASS_56_VALID_POOL_SNAPSHOTS_PARTIAL_CAPTURE_NO_RELOAD_PROOF",
+      "evidence": "memory/evidence/PROBE3-owner-090753-safe-summary.json",
+      "occupiedSerialReplacements": 2,
+      "playableCoop": false
     }
   },
   "pending": {
@@ -461,7 +467,7 @@
     },
     "ACTOR_001": "Real Probe2 13 LOD+animation correlations, 9 first observed late, 2 10s sampling gaps; NOT NPC death/spawn or ownership proof. ACTOR001A analyzer and value-only mock remote roster pass isolated CI, actual game actor factory/proxy unimplemented.",
     "COMBAT_001": "not_started",
-    "DEVICE": "Baseline and Probe2 owner accepted; Probe3 build verified, focused NPC damage/death/checkpoint reload capture required on owner phone",
+    "DEVICE": "Probe3 capture read; pool layout/serial replacement observed. Per-actor controller/render ownership still needs verified graph experiment; no baseline or duplicate Probe3 retest.",
     "SRC_002": "Separate candidate build and owner baseline runtime accepted for this limited device test; not original Arabic source equivalence/full campaign proof.",
     "NET_004": "Synthetic host+scene inbox composition PASS. Real Android LAN/ZeroTier, secure session auth, actor mapping and game-thread integration NOT tested.",
     "SRC_002B": {
@@ -525,7 +531,7 @@
       "next": "Android opt-in room browser & LAN interface binding, 2-device discovery; authenticated session before gameplay; no game actor use yet"
     },
     "PROBE3_DEVICE_BUILD": {
-      "status": "BUILD_COMPLETE_OWNER_PHONE_ACTOR_TEST_REQUIRED",
+      "status": "OWNER_POOL_CAPTURE_READ_LAYOUT_AND_REINITIALIZATION_OBSERVED",
       "workflow": ".github/workflows/black-coop-probe3-apk.yml",
       "package": "org.bocoop.black.probe3",
       "session": "memory/sessions/2026-11-21_bo-coop-21-probe3-device-build.md",
@@ -551,23 +557,21 @@
     "gameplayCoop": false,
     "sourceCommit": "678536b205506be6cfcc4ca86a18afe3391e0aa9"
   },
-  "next": "Need owner focused Probe3 phone capture according to docs/PROBE3_DEVICE_TEST_AR.md; no baseline retest or duplicate toy networking",
+  "next": "Validate actor328 animation controller backlink and private runtime resources before real remote actor/render work",
   "latestHandoff": {
     "date": "2026-11-21",
-    "session": 23,
+    "session": 24,
     "kind": "documentation_and_static_analysis_only",
     "newApk": false,
     "newCI": false,
     "actorPoolEvidence": "memory/sessions/2026-11-21_bo-coop-19-cloud-handoff.md",
-    "next": "Owner Probe3 actor lifecycle test, then analyze pool observations before real remote actor work",
+    "next": "Verified per-actor animation instance graph from actor328 owner backlink; do not repeat Probe3 test",
     "cloudFilesRequiredFromOwner": false,
     "actorPoolContracts": "docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md",
     "fullOwnerObjective": "docs/OWNER_PROJECT_OBJECTIVE_AR.md",
     "serialReset": "1D5E00 successful AL1 path restores pool and sets counter8524=1; instrument return without changing context",
     "poolReader": "coop/probe3/pool_snapshot.hpp",
-    "poolReaderStatus": "PROBE3_APK_READY_WAITING_OWNER_PHONE_CAPTURE",
-    "blockedReason": "No owner Probe3 runtime capture; only prior Probe2 capture in CL and no new probe attachment. Build verified, but real pool lifetime/model evidence requires phone NPC death and checkpoint test.",
-    "blockedAuditConsecutiveGoalTurns": 3
+    "poolReaderStatus": "PROBE3_APK_READY_WAITING_OWNER_PHONE_CAPTURE"
   },
-  "executionStatus": "blocked_waiting_owner_probe3_phone_capture"
+  "executionStatus": "research_resumed_owner_probe3_capture_received"
 }

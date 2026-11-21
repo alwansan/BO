@@ -23,3 +23,4 @@ jobs:
           python3 -m py_compile coop/analysis/summarize_probe.py coop/analysis/capture_analysis_checks.py coop/analysis/actor_lifecycle_triage.py coop/analysis/test_actor_lifecycle_triage.py
           python3 -m unittest discover -s coop/analysis -p capture_analysis_checks.py -v
           python3 -m unittest discover -s coop/analysis -p test_actor_lifecycle_triage.py -v
+          python3 -m unittest discover -s coop/analysis -p test_pool_capture.py -v
