@@ -1,3 +1,8 @@
+## Session39 current verified handoff — 2026-11-22
+New commits on BO:experiment/black-coop: 86faa014 RoomSession game-thread ownership fence around real TLS story PREPARE/READY/COMMIT/ABORT; 5370dcae actual loopback TLS SessionTest with synthetic verified-loader callback contract. JVM run44954581676 SUCCESS, literal SESSION_STORY_BRIDGE_PASS. Source staging44954581651 SUCCESS; Android29 and lobby APK runs44954581718/44954581624 were ongoing at documentation, check current. Session file memory/sessions/2026-11-22_bo-coop-39-roomsession-story-thread-bridge.md. Still NO real BLACK gameplay, game-thread callback, shared host mission/world, renderer remote human ally, or new phone-tested v3 APK. Old owner-tested 44946597973 uses incompatible protocol v2. Owner images show two human lobby members 2/4, not shared game. Old CL host BindException detected; source retry passed JVM/Android29 but phone proof open. Preserve original local POV; OTHER humans rendered eventually as independent fullbody ally without AI. No ISO reupload.
+
+---
+
 ## Latest final verification from Session38
 Real TLS v3 story control and rapid Host/Leave/Host regression confirmed in JVM run44953176046 (STORY_TLS_PASS + ROOM_REHOST_PASS four iterations) and Android29 KeyStore run44953176054 (TLS_PLATFORM_PASS including stage messages and rebind). BOTH PASS in source-only/synthetic testing, not on actual owner game phones. Real mission Start, remote fullbody AllyBody renderer and world sync not implemented; latest owner tested Android game remains run44946597973/artifact14724535514 protocol-v2 incompatible. Read docs/ROOM_STORY_TLS_PROTOCOL_AR.md, docs/BLACK_STORY_ENTRY_AUDIT_AR.md, Session38. No ISO request.
 
