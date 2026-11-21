@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-42-async-story-ready-world-pointer-audit.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-43-world-writers-and-native-witness.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -954,6 +954,59 @@
       "sourcePreflightRun": 44961110163,
       "sourcePreflightStatus": "SUCCESS",
       "phoneAcceptance": false
+    },
+    "OWNER_WORLD_WRITER_FLOW_20261122": {
+      "status": "PASS_PRIVATELY_PINNED_C5_XBE_STATIC_ONLY",
+      "workflowRun": 44961768279,
+      "safeArtifact": 14729429674,
+      "worldGlobal": "0x002D45D4",
+      "worldRegisterWrites": [
+        {
+          "address": "0x0020BF48",
+          "sourceRegister": "EAX",
+          "possibleRecentZero": false
+        },
+        {
+          "address": "0x0020BF51",
+          "sourceRegister": "EBX",
+          "possibleRecentZero": true
+        }
+      ],
+      "writesDistanceBytes": 9,
+      "nearbyBranchTargetCount": 17,
+      "nearbyDirectCallTargetCount": 0,
+      "directBranchToSecondWriter": "0x0020BF3F -> 0x0020BF51",
+      "directBranchPastSecond": "0x0020BF4F -> 0x0020BF57",
+      "secondRegisterGuaranteedZeroOnAllPaths": false,
+      "functionEntrypointKnown": false,
+      "actualSceneLoadedHookProven": false,
+      "missionIdentityKnown": false,
+      "sourceDocument": "docs/BLACK_WORLD_POINTER_XREF_AUDIT_AR.md"
+    },
+    "SOURCE_ONLY_NATIVE_WORLD_WITNESS_20261122": {
+      "status": "PASS_CXX_SANITIZER_AND_SOURCE_STAGING_NOT_PHONE_RENDER",
+      "nativeContractRun": 44962215874,
+      "sourcePreflightRun": 44962275672,
+      "apkWithSourceObserverRun": 44962275637,
+      "apkWithSourceObserverStatus": "CHECK_LIVE",
+      "sourceFiles": [
+        "coop/room_network/world_tick_contract.hpp",
+        "coop/room_network/room_world_tick.hpp",
+        "coop/prepare_room_network.py"
+      ],
+      "runtimeFixedCodes": [
+        "WORLD_MISSION_LAUNCH_ATTEMPT",
+        "WORLD_LOCAL_PLAYER_UPDATE_SEEN",
+        "WORLD_POINTER_CHANGED_UNVERIFIED"
+      ],
+      "originalGameWrappers": [
+        "sub_00124CF0",
+        "sub_001E5FA0"
+      ],
+      "sourceOnlyStaging": true,
+      "guestWorldLoadedFromTheseSignals": false,
+      "roomSessionReadySentFromTheseSignals": false,
+      "blackWorldPlayableOnline": false
     }
   },
   "pending": {
@@ -1127,10 +1180,10 @@
     "deviceTested": true,
     "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "Session42 latest: Android29 full async SAFE logs + TLS PASS44961110132, source preflight PASS44961110163. Check room-only APK44961110208 live but do not ask owner to test. Focus static caller/control flow of owner c5 world pointer writes at 0020BF48/0020BF51 and true mission/stage loaded game-thread source before linking real scene READY. Then independent remote full-body human AllyBody and host world/AI/quest sync. CI-first; major device test only later.",
+  "next": "Session43: verify newest TLS title Android APK44962275637 after staging read-only original player tick & mission launch attempt observer. Private world writer CI44961768279 SUCCESS (0x20BF48 EAX, 0x20BF51 EBX; branch into second, no scene proof); native guard44962215874 and source preflight44962275672 PASS. Next rigorously verify actual mission/stage ID, XBE world-load completion and game-thread ABI; ONLY then gate RoomSession READY; then independent remote human fullbody AllyBody + authoritative world replication. No phone test until substantial gameplay.",
   "latestHandoff": {
     "date": "2026-11-22",
-    "session": 42,
+    "session": 43,
     "kind": "owner_CI_only_stage_static_plus_safe_tls_story_diagnostics",
     "plan": "docs/superpowers/plans/2026-11-22-host-story-remote-ally.md",
     "sourceCiRun": 44951425780,
@@ -1155,12 +1208,12 @@
     "sourceCommit": "5370dcaed04fab156f807a63dc86dd827d5ae16f",
     "storyFacadeJvmRun": 44954581676,
     "storyFacadeAndroid29Run": 44954581718,
-    "sourcePreflightRun": 44954581651,
+    "sourcePreflightRun": 44962275672,
     "roomOnlyAndroidApkRun": 44954581624,
     "engineHookVerified": false,
     "remoteHumanActorRendered": false,
     "ownerV3DeviceAccepted": false,
-    "sessionFile": "memory/sessions/2026-11-22_bo-coop-42-async-story-ready-world-pointer-audit.md",
+    "sessionFile": "memory/sessions/2026-11-22_bo-coop-43-world-writers-and-native-witness.md",
     "ownerTestPolicy": "CI_FIRST_MAJOR_TRIAL_ONLY",
     "ownerXbeStaticRun": 44956138064,
     "storyDiagnosticJvmRun": 44956473684,
@@ -1184,9 +1237,14 @@
     "roomLogAndroidStatus": "SUCCESS",
     "sourceRun": 44961110163,
     "sourceStatus": "SUCCESS",
-    "engineActualSharedStory": false
+    "engineActualSharedStory": false,
+    "ownerWriterFlowRun": 44961768279,
+    "nativeWorldWitnessRun": 44962215874,
+    "latestRoomApkRun": 44962275637,
+    "realSceneLoadedHook": false,
+    "ownerPhoneTestRequested": false
   },
-  "executionStatus": "Session42: owner pinned c5 xref CI44960617668/44960876328/44960893099 PASS 892 refs/two register-sourced possible world writes; JVM44960452007 and Android29 44960451936 guest READY async PASS; Android29 latest44961110132 SUCCESS for async diagnostic disk writer, TLS + rotation; source44961110163 PASS. Room-only APK44961110208 still pending. No shared BLACK campaign, no remote human body rendering, no owner phone test.",
+  "executionStatus": "Session43: owner c5 private XBE static flow44961768279 SUCCESS, 2 world writes 9B apart EAX/EBX, nearby branch-to-second suggests alternatives but no proven clear/loaded scene. Added staging-only native local-world update and mission-launch attempt fixed codes without emitting STORY_READY. Contract ASan+UBSan44962215874 SUCCESS, source preflight44962275672 SUCCESS; Android full room-only APK44962275637 pending. User phone test not requested; real host story/remote human ally remains undone.",
   "ownerClarifications": {
     "session": 28,
     "previousPhoneTests": "Solo gameplay and two-phone real LAN lobby now confirmed, but no two-phone SAME WORLD gameplay",
@@ -1198,9 +1256,9 @@
   },
   "integrationRoadmap": "docs/COOP_INTEGRATION_ROADMAP_AR.md",
   "currentWork": {
-    "session": 42,
-    "task": "real host campaign scene-load investigation on pinned owner XBE + async TLS guest READY and bounded game-thread-safe event logging",
-    "status": "Owner c5 world pointer static audit and async TLS READY validated; Android29 asynchronous room diagnostics now SUCCESS. Actual BLACK stage-loaded game hook and remote human AllyBody/world replication still OPEN",
+    "session": 43,
+    "task": "pinned original c5 world writer control flow, actual original local player update and mission-launch attempt read-only witness staged into TLS title build",
+    "status": "Original XBE private static flow SUCCESS; native observer synthetic C++ and source staging PASS. Latest full APK compile pending; no actual BLACK shared campaign or actor yet.",
     "sourceCi": 44951425780,
     "sourceCode": "9938283748ad1bdb06f15259d7e4fcb791a47574",
     "latestOwnerTestedAndroidApkRun": 44946597973,
@@ -1267,7 +1325,21 @@
     "phoneTestRequiredNow": false,
     "latestSourcePreflightRun": 44961110163,
     "latestSourcePreflightStatus": "SUCCESS",
-    "currentRoomOnlyApkStatus": "CHECK_LIVE"
+    "currentRoomOnlyApkStatus": "CHECK_LIVE",
+    "originalWorldWriterFlowRun": 44961768279,
+    "originalWorldWriterFlowStatus": "SUCCESS_PRIVATE_PINNED_OWNER_IMAGE",
+    "originalWorldWriterFlowSafeArtifact": 14729429674,
+    "nativeLocalWorldTickTestRun": 44962215874,
+    "nativeLocalWorldTickTestStatus": "SUCCESS",
+    "nativeRoomStagingTestRun": 44962275672,
+    "nativeRoomStagingStatus": "SUCCESS",
+    "androidCandidateWithWitnessRun": 44962275637,
+    "androidCandidateWithWitnessStatus": "CHECK_LIVE",
+    "realMissionStageIdentityProven": false,
+    "realSceneLoadedGameThreadHookProven": false,
+    "storyReadyFromActualBlackScene": false,
+    "remoteFullBodyHumanRendered": false,
+    "ownerPhoneTestRequiredNow": false
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
