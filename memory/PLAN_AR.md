@@ -1,3 +1,12 @@
+## OWNER TEST GATE — 2026-11-22
+- **CI-FIRST:** compile/sanitize Java/C++/Python, run JVM TLS, Android29 KeyStore emulator, staged Android APK integrity, private XBE static entry audit, synthetic disconnection/rehost/scene/proxy tests until robust.
+- **NO PHONE TEST NOW:** v3 lobby transport/Java story facade are NOT real BLACK shared story and cannot justify a physical owner trial. A new APK alone is not a reason to request testing.
+- **ONLY MAJOR MILESTONE:** real verified host mission choice+scene loader with consistent guest scene epoch, remote human-controlled ALLY visuals and movement at minimum, then single bundled owner two-phone test. Ideally include world/combat/quest acceptance. One app build on BOTH phones and automatically exported safe diagnostics for all small questions.
+- **AUTO CAPTURE:** bounded event codes, per-stage and room state lifecycle, remote spawn/render state, scene epoch match, AI/world sync, performance crashes. Never expose owner assets/addresses/keys.
+- Owner instruction committed to AGENTS/MEMORY/RESTORE and docs/MAJOR_DEVICE_TEST_GATE_AR.md. No repeated ISO/model capture requests.
+
+---
+
 ## ACTIVE Session39 — verified TLS handoff to RoomSession, engine remains next gate (2026-11-22)
 - ENGINE BRIDGE STAGE 1 SOURCE DONE: commits `86faa014` / `5370dcae` provide `RoomSession.bindStoryGameThread`, read-only story status, host-only PREPARE, game-thread scene-loaded READY, host cancel and thread binding generation reset. This still depends on **an unimplemented, independently verified BLACK game-thread callback**; calling these from synthetic JVM test does not prove game loading.
 - JVM real TLS test `44954581676` SUCCESS confirmed log strings `SESSION_STORY_BRIDGE_PASS`, `STORY_TLS_PASS`, `ROOM_REHOST_PASS`; source staging `44954581651` SUCCESS; Android29 `44954581718`, Android lobby-only APK `44954581624` verify live before acceptance.
