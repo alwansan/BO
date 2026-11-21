@@ -8,7 +8,8 @@ permissions:
   contents: read
 concurrency:
   group: black-coop-real-lobby-core
-  cancel-in-progress: false
+  # Prior source commits are superseded; test the newest story protocol.
+  cancel-in-progress: true
 jobs:
   real-tls:
     runs-on: ubuntu-latest
