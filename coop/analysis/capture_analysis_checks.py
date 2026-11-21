@@ -161,7 +161,7 @@ class SummaryChecks(unittest.TestCase):
         self.assertEqual(report["correlation_overlap_counts"]["player_lod"],0)
         self.assertEqual(report["valid_resource_count"]["lod"],13)
         self.assertEqual(report["valid_render_count"]["lod"],13)
-        self.assertEqual(report["nonzero_animation_clip_hash_count"]["animation"],14)
+        self.assertEqual(report["nonzero_unverified_clip_field_0x18_count"]["animation"],14)
         self.assertEqual(report["sample_observation_span_seconds"],139)
         self.assertEqual(report["distinct_thread_count"],1)
         self.assertTrue(report["capture_is_partial_snapshot"])
