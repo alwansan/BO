@@ -32,3 +32,12 @@ Baseline يعمل على هاتف المالك بلا تعطل؛ لا تعيد �
 
 ## ملاحظات محلية
 `/home/a/Desktop/black/BO-active` checkout نظيف من الفرع الصحيح قبل هذه الدفعة. `/home/a/Desktop/black/BO-coop` قديم وله تعديلات محلية؛ لا reset/delete ولا تخلطه مع HEAD الحديث. مراجع read-only: Black-Android f3754d6985a8c35204e7df071546e586b10f1806، SDK XboxXBE-Recomp 99078b119b5d5e0d1d6afb1390e29437c0c984c0.
+
+
+## متابعة قصيرة بعد التسليم — عقود أكثر دقة
+فُحصت فعلياً slices `1da1a0:1da2d0` و`1e6860:1e69b0` بواسطة الأداة على SHA المطابق:
+- **0x1E6860 ليست predicate نقية آمنة للاستدعاء**: تقارن count+79B4/capacity+79B8 في container+79B0، وعند الامتلاء تستدعي1C4A90 ثم2056A0 قبل اختبار20 flags في global2D45F4+2960. لا تستدعها من probe؛ راقب فقط.
+- 0x1DA240 تنقل actor إلى container manager+79C0، تفحص actor+250، وقد تستدعي1DA1A0 عند الامتلاء. تضبط actor+384 إلى1؛ **لا تسمها spawn أو active-list insertion مؤكداً**، قد تكون مرحلة تقاعد/موت.
+- 0x1E68B0 تستخدم container+79D0، وقد تستدعي1DA1A0 عند الامتلاء، تفك موارد+324/+B4، تضبط+384 إلى2، وتصفّر+8/+C. هذا يدعم وجود قوائم حالات متعددة، وليس قائمة active وحيدة.
+- 0x1DA1A0 تأخذ manager ثمactor كوسيطين stack وتنتهي ret8؛ تنظف موارد+324/+B4، تستدعي1B6770 على manager+79A0 ثم actor virtual slot+0xC. هذا عقد cleanup قوي، لا free heap مثبت.
+هذه أدلة ثابتة فقط. يجب فحص1B6770 و1C4A90 و1DF440 ودالة init/serial لفهم الحاويات قبل أي إضافة hooks أو قراءة count كأنه عدد الأحياء.
