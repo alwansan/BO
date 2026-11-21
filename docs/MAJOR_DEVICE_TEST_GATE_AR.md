@@ -1,3 +1,8 @@
+## CI achievement: safe combined log export verified without owner participation (2026-11-22)
+Run `44957104337` Android29 **SUCCESS** with `ROOM_LOG_ROTATION_PASS`: automatically generated 900 synthetic safe events; previous+current rotated room event log exported once through MediaStore; began/ended markers found; tampered previous log refused. TLS/Keystore and rehost also PASS. This validates ROOM transport diagnostics, not the FUTURE real BLACK scene/actor/combat/world instrumentation. Do not ask owner to test until the actual substantial shared-world milestone is ready.
+
+---
+
 # BO-COOP — سياسة تقليل تجارب المالك وتجربة القبول الموحّدة (2026-11-22)
 
 ## توجيه المالك الملزم
