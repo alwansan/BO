@@ -1,3 +1,16 @@
+# BO-COOP — Latest restore Session31 (2026-11-21)
+
+**Only writable branch:** `alwansan/BO:experiment/black-coop`. Read `AGENTS.md`, `memory/STATE.json`, `memory/sessions/2026-11-21_bo-coop-31-android-tls-session-forms.md`, then MEMORY, PLAN, ISSUES, `docs/ROOM_DIRECT_JOIN_AR.md`, `docs/COOP_INTEGRATION_ROADMAP_AR.md` and earlier Session30. Check live HEAD and Actions before writing.
+
+### Session31 latest verified facts
+- **Android TLS platform PASS** on Android29 emulator in [44922935535](https://github.com/alwansan/BO/actions/runs/44922935535), job136902689543, explicit `TLS_PLATFORM_PASS`. EC P-256 opaque AndroidKeyStore and real pinned TLS room host/client/roster/heartbeat/close. It is not a real phone pair or gameplay.
+- Added `RoomSession.java` bounded async lifecycle, cancel, immutable roster. Source `e8c0aece75bc466644e3a9cd775b8f5c79ce4105`, core [44923264389](https://github.com/alwansan/BO/actions/runs/44923264389) **SUCCESS** with `ROOM_SESSION_PASS`.
+- Added isolated Android `RoomLobbyActivity.java` Host/Join/Leave direct IPv4+port/full fingerprint/PIN and roster; source `9ab240262f5d327203053b6ca7d2c820360b72a8`. Android emulator platform [44923426931](https://github.com/alwansan/BO/actions/runs/44923426931) **PENDING when recorded**. Previous run44923264409 APK `pm install` hung exit124 after adb push; diagnose/retry bounded, not a proven TLS regression.
+- **No Flash-to-Activity wiring yet. No second human gameplay actor, body, AI/combat or mission sync.** Owner accepted previous UI and Probe4; do NOT ask to redo those. Pin/key/private assets never committed. `main` and `biso` unchanged.
+- Next: inspect latest Actions, ensure Android form gate PASS, then stage actual game Android/Flash Host/Join integration and a separate APK, plus independent ACTOR+324/factory/full-body ownership audit. Update RESTORE and memory after every batch.
+
+---
+
 # BO-COOP — Latest restore Session30 (2026-11-21)
 **Only writable GitHub branch `alwansan/BO:experiment/black-coop`.** Start with `AGENTS.md`, `memory/STATE.json`, `memory/sessions/2026-11-21_bo-coop-30-directjoin-android-keystore.md`, then `memory/MEMORY.md`, `memory/PLAN_AR.md`, `memory/ISSUES_AR.md`, `docs/ROOM_DIRECT_JOIN_AR.md`, `docs/superpowers/plans/2026-11-21-real-lobby.md`, and `docs/COOP_INTEGRATION_ROADMAP_AR.md`. Verify HEAD and Actions live before writing.
 

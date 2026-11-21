@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-30-directjoin-android-keystore.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-31-android-tls-session-forms.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -604,6 +604,43 @@
       "trueHumanRoomNetwork": true,
       "androidUiIntegrated": false,
       "gameNetworkIntegrated": false
+    },
+    "ANDROID_KEYSTORE_PLATFORM": {
+      "status": "ANDROID29_REAL_TLS_PIN_AND_OPAQUE_KEYSTORE_RUNTIME_PASS",
+      "sourceCommit": "1da051c02c300ef5c4a301ae2691d6ab5e8830f7",
+      "run": 44922935535,
+      "job": 136902689543,
+      "androidRuntimeVerified": true,
+      "evidence": "TLS_PLATFORM_PASS instrumentation on emulator, real AndroidKeyStore EC P-256, pinned TLS host/client, roster heartbeat close. Not two phones or game integration.",
+      "priorRunFailed": 44922289967,
+      "subsequentTransientCiFailure": 44923264409,
+      "subsequentFailureCause": "Emulator package-manager install timed out (exit 124); no proof of a new TLS regression."
+    },
+    "REAL_LOBBY_SESSION": {
+      "status": "JVM_REAL_SOCKET_LIFECYCLE_PASS_ANDROID_SESSION_TEST_PENDING",
+      "code": "e8c0aece75bc466644e3a9cd775b8f5c79ce4105",
+      "run": 44923264389,
+      "job": 136903679809,
+      "sessionTest": "ROOM_SESSION_PASS",
+      "features": [
+        "bounded asynchronous session worker",
+        "host/join",
+        "copied roster",
+        "wrong-PIN failure",
+        "cancel and close"
+      ]
+    },
+    "ROOM_ANDROID_FORMS": {
+      "status": "ISOLATED_ANDROID_HOST_JOIN_FORM_PUSHED_PLATFORM_CI_PENDING",
+      "code": "9ab240262f5d327203053b6ca7d2c820360b72a8",
+      "run": 44923426931,
+      "paths": [
+        "coop/lobby/platform/RoomLobbyActivity.java",
+        "coop/lobby/platform/PlatformInstrumentation.java"
+      ],
+      "inGameFlashConnected": false,
+      "phoneToPhoneTested": false,
+      "gameActors": false
     }
   },
   "pending": {
@@ -749,23 +786,19 @@
     "deviceAccepted": true,
     "gameplayCoop": false
   },
-  "next": "Check Android Keystore EC P-256 platform workflow 44922289967 and inspect instrumentation logs. If PASS, add Android host/join forms & game JNI/Flash live room rows in an isolated APK. If FAIL, diagnose server-side sanitized handshake info, no insecure TLS bypass. Continue native actor+brain ownership separately; no actual 2-player campaign yet.",
+  "next": "Check Android form build/emulator run44923426931; repair any compile/runtime/install flake with bounded retries, then stage a separate game APK that launches the authenticated room UI from accepted Flash CO-OP. Actual body+324 ownership and mission sync remain open; no guest writes or gameplay claim.",
   "latestHandoff": {
     "date": "2026-11-21",
-    "session": 29,
-    "kind": "owner_ui_acceptance_and_real_tls_lobby_core",
+    "session": 31,
+    "kind": "real_android_tls_proven_and_standalone_host_join_forms",
     "newApk": false,
     "newCI": true,
-    "actorPoolEvidence": "memory/sessions/2026-11-21_bo-coop-19-cloud-handoff.md",
-    "next": "Run synthetic Android emulator instrumentation for per-install opaque AndroidKeyStore identity and real pinned TLS; then implement discovery/direct join, Android forms and Flash/JNI live room state. Native actor/body and story sync remain required.",
-    "cloudFilesRequiredFromOwner": false,
-    "actorPoolContracts": "docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md",
-    "fullOwnerObjective": "docs/OWNER_PROJECT_OBJECTIVE_AR.md",
-    "serialReset": "1D5E00 successful AL1 path restores pool and sets counter8524=1; instrument return without changing context",
-    "poolReader": "coop/probe3/pool_snapshot.hpp",
-    "poolReaderStatus": "OWNER_PROBE3_AND_PROBE4_CAPTURE_ACCEPTED"
+    "sourceCodeCommit": "9ab240262f5d327203053b6ca7d2c820360b72a8",
+    "platformPassRun": 44922935535,
+    "sessionCorePassRun": 44923264389,
+    "next": "Check Android form build/emulator run44923426931; repair any compile/runtime/install flake with bounded retries, then stage a separate game APK that launches the authenticated room UI from accepted Flash CO-OP. Actual body+324 ownership and mission sync remain open; no guest writes or gameplay claim."
   },
-  "executionStatus": "android_avd_registry_fix_pending_real_tls_and_discovery_core_ci_green",
+  "executionStatus": "android_keystore_tls_runtime_pass_jvm_session_pass_standalone_android_forms_platform_ci_pending",
   "ownerClarifications": {
     "session": 28,
     "previousPhoneTests": "solo local human plus enemy/friendly NPCs only; never two phones",

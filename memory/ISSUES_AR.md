@@ -283,3 +283,8 @@ APK44876183662SUCCESS؛artifact14696342069 نُزلوفُحصhash. راجع memo
 - Android29 emulator boots and installs synthetic APK, but RSA-only KeyManager handshake fails even with DIGEST_NONE. Observed server SSLHandshakeException/SSLProtocolException and requested EC keyType in 44921892101; not a certificate pin bypass issue. EC P-256 identity is being tested, no PASS yet.
 - Avoid treating test-only self-signed certificate and full SHA256 pin as production PKI; user must verify pin out-of-band. Do not silently replace already-pinned identities on devices.
 - Shared-chat URL inaccessible directly; GitHub session29 live source used. No claim of exact transcription from link.
+
+## Session31 remaining issues
+- Android TLS core passed emulator 44922935535. Separate run44923264409 failed at `adb shell pm install` (timeout 124 after staged APK push); runner/emulator install flake, not proven TLS defect. New UI/platform test run44923426931 pending.
+- Android Host/Join/Leave forms added as isolated synthetic Activity. No integration with BlackActivity/Flash menu yet; no two-phone LAN test; do not release this as co-op gameplay.
+- Real actor creation still blocked by independent +324 ownership, 16-element pool, unguarded damage access and full-body/animation resource verification. Preserve story saves, NPCs, ISO, and main.

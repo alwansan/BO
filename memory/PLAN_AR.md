@@ -332,3 +332,10 @@ APK44876183662SUCCESS؛artifact14696342069 نُزلوفُحصhash. راجع memo
 - [ ] Android TLS platform instrumentation PASS is essential before connecting live room to Flash Host/Join forms and actual Android LAN.
 - [ ] Build standalone app form/bridge with immutable roster; keep network worker off game thread.
 - [ ] Actual independent character body/controller 324 + combat AI mission checkpoint sync remain mandatory.
+
+## Session31 — Room networking to game integration
+- [x] AndroidKeyStore EC P-256 real Android29 TLS/socket gate `TLS_PLATFORM_PASS` in 44922935535; prior timeout was APK install, not proof of certificate failure.
+- [x] Bounded Java RoomSession with real JVM host/join/cancel/roster tests `ROOM_SESSION_PASS` 44923264389.
+- [ ] Android opt-in RoomLobbyActivity compile/runtime gate (CI44923426931 pending); inspect emulator install flakiness and logs.
+- [ ] Wire accepted Flash room Host/Join to game Activity and immutable roster, separate isolated APK, then two-device test; no untrusted discovery as authenticated lobby.
+- [ ] Independently solve ACTOR+324 allocation/lifecycle/body rig, network-to-game-thread snapshot apply, combat/story missions. Never equate room participants with in-game actors.
