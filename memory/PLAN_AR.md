@@ -134,3 +134,7 @@ Owner ISO uploaded 5 parts and fully SHA-verified. See docs/OWNER_ISO_UPLOAD_AR.
 - [ ] Validate actor lifetimes/full-body before ACTOR-001; no guest writes or production auth claims.
 
 HOOK001 fairness source e9ad056: host sanitizer + pinned-source [44856368591](https://github.com/alwansan/BO/actions/runs/44856368591) PASS, Android [44856368592](https://github.com/alwansan/BO/actions/runs/44856368592) pending. Next verify APK SHA/artifact; older f7 build 44855984997 still running. No device acceptance.
+
+## NET004-PREP composition test (2026-11-21)
+- Code commit a5d164ca6f5f19bb807851429c7ba294a5d572b4 wires two previously isolated *test components* under coop/bridge/test_transport_pipeline.cpp. A deterministic host validates Join/Accept and Input token/endpoint/sequence; a transport worker stages value-only commands into SceneInbox; the owning simulated game thread drains them into a mock scene. Negative tests cover forged endpoint/token, duplicate replay, wrong drain thread, and scene reload dropping stale input. No actual network socket is opened by this composition test (separate Linux UDP socket tests exist), no BLACK hooks/actor memory access/gameplay, no authentication or phone test.
+- [44856542339](https://github.com/alwansan/BO/actions/runs/44856542339) completed SUCCESS with ASAN/UBSAN and strict C++20; input path tested synthetically only. Keep wording «mock host→scene pipeline», not co-op, and do not treat a pseudorandom lab token as secure authentication.

@@ -21,3 +21,7 @@
 - ملاحظة حدود: الحصة المحجوزة تضمن **إمكانية** رصد اللاعب إذا وصلت استدعاءات اللاعب، ولا تضمن ظهور player samples على جهاز فعلي؛ no phone test. لا تعادل هوية player المحفوظة actor lifetime.
 
 **أحدث بوابة Android للشفرة e9ad056:** Run [44856368592](https://github.com/alwansan/BO/actions/runs/44856368592) pending عند التوثيق. تحقق من نهايته وإثبات artifact/hash/signature/ABI. إن لم ينجح، ابدأ من log الحقيقي ولا تخفف الاختبارات. الـBaseline الأصلية ناجحة ولا تعاد.
+
+## NET004-PREP composition test (2026-11-21)
+- Code commit a5d164ca6f5f19bb807851429c7ba294a5d572b4 wires two previously isolated *test components* under coop/bridge/test_transport_pipeline.cpp. A deterministic host validates Join/Accept and Input token/endpoint/sequence; a transport worker stages value-only commands into SceneInbox; the owning simulated game thread drains them into a mock scene. Negative tests cover forged endpoint/token, duplicate replay, wrong drain thread, and scene reload dropping stale input. No actual network socket is opened by this composition test (separate Linux UDP socket tests exist), no BLACK hooks/actor memory access/gameplay, no authentication or phone test.
+- [44856542339](https://github.com/alwansan/BO/actions/runs/44856542339) completed SUCCESS with ASAN/UBSAN and strict C++20; input path tested synthetically only. Keep wording «mock host→scene pipeline», not co-op, and do not treat a pseudorandom lab token as secure authentication.

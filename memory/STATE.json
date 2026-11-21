@@ -179,6 +179,12 @@
       "run": 44856368591,
       "code": "e9ad056805cabacadcf3882d5ff7aeb5f45df914",
       "scope": "Synthetic host only, not phone"
+    },
+    "NET004_MOCK_TRANSPORT_PIPELINE": {
+      "status": "pass_isolated_sanitized_mock_only",
+      "run": 44856542339,
+      "code": "a5d164ca6f5f19bb807851429c7ba294a5d572b4",
+      "scope": "Host packet validation + scene inbox + mock world, no actual game, no actual UDP sockets in this specific test"
     }
   },
   "pending": {
@@ -191,7 +197,7 @@
     "COMBAT_001": "not_started",
     "DEVICE": "Owner-tested rebuilt baseline ACCEPTED; HOOK001 probe device test NOT STARTED; co-op device-pair test NOT STARTED.",
     "SRC_002": "Separate candidate build and owner baseline runtime accepted for this limited device test; not original Arabic source equivalence/full campaign proof.",
-    "NET_004": "Isolated game-thread inbox passed Linux CI; no in-game integration, authenticated transport or phone peer-pair test.",
+    "NET_004": "Synthetic host+scene inbox composition PASS. Real Android LAN/ZeroTier, secure session auth, actor mapping and game-thread integration NOT tested.",
     "SRC_002B": {
       "status": "candidate translation possible; 46 library symbols, 5 data locations, 11 ABI unresolved; semantics not accepted",
       "candidateSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
