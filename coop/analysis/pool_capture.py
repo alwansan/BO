@@ -12,6 +12,42 @@ def integer(value, maximum=(1<<32)-1):
     return value
 
 
+def collect_instances(record,actors,stats):
+    if 'instance_schema' not in record:
+        if 'instances' in record:raise ValueError('Instance rows without schema')
+        return
+    if integer(record['instance_schema'],1)!=1:raise ValueError('Unknown instance schema')
+    rows=record.get('instances')
+    if not isinstance(rows,list) or not 1<=len(rows)<=5:raise ValueError('Wrong instance row count')
+    seen=set();npc=[];local=[];local_rows=0;npc_rows=0
+    for row in rows:
+        if not isinstance(row,list) or len(row)!=9:raise ValueError('Wrong instance tuple')
+        for value in row:integer(value)
+        is_local,slot,serial,valid,controller,runtime,binding,scratch_a,scratch_b=row
+        if is_local>1 or valid>1 or slot>31 or (is_local and slot):raise ValueError('Wrong instance tag')
+        if (is_local,slot) in seen:raise ValueError('Duplicate instance identity')
+        seen.add((is_local,slot))
+        if is_local:local_rows+=1
+        else:
+            npc_rows+=1
+            if actors[slot][1]!=1 or actors[slot][2]!=serial:raise ValueError('Instance does not match live pool identity')
+        stats['rows']+=1
+        if not valid:
+            if any(row[4:]):raise ValueError('Failed instance has stale pointers')
+            stats['invalid']+=1;continue
+        if controller<0x10000:raise ValueError('Invalid checked controller')
+        stats['valid']+=1
+        stats['localValid' if is_local else 'npcValid']+=1
+        (local if is_local else npc).append(controller)
+        if runtime:stats['validWithNonzeroRuntimePointer']+=1
+        if scratch_a and scratch_b:stats['validWithNonzeroScratchPointers']+=1
+    if local_rows!=1 or npc_rows>4:raise ValueError('Instance sampling budget violated')
+    stats['frames']+=1
+    stats['maxDistinctNpcControllersPerFrame']=max(stats['maxDistinctNpcControllersPerFrame'],len(set(npc)))
+    if len(npc)!=len(set(npc)):stats['framesWithRepeatedNpcControllerValues']+=1
+    if set(npc)&set(local):stats['framesWithLocalNpcSharedControllerValue']+=1
+
+
 def analyze(path:Path):
     with Path(path).open('rb') as source:
         raw=source.read(1048577)
@@ -22,6 +58,7 @@ def analyze(path:Path):
     max_resource320=max_resource35c=shared320=shared35c=0
     pool_counts={'total':0,'valid':0,'invalid':0}
     last_attempt=last_rejected=0
+    instance_stats=Counter()
     for index,line in enumerate(raw.splitlines(),1):
         if not line.strip():continue
         if index>2050 or len(line)>8192:raise ValueError('Capture record budget exceeded')
@@ -54,6 +91,7 @@ def analyze(path:Path):
         if type(valid) is not bool:raise ValueError('Pool valid flag must be boolean')
         pool_counts['total']+=1
         if not valid:
+            if 'instance_schema' in record or 'instances' in record:raise ValueError('Invalid pool cannot carry instance graph')
             pool_counts['invalid']+=1;previous=None;continue
         pool_counts['valid']+=1
         counter=integer(record.get('counter'))
@@ -79,6 +117,7 @@ def analyze(path:Path):
             if resource320:r320.add(resource320)
             if resource35c:r35c.add(resource35c)
         if [physical[i] for i in range(4)]!=occupied:raise ValueError('Occupied count mismatch')
+        collect_instances(record,actors,instance_stats)
         max_resource320=max(max_resource320,len(r320));max_resource35c=max(max_resource35c,len(r35c))
         if active>len(r320):shared320+=1
         if active>len(r35c):shared35c+=1
@@ -95,6 +134,7 @@ def analyze(path:Path):
         previous=(scope,counter,actors)
     if not header or not pool_counts['total']:raise ValueError('No Probe3 pool observations')
     return {'schema':1,'events':dict(sorted(counts.items())),'pool':pool_counts,
+            'instances':{k:instance_stats[k] for k in ('frames','rows','valid','invalid','npcValid','localValid','maxDistinctNpcControllersPerFrame','framesWithRepeatedNpcControllerValues','framesWithLocalNpcSharedControllerValue','validWithNonzeroRuntimePointer','validWithNonzeroScratchPointers')},
             'captureComplete':ended,'durationMs':(last_ms-first_ms),'scopeCount':len(scopes),'scopeChanges':scope_changes,
             'groupTransitions':dict(sorted(transitions.items())),'stateTransitions':dict(sorted(states.items())),
             'occupiedSerialChanges':serial_changes,'resourceChangesWithSerialChange':resource_changes,

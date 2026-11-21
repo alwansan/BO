@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "run": 44876183662,
+  "sourceCommit": "1b27ecc26e5417b91eb84208479e039e9b792521",
+  "conclusion": "success",
+  "jobs": {
+    "observerCore": 136761271051,
+    "androidApk": 136761328017
+  },
+  "artifact": 14696342069,
+  "metadataArtifact": 14697085027,
+  "package": "org.bocoop.black.probe4",
+  "apkBytes": 21749755,
+  "apkSha256": "bfd7968b04851d8c814bdb88563b1efb8e8b9b88695d2c161c077111bd3c9897",
+  "zipSha256": "9e4cf607925d35c35055e705ec7739c03d3b135d1abcee752fa2b34e2116015a",
+  "compileImageSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+  "architecture": "AArch64",
+  "signatureAndPackageVerified": true,
+  "noNetworkPermission": true,
+  "noOriginalGameAssetsInApk": true,
+  "downloadedAndIndependentlyHashed": true,
+  "deviceTested": false,
+  "playableCoop": false,
+  "localOutput": "/home/a/Desktop/black/Probe4-44876183662"
+}

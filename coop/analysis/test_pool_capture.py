@@ -48,4 +48,27 @@ class PoolCaptureTests(unittest.TestCase):
         result=self.run_capture([HEADER,{'event':'player','position':[123456789,2,3],'thread':9912345},pool(),{'event':'end','records':2}])
         self.assertTrue(result['captureComplete'])
         self.assertNotIn('123456789',json.dumps(result));self.assertNotIn('9912345',json.dumps(result))
+    def test_instance_graph_aggregates_are_private_and_do_not_claim_ownership(self):
+        record=pool();record['instance_schema']=1
+        record['instances']=[[0,31,912345,1,7123456,8123456,8123457,9123001,9123002],
+                             [1,0,17,1,7123457,8123458,8123459,9123003,9123004]]
+        result=self.run_capture([HEADER,record])
+        self.assertEqual(result.get('instances',{}).get('valid',0),2)
+        self.assertEqual(result['instances']['npcValid'],1)
+        self.assertEqual(result['instances']['localValid'],1)
+        self.assertEqual(result['instances']['maxDistinctNpcControllersPerFrame'],1)
+        for value in ['7123456','8123456','9123001']:self.assertNotIn(value,json.dumps(result))
+        self.assertFalse(result['provesPlayableCoop'])
+    def test_instance_wrong_serial_duplicate_and_failed_stale_pointer_rejected(self):
+        rows=[[[0,31,912346,1,7123456,0,0,0,0],[1,0,17,0,0,0,0,0,0]],
+              [[0,31,912345,0,7123456,0,0,0,0],[1,0,17,0,0,0,0,0,0]],
+              [[1,0,17,0,0,0,0,0,0],[1,0,17,0,0,0,0,0,0]]]
+        for values in rows:
+            record=pool();record.update(instance_schema=1,instances=values)
+            with self.subTest(),self.assertRaises(ValueError):self.run_capture([HEADER,record])
+    def test_instance_schema_and_row_limits_rejected(self):
+        a=pool();a.update(instance_schema=True,instances=[])
+        b=pool();b.update(instance_schema=1,instances=[[1,0,0,0,0,0,0,0,0]]*6)
+        for record in [a,b]:
+            with self.subTest(),self.assertRaises(ValueError):self.run_capture([HEADER,record])
 if __name__=='__main__':unittest.main()

@@ -242,3 +242,7 @@ Probe3جاهز؛بعد3goalturnsلايزالcoop_probe.txtالجديدغيرمت
 
 ## جلسة25 — رصد instance graph
 محلل Probe3 CI44875336266SUCCESS. إضافة Probe4 منفصلة لروابط controller328/owner/runtime/scratch؛محلياً native/JSON/preparer9tests ومراجعة PASS،CI/APK pending. راجع memory/sessions/2026-11-21_bo-coop-25-instance-graph-build.md؛لا duplicateProbe3 ولا co-op claim.
+
+
+## جلسة26 — Probe4 ready
+APK44876183662SUCCESS؛artifact14696342069 نُزلوفُحصhash. راجع memory/sessions/2026-11-21_bo-coop-26-probe4-ready.md؛التالياختبارownerinstancegraph وفقdocs/PROBE4_DEVICE_TEST_AR.md،بلاrepeatProbe3/baseline. analyzergraphextensionsمحلياً19+11testsPASSومراجعةPASS؛CIتحليلهذهالدفعةقيدالإطلاق. لاco-opجاهز.

@@ -1,3 +1,9 @@
+# أحدث جلسة26 — Probe4 APK جاهز، يحتاج اختبار روابط التحريك
+اقرأmemory/sessions/2026-11-21_bo-coop-26-probe4-ready.md. run44876183662SUCCESSبكلاjobعلى1b27ecc26e5417b91eb84208479e039e9b792521؛artifact14696342069،packageorg.bocoop.black.probe4،APKsha256bfd7968b04851d8c814bdb88563b1efb8e8b9b88695d2c161c077111bd3c9897. نُزلوفُحصZIP/APKمستقلاً. [تنزيلartifact](https://github.com/alwansan/BO/actions/runs/44876183662/artifacts/14696342069).
+التالي**اختبارالهاتفالمحدد**docs/PROBE4_DEVICE_TEST_AR.md. Probe3السابققُرئوقُبل56/56poolو2serialreplacements؛لاتطلبهمجدداً. محللpool_capture.pyيقبلProbe3/4ويخرجإحصاءاتآمنةللروابطفقط؛محلياً10pooltests+19analysis+11legacyprivacyPASSومراجعةواضحة. **validbacklinkلايثبتreadableruntime أوallocationownership أوuniqueness**. هدفco-opلميكمل؛لاISOجديدأولاعبثانٍمثبت. ما أدناهتاريخفقط.
+
+---
+
 # أحدث جلسة25 — Probe4 instance graph قيد البناء
 سجل Probe3 الجديد قُرئ:56/56 pool صالحة،2 serial replacements،المصادر المشتركة ليست instance. لا تطلبه مجدداً. analyzerCI44875336266SUCCESS.
 أضيف رصد actor328↔controller.owner مع runtime54/binding50/scratch34C/350 في حزمة Probe4 منفصلة. اقرأ memory/sessions/2026-11-21_bo-coop-25-instance-graph-build.md. الاختبارات المحلية والمراجعة نجحت؛**تابع Actions الجديد حتى نجاح APK قبل طلب اختبار الهاتف**. docs/PROBE4_DEVICE_TEST_AR.md يشرح الهدف وحدود valid. لا لاعب ثانٍ أو co-op مثبت بعد.

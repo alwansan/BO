@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-25-instance-graph-build.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-26-probe4-ready.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -463,6 +463,31 @@
       "run": 44875336266,
       "code": "f0a66a8dd74f2e610be7dc914f7a301d84364c8f",
       "safeSummary": "memory/evidence/PROBE3-owner-090753-safe-summary.json"
+    },
+    "PROBE4_ANDROID_BUILD": {
+      "schema": 1,
+      "run": 44876183662,
+      "sourceCommit": "1b27ecc26e5417b91eb84208479e039e9b792521",
+      "conclusion": "success",
+      "jobs": {
+        "observerCore": 136761271051,
+        "androidApk": 136761328017
+      },
+      "artifact": 14696342069,
+      "metadataArtifact": 14697085027,
+      "package": "org.bocoop.black.probe4",
+      "apkBytes": 21749755,
+      "apkSha256": "bfd7968b04851d8c814bdb88563b1efb8e8b9b88695d2c161c077111bd3c9897",
+      "zipSha256": "9e4cf607925d35c35055e705ec7739c03d3b135d1abcee752fa2b34e2116015a",
+      "compileImageSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+      "architecture": "AArch64",
+      "signatureAndPackageVerified": true,
+      "noNetworkPermission": true,
+      "noOriginalGameAssetsInApk": true,
+      "downloadedAndIndependentlyHashed": true,
+      "deviceTested": false,
+      "playableCoop": false,
+      "localOutput": "/home/a/Desktop/black/Probe4-44876183662"
     }
   },
   "pending": {
@@ -473,7 +498,7 @@
     },
     "ACTOR_001": "Real Probe2 13 LOD+animation correlations, 9 first observed late, 2 10s sampling gaps; NOT NPC death/spawn or ownership proof. ACTOR001A analyzer and value-only mock remote roster pass isolated CI, actual game actor factory/proxy unimplemented.",
     "COMBAT_001": "not_started",
-    "DEVICE": "Probe3 capture read; pool layout/serial replacement observed. Per-actor controller/render ownership still needs verified graph experiment; no baseline or duplicate Probe3 retest.",
+    "DEVICE": "Probe3 owner pool capture accepted within sampled scope; Probe4 APK verified, owner instance graph capture now required. No baseline/Probe3 retest.",
     "SRC_002": "Separate candidate build and owner baseline runtime accepted for this limited device test; not original Arabic source equivalence/full campaign proof.",
     "NET_004": "Synthetic host+scene inbox composition PASS. Real Android LAN/ZeroTier, secure session auth, actor mapping and game-thread integration NOT tested.",
     "SRC_002B": {
@@ -552,32 +577,36 @@
       "artifact": 14695275729
     },
     "PROBE4_DEVICE_BUILD": {
-      "status": "LOCAL_TESTS_REVIEW_PASS_CI_NOT_LAUNCHED",
+      "status": "BUILD_SUCCESS_OWNER_PHONE_INSTANCE_CAPTURE_REQUIRED",
       "package": "org.bocoop.black.probe4",
       "workflow": ".github/workflows/black-coop-probe4-apk.yml",
-      "protocol": "docs/PROBE4_DEVICE_TEST_AR.md"
+      "protocol": "docs/PROBE4_DEVICE_TEST_AR.md",
+      "run": 44876183662,
+      "sourceCommit": "1b27ecc26e5417b91eb84208479e039e9b792521",
+      "artifact": 14696342069,
+      "sha256": "bfd7968b04851d8c814bdb88563b1efb8e8b9b88695d2c161c077111bd3c9897"
     }
   },
   "apk": {
-    "kind": "Probe3 read-only pool/resource/reset diagnostic",
-    "run": 44872995034,
-    "artifact": 14695275729,
-    "package": "org.bocoop.black.probe3",
-    "sha256": "352d78ed1811b918b91f344e0ba613eb7a0a9f1cc43ba93ae952fccb83ffec44",
-    "bytes": 21746299,
+    "kind": "Probe4 read-only instance graph diagnostic",
+    "run": 44876183662,
+    "artifact": 14696342069,
+    "package": "org.bocoop.black.probe4",
+    "sha256": "bfd7968b04851d8c814bdb88563b1efb8e8b9b88695d2c161c077111bd3c9897",
+    "bytes": 21749755,
+    "sourceCommit": "1b27ecc26e5417b91eb84208479e039e9b792521",
     "deviceAccepted": false,
-    "gameplayCoop": false,
-    "sourceCommit": "678536b205506be6cfcc4ca86a18afe3391e0aa9"
+    "gameplayCoop": false
   },
-  "next": "Complete Probe4 Linux/Android APK CI and verify artifact; then targeted instance graph phone test, no duplicate Probe3 test",
+  "next": "Focused Probe4 phone instance graph capture according to docs/PROBE4_DEVICE_TEST_AR.md; do not repeat Probe3 or baseline",
   "latestHandoff": {
     "date": "2026-11-21",
-    "session": 25,
+    "session": 26,
     "kind": "documentation_and_static_analysis_only",
     "newApk": false,
     "newCI": false,
     "actorPoolEvidence": "memory/sessions/2026-11-21_bo-coop-19-cloud-handoff.md",
-    "next": "Follow isolated Probe4 instance graph APK build, then owner phone test only after verification",
+    "next": "Owner Probe4 instance graph capture, then real actor body/proxy experiment with verified lifecycle and game-thread guards",
     "cloudFilesRequiredFromOwner": false,
     "actorPoolContracts": "docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md",
     "fullOwnerObjective": "docs/OWNER_PROJECT_OBJECTIVE_AR.md",
@@ -585,5 +614,5 @@
     "poolReader": "coop/probe3/pool_snapshot.hpp",
     "poolReaderStatus": "PROBE3_APK_READY_WAITING_OWNER_PHONE_CAPTURE"
   },
-  "executionStatus": "instance_graph_implementation_ci_pending"
+  "executionStatus": "probe4_apk_verified_owner_instance_capture_required"
 }

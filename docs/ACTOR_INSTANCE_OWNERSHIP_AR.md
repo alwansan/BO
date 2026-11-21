@@ -14,3 +14,7 @@ resource320ظهرحتى4قيمغيرصفريةفياللقطة،معمشاركة
 
 ## خطوة عملية تالية
 رصدمنفصلopt-in،بدونguestwrites/calls،يتحققlivepoolslot+serialقبلوبعدقراءةcontroller328 وbacklinkowner وruntime54/binding50 وscratch34C/350. سجّلvalidityلكلرابط،ولا تحولفشلقراءةمرشحإلىNPCdeath. افحصالتفردعبرالشخصياتوالتبدلعندإعادةاستخدامالخانة. لا تنسخbody.bcaالمقيدمنPeterson؛مرجعهWindowsTDMأفكاربنيةفقطوhead0ee3ae6411c7f0989c62cbe36b224d3f55043923لميَتغيرعندالفحصالجديد.
+
+
+## ملاحظة تصميم proxy لاحق — استنتاج لا تعديل مطبق
+المصفوفة الفيزيائية32slot. حدودالقوائم المستخدمة16live+8phase1+8phase2=32 (freecontainercapacity32مستقل،لكنالعضويةحصرية). 1DF440ينظفمرشحاًفقطعندماlivecount==livecapacityثميفترضfreecandidateمتاحاً. رفعlivecapacityوحدهقديكسرالافتراض:يمكنامتلاء32slotبينالقوائمالثلاثدونامتلاءliveالجديدة،فيُختارfreeصفر. لا توسعcapacityعشوائياًلإضافةremoteavatars؛يلزمتصميمحصةاجماليةوprotectedremotehandlesوفحصselector/AI/questownership. مورد20flagsوحوض33controllerمرشحانبحدودثابتةمنالصورة،وليساإثباتسعةplayersمتاحة. لا تفترضأن324=AIbrain أوأنتمريرهصفراًإلىfactoryآمنقبلتحليلعقده.
