@@ -87,7 +87,9 @@ public final class RoomTls {
             this.host=RoomWire.name(host);this.room=RoomWire.name(room);
             if(bind==null||port<0||port>65535)throw new IOException("Invalid listener address");
             listener=(SSLServerSocket)ctx.getServerSocketFactory().createServerSocket();
-            try{listener.setReuseAddress(false);listener.setEnabledProtocols(protocols(listener.getSupportedProtocols()));listener.bind(new InetSocketAddress(bind,port),8);}
+            try{// Rebind quickly after owner Host/Leave/Host without waiting for
+                // lingering TCP TIME_WAIT endpoints; still reject concurrent LISTEN.
+                listener.setReuseAddress(true);listener.setEnabledProtocols(protocols(listener.getSupportedProtocols()));listener.bind(new InetSocketAddress(bind,port),8);}
             catch(IOException|RuntimeException e){try{listener.close();}catch(IOException ignored){}throw e;}
             workers=new ThreadPoolExecutor(6,6,0,TimeUnit.SECONDS,new ArrayBlockingQueue<>(8),RoomTls::thread);
             ticker=Executors.newSingleThreadScheduledExecutor(RoomTls::thread);
