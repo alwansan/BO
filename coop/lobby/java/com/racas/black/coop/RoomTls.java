@@ -89,7 +89,22 @@ public final class RoomTls {
             listener=(SSLServerSocket)ctx.getServerSocketFactory().createServerSocket();
             try{// Rebind quickly after owner Host/Leave/Host without waiting for
                 // lingering TCP TIME_WAIT endpoints; still reject concurrent LISTEN.
-                listener.setReuseAddress(true);listener.setEnabledProtocols(protocols(listener.getSupportedProtocols()));listener.bind(new InetSocketAddress(bind,port),8);}
+                listener.setReuseAddress(true);
+                listener.setEnabledProtocols(protocols(listener.getSupportedProtocols()));
+                // On some Android/Linux TCP stacks a just-stopped room can
+                // briefly leave its endpoint non-bindable despite reuseaddr.
+                // Retry a FIXED private-room port for at most 1.5s on this
+                // worker; never silently downgrade to another host/port.
+                for(int attempts=0;;attempts++)try{
+                    listener.bind(new InetSocketAddress(bind,port),8);break;
+                }catch(BindException occupied){
+                    if(port==0||attempts>=30)throw occupied;
+                    try{Thread.sleep(50);}
+                    catch(InterruptedException interrupt){
+                        Thread.currentThread().interrupt();
+                        throw new IOException("Host listener bind interrupted",interrupt);
+                    }
+                }}
             catch(IOException|RuntimeException e){try{listener.close();}catch(IOException ignored){}throw e;}
             workers=new ThreadPoolExecutor(6,6,0,TimeUnit.SECONDS,new ArrayBlockingQueue<>(8),RoomTls::thread);
             ticker=Executors.newSingleThreadScheduledExecutor(RoomTls::thread);
