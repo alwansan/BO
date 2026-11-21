@@ -739,7 +739,8 @@
       "storySecondMissionAfterAbort": true,
       "actorSpawned": false,
       "sharedStageLoaded": false,
-      "phoneTested": false
+      "phoneTested": false,
+      "secondMissionAfterAbortVerified": true
     },
     "STORY_TLS_V3_ANDROID_EMULATOR": {
       "status": "PASS_ANDROID29_CONSCRYPT_KEYSTORE_SOCKET_STORY_ONLY",
@@ -757,6 +758,16 @@
       "androidTest": 44953055469,
       "ownerPhoneTested": false,
       "rootCauseProven": false
+    },
+    "ROOM_REHOST_TCP_JVM": {
+      "status": "PASS_4_FAST_RESTARTS_REAL_TLS",
+      "run": 44953176046,
+      "job": 136995400648,
+      "source": "e606a881e6ce32789a0ca1ab21b8310f44d74800",
+      "proof": "ROOM_REHOST_PASS 4 consecutive same-port TCP sessions with TLS clients; concurrent listener rejected",
+      "androidOutcome": "PENDING_RUN44953176054",
+      "ownerPhonesTested": false,
+      "originalBindExceptionCausalityConfirmed": false
     }
   },
   "pending": {
@@ -930,11 +941,11 @@
     "deviceTested": true,
     "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "Audit and hook actual BLACK game-thread mission-select/load/ready (pinned candidate sub_00124CF0) to RoomSession/RoomTls story prepare and readiness, without single-player side effects. Then implement separately-owned remote full-body ally visual for OTHER humans, with real pose/input/world/AI/quest sync. Verify v3 on two phones with new candidate after actual engine milestone; do not repeat primary model probe or request ISO.",
+  "next": "Read docs/ROOM_STORY_TLS_PROTOCOL_AR.md and BLACK_STORY_ENTRY_AUDIT_AR.md; after validating latest Android fast-rehost CI connect game-thread 0..7 mission selection & actual scene loaded event to process RoomSession story bridge. Render OTHER humans via independently owned ally rig, host visible to guest; then replicate input/pose/world/AI/quest. No repeat primary model probe or ISO request.",
   "latestHandoff": {
     "date": "2026-11-22",
     "session": 38,
-    "kind": "owner_capture_remote_ally_view_real_tls_host_mission_control_source_verified",
+    "kind": "real_tls_v3_mission_and_rapid_rehost_jvm_verified_android_story_verified",
     "plan": "docs/superpowers/plans/2026-11-22-host-story-remote-ally.md",
     "sourceCiRun": 44951425780,
     "latestVerifiedAndroidBuild": 44946597973,
@@ -949,9 +960,14 @@
     "latestOwnerVerifiedApkRun": 44946597973,
     "latestOwnerVerifiedArtifact": 14724535514,
     "noNewAcceptedAndroidGameApk": true,
-    "latestRehostTestAttempt": 44953055433
+    "latestRehostTestAttempt": 44953055433,
+    "fastRehostJVMRun": 44953176046,
+    "fastRehostAndroidRun": 44953176054,
+    "fastRehostAndroidStatus": "IN_PROGRESS_AT_DOCUMENT_TIME",
+    "latestVerifiedOwnerAPKRun": 44946597973,
+    "newSourceNoPlayableApk": true
   },
-  "executionStatus": "Session38: owner primary-local-model capture verified; remote human AllyBody visual C++ contract PASS; real TLS v3 host story PREPARE/READY/COMMIT/ABORT JVM and Android29 PASS; actual BLACK scene loader/remote body/world sync OPEN; rapid rehost mitigation awaiting latest CI",
+  "executionStatus": "Session38: local original first-person primary model owner capture verified; remote ally look value-only CI PASS; story TLS v3 JVM+Android29 transport PASS; TCP fast rehost JVM PASS Android retest PENDING; no real BLACK scene start, remote bodies or world sync.",
   "ownerClarifications": {
     "session": 28,
     "previousPhoneTests": "Solo gameplay and two-phone real LAN lobby now confirmed, but no two-phone SAME WORLD gameplay",
@@ -980,12 +996,16 @@
     "storyJVMRun": 44952822531,
     "android29StoryRun": 44952822499,
     "sourcePreflightRun": 44952822545,
-    "rapidRehostCITest": 44953055433,
-    "rapidRehostTestStatus": "in_progress_at_record",
+    "rapidRehostCITest": 44953176046,
+    "rapidRehostTestStatus": "PASS_4_REAL_TCP_RESTARTS_AND_ACTIVE_LISTENER_REFUSED",
     "latestOwnerTestedApkRun": 44946597973,
     "actualSharedStory": false,
     "gameActorSpawned": false,
-    "phoneV3Tested": false
+    "phoneV3Tested": false,
+    "sourceCommit": "e606a881e6ce32789a0ca1ab21b8310f44d74800",
+    "androidRapidRehostRun": 44953176054,
+    "androidRapidRehostStatus": "IN_PROGRESS",
+    "actorCreated": false
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
