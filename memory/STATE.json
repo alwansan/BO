@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-41-cl-logs-ci-first-discovery-fix.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-42-async-story-ready-world-pointer-audit.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -884,6 +884,66 @@
       "noRealGameActorsOrWorldSync": true,
       "currentRoomOnlyApkRun": 44959047454,
       "currentRoomOnlyApkStatus": "CHECK_LIVE"
+    },
+    "STORY_READY_OFF_GAME_THREAD_20261122": {
+      "status": "PASS_JVM_ANDROID29_SYNTHETIC_REAL_TLS_ONLY",
+      "codeCommit": "57eb099dc975a1dee5673d484ae08e2c02bd63d9",
+      "jvmTestCommit": "2337b5c4457f7ab4b345117cd8242740302ac73d",
+      "androidTestCommit": "34191daf22edc6761716fe89261b8a0c0c7d4559",
+      "jvmRun": 44960452007,
+      "jvmMarker": "STORY_READY_ASYNC_PASS",
+      "android29Run": 44960451936,
+      "android29Marker": "STORY_READY_ASYNC_ANDROID_PASS",
+      "networkWriterBounded": true,
+      "readyQueueCapacity": 1,
+      "synchronousTLSWriteOnGameThread": false,
+      "actualBlackHookConnected": false,
+      "actualMissionLoaded": false
+    },
+    "OWNER_WORLD_POINTER_XREF_20261122": {
+      "status": "PASS_PINNED_XBE_PRIVATE_STATIC_CANDIDATES_ONLY",
+      "syntheticAndOwnerRun": 44960617668,
+      "typedOwnerRun": 44960876328,
+      "typedRegressionRun": 44960893099,
+      "safeArtifactId": 14729756019,
+      "ownerHashMatched": true,
+      "executableSections": 10,
+      "privatelyScannedCodeBytes": 2772164,
+      "possibleReferences": 892,
+      "possibleReads": 890,
+      "possibleDirectWrites": 2,
+      "worldVariable": "0x002D45D4",
+      "possibleWriterAddresses": [
+        "0x0020BF48",
+        "0x0020BF51"
+      ],
+      "writerOperandClasses": [
+        "register",
+        "register"
+      ],
+      "ownerBinaryOrDisassemblyExported": false,
+      "actualSceneLoaderProven": false,
+      "realSceneEpochProven": false,
+      "safeEngineHookProven": false,
+      "documentation": "docs/BLACK_WORLD_POINTER_XREF_AUDIT_AR.md"
+    },
+    "ROOM_DIAGNOSTICS_NO_GAME_THREAD_IO_20261122": {
+      "status": "SOURCE_CODE_AND_JVM_GATE_PASS_ANDROID29_EMULATOR_RECHECK_PENDING",
+      "sourceCommit": "28289cc8e187de7ad5f4393d617721ce50f488fc",
+      "androidAsyncTestFixCommit": "0de18eb19a22dbc5b44a1e49c177271483873bea",
+      "persistentLoggerNamespaceFix": "3670520976394d54cfcebb3d1694b4393a1e37bd",
+      "boundedQueueCapacity": 2048,
+      "producerDoesFileIO": false,
+      "eventCodeSanitization": true,
+      "exportWaitsForWriter": true,
+      "storageOverflowAggregateOnly": true,
+      "initialAndroidFailureRun": 44960759104,
+      "initialFailure": "SYNTHETIC_TEST_DID_NOT_FLUSH_LOG_WRITER_BEFORE_FILE_ASSERTION",
+      "nextAndroidFailureRun": 44960934419,
+      "secondFailure": "PERSISTENT_DIAGNOSTIC_THREAD_NAME_COLLIDED_WITH_ROOM_THREAD_LEAK_ASSERTION",
+      "verifyAndroidRun": 44961110132,
+      "verifyAndroidStatus": "CHECK_LIVE",
+      "actualGameSceneAndActorsLogged": false
     }
   },
   "pending": {
@@ -1057,10 +1117,10 @@
     "deviceTested": true,
     "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "Session41 DONE CI: inspect latest room-only APK44959047454 (may be in_progress). CL two-phone aggregate run44959212836 SUCCESS; Android29 room scan gate44959047461 PASS, JVM44959047515 PASS, source44959047532 PASS. Continue genuine owner c5 mission/stage-loaded game-thread hook then remote AllyBody human input/renderer and host world sync. NO owner phone test now, only substantial future combined acceptance.",
+  "next": "Session42: verify Android29 log async fix run44961110132 and source/APK status. Follow 0x0020BF48 and 0x0020BF51 world-pointer assignments in owner c5 via private static control-flow; do not mistake pointer store for scene loaded. Establish actual mission ID stage epoch and verified game-thread callback then connect RoomSession TLS bridge and human remote AllyBody/host-world replication. No physical owner test until substantial genuine gameplay acceptance.",
   "latestHandoff": {
     "date": "2026-11-22",
-    "session": 41,
+    "session": 42,
     "kind": "owner_CI_only_stage_static_plus_safe_tls_story_diagnostics",
     "plan": "docs/superpowers/plans/2026-11-22-host-story-remote-ally.md",
     "sourceCiRun": 44951425780,
@@ -1090,7 +1150,7 @@
     "engineHookVerified": false,
     "remoteHumanActorRendered": false,
     "ownerV3DeviceAccepted": false,
-    "sessionFile": "memory/sessions/2026-11-22_bo-coop-41-cl-logs-ci-first-discovery-fix.md",
+    "sessionFile": "memory/sessions/2026-11-22_bo-coop-42-async-story-ready-world-pointer-audit.md",
     "ownerTestPolicy": "CI_FIRST_MAJOR_TRIAL_ONLY",
     "ownerXbeStaticRun": 44956138064,
     "storyDiagnosticJvmRun": 44956473684,
@@ -1101,9 +1161,17 @@
     "clAuditRun": 44959212836,
     "roomScanGateJvmRun": 44959047515,
     "roomScanGateAndroid29Run": 44959047461,
-    "noOwnerPhoneTest": true
+    "noOwnerPhoneTest": true,
+    "ownerWorldXrefAuditRun": 44960876328,
+    "guestReadyJvmPass": 44960452007,
+    "guestReadyAndroid29Pass": 44960451936,
+    "roomLogAndroidPending": 44961110132,
+    "realBlackSceneLoadFound": false,
+    "gameThreadReadyAttested": false,
+    "sharedStory": false,
+    "ownerDeviceTestRequested": false
   },
-  "executionStatus": "Session41 verified CL historical 4 host BindException events and 103 second-phone post-JOIN SCAN_STARTED events via sanitized CI44959212836. New allowlist scan gate tested JVM44959047515, Android29 44959047461 and source staging44959047532 PASS. Room-only APK44959047454 status check live. Original local 44-bone arms-only observed 8/8. Real shared story/remote human body not implemented; no owner device test requested.",
+  "executionStatus": "Session42: original c5 owner XBE world xref metadata CI44960617668, typed CI44960876328, tests44960893099 SUCCESS: 892 references/2 register-derived writers. TLS guest READY off game thread JVM44960452007 and Android29 44960451936 SUCCESS. Bounded async room diagnostic log source staged; Android29 first test failure from premature file assertion, second from thread naming in cleanup check; fixed via commits0de18eb19 and367052097, rerun44961110132 pending. Real BLACK scene/actor/world not yet implemented. No user trial.",
   "ownerClarifications": {
     "session": 28,
     "previousPhoneTests": "Solo gameplay and two-phone real LAN lobby now confirmed, but no two-phone SAME WORLD gameplay",
@@ -1115,9 +1183,9 @@
   },
   "integrationRoadmap": "docs/COOP_INTEGRATION_ROADMAP_AR.md",
   "currentWork": {
-    "session": 41,
-    "task": "CL two-device evidence -> prevent active-session discovery storm and duplicate host/join taps; safe CL audit CI; then true engine scene epoch and human remote AllyBody",
-    "status": "CI JVM + Android29 + source PASS, CL safe aggregate PASS; real game stage/actor/world still OPEN",
+    "session": 42,
+    "task": "real host campaign scene-load investigation on pinned owner XBE + async TLS guest READY and bounded game-thread-safe event logging",
+    "status": "World pointer xref private CI pinned owner c5 PASS; guest READY off game thread JVM/Android29 PASS; no game scene callback; async room log Android29 rerun pending after test assumption/thread-name fixes",
     "sourceCi": 44951425780,
     "sourceCode": "9938283748ad1bdb06f15259d7e4fcb791a47574",
     "latestOwnerTestedAndroidApkRun": 44946597973,
@@ -1168,7 +1236,20 @@
     "consolidatedLogAndroidTestCommit": "b21e0e01320c2f87110405728214f13008248e04",
     "consolidatedLogAndroidTestStatus": "SUCCESS_ROOM_LOG_ROTATION_PASS",
     "clEvidencePin": "82b2c46f20aa2c911c6dfaec053be6d7d73962d4",
-    "clAuditRun": 44959212836
+    "clAuditRun": 44959212836,
+    "ownerWorldXrefRun": 44960617668,
+    "ownerWorldXrefTypedRun": 44960876328,
+    "ownerWorldXrefVerified": true,
+    "worldWriter1": "0x0020BF48",
+    "worldWriter2": "0x0020BF51",
+    "latestReadyAsyncJvmRun": 44960452007,
+    "latestReadyAsyncAndroid29Run": 44960451936,
+    "latestRoomLogAsyncAndroid29Run": 44961110132,
+    "latestRoomLogAsyncAndroid29Status": "CHECK_LIVE",
+    "currentRoomOnlyApkRun": 44961110208,
+    "actualSceneLoadedEngineHook": false,
+    "remoteHumanFullBodyRendered": false,
+    "phoneTestRequiredNow": false
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
@@ -1254,7 +1335,7 @@
     "directiveDate": "2026-11-22",
     "preference": "CI_FIRST_NO_SMALL_OWNER_PHONE_TESTS",
     "deviceTrialRequiredNow": false,
-    "physicalDeviceTrials": "ONLY_SUBSTANTIAL_END_TO_END_MILESTONE_CI_CANNOT_PROVE",
+    "physicalDeviceTrials": "ONLY_AFTER_GENUINE_SHARED_BLACK_SCENE_AND_REMOTE_HUMAN_MILESTONE",
     "combineMinorQuestionsIntoOneAutomaticBoundedSafeLogExport": true,
     "majorGate": "docs/MAJOR_DEVICE_TEST_GATE_AR.md",
     "oneMatchingApkForBothPhones": true,
