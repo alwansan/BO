@@ -1,3 +1,11 @@
+## Session40 residual issues after offline owner static/XBE and diagnostics (2026-11-22)
+- XBE executable entry mapping verified on actual owner c5 in CI44956138064 but a 160B disassembly window is insufficient for scene loader semantics, ABI and epoch; do not invoke as game Start or mark game-thread hook solved. Mission index0 remains valid.
+- TLS v3 story diagnostic codes are automatically logged by Android room session even when overlay is dismissed; JVM test44956473684 PASS. Combined previous/current sanitized log segments are source-patched, Android29 44956473707 / lobby-only APK 44956473687 require live confirmation. No true mission scene callback means no real story event emitted yet.
+- STILL UNIMPLEMENTED: remote human fullbody AllyBody and independent renderer life, shared host world/AI/combat/objectives/weapon sync, actual two-phone shared mission.
+- Device policy: do not ask owner for tiny tests, new APK lobby-only or repeated model ISO. One meaningful major trial only after all acceptance gates, collecting all small details automatically. docs/MAJOR_DEVICE_TEST_GATE_AR.md.
+
+---
+
 ## Owner test burden policy — 2026-11-22
 Owner does not want small/fragmented phone tests. CI and synthetic/emulator tests are preferred. A physical two-phone test remains BLOCKED until meaningful real shared-story engine/remote-human integration exists. Automatic consolidated privacy-safe diagnostics must capture minor uncertainties during that one major test. Do not ask owner to try the successful lobby-only APK; no gameplay exists. Follow docs/MAJOR_DEVICE_TEST_GATE_AR.md and AGENTS.md.
 
