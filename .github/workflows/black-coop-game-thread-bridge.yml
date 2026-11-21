@@ -15,7 +15,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          sparse-checkout: coop/bridge
+          sparse-checkout: |
+            coop/bridge
+            coop/native/net_core.hpp
           sparse-checkout-cone-mode: false
           lfs: false
       - name: Build bounded C++20 game-thread queue under sanitizers
@@ -23,8 +25,13 @@ jobs:
           g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread \
             -fsanitize=address,undefined -fno-omit-frame-pointer \
             coop/bridge/test_scene_inbox.cpp -o /tmp/bo-coop-inbox-tests
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread \
+            -fsanitize=address,undefined -fno-omit-frame-pointer \
+            coop/bridge/test_transport_pipeline.cpp -o /tmp/bo-coop-transport-pipeline
       - name: Verify validation, capacity, scene barriers and thread ownership
         env:
           ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
           UBSAN_OPTIONS: halt_on_error=1
-        run: /tmp/bo-coop-inbox-tests
+        run: |
+          /tmp/bo-coop-inbox-tests
+          /tmp/bo-coop-transport-pipeline
