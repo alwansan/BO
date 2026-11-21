@@ -37,7 +37,7 @@ class AuditTests(unittest.TestCase):
         self.assertEqual(summary["stored_part_count"],3)
         self.assertEqual(summary["multi_part_file_count"],1)
         self.assertEqual(validate_stored_parts(self.root,entries),14)
-        (large/"part-00001").write_bytes(b"tampered")
+        (large/"part-00001").write_bytes(b"SECOND")
         with self.assertRaisesRegex(ValueError,"hash or size"):
             validate_stored_parts(self.root,entries)
     def test_malicious_paths_rejected(self):
