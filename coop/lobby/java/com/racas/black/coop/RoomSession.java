@@ -49,8 +49,83 @@ public final class RoomSession implements AutoCloseable {
         1,1,0L,TimeUnit.MILLISECONDS,new ArrayBlockingQueue<>(1),r->{
             Thread t=new Thread(r,"bo-lobby-session");t.setDaemon(true);return t;
         },new ThreadPoolExecutor.DiscardOldestPolicy());
+    // Only a future VERIFIED BLACK engine callback may claim this thread.
+    // This Java guard prevents socket/UI workers from accidentally invoking
+    // the story APIs once the real game thread is bound. It is not proof of
+    // a real game hook, scene loader, or shared simulation.
+    private Thread storyGameThread;
     private long generation;
     private boolean closed;
+
+    /** Read-only ticket status; no live socket or game actor is exposed. */
+    public static final class StoryStatus {
+        public final RoomStoryWire.Ticket ticket;
+        public final boolean committed;
+        private StoryStatus(RoomStoryWire.Ticket ticket,boolean committed){
+            this.ticket=ticket;this.committed=committed;
+        }
+    }
+
+    /**
+     * Called exclusively from a future verified BLACK game-thread callback,
+     * never from an Android button or a TLS reader. A new room must rebind.
+     * This is a thread-identity guard, NOT a scene-load attestation.
+     */
+    public boolean bindStoryGameThread(){
+        synchronized(lock){
+            if(closed||(phase!=Phase.HOSTING&&phase!=Phase.JOINED))return false;
+            if(storyGameThread==null)storyGameThread=Thread.currentThread();
+            return storyGameThread==Thread.currentThread();
+        }
+    }
+    private boolean validStoryThread(){
+        return !closed&&storyGameThread!=null&&storyGameThread==Thread.currentThread();
+    }
+    /** Never auto-starts a level or publishes READY when a guest joins. */
+    public StoryStatus storyStatus(){
+        synchronized(lock){
+            if(host!=null&&phase==Phase.HOSTING)
+                return new StoryStatus(host.storyTicket(),host.storyCommitted());
+            if(client!=null&&phase==Phase.JOINED&&client.isRunning())
+                return new StoryStatus(client.storyTicket(),client.storyCommitted());
+            return new StoryStatus(null,false);
+        }
+    }
+    /**
+     * Mission ID 0..7 from an independently verified game-thread selection
+     * only. No UI or network-thread direct access; host is sole authority.
+     */
+    public RoomStoryWire.Ticket prepareStoryFromGameThread(int mission,int stage,int epoch)
+        throws IOException {
+        synchronized(lock){
+            if(!validStoryThread()||phase!=Phase.HOSTING||host==null)
+                throw new IOException("No bound host game thread");
+            return host.prepareStory(mission,stage,epoch);
+        }
+    }
+    /**
+     * The caller MUST independently prove the actual BLACK scene is loaded.
+     * Host return means all participants committed; guest return means READY
+     * was sent. These are intentionally distinct, existing TLS core results.
+     */
+    public boolean reportSceneLoadedFromGameThread(int mission,int stage,int epoch)
+        throws IOException {
+        synchronized(lock){
+            if(!validStoryThread())return false;
+            if(host!=null&&phase==Phase.HOSTING)
+                return host.hostSceneLoaded(mission,stage,epoch);
+            if(client!=null&&phase==Phase.JOINED&&client.isRunning())
+                return client.acknowledgeSceneLoaded(mission,stage,epoch);
+            return false;
+        }
+    }
+    /** Host scene unload/cancel invalidates its prepared ticket. */
+    public boolean cancelStoryFromGameThread(){
+        synchronized(lock){
+            return validStoryThread()&&phase==Phase.HOSTING&&host!=null&&
+                   host.cancelStory();
+        }
+    }
     private Phase phase=Phase.IDLE;
     private String description="",fingerprint="";
     private RoomTls.Server host;
@@ -69,6 +144,7 @@ public final class RoomSession implements AutoCloseable {
         synchronized(lock) {
             if(closed)throw new IllegalStateException("RoomSession was destroyed");
             token=++generation;
+            storyGameThread=null;
             oldHost=host;oldClient=client;oldAnnouncer=announcer;
             host=null;client=null;announcer=null;phase=Phase.CONNECTING;
             description="Connecting";fingerprint="";
@@ -200,7 +276,8 @@ public final class RoomSession implements AutoCloseable {
         RoomDiscovery.Host oldAnnouncer;
         RoomTls.Client oldClient;
         synchronized(lock){
-            ++generation;oldHost=host;oldClient=client;oldAnnouncer=announcer;
+            ++generation;storyGameThread=null;
+            oldHost=host;oldClient=client;oldAnnouncer=announcer;
             host=null;client=null;announcer=null;phase=Phase.IDLE;description="";fingerprint="";
         }
         closeQuietly(oldAnnouncer);closeQuietly(oldClient);closeQuietly(oldHost);
