@@ -41,7 +41,7 @@ class RoomNetPrepareTests(unittest.TestCase):
             diagnostics=(root/'app/src/main/java/com/racas/black/coop/RoomDiagnostics.java').read_text()
             self.assertIn('coop_room_events.log',diagnostics)
             self.assertNotIn('RoomLobbyActivity.java',str(modified))
-            self.assertIn('PINNED', (root/'app/src/main/java/com/racas/black/coop/RoomAppRooms.java').read_text())
+            self.assertIn('SECURE LAN', (root/'app/src/main/java/com/racas/black/coop/RoomAppRooms.java').read_text())
             ui=(root/'src/game/options_menu.cpp').read_text()
             self.assertIn('blackcoop::OpenAndroidLobby(row->id)',ui)
             self.assertIn('blackcoop::AndroidRoomRow(-104)',ui)
