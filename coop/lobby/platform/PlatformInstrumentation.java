@@ -26,8 +26,10 @@ public final class PlatformInstrumentation extends Instrumentation {
         for(int i=0;i<900;i++)
             RoomDiagnostics.event("STORY_SAFE_ROTATION_SAMPLE_ABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789");
         RoomDiagnostics.event("STORY_DIAGNOSTICS_END");
-        check(recent.isFile()&&older.isFile());
+        // Event producer is nonblocking by design; read() is the explicit
+        // export barrier that flushes the dedicated bounded IO worker.
         String safe=RoomDiagnostics.read();
+        check(recent.isFile()&&older.isFile());
         check(safe.contains("STORY_DIAGNOSTICS_BEGIN")&&safe.contains("STORY_DIAGNOSTICS_END"));
         check(RoomDiagnostics.exportToDownloads(context));
         try(java.io.FileOutputStream write=new java.io.FileOutputStream(older,true)){
@@ -162,7 +164,7 @@ public final class PlatformInstrumentation extends Instrumentation {
             while(Thread.getAllStackTraces().keySet().stream().anyMatch(t->t.isAlive()&&t.getName().startsWith("bo-room-"))){
                 if(System.nanoTime()>deadline)throw new AssertionError("Room threads survived close");Thread.sleep(10);
             }
-            result.putString("stream","TLS_PLATFORM_PASS: AndroidKeyStore TLS room, host-story PREPARE / guest explicit READY / host COMMIT and same-port rapid rehost succeeded over Android29 sockets; names-only Host, automatic Join and Back regression passed; ROOM_LOG_ROTATION_PASS verified safe rotated MediaStore export and tamper refusal; STORY_READY_ASYNC_ANDROID_PASS write on network worker; ROOM_ACTIVE_SCAN_GATE_PASS no scan storm or duplicate host while connected (NO BLACK game loader/actor)\n");
+            result.putString("stream","TLS_PLATFORM_PASS: AndroidKeyStore TLS room, host-story PREPARE / guest explicit READY / host COMMIT and same-port rapid rehost succeeded over Android29 sockets; names-only Host, automatic Join and Back regression passed; ROOM_LOG_ROTATION_PASS verified safe rotated MediaStore export and tamper refusal; ROOM_LOG_ASYNC_PASS bounded off-thread disk writer with export barrier; STORY_READY_ASYNC_ANDROID_PASS write on network worker; ROOM_ACTIVE_SCAN_GATE_PASS no scan storm or duplicate host while connected (NO BLACK game loader/actor)\n");
             finish(Activity.RESULT_OK,result);
         }catch(Throwable failure){
             android.util.Log.e("BlackTlsPlatform","Platform test failed",failure);
