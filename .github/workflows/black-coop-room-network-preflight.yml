@@ -1,0 +1,70 @@
+name: BO-COOP room network game bridge source preflight
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/prepare_room_network.py'
+      - 'coop/room_network_prepare_checks.py'
+      - 'coop/room_network/**'
+      - 'coop/lobby/**'
+      - '.github/workflows/black-coop-room-network-preflight.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-transform:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: bo
+          sparse-checkout: coop
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - uses: actions/checkout@v4
+        with:
+          repository: RanggaCasper/Black-Android
+          ref: f3754d6985a8c35204e7df071546e586b10f1806
+          path: reference
+          persist-credentials: false
+      - name: Fail-closed room network source stages, no game assets
+        env:
+          BO_UPSTREAM_REFERENCE: ${{ github.workspace }}/reference
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s bo/coop -p room_network_prepare_checks.py -v
+          python3 -m unittest discover -s bo/coop -p room_ui_prepare_checks.py -v
+          echo 'ROOM_NET_STAGE_PASS: in-game Flash -> Android source transformation is atomic; NO game APK/gameplay claimed'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Compile Android room form and all staged Java 8 sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          sdk="$ANDROID_HOME/cmdline-tools/latest/bin"
+          "$sdk/sdkmanager" --install 'platforms;android-34' </dev/null
+          scratch="$RUNNER_TEMP/bo-room-net-source"
+          mkdir -p "$scratch/stage" "$scratch/java"
+          trap 'rm -rf "$scratch"' EXIT
+          python3 - <<'PY'
+          import pathlib,os,shutil,sys
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])/'bo-room-net-source/stage'
+          upstream=pathlib.Path(os.environ['GITHUB_WORKSPACE'])/'reference'
+          sys.path.insert(0,'bo/coop')
+          from prepare_room_network import INPUTS,prepare
+          for name in INPUTS:
+              p=root/name;p.parent.mkdir(parents=True,exist_ok=True)
+              shutil.copy2(upstream/name,p)
+          changes=prepare(root)
+          assert len(changes)>=26
+          print('Staged source files',len(changes))
+          PY
+          javac --release 8 -Xlint:all,-options -Werror \
+            -cp "$ANDROID_HOME/platforms/android-34/android.jar" \
+            -d "$scratch/java" \
+            "$scratch/stage"/app/src/main/java/com/racas/black/coop/*.java
+          echo 'ROOM_NET_JAVA_PASS: Android Java source compile only, not a game APK'
