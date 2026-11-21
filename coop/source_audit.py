@@ -78,7 +78,7 @@ def xbe_from_iso(path):
         return {"bytes":count, "sha1":hashlib.sha1(data).hexdigest(),
                 "sha256":hashlib.sha256(data).hexdigest(), "partition_offset":base}
 
-def elf_identity(path, xbe_sha):
+def elf_identity(path, xbe_sha, readelf="readelf"):
     with path.open("rb") as f:
         header = f.read(64)
         if header[:6] != b"\x7fELF\x02\x01" or struct.unpack_from("<H", header, 18)[0] != 183:
@@ -93,7 +93,7 @@ def elf_identity(path, xbe_sha):
             typ, flags, off, va, pa, filesz, memsz, align = struct.unpack("<IIQQQQQQ", f.read(56))
             if typ == 1:
                 loads.append((off, va, filesz))
-        syms = subprocess.check_output(["readelf", "-Ws", str(path)], text=True)
+        syms = subprocess.check_output([str(readelf), "-Ws", str(path)], text=True)
         candidates = set()
         for line in syms.splitlines():
             fields = line.split()

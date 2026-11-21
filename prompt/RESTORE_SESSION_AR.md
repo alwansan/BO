@@ -1,4 +1,4 @@
-# استعادة BO-COOP — 2026-11-21، جلسة06
+# استعادة BO-COOP — 2026-11-21، جلسة07
 
 الهدف مود BLACK Android تعاوني حقيقي داخل القصة: هاتف هوست، لاعبان ثم4، LAN/ZeroTier، غرف واكتشاف/اتصال يدوي، late-join، AI/قتال/أهداف مشتركة، نوك/إنعاش، friendly fire، أسماء ومجسمات، وحفظ الفردي. النطاق التفصيلي وبراهين القبول في docs/COOP_REQUIREMENTS_AR.md. لا gameplay مقبول ولا APK جماعية حالياً.
 
@@ -17,10 +17,12 @@
 - أول probe44840599544 فشل toolchain (Clang20 مع MSVC يتطلب22) قبل التحليل؛ أُصلح باختيار Clang22.1.3 المرفق بـVisualStudio. لا تغير شروط STL أو ملفات اللعبة.
 - توجد logs عامة بنفس hash المرشح في upstream Android issue33؛ هذا لا يثبت تشغيل نسخة المالك ولا أن الاختلاف بسبب تعريب.
 
-## ما ننتظره ولماذا
-طلبنا تجربة النسخة العربية المثبتة إلى مهمة لمدة دقيقة ونتيجتها وسجلها؛ لم تصل الإجابة/السجل بعد. قد تقرأ النسخة ISO آخر من /Black؛ لا تفترض أن bundle المرفق هو الصورة الفعلية. docs/DEVICE_BASELINE_AR.md يوضح المسار المتوقع وطريقة التشخيص. لا APK جديدة للتجربة الحالية. لا تثبت user runtime من CI أو metadata.
+## تحديث جلسة07 — العقبة السابقة حُسمت
+المالك أكد دخول النسخة الحالية للمهمة وعملها، وقدم ملفات التطبيق محلياً. loaded hash في black.log=c5bfed... وbuild f3754d6، وSHA256 كامل ISO من الهاتف مطابق manifest f6d15f.... raw log والسيفات خاصة لا تنشرها. دليل metadata: memory/evidence/DEVICE-existing-owner-runtime.json. `quit: ConfirmWarning, FEAudio failed` موثق كرسالة exit-menu، وExit0؛ لا نخفيه ولا نفترض عطل قتال. لا تكرر طلب اختبار الأصل أو XBE المفقود.
 
-## الخطوة التالية
-اقرأ نتيجة المالك والـlog وحدد loaded SHA/build/GPU/path؛ عندها واصل baseline/مراجعة المرشح مع بوابات ABI/offsets. لا engine build/HOOK/ACTOR فوق هوية غير مثبتة. لا كتابة ذاكرة من network thread، ولا ادعاء لاعب ثان قبل ACTOR/COMBAT على هاتفين. لا أصل لعبة أو generated game source في artifacts؛ metadata فقط.
+## الخطوة الحالية
+راجع أحدث session07 وSTATE وdocs/superpowers/plans/2026-11-21-candidate-baseline.md. واصل workflow black-coop-baseline.yml لتجربة بناء candidate مستقل من XBE الفعلي، دون تعطيل hash check. package org.bocoop.black.baseline وحفظ مستقل، label NO CO-OP. native/src/config لا تغيير فيها، packaging/updater/build concurrency فقط. لا source-equivalent Arabic claim ولا gameplay/device acceptance قبل اختبار الناتج. افحص CI/HEAD الحاليين؛ لا APK ناجحة حتى build+signature/package/ABI/embedded-hash gates. الأصل لا يمس، ولا تنشر ISO/XBE/generated sources أو log/hdd. بعد baseline يحتاج اختبار الهاتف قبل HOOK/ACTOR.
 
 بعد كل دفعة أو اكتشاف أو CI: حدّث STATE/MEMORY/PLAN/ISSUES حسب الحاجة، جلسة مستقلة وRESTORE، وcommit على الفرع التجريبي ثم تحقق من HEAD. الهدف لم يكتمل؛ لا عمل خلفي خارج الجلسة.
+
+مراجعة baseline قبل CI: الاستيراد داخل assets الخاصة فقط، لا صلاحيات تخزين واسعة، artifacts لا تصعد قبل نجاح تحقق APK. source packaging preview الحقيقي PASS واختبارات4/4 PASS. لا نتيجة بناء Android بعد.

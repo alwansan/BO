@@ -1,0 +1,21 @@
+{
+  "scope": "Existing owner Arabic APK only; not newly rebuilt baseline or multiplayer",
+  "owner_report": "Original Arabic version enters story mission and works without observed problems",
+  "log_sha256": "f59e1af7dd61ff71b45f894a18166cc27ce69b42b970e47877593ed281349a5e",
+  "log_build": "f3754d6",
+  "android_api": 35,
+  "gpu": "Adreno 730",
+  "logged_loaded_xbe_sha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+  "logged_another_release": true,
+  "copied_phone_iso_sha256": "f6d15ff277eb19ef4fb9092e245599c7ae68f5a49c6ac7db60934a32ec246c62",
+  "copied_phone_iso_matches_manifest": true,
+  "copied_phone_iso_bytes": 1793179648,
+  "exit_code_logged": 0,
+  "log_errors": [
+    "quit: ConfirmWarning, FEAudio failed"
+  ],
+  "error_scope": "Matches upstream exit_menu.cpp ReportOnce/ApplyTitleSounds path; not proof of a gameplay audio fault. No unrelated fix applied.",
+  "mission_evidence": "Owner report; startup log does not independently instrument mission progress",
+  "rebuilt_engine_tested": false,
+  "multiplayer_tested": false
+}

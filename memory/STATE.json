@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-06-manual-abi.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-07-phone-baseline.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -67,6 +67,13 @@
       "abiUnresolved": 11,
       "hostTargetsPresent": 28,
       "runtimeCompatible": null
+    },
+    "DEVICE_EXISTING": {
+      "status": "owner_reports_mission_pass_and_log_confirms_actual_image",
+      "evidence": "memory/evidence/DEVICE-existing-owner-runtime.json",
+      "loadedImage": "c5bfed25449c8212d7a976f15246e87ead57713f",
+      "isoMatchesManifest": true,
+      "rebuiltEngineTested": false
     }
   },
   "pending": {
@@ -78,7 +85,7 @@
     "ACTOR_001": "not_started",
     "COMBAT_001": "not_started",
     "DEVICE": "not_started",
-    "SRC_002": "Exact original XBE unavailable per owner; candidate static analysis pending, no engine build authorized by evidence",
+    "SRC_002": "Original82d058 baseline unavailable; isolated candidate c5bfed rebuild prepared with exact own input identity and existing-phone evidence",
     "NET_004": "Phone/ZeroTier runtime and authenticated production protocol untested",
     "SRC_002B": {
       "status": "candidate translation possible; 46 library symbols, 5 data locations, 11 ABI unresolved; semantics not accepted",
@@ -91,8 +98,13 @@
         "fullAbiSemanticsAccepted": false
       }
     },
-    "DEVICE_BASELINE": "Still awaiting owner existing-app mission result/log; required to identify image actually loaded from shared Black folder vs supplied bundle"
+    "DEVICE_BASELINE": "Original-phone question answered and image identified. NEW isolated rebuilt candidate baseline still unbuilt/untested.",
+    "CANDIDATE_BUILD": {
+      "status": "prepared_for_ci",
+      "package": "org.bocoop.black.baseline",
+      "phoneTested": false
+    }
   },
   "apk": null,
-  "next": "Read owner phone mission result/log before selecting active baseline image. Preserve full co-op scope; no APK or in-game networking exists."
+  "next": "Run isolated candidate baseline Actions; verify real build, package, native identity and artifact before requesting new-app device test."
 }
