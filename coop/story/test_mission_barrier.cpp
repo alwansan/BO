@@ -51,6 +51,18 @@ int main(){
     assert(!host.Prepare(MissionTicket{31,753,7,1,903,1},true));
     assert(host.Prepare(MissionTicket{31,753,7,1,903,3},true));
     assert(host.Reset());
+    // The FIRST campaign mission is index 0, and stage 0 is legitimate.
+    // This exact bug previously rejected the first selectable mission.
+    const MissionTicket first{44,333,0,0,1,0b0011};
+    assert(host.Prepare(first,true));
+    assert(guest.AcceptPrepare(first,2,true));
+    assert(guest.MarkActuallyLoaded(0,0,1));
+    assert(host.Ready(first,1,1,true));
+    assert(host.Ready(first,2,1,true));
+    assert(host.Commit(commit)&&commit==first);
+    assert(guest.AcceptCommit(commit,true));
+    assert(host.Reset()&&guest.Reset());
+    assert(!host.Prepare(MissionTicket{45,777,8,0,1,3},true)); // no mission #8
     std::cout<<"MISSION_BARRIER_PASS: host ticket, all connected peers loaded exact scene,"
                 " authenticated ready/commit, cancellation and replay fences\n";
     std::cout<<"No BLACK engine Start, game scene loader, or live TLS wiring claimed\n";
