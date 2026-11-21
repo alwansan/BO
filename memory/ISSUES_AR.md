@@ -1,3 +1,11 @@
+## Session43 research and verified limitations
+- Real c5 XBE private metadata44961768279 PASS: both kWorld write sites in one executable section, 9B apart with EAX/EBX sources, direct branch to second; no validated function boundaries/ABI, no known mission ID, stage-loaded callback or scene epoch. EBX possible zero-instruction in previous linear path is NOT proof of zero across branch. Keep actual story integration blocked.
+- Staging native source observer at existing original player update and difficulty wrapper added; C++ tests44962215874 and source preflight44962275672 PASS. Diagnostic codes are safe + bounded, do not indicate actual game loads, and are not connected to STORY_READY. Android full room-only APK44962275637 check live before claiming compile success. Never ask owner to install this just for these markers.
+- OPEN: human-controlled remote full-body ally rendering/animation/ownership, host authoritative one shared mission/world, camera local hands unchanged, real AI/combat/objectives and replay-safe state sync. Other synthetic TLS lobby tests are NOT the missing gameplay.
+- CI-first owner policy, one major two-phone acceptance only once substantial real gameplay ready.
+
+---
+
 ## Session42 actual CI status — 2026-11-22
 Closed for synthetic CI: async room diagnostics first Android failure44960759104 was a pre-flush test assumption; second44960934419 was process logger name accidentally matching bo-room network thread leak prefix. Both corrected without relaxing network teardown assertions. Android29 latest44961110132 **SUCCESS** with ROOM_LOG_ASYNC_PASS, TLS_PLATFORM_PASS, STORY_READY_ASYNC_ANDROID_PASS, ROOM_LOG_ROTATION_PASS; source44961110163 PASS. No physical device test warranted.
 Unresolved: world global 0x2D45D4 sites 0020BF48 and 0020BF51 are x86 static register-source write candidates, NOT proven scene-loaded callbacks. Original game mission/stage identity, verified game-thread hook, real remote ALLY body model ownership/renderer, input/world/AI/quest/combat replication still absent. Report docs/BLACK_WORLD_POINTER_XREF_AUDIT_AR.md, Session42.
