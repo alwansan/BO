@@ -1,0 +1,426 @@
+{
+  "scope": "static recompiler probe only; no engine build or gameplay",
+  "candidate": {
+    "bytes": 2813952,
+    "sha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+    "sha256": "df2739c372d254a90aeeccf5971d12097f22d89fbb90db021fda96dd4deb68f6",
+    "partition_offset": 0
+  },
+  "reference": "f3754d6985a8c35204e7df071546e586b10f1806",
+  "sdk": "99078b119b5d5e0d1d6afb1390e29437c0c984c0",
+  "existing_compile_image_sha1": "82d0588124e70102ee650f8969c0a56374476234",
+  "matches_existing_compile_image": false,
+  "runtime_compatible": null,
+  "apk_built": false,
+  "symbol_scanner_exit_code": 0,
+  "independent_scan_comparison": {
+    "symbols": {
+      "reference_nonzero_count": 154,
+      "matching_count": 108,
+      "differences": [
+        {
+          "name": "D3D_BlockOnResource",
+          "reference": 2543664,
+          "scanned": 0
+        },
+        {
+          "name": "D3D_LazySetState",
+          "reference": 2558368,
+          "scanned": null
+        },
+        {
+          "name": "D3DDevice_BeginPush",
+          "reference": 2543888,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_End",
+          "reference": 2531824,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_EndPush",
+          "reference": 2543984,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_GetBackBufferScale",
+          "reference": 2585744,
+          "scanned": null
+        },
+        {
+          "name": "D3DDevice_GetDepthStencilSurface2",
+          "reference": 2534048,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_GetDisplayFieldStatus",
+          "reference": 2536976,
+          "scanned": null
+        },
+        {
+          "name": "D3DDevice_GetDisplayMode",
+          "reference": 2532128,
+          "scanned": null
+        },
+        {
+          "name": "D3DDevice_GetRenderTarget2",
+          "reference": 2533984,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_GetViewportOffsetAndScale",
+          "reference": 2550208,
+          "scanned": null
+        },
+        {
+          "name": "D3DDevice_LoadVertexShader",
+          "reference": 2527104,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_MakeSpace",
+          "reference": 2543360,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetFlickerFilter",
+          "reference": 2538000,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetPalette",
+          "reference": 2536752,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetRenderState_BackFillMode",
+          "reference": 2548912,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetRenderState_DoNotCullUncompressed",
+          "reference": 2548304,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetRenderState_EdgeAntiAlias",
+          "reference": 2546608,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetRenderState_FillMode",
+          "reference": 2548832,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetRenderState_FrontFace",
+          "reference": 2546960,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetRenderState_LogicOp",
+          "reference": 2548736,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetRenderState_MultiSampleAntiAlias",
+          "reference": 2548608,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetRenderState_MultiSampleMask",
+          "reference": 2548672,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetRenderState_MultiSampleMode",
+          "reference": 2548512,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetRenderState_MultiSampleRenderTargetMode",
+          "reference": 2548560,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetRenderState_NormalizeNormals",
+          "reference": 2547040,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetRenderState_OcclusionCullEnable",
+          "reference": 2548016,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetRenderState_RopZCmpAlwaysRead",
+          "reference": 2548240,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetRenderState_RopZRead",
+          "reference": 2548272,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetRenderState_SampleAlpha",
+          "reference": 2548704,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetRenderState_ShadowFunc",
+          "reference": 2546672,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetRenderState_Simple",
+          "reference": 2549168,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetRenderState_StencilCullEnable",
+          "reference": 2548128,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetRenderState_TextureFactor",
+          "reference": 2547584,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetRenderState_TwoSidedLighting",
+          "reference": 2548944,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetRenderState_VertexBlend",
+          "reference": 2549040,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetRenderState_YuvEnable",
+          "reference": 2547952,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetScreenSpaceOffset",
+          "reference": 2538064,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetTextureStageStateNotInline",
+          "reference": 2549856,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetTextureState_BorderColor",
+          "reference": 2549696,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetTextureState_BumpEnv",
+          "reference": 2549584,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetTextureState_ColorKeyColor",
+          "reference": 2549776,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetVertexShaderConstant1",
+          "reference": 2529408,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetVertexShaderConstant1Fast",
+          "reference": 2529504,
+          "scanned": 0
+        },
+        {
+          "name": "D3DDevice_SetVertexShaderConstant4",
+          "reference": 2529584,
+          "scanned": 0
+        },
+        {
+          "name": "Lock2DSurface",
+          "reference": 2545936,
+          "scanned": 0
+        }
+      ]
+    },
+    "data": {
+      "reference_nonzero_count": 11,
+      "matching_count": 6,
+      "differences": [
+        {
+          "name": "D3D_DeferredTextureState",
+          "reference": 2595144,
+          "scanned": 0
+        },
+        {
+          "name": "D3D_DirtyFlags",
+          "reference": 2605056,
+          "scanned": 0
+        },
+        {
+          "name": "D3D_FvfShader",
+          "reference": 2594368,
+          "scanned": null
+        },
+        {
+          "name": "D3D_RenderState",
+          "reference": 2605064,
+          "scanned": 0
+        },
+        {
+          "name": "D3D_Streams",
+          "reference": 2594648,
+          "scanned": 0
+        }
+      ]
+    },
+    "abi": {
+      "reference_nonzero_count": 11,
+      "matching_count": 0,
+      "differences": [
+        {
+          "name": "CDevice_KickOff",
+          "reference": [
+            "edx"
+          ],
+          "scanned": [
+            "?"
+          ]
+        },
+        {
+          "name": "D3D_BlockOnResource",
+          "reference": [
+            "eax"
+          ],
+          "scanned": null
+        },
+        {
+          "name": "D3D_InternalRelease",
+          "reference": [
+            "esi"
+          ],
+          "scanned": [
+            "?"
+          ]
+        },
+        {
+          "name": "D3D_MakeRequestedSpace",
+          "reference": [
+            "stack",
+            "eax"
+          ],
+          "scanned": [
+            "?",
+            "?"
+          ]
+        },
+        {
+          "name": "D3DDevice_LoadVertexShader",
+          "reference": [
+            "eax",
+            "stack"
+          ],
+          "scanned": null
+        },
+        {
+          "name": "D3DDevice_SelectVertexShader",
+          "reference": [
+            "eax",
+            "ebx"
+          ],
+          "scanned": [
+            "?",
+            "?"
+          ]
+        },
+        {
+          "name": "D3DDevice_SetFlickerFilter",
+          "reference": [
+            "esi"
+          ],
+          "scanned": null
+        },
+        {
+          "name": "D3DDevice_SetPixelShaderConstant",
+          "reference": [
+            "ecx",
+            "stack",
+            "eax"
+          ],
+          "scanned": [
+            "?",
+            "?",
+            "?"
+          ]
+        },
+        {
+          "name": "D3DDevice_SetShaderConstantMode",
+          "reference": [
+            "eax"
+          ],
+          "scanned": [
+            "?"
+          ]
+        },
+        {
+          "name": "D3DResource_IsBusy",
+          "reference": [
+            "ecx"
+          ],
+          "scanned": [
+            "?"
+          ]
+        },
+        {
+          "name": "Lock2DSurface",
+          "reference": [
+            "stack",
+            "stack",
+            "stack",
+            "esi",
+            "eax",
+            "stack"
+          ],
+          "scanned": null
+        }
+      ]
+    }
+  },
+  "scan_caveat": "Signature/constant-based inference, not proof of semantic equivalence; manual review remains required.",
+  "recompiler_exit_code": 0,
+  "recompiler_statistics": "functions 15042\ninstructions 798292\nunimplemented aaa 15\nunimplemented aad 12\nunimplemented aam 18\nunimplemented aas 127\nunimplemented arpl 15\nunimplemented bound 27\nunimplemented daa 18\nunimplemented das 5\nunimplemented enter 13\nunimplemented fbstp 1\nunimplemented ffreep 1\nunimplemented insb 11\nunimplemented insd 11\nunimplemented int1 10\nunimplemented into 23\nunimplemented iretd 35\nunimplemented lar 1\nunimplemented lds 22\nunimplemented les 94\nunimplemented lfs 1\nunimplemented lldt 2\nunimplemented lss 1\nunimplemented outsb 12\nunimplemented outsd 7\nunimplemented salc 6\nunimplemented sldt 2\nunimplemented str 1\nunimplemented verr 1\n",
+  "host_target_analysis": {
+    "source_named_targets": 28,
+    "generated_targets": 28,
+    "absent_targets": [],
+    "unresolved_targets": [],
+    "targets_with_unimplemented_instructions": {},
+    "hook_addresses_with_unimplemented_instruction": [],
+    "caveat": "Function presence and trap locations do not prove calling conventions, reachability, field layout, or actor lifecycle."
+  },
+  "interpretation": "Successful static translation is not semantic compatibility, a baseline engine build, or multiplayer acceptance.",
+  "run": 44841534370,
+  "job": 136650848324,
+  "code": "08fd55b4cb1640b4b56445d43e1801dbc635b1a3",
+  "artifact": 14680348280,
+  "interpretation_of_scan": {
+    "unresolved_counts": {
+      "symbols": 46,
+      "data": 5,
+      "abi": 11
+    },
+    "conflicting_nonzero_or_known_values": {
+      "symbols": [],
+      "data": [],
+      "abi": []
+    },
+    "note": "Missing scanner results and ? ABI registers are unresolved evidence, not proof of shifted addresses. No complete semantic equivalence established."
+  }
+}

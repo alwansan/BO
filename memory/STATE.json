@@ -54,6 +54,19 @@
       "instructions": 798292,
       "containsUnimplementedInstructions": true,
       "evidence": "memory/evidence/SRC-002b-static-44840960136.json"
+    },
+    "SRC_002B_DEEP_STATIC": {
+      "status": "pass_analysis_only_with_unresolved_symbols_and_abi",
+      "run": 44841534370,
+      "code": "08fd55b4cb1640b4b56445d43e1801dbc635b1a3",
+      "evidence": "memory/evidence/SRC-002b-deep-44841534370.json",
+      "symbolsConfirmed": 108,
+      "symbolsUnresolved": 46,
+      "dataConfirmed": 6,
+      "dataUnresolved": 5,
+      "abiUnresolved": 11,
+      "hostTargetsPresent": 28,
+      "runtimeCompatible": null
     }
   },
   "pending": {
@@ -68,12 +81,13 @@
     "SRC_002": "Exact original XBE unavailable per owner; candidate static analysis pending, no engine build authorized by evidence",
     "NET_004": "Phone/ZeroTier runtime and authenticated production protocol untested",
     "SRC_002B": {
-      "status": "static_translation_pass; independent symbols/ABI/host-target audit prepared",
+      "status": "candidate translation possible; 46 library symbols, 5 data locations, 11 ABI unresolved; semantics not accepted",
       "candidateSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
       "scope": "Read-only analysis of supplied owner image; no baseline acceptance, no APK",
       "firstRun": 44840599544
-    }
+    },
+    "DEVICE_BASELINE": "Asked owner to enter mission on existing Arabic APK and supply latest app log; no response yet"
   },
   "apk": null,
-  "next": "Inspect independent candidate symbol/ABI scan and host trap report; no runtime or engine baseline accepted."
+  "next": "Read owner existing-app mission result/log; resolve candidate static ABI/offsets. No candidate engine/APK built; full co-op scope remains docs/COOP_REQUIREMENTS_AR.md."
 }
