@@ -40,6 +40,22 @@ def classify_xref(mnemonic, operands):
     return "read_or_address"
 
 
+def classify_write_source(operands):
+    """Aggregate operand *class*, never copy original instruction text."""
+    split = operands.split(",", 1)
+    if len(split) != 2:
+        return "unknown"
+    source = split[1].strip().lower()
+    if re.fullmatch(r"0x[0-9a-f]+", source):
+        return "immediate_zero" if int(source, 16) == 0 else "immediate_nonzero"
+    if re.fullmatch(r"(?:[abcd][hl]|(?:e?[abcd]x)|e?(?:si|di|bp|sp))", source):
+        return "register"
+    if "[" in source or "ptr" in source:
+        return "memory"
+    return "unknown"
+
+
+
 def analyze_bytes(data: bytes, expected_sha1: str = OWNER_SHA1) -> dict:
     if not isinstance(data, (bytes, bytearray)) or not 0 < len(data) <= MAX_FILE:
         raise UnsafeImage("Unexpected XBE image size")
@@ -58,6 +74,7 @@ def analyze_bytes(data: bytes, expected_sha1: str = OWNER_SHA1) -> dict:
         "read_modify_write_candidate": 0,
     }
     writers = []
+    writer_details = []
     with tempfile.TemporaryDirectory(prefix="bo-owner-xref-private-") as tmp:
         for index, (vaddr, length, offset) in enumerate(sections):
             p = Path(tmp) / ("section-" + str(index) + ".bin")
@@ -88,7 +105,13 @@ def analyze_bytes(data: bytes, expected_sha1: str = OWNER_SHA1) -> dict:
                 if sum(counters.values()) > MAX_XREFS:
                     raise UnsafeImage("Excessive world-pointer matches")
                 if kind != "read_or_address" and len(writers) < MAX_WRITER_ADDRESSES:
-                    writers.append("%08X" % insn_addr)
+                    address = "%08X" % insn_addr
+                    writers.append(address)
+                    writer_details.append({
+                        "address": address,
+                        "access": kind,
+                        "source_class": classify_write_source(match.group(3))
+                    })
     return {
         "schema": "BO-COOP-world-xrefs-heuristic-v1",
         "source": "owner-pinned-XBE-executable-sections",
@@ -102,6 +125,7 @@ def analyze_bytes(data: bytes, expected_sha1: str = OWNER_SHA1) -> dict:
         "write_candidates": counters["write_candidate"],
         "read_modify_write_candidates": counters["read_modify_write_candidate"],
         "bounded_possible_writer_addresses": writers,
+        "bounded_writer_operand_classes": writer_details,
         "true_scene_loader_proven": False,
         "mission_identity_proven": False,
         "world_epoch_proven": False,
