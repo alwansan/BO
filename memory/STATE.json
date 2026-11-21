@@ -751,13 +751,14 @@
       "phoneTested": false
     },
     "STORY_REHOST_MITIGATION": {
-      "status": "SOURCE_CHANGE_LATEST_CI_IN_PROGRESS",
-      "tcpListenerReuseAddress": true,
-      "sourceCommit": "c42508a15b0ef80a8370433d13d6823e066a865b",
-      "jvmTest": 44953055433,
-      "androidTest": 44953055469,
+      "status": "PASS_JVM_AND_ANDROID29_EMULATOR_ONLY_PHONE_OPEN",
+      "sourceCommit": "e606a881e6ce32789a0ca1ab21b8310f44d74800",
+      "reuseAddress": true,
+      "boundedRetryMs": 1500,
+      "jvmRun": 44953176046,
+      "android29Run": 44953176054,
       "ownerPhoneTested": false,
-      "rootCauseProven": false
+      "clBindExceptionRootCauseFullyProven": false
     },
     "ROOM_REHOST_TCP_JVM": {
       "status": "PASS_4_FAST_RESTARTS_REAL_TLS",
@@ -765,9 +766,18 @@
       "job": 136995400648,
       "source": "e606a881e6ce32789a0ca1ab21b8310f44d74800",
       "proof": "ROOM_REHOST_PASS 4 consecutive same-port TCP sessions with TLS clients; concurrent listener rejected",
-      "androidOutcome": "PENDING_RUN44953176054",
+      "androidOutcome": "PASS_RUN44953176054",
       "ownerPhonesTested": false,
-      "originalBindExceptionCausalityConfirmed": false
+      "originalBindExceptionCausalityConfirmed": false,
+      "androidJob": 136995441168
+    },
+    "ROOM_REHOST_ANDROID_EMULATOR": {
+      "status": "PASS_ANDROID29_KEYSTORE_TLS_SOCKET_ONLY",
+      "run": 44953176054,
+      "job": 136995441168,
+      "proof": "TLS_PLATFORM_PASS: same port rapid rehost + host story PREPARE/READY/COMMIT on Android29; old host game Activity Back regression",
+      "ownerPhonesTested": false,
+      "actualGameStory": false
     }
   },
   "pending": {
@@ -963,11 +973,11 @@
     "latestRehostTestAttempt": 44953055433,
     "fastRehostJVMRun": 44953176046,
     "fastRehostAndroidRun": 44953176054,
-    "fastRehostAndroidStatus": "IN_PROGRESS_AT_DOCUMENT_TIME",
+    "fastRehostAndroidStatus": "PASS_ANDROID29_EMULATOR_ONLY",
     "latestVerifiedOwnerAPKRun": 44946597973,
     "newSourceNoPlayableApk": true
   },
-  "executionStatus": "Session38: local original first-person primary model owner capture verified; remote ally look value-only CI PASS; story TLS v3 JVM+Android29 transport PASS; TCP fast rehost JVM PASS Android retest PENDING; no real BLACK scene start, remote bodies or world sync.",
+  "executionStatus": "Session38: owner primary-model arms-only capture read; actual encrypted story control JVM/Android29 PASS, rapid same-port rehost JVM/Android29 PASS; local FirstPerson/remote AllyBody value-only CI PASS; actual BLACK shared stage + remote bodies + input/AI/combat/quest OPEN",
   "ownerClarifications": {
     "session": 28,
     "previousPhoneTests": "Solo gameplay and two-phone real LAN lobby now confirmed, but no two-phone SAME WORLD gameplay",
@@ -1004,7 +1014,7 @@
     "phoneV3Tested": false,
     "sourceCommit": "e606a881e6ce32789a0ca1ab21b8310f44d74800",
     "androidRapidRehostRun": 44953176054,
-    "androidRapidRehostStatus": "IN_PROGRESS",
+    "androidRapidRehostStatus": "PASS_ANDROID29_RUN44953176054",
     "actorCreated": false
   },
   "actorFactoryDiagnostic": {
