@@ -18,9 +18,9 @@
         "torso"
       ],
       "full_body_candidate": true,
-      "resource_key": "BC1_CAE",
       "resource_key_hex": "53b10fbca8f68000",
-      "file": "levels/level_07/stg_0001/StLevel.bin"
+      "file": "levels/level_07/stg_0001/StLevel.bin",
+      "resource_key_base40_candidate": "BC1_CAE"
     },
     {
       "model_version": 35,
@@ -32,9 +32,9 @@
         "torso"
       ],
       "full_body_candidate": true,
-      "resource_key": "BC1_MAT",
       "resource_key_hex": "53b1113a7cc40000",
-      "file": "levels/level_00/stg_0001/StLevel.bin"
+      "file": "levels/level_00/stg_0001/StLevel.bin",
+      "resource_key_base40_candidate": "BC1_MAT"
     },
     {
       "model_version": 35,
@@ -46,9 +46,9 @@
         "torso"
       ],
       "full_body_candidate": true,
-      "resource_key": "BC1_TOM",
       "resource_key_hex": "53b11252b3628000",
-      "file": "levels/level_07/stg_0001/StLevel.bin"
+      "file": "levels/level_07/stg_0001/StLevel.bin",
+      "resource_key_base40_candidate": "BC1_TOM"
     },
     {
       "model_version": 35,
@@ -60,9 +60,9 @@
         "torso"
       ],
       "full_body_candidate": true,
-      "resource_key": "COM",
       "resource_key_hex": "5b54da6da8000000",
-      "file": "levels/level_08/stg_0001/StLevel.bin"
+      "file": "levels/level_08/stg_0001/StLevel.bin",
+      "resource_key_base40_candidate": "COM"
     },
     {
       "model_version": 35,
@@ -74,9 +74,9 @@
         "torso"
       ],
       "full_body_candidate": true,
-      "resource_key": "ELT",
       "resource_key_hex": "668fd89500000000",
-      "file": "levels/level_08/stg_0001/StLevel.bin"
+      "file": "levels/level_08/stg_0001/StLevel.bin",
+      "resource_key_base40_candidate": "ELT"
     },
     {
       "model_version": 35,
@@ -88,9 +88,9 @@
         "torso"
       ],
       "full_body_candidate": true,
-      "resource_key": "LRG",
       "resource_key_hex": "902211af78000000",
-      "file": "levels/level_08/stg_0001/StUnit07.bin"
+      "file": "levels/level_08/stg_0001/StUnit07.bin",
+      "resource_key_base40_candidate": "LRG"
     },
     {
       "model_version": 35,
@@ -102,9 +102,9 @@
         "torso"
       ],
       "full_body_candidate": true,
-      "resource_key": "REG",
       "resource_key_hex": "b12a7a6238000000",
-      "file": "levels/level_08/stg_0001/StUnit07.bin"
+      "file": "levels/level_08/stg_0001/StUnit07.bin",
+      "resource_key_base40_candidate": "REG"
     },
     {
       "model_version": 35,
@@ -116,9 +116,9 @@
         "torso"
       ],
       "full_body_candidate": true,
-      "resource_key": "SHD",
       "resource_key_hex": "b7698f1580000000",
-      "file": "levels/level_08/stg_0001/StLevel.bin"
+      "file": "levels/level_08/stg_0001/StLevel.bin",
+      "resource_key_base40_candidate": "SHD"
     },
     {
       "model_version": 35,
@@ -130,9 +130,9 @@
         "torso"
       ],
       "full_body_candidate": true,
-      "resource_key": "SHK",
       "resource_key_hex": "b770140398000000",
-      "file": "levels/level_08/stg_0001/StLevel.bin"
+      "file": "levels/level_08/stg_0001/StLevel.bin",
+      "resource_key_base40_candidate": "SHK"
     },
     {
       "model_version": 35,
@@ -144,9 +144,9 @@
         "torso"
       ],
       "full_body_candidate": true,
-      "resource_key": "SOL",
       "resource_key_hex": "b875c7a280000000",
-      "file": "levels/level_08/stg_0001/StUnit07.bin"
+      "file": "levels/level_08/stg_0001/StUnit07.bin",
+      "resource_key_base40_candidate": "SOL"
     }
   ],
   "protagonist_body_proven": false,
@@ -155,6 +155,7 @@
     "Head+torso+leg bone name tags are a candidate classifier, not an identity or rendering test",
     "No KELL substring among parsed resource keys does not prove absence of a protagonist body",
     "Counts contain duplicated resources across levels",
-    "No meshes, transforms, vertex data, bone name arrays or raw descriptors published"
+    "No meshes, transforms, vertex data, bone name arrays or raw descriptors published",
+    "Base40 strings are decoded key candidates, not guaranteed canonical resource names"
   ]
 }

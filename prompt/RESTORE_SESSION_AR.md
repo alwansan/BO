@@ -1,3 +1,6 @@
+## جلسة36 — أحدث توجيه واجب
+المالك يريد شخصيةاللعبةالأصليةعلىكلهاتف،ولايريدbodyبوتأوحليف. اقرَأmemory/sessions/2026-11-21_bo-coop-36-original-player-steering.md والخطةdefault-player-link. تجربةالهاتفالتاليةتتحققمنMODELالمحمّلفيlocalplayerالأصلي،لاتطلبNPCfactorycaptureبعدهذاالتوجيه. لاsharedStartأوبعيدمرئيبعد؛المحليوالـreviewللقارئالجديدPASS،APKالتاليقيدالإطلاق. لاادعاءأنمجردlocalplayerعلىكلجهازينسخالجسموالعالمعبرالشبكة.
+
 
 ## مرجع وتقدم أصول جديد بعد رفع جلسة35
 اكتشفنا portingpete/Black-2006-Recomp@b2512fafd3e181e4febfb298f297245b845ef628،LICENSE MIT قرئ. راجع docs/REFERENCE_BLACK_PC_COOP_AR.md؛PC split-screen لديه player-context وpuppets لكنAIلايستهدفP2 بعد،وليسAndroid/network coop. لا نقل أعمىلـslotcopy؛+250عضويةالمجموعةيحتاجحماية. أداةBOالأصليةmodel_inventory.pyقرأَت271ملفاًمحلياًو4286MODEL،76مرشحbodyبـ10keysفريدة؛protagonistغيرمثبت.3اختباراتحدودوتصنيفPASS،لاgeometry/أصولمصدرة. نتائجآمنةفيOWNER-MODEL-CANDIDATES-20261121.json. تبقىخطةactualactor/control/AI/story،ولاStartوهمي.

@@ -56,13 +56,14 @@ def inspect(data):
     try:
      entry=table+i*16;key=u64(data,entry);target=base+u32(data,entry+8)
      if (target,key) in seen:continue
-     item=model(data,target);seen.add((target,key));item.update(resource_key=label(key),resource_key_hex=f'{key:016x}');result.append(item)
+     item=model(data,target);seen.add((target,key));item.update(resource_key_base40_candidate=label(key),resource_key_hex=f'{key:016x}');result.append(item)
     except (ValueError,struct.error,UnicodeError):continue
  return result
 
 def main():
  parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('root',type=pathlib.Path);parser.add_argument('--output',type=pathlib.Path,required=True)
  args=parser.parse_args();root=args.root
+ if not root.exists() or not (root.is_file() or root.is_dir()):parser.error("Input must be an existing file or directory")
  if root.is_symlink():parser.error('Symlink input refused')
  files=[root] if root.is_file() else sorted(p for p in root.rglob('*') if p.is_file() and not p.is_symlink() and p.suffix.lower() in ('.bin','.db'))
  summary={'scope':'validated MODEL dictionary signature candidates; not complete container or renderer validation','files_examined':0,'files_skipped_size':0,'models':[]}
