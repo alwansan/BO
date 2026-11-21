@@ -1,0 +1,82 @@
+name: BO-COOP original owned full-body MODEL geometry candidate check
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/analysis/ally_model_geometry_gate.py'
+      - 'coop/analysis/test_ally_model_geometry_gate.py'
+      - '.github/workflows/black-coop-ally-geometry-candidates.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: bo-coop-private-ally-model-geometry
+  cancel-in-progress: true
+jobs:
+  synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Verify bounds/relocation/finite vertices with synthetic MODEL only
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s coop/analysis -p test_ally_model_geometry_gate.py -v
+          echo 'BO_ALLY_GEOMETRY_SYNTHETIC_PASS: no game data required'
+  owner-asset-metadata:
+    needs: synthetic
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: bo
+          sparse-checkout: |
+            coop/analysis/model_inventory.py
+            coop/analysis/ally_model_geometry_gate.py
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - uses: actions/checkout@v4
+        with:
+          repository: alwansan/biso
+          ref: 9ceb6a65fb5a4414c106ca3961295a1f8f7e558b
+          persist-credentials: false
+          path: owner-biso
+          sparse-checkout: |
+            Black_Xbox_Extracted/levels/level_00/stg_0001/StLevel.bin
+            Black_Xbox_Extracted/levels/level_07/stg_0001/StLevel.bin
+            Black_Xbox_Extracted/levels/level_08/stg_0001/StLevel.bin
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Verify safe geometry metadata on 3 original owner stage resources
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          set -euo pipefail
+          python3 bo/coop/analysis/ally_model_geometry_gate.py             --owner-root owner-biso/Black_Xbox_Extracted             --report "$RUNNER_TEMP/bo-ally-model-surface-safe.json"
+          python3 - <<'PY'
+          import json,os,pathlib
+          r=json.loads((pathlib.Path(os.environ['RUNNER_TEMP'])/'bo-ally-model-surface-safe.json').read_text())
+          assert r['files_read']==3
+          assert r['schema']=='BO-COOP-owner-ally-geometry-candidate-v1'
+          assert not r['friendly_ally_or_remote_player_identity_verified']
+          assert not r['raw_assets_or_vertices_exported']
+          assert not r['actual_black_actor_spawned']
+          print('BO_ALLY_OWNER_SURFACE_AUDIT_PASS: bounded metadata only; NO verified rig or game actor')
+          PY
+      - name: Upload small bounded metadata (NEVER original MODEL assets)
+        uses: actions/upload-artifact@v4
+        with:
+          name: bo-ally-model-candidate-safe-metadata
+          path: ${{ runner.temp }}/bo-ally-model-surface-safe.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Purge local original owner stage resources after audit
+        if: always()
+        run: |
+          rm -rf owner-biso
+          rm -f "$RUNNER_TEMP/bo-ally-model-surface-safe.json"
