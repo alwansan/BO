@@ -6,7 +6,7 @@ import struct
 import unittest
 
 from story_entry_static import UnsafeImage
-from world_xref_static import analyze_bytes, classify_xref
+from world_xref_static import analyze_bytes, classify_xref, classify_write_source
 
 
 def synthetic():
@@ -40,6 +40,10 @@ class WorldXrefTests(unittest.TestCase):
         self.assertEqual(classify_xref("mov","eax,DWORD PTR [0x2d45d4]"),"read_or_address")
         self.assertEqual(classify_xref("cmp","DWORD PTR [0x2d45d4],eax"),"read_or_address")
         self.assertEqual(classify_xref("inc","DWORD PTR [0x2d45d4]"),"read_modify_write_candidate")
+        self.assertEqual(classify_write_source("ds:0x2d45d4,eax"),"register")
+        self.assertEqual(classify_write_source("ds:0x2d45d4,0x0"),"immediate_zero")
+        self.assertEqual(classify_write_source("ds:0x2d45d4,0x12345"),"immediate_nonzero")
+        self.assertEqual(classify_write_source("ds:0x2d45d4,DWORD PTR [eax]"),"memory")
 
     @unittest.skipUnless(shutil.which("objdump"),"objdump unavailable")
     def test_synthetic_real_binutils_and_output_privacy(self):
@@ -50,6 +54,8 @@ class WorldXrefTests(unittest.TestCase):
         self.assertEqual(result["read_or_address_candidates"],2)
         self.assertEqual(result["world_global_address"],"002D45D4")
         self.assertGreaterEqual(len(result["bounded_possible_writer_addresses"]),2)
+        sources={entry["source_class"] for entry in result["bounded_writer_operand_classes"]}
+        self.assertEqual(sources,{"register","immediate_zero"})
         self.assertFalse(result["true_scene_loader_proven"])
         self.assertFalse(result["safe_hook_proven"])
         self.assertFalse(result["world_epoch_proven"])
