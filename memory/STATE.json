@@ -488,6 +488,14 @@
       "deviceTested": false,
       "playableCoop": false,
       "localOutput": "/home/a/Desktop/black/Probe4-44876183662"
+    },
+    "PROBE4_CAPTURE_ANALYZER": {
+      "status": "PASS_PRIVACY_SCHEMA_CI_AND_NATIVE_OBSERVER_SYNTHETIC_INTEGRATION",
+      "run": 44908343745,
+      "job": 136858618002,
+      "code": "399cf730f95dfb6a52c76f02cca30b353545cadd",
+      "poolTests": 10,
+      "phoneGraphDataAnalyzed": false
     }
   },
   "pending": {
