@@ -1,3 +1,14 @@
+# NEWEST Session38 work — real story TLS v3 transport, 2026-11-22
+Read memory/STATE.json, memory/sessions/2026-11-22_bo-coop-38-firstperson-remote-ally-shared-mission.md, docs/ROOM_STORY_TLS_PROTOCOL_AR.md and docs/BLACK_STORY_ENTRY_AUDIT_AR.md, then earlier Session37/36. Branch ONLY experiment/black-coop; verify live HEAD and Actions first. Latest owner original-player primary-model probe ARRIVED already (8 complete arms-only models) in CL. Original local first-person remains on each phone, OTHER real humans use independent full-body ALLY LOOK, not NPC AI. Host selects ONE authoritative world, not two solo games.
+
+NEW CODE since initial Session38: RoomStoryWire.java adds bounded STORY_PREPARE=8, STORY_READY=9, STORY_COMMIT=10, STORY_ABORT=11; RoomWire VERSION/PROFILE 3 (old v2 APK peers deliberately incompatible). RoomTls.Server sends host PREPARE, requires explicit actual-scene hostLoaded and authenticated guest READY tied to exact session/token/current roster; server emits COMMIT only after ALL. Client refuses fake/stale COMMIT, never autoloads a stage or makes game writes. Compact story slots are current roster ordering (host1/guests2-4), NOT raw monotonic room player ID. No GAME THREAD hooks to BLACK yet. Story localhost real TLS CI44952822531 SUCCESS with STORY_WIRE_PASS and STORY_TLS_PASS (two successive stages and abort/leave); Android29 EC KeyStore story CI44952822499 SUCCESS with TLS_PLATFORM_PASS. This is not phone story gameplay.
+
+Observed ERROR_BINDEXCEPTION when owner rehosts too fast: new server listener reuseaddr + bounded 1.5s fixed-port retry, NOT silent alternate-port fallback. JVM regression CI44953176046 SUCCESS with ROOM_REHOST_PASS (4 consecutive Host/Leave/TLS clients, concurrent listener refused). Android rehost test run44953176054 was in progress at recording; check live status and repair if failed. Source game room mapping includes RoomStoryWire.java, preflight CI44952822545 SUCCESS. No new playable co-op APK, latest owner-tested primary model APK44946597973/artifact14724535514. Do NOT ask owner for ISO or repeat old model test.
+
+Next real work: audit pinned 00124CF0/0011B890 engine mission selection/load callback and confirm scene epoch, then connect RoomSession/BLACK game thread to real TLS story message logic, then actual remote ally fullbody render driven by authentic human input and world/AI/quest sync. No fake START, no clone of NPC+324 brain. Preserve saves and original singleplayer, update all memory files after every batch.
+
+---
+
 # LATEST RESTORE: BO-COOP Session38 — 2026-11-22
 **Only write alwansan/BO:experiment/black-coop.** Read AGENTS.md, memory/sessions/2026-11-22_bo-coop-38-firstperson-remote-ally-shared-mission.md, docs/superpowers/plans/2026-11-22-host-story-remote-ally.md and CLOUD_HANDOFF, STATE, MEMORY, PLAN, ISSUES. Fetch live HEAD and Actions first.
 
