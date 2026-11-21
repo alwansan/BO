@@ -1,0 +1,44 @@
+name: BO-COOP reference TDM asset profile, metadata only
+on:
+  workflow_dispatch:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/analysis/tdm_reference_profile.py'
+      - 'coop/analysis/test_tdm_reference_profile.py'
+      - '.github/workflows/black-coop-tdm-asset-preflight.yml'
+permissions:
+  contents: read
+jobs:
+  reference-inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+          sparse-checkout: |
+            coop/analysis/tdm_reference_profile.py
+            coop/analysis/test_tdm_reference_profile.py
+          sparse-checkout-cone-mode: false
+      - name: Only pinned owner manifest (not copyrighted game files)
+        uses: actions/checkout@v4
+        with:
+          repository: alwansan/biso
+          ref: 9ceb6a65fb5a4414c106ca3961295a1f8f7e558b
+          path: owner-metadata
+          lfs: false
+          sparse-checkout: |
+            GITHUB_UPLOAD_MANIFEST.json
+          sparse-checkout-cone-mode: false
+      - name: Strict Python and negative synthetic tests
+        run: |
+          python3 -m py_compile coop/analysis/tdm_reference_profile.py coop/analysis/test_tdm_reference_profile.py
+          python3 -m unittest discover -s coop/analysis -p test_tdm_reference_profile.py -v
+      - name: Compare owner metadata to third-party resource inventory
+        run: |
+          python3 coop/analysis/tdm_reference_profile.py \
+            --manifest owner-metadata/GITHUB_UPLOAD_MANIFEST.json \
+            --require-reference-match
+          test ! -e owner-metadata/Black_Xbox_Extracted/default.xbe
+          echo "PASS: names and sizes only; no game binaries, ISO, or other mod assets used"
