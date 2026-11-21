@@ -16,3 +16,8 @@
 - renderer 1CCA60 يبني قائمة الرسم من live79B0 وphase1 79C0؛ عضوية pool لا تعفي من spatial registration الصحيح.
 
 التالي: تدقيق مسارات الإصابة/الانفجار لـ324 الفارغ وتسلسل register/update/unregister؛ بعدها تنفيذ حزمة محلية معزولة opt-in فقط إن ثبتت invariants. لا AI brain shallow copy، ولا زيادة live capacity منفردة، ولا ادعاء لاعب2 من هذه التجربة.
+
+## قرار مراجعة مستقل لاحق
+تأكد مسار الإصابة1E7753..1E7759: target324 ثم+90 دونnullguard عندما384==0. رُفض تصميم null-brain المسجل؛لايكفيhookإصابةواحد. 1DFC30 لديهnullguardمحلي فقط،ولايتعداهالضمان. المسارالمختارللبحثالتاليnativefactoryمع324مستقلمنمسارacquisitionالأصلي،دوننسخ/استعارة324.
+
+1AF880هوcallerللـfactory:يأخذcontrollerمنfreelist عندglobal2D1988+22CDC،ينقلهإلىnext1F00،يبنيdescriptorمن12stackargsمعECX/EDI،وينادي1DF440. بعدالعودةيكتبفيactorدونفحصnull؛إعادةندائهتحتاجفحصسعاتالمحركوصلاحيةdescriptorوهويةالمهمة،لاreplayأعمى. لمتُثبتبعدقيمبديلةلـquest/spawnIDولاملكيةكلمراجعdescriptor.

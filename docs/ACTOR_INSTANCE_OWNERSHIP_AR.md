@@ -5,15 +5,20 @@
 resource320ظهرحتى4قيمغيرصفريةفياللقطة،معمشاركةبينعدةشخصيات؛35Cقيمةواحدةمشتركة. لايمكنتعريفrenderinstanceبهما.
 
 ## تحليل ثابت read-only للصورة c5bfed...
-- 1DA4F0/1DA522:actor+320يساويinputstackargumentالثاني. 1C5C60يفكwrapperعبر[320]ثمينسخقوالبsharedresource+38/+40 إلىbuffersالمؤشرةبـactor+34C/+350. هذانمرشحانلمخازنكتابةخاصة؛تفردهماعلىالهاتفلميثبتبعد.
+- 1DA4F0/1DA522:actor+320يساويinputstackargumentالثاني. 1C5C60يفكwrapperعبر[320]ثمينسخقوالبsharedresource+38/+40 إلىbuffersالمؤشرةبـactor+34C/+350. هذانمرشحانلمخازنكتابةخاصة؛Probe4يدعمعلاقتهماالمستقرة،ولايثبتملكيةالتخصيص.
 - actor+328مرشحمتحكمتحريكحقيقي. 1E05B2..1E05EFيأخذهمنrootglobal2D12C8،array+70 وcounter+F4،معحد0x21(33)؛ينادي17EAE0للتهيئةويكتبالpointerإلىactor+328. استنتاج32NPC+1localمعقولةلكنهامحدوديةمرشحوليستترخيصلإنشاء33لاعباً.
 - **17E420**ABIمنالتعليمات:EAXactor،ESIcontroller،stackarg1binding. عند17E448يكتبcontroller+0=actor؛عند17E44Aيكتبactor+328=controller؛ثمcontroller+50=binding. يعيدتهيئةmatricesعندcontroller+30/+34 وغيرهما. هذهbacklinksمثبتةثابتاً،وليستدعوةآمنةلإنشاءشخصيةمنnetworkthread.
 - 17EAE0يصفرcontrollerowner+0وbinding+50ويخصصblock0x9D0إلىcontroller+54ويصفرname+5C. هذايتطابقمعالمصدرالمثبتhooks.cpp:animationowner+0،clip/runtime+54،name+5C. لا نفترضأن+54assetمشترك؛عقدهالأعمقيحتاجفحصاً.
 - **1C6150** (NPCvirtualslot5) يقرأactor+320للوصفالمشترك،ويستعملactor+328→+54→+50 وactor+328→+50→+34 لملءأوصافالرسمفيbufferactor+34C،ثميناديLOD1C55A0وdrawhelper1C5B40. هذايربطcontrollerبمسارالرسم،معأنinstanceownership/runtimeالتفردلميُقبلبعد.
 - actor+29Cفيالمصدرهوweapon؛لا تخلطهcontrollerالتحريكأوoffsetبنفسالاسمفيكلاسphysicsآخر.
 
-## خطوة عملية تالية
-رصدمنفصلopt-in،بدونguestwrites/calls،يتحققlivepoolslot+serialقبلوبعدقراءةcontroller328 وbacklinkowner وruntime54/binding50 وscratch34C/350. سجّلvalidityلكلرابط،ولا تحولفشلقراءةمرشحإلىNPCdeath. افحصالتفردعبرالشخصياتوالتبدلعندإعادةاستخدامالخانة. لا تنسخbody.bcaالمقيدمنPeterson؛مرجعهWindowsTDMأفكاربنيةفقطوhead0ee3ae6411c7f0989c62cbe36b224d3f55043923لميَتغيرعندالفحصالجديد.
+## دليل Probe4 المقبول والخطوة التالية
+سجل المالك BLACK-Probe-20261121-163248-271 قُرئ وفُحص؛ الملخص `memory/evidence/PROBE4-owner-163248-safe-summary.json`. 111/111 pool و548/548 instance links صالحة، منها437 NPC و111 local، دون اشتراك controller بينlocal وNPC في اللقطة. runtime وscratch غير صفرية في كل القراءات الصالحة. هذا يدعم علاقة controller الخاصة بالشخصية المرصودة، لكنه لا يثبت allocation ownership أو أن الذاكرة قابلة للنسخ أو آمنة للإنشاء. المالك لم يواجه مشاكل؛ لا إعادة Probe4. الالتقاط115107ms وscopeواحد ودونend، فلا دليلreload.
+
+المسار التالي إنشاء actor عبر المحرك مع مكوّن تحكم324 مستقل وصالح. **رُفض مسار null-brain المسجل في العالم**: مسار إصابة1E7753..1E7759 يقرأtarget324 ثم+90 دونnullguard عندما384==0. إضافةdamagehookوحيد لا تثبت بقيةcallbacks. لا تستعر324منNPC لأن1D21F0 يكتبbacklink actor إلى+8C.
+
+التسجيل1CE1F0( EAXactor،stackworld،ret4) يربطworld5CB4 وspatial-list4968؛الإزالة1BEB40 تفترضروابط34/38صالحة. تحديث1801B0ليسpose-only لأنهينادي1CE600/15850لتحريكspatialtree. مسار1DFC30يملكnullguardلكنذلكلايحميجميعالإصابات. أكدتمراجعةمستقلةهذهالعقود.
+
 
 
 ## ملاحظة تصميم proxy لاحق — استنتاج لا تعديل مطبق
