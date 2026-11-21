@@ -42,12 +42,12 @@ public final class RoomStoryTlsTest {
             catch(java.io.IOException expected){}
         }
         // A peer exit during PREPARE must revoke the barrier and refuse COMMIT.
-        try(RoomTls.Server host=RoomTls.Server.start(hostContext,loop,0,"Host","Campaign");
-            RoomTls.Client guest=RoomTls.Client.connect(guestContext,loop,host.port(),"Remote")){
-            until(()->guest.snapshot()!=null&&guest.snapshot().players.size()==2);
-            host.prepareStory(0,0,11);
-            until(()->guest.storyTicket()!=null);
-            guest.close();
+        try(RoomTls.Server host=RoomTls.Server.start(hostContext,loop,0,"Host","Campaign")){
+            try(RoomTls.Client guest=RoomTls.Client.connect(guestContext,loop,host.port(),"Remote")){
+                until(()->guest.snapshot()!=null&&guest.snapshot().players.size()==2);
+                host.prepareStory(0,0,11);
+                until(()->guest.storyTicket()!=null);
+            } // guest exits before any READY; no manual close() on try resources
             until(()->host.snapshot().players.size()==1);
             ok(host.storyTicket()==null&&!host.storyCommitted());
         }
