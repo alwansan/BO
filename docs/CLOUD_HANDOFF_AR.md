@@ -1,3 +1,9 @@
+## Session43 late gate / external reference — 2026-11-22
+Windows APK builder `44962275637` failed ONLY due strict packaging-source allowlist not including authorized read-only `difficulty.cpp` plus `room_world_tick.hpp`/`world_tick_contract.hpp`; 19 staging tests passed. Exact finite allowlist repaired `561eacc0`; current APK build `44962611024` CHECK LIVE (no gameplay). Core C++ native world witness sanitizer and source staging PASS. Do not ask owner to install a room-only APK.
+Public Peterson047 BLACK-XBEMultiplayer checked: Windows 8-player TDM binary-only alpha, dedicated net thread, separate game/discovery UDP ports; NOT campaign story co-op. Linked BLACK-Coop source 404 (not readable), included third-party animation body.bca permission within mod only, do not copy. Reference memo `docs/REFERENCE_BLACK_XBEMULTIPLAYER_20261122_AR.md`. Actual owner c5 stage loader, human fullbody ally renderer, one host-world AI/quest/combat still missing. Restore Session43 and STATE.
+
+---
+
 ## Session43 handoff — 2026-11-22
 Original c5 owner XBE world writer direct control references `44961768279 SUCCESS` (artifact14729429674). First writer0020BF48 receives EAX; second0020BF51 receives EBX; nine bytes apart, direct branch to second, uncertain EBX zero. Static analysis NOT a proven BLACK mission loaded callback, actor renderer or host-world synchronizer. Source-only read-only game event witness now staged in original source wrappers sub_00124CF0 (bounded mission-launch attempt) and sub_001E5FA0 (local original player update), JNI bridge emits fixed safe event codes only, never READY, guest pointers, positions or saves. C++ sanitizer `44962215874 SUCCESS`; staging `44962275672 SUCCESS`; Android title APK `44962275637` verify live (room-only). No owner phone test, no gameplay. Read Session43, docs/BLACK_WORLD_POINTER_XREF_AUDIT_AR.md and prompt/RESTORE_SESSION_AR.md. Only write experiment/black-coop.
 
