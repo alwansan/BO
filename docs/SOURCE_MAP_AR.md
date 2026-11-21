@@ -42,3 +42,6 @@ Run 44841534370 على code 08fd55b4cb1640b4b56445d43e1801dbc635b1a3 completed/s
 - تقرير Android upstream #33 يسجل نفس c5bfed... مع v1.5.0 وتحميل Vulkan: https://github.com/RanggaCasper/Black-Android/issues/33 ؛ ليس إثبات تشغيل نسخة المالك أو توافق co-op، ولا دليل أن اختلاف البصمة سببه التعريب.
 - سُئل المالك إن كانت نسخته تدخل مهمة؛ الإجابة/سجل الهاتف لم يصلا بعد. دليل جمع سجل التشغيل: docs/DEVICE_BASELINE_AR.md. هذا طلب تشخيص للنسخة الأصلية، لا تجربة APK جديدة أو تعديل ملفات الحفظ.
 - مسار الأصل82d058... ما زال غير متاح؛ مسار candidate c5bfed... لم يغلق، يحتاج حسم static ABI/offsets ودليل runtime. لا تعيد بدء مخابر الشبكة أو طلب XBE المفقود دون دليل جديد.
+
+## حالة المصدر بعد جلسة07
+نجاح compile candidate مستقل مثبت44845637359، input/compiled SHA1=c5bfed...، وليس إعادة إنتاج Arabic82d058...؛ دليل BASELINE-candidate-build-44845637359.json. native/src/config كما في المصدر المثبت، تعديلات تغليف5 ملفات Java/Gradle/XML. runtime candidate ما زال ينتظر الهاتف. مرشحات ACTOR منفصلة في docs/ACTOR_FEASIBILITY_AR.md ولا تستخدم كإثبات offset/lifetime.

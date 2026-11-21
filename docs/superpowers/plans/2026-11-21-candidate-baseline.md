@@ -21,12 +21,14 @@
 
 ## Task2: Build and verify candidate on Actions
 - [x] Add bounded workflow: manifest restore, pinned tools, regenerate XBE, apply packaging, Android compile with two native compile jobs.
-- [ ] Validate YAML/inline Python locally; run actual CI and diagnose failures from logs.
-- [ ] Verify final APK package/ARM64/debug signature and embedded kImageSha1 equals input. Confirm no original game assets bundled; archive only APK+metadata.
-- [ ] Record run/code/artifact hashes and precise scope in memory/state/plan/issues/session/recovery.
-- [ ] Provide exact install/import/first-mission/log instructions for the new baseline; do not claim co-op or working rebuilt engine before phone test.
+- [x] Validate YAML/inline Python locally; run actual CI and diagnose failures from logs.
+- [x] Verify final APK package/ARM64/debug signature and embedded kImageSha1 equals input. Confirm no original game assets bundled; archive only APK+metadata.
+- [x] Record run/code/artifact hashes and precise scope in memory/state/plan/issues/session/recovery.
+- [x] Provide exact install/import/first-mission/log instructions for the new baseline; do not claim co-op or working rebuilt engine before phone test.
 
 ## Review focus
 Unknown source anchors must fail before mutation; app identity must resolve original JNI class; native gameplay files must remain unchanged; build must bind to real input hash; copied owner logs and game bytes must stay out of artifacts.
 
 Review fixed: private import destination plus removal of broad storage permissions, and no metadata/APK upload before verification. Storage-permission test observed RED then GREEN; full suite4/4 PASS. Actual pinned-source packaging preview and syntax checks PASS.
+
+Completed baseline build deliverable: run44845637359, artifact14682519899; APK SHA/ZIP SHA and native image independently rechecked after download. Phone acceptance remains explicitly pending before HOOK/ACTOR; full co-op goal incomplete.

@@ -74,6 +74,18 @@
       "loadedImage": "c5bfed25449c8212d7a976f15246e87ead57713f",
       "isoMatchesManifest": true,
       "rebuiltEngineTested": false
+    },
+    "CANDIDATE_ANDROID_BUILD": {
+      "status": "pass_build_package_signature_and_exact_candidate_native_identity_only",
+      "run": 44845637359,
+      "job": 136664530136,
+      "code": "5212673e5bc92bbe30a7e001cc8e26924a14f0af",
+      "artifact": 14682519899,
+      "apkSha256": "4ead325d67772a1c877b9f073aebc0e9eaaab45e9a0028d2380645c4bc2f69f7",
+      "package": "org.bocoop.black.baseline",
+      "evidence": "memory/evidence/BASELINE-candidate-build-44845637359.json",
+      "phoneTested": false,
+      "multiplayer": false
     }
   },
   "pending": {
@@ -84,8 +96,8 @@
     },
     "ACTOR_001": "not_started",
     "COMBAT_001": "not_started",
-    "DEVICE": "not_started",
-    "SRC_002": "Original82d058 baseline unavailable; isolated candidate c5bfed rebuild prepared with exact own input identity and existing-phone evidence",
+    "DEVICE": "No co-op phone/device-pair test; separate rebuilt baseline phone test pending",
+    "SRC_002": "Candidate Android build and self-consistent identity proven; rebuilt runtime device acceptance still pending. Not original Arabic source equivalence.",
     "NET_004": "Phone/ZeroTier runtime and authenticated production protocol untested",
     "SRC_002B": {
       "status": "candidate translation possible; 46 library symbols, 5 data locations, 11 ABI unresolved; semantics not accepted",
@@ -98,17 +110,9 @@
         "fullAbiSemanticsAccepted": false
       }
     },
-    "DEVICE_BASELINE": "Original-phone question answered and image identified. NEW isolated rebuilt candidate baseline still unbuilt/untested.",
-    "CANDIDATE_BUILD": {
-      "status": "running_android_compile",
-      "package": "org.bocoop.black.baseline",
-      "phoneTested": false,
-      "run": 44845637359,
-      "job": 136664530136,
-      "code": "5212673e5bc92bbe30a7e001cc8e26924a14f0af",
-      "firstFailedRun": 44845056293
-    }
+    "DEVICE_BASELINE": "NEW baseline APK built and verified. Await first-mission movement/fire/retry/quit and log from org.bocoop.black.baseline. Original Arabic test already answered.",
+    "HOOK_001": "Read-only probe design candidates in docs/ACTOR_FEASIBILITY_AR.md; implementation waits rebuilt-baseline device acceptance and bounds/lifecycle/thread proof"
   },
   "apk": null,
-  "next": "Run isolated candidate baseline Actions; verify real build, package, native identity and artifact before requesting new-app device test."
+  "next": "Deliver verified NO-COOP baseline APK and read new-app device result/log before HOOK-001. Actor factory/full-body ownership remains unproven."
 }
