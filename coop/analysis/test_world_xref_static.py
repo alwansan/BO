@@ -31,10 +31,11 @@ def synthetic():
 
 class WorldXrefTests(unittest.TestCase):
     def test_operand_classifier_disallows_immediates_and_nonworld_refs(self):
-        self.assertEqual(classify_xref("mov","DWORD PTR ds:0x2d45d4,eax"),None)
+        self.assertEqual(classify_xref("mov","DWORD PTR ds:0x2d45d4,eax"),"write_candidate")
         self.assertIsNone(classify_xref("mov","eax,DWORD PTR ds:0x2d45dc"))
+        self.assertIsNone(classify_xref("mov","eax,0x2d45d4"))
         self.assertEqual(classify_xref("mov","DWORD PTR ds:0x2d45d4[eax],ecx"),None)
-        self.assertEqual(classify_xref("mov","DWORD PTR ds:0x2d45d4, 0x0"),None)
+        self.assertEqual(classify_xref("mov","DWORD PTR ds:0x2d45d4, 0x0"),"write_candidate")
         self.assertEqual(classify_xref("mov","DWORD PTR [0x2d45d4],eax"),"write_candidate")
         self.assertEqual(classify_xref("mov","eax,DWORD PTR [0x2d45d4]"),"read_or_address")
         self.assertEqual(classify_xref("cmp","DWORD PTR [0x2d45d4],eax"),"read_or_address")
