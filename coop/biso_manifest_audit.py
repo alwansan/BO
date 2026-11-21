@@ -36,7 +36,7 @@ def load_manifest(path):
     files, seen_parts, splits = {}, set(), 0
     for record in records:
         name = safe_path(record.get("path"))
-        if not name.startswith(ROOT) or not name[len(ROOT):] or name in files:
+        if not name.startswith(ROOT) or not name[len(ROOT):] or name[len(ROOT):] in files:
             raise ValueError("invalid or duplicate target")
         size, sha, parts = record.get("bytes"), record.get("sha256"), record.get("parts")
         if type(size) is not int or size < 0 or size > MAX_FILE:
