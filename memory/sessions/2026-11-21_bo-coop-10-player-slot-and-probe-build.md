@@ -7,3 +7,7 @@
 - [Windows Android APK 44854667587](https://github.com/alwansan/BO/actions/runs/44854667587) started on player-slot source; **status in_progress at this memo**. Do not claim built or recommend this new artifact before final verification. No phone test, no actual co-op. Main/baseline original unchanged.
 
 Next: inspect latest Android job and artifact independently, update RESTORE/STATE/evidence after final outcome. Source asset archive uploaded five parts earlier, already documented docs/OWNER_ISO_UPLOAD_AR.md; reconstructed identical BO ISO, never public commit raw game bytes. 
+
+## تحديث جلسة10 — تحليل الخصوصية والنتائج الحية
+- [44854855170](https://github.com/alwansan/BO/actions/runs/44854855170) completed SUCCESS for privacy-safe probe log analyzer tests (synthetic only), on code bcbf1964b7fb378ad17fed2724aaeefbab91de46. Added bounded diagnostic reason-code flags: capture_end_not_seen, no_samples, no_player_samples, no_lod_samples, no_animation_samples, reader_unavailable, local_output_error. No raw pointer, position, names, thread/epoch IDs or raw logs in summaries. Tests include empty/permission and truncated capture. These flags DO NOT prove model absence or factory success.
+- [44854855083](https://github.com/alwansan/BO/actions/runs/44854855083) Python UDP regression SUCCESS. Android candidate run44854667587 was in progress (Gradle native compile) at this documentation update. Do not infer Android runtime from host CI.

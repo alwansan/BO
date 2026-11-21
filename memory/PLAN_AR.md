@@ -121,3 +121,7 @@ Owner ISO uploaded 5 parts and fully SHA-verified. See docs/OWNER_ISO_UPLOAD_AR.
 - [ ] Verify Android rebuild [44854667587](https://github.com/alwansan/BO/actions/runs/44854667587) and associated signed APK metadata before recommending artifact.
 - [ ] HOOK001 phone runtime: optional capture only, store logs privately, summarize without raw locations; **not** baseline retest.
 - [ ] ACTOR-001 (full body proxy) remains unproven; no networked gameplay yet.
+
+## تحديث جلسة10 — تحليل الخصوصية والنتائج الحية
+- [44854855170](https://github.com/alwansan/BO/actions/runs/44854855170) completed SUCCESS for privacy-safe probe log analyzer tests (synthetic only), on code bcbf1964b7fb378ad17fed2724aaeefbab91de46. Added bounded diagnostic reason-code flags: capture_end_not_seen, no_samples, no_player_samples, no_lod_samples, no_animation_samples, reader_unavailable, local_output_error. No raw pointer, position, names, thread/epoch IDs or raw logs in summaries. Tests include empty/permission and truncated capture. These flags DO NOT prove model absence or factory success.
+- [44854855083](https://github.com/alwansan/BO/actions/runs/44854855083) Python UDP regression SUCCESS. Android candidate run44854667587 was in progress (Gradle native compile) at this documentation update. Do not infer Android runtime from host CI.

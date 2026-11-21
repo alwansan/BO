@@ -17,7 +17,7 @@
       "run": 44808411128,
       "code": "79f8648e666d02edae8aefde27e361f8f5ad5cdc",
       "regressionRun": 44813529325,
-      "latestRegressionRun": 44834027684
+      "latestRegressionRun": 44854855083
     },
     "SRC_001_AUDIT": {
       "status": "pass_manifest_and_identity_inspection",
@@ -142,6 +142,13 @@
       "run": 44854667613,
       "code": "457740830d2ba1b65ac9694759c86daf38fc27ee",
       "deviceTested": false
+    },
+    "HOOK001_PRIVACY_DIAGNOSTICS": {
+      "status": "passed_synthetic_privacy_ci",
+      "run": 44854855170,
+      "code": "bcbf1964b7fb378ad17fed2724aaeefbab91de46",
+      "script": "coop/analysis/summarize_probe.py",
+      "scope": "Only aggregate diagnostic flags, no raw log processed"
     }
   },
   "pending": {

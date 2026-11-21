@@ -97,3 +97,7 @@ AOSP Android15 SYSCALLS.TXT يحتوي process_vm_readv all، app/common blockli
 ## HOOK001 session10 risk & correction
 - Local player could starve under 64 observations. Reserved first slot; source and host tests pass 44854667613, Android new rebuild not yet confirmed. ID1 may be reused across local respawn in same world; identifiers remain correlations only, not actors.
 - Actual phone support for process_vm_readv/getpid under OEM Android and LOD/vtable filtering, log directory/access and clock limits is **not demonstrated by CI**. Do not infer from build alone.
+
+## تحديث جلسة10 — تحليل الخصوصية والنتائج الحية
+- [44854855170](https://github.com/alwansan/BO/actions/runs/44854855170) completed SUCCESS for privacy-safe probe log analyzer tests (synthetic only), on code bcbf1964b7fb378ad17fed2724aaeefbab91de46. Added bounded diagnostic reason-code flags: capture_end_not_seen, no_samples, no_player_samples, no_lod_samples, no_animation_samples, reader_unavailable, local_output_error. No raw pointer, position, names, thread/epoch IDs or raw logs in summaries. Tests include empty/permission and truncated capture. These flags DO NOT prove model absence or factory success.
+- [44854855083](https://github.com/alwansan/BO/actions/runs/44854855083) Python UDP regression SUCCESS. Android candidate run44854667587 was in progress (Gradle native compile) at this documentation update. Do not infer Android runtime from host CI.
