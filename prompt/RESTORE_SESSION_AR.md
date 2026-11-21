@@ -1,3 +1,9 @@
+# استعادة أحدث — جلسة23: Probe3 APK جاهز، يحتاج اختبار هاتف
+اقرأAGENTS.md ثمmemory/STATE.json ثم **memory/sessions/2026-11-21_bo-coop-23-probe3-apk-ready.md**. لا تبدأبناءProbe3منجديد: **APK44872995034SUCCESS** وcore44872995111SUCCESS على678536b205506be6cfcc4ca86a18afe3391e0aa9؛فحصgeneratedresetنجحفعلياًبعدإصلاحصيغةSDKبجلسة22. artifact14695275729،packageorg.bocoop.black.probe3،SHA256352d78ed1811b918b91f344e0ba613eb7a0a9f1cc43ba93ae952fccb83ffec44؛نُزلوفُحصبشكل مستقل. [تنزيلartifact](https://github.com/alwansan/BO/actions/runs/44872995034/artifacts/14695275729).
+**التالي يحتاج المالك:** اختبارواحدوفقdocs/PROBE3_DEVICE_TEST_AR.md (Startcapture،قتلNPC،checkpoint/reload،أحدثcoop_probe.txt). لاrepeatbaseline/Probe2 ولاuploadISO/Androiddataجديد. بعدlogحللpoolvalid/reset_sequence/slot+serial/resources؛لاهويةدائمةولاspawn/death/modelownershipproofمقبولبعد. **co-op الحقيقي لم يكتمل، ولاISOمعدلجديدبهذهالدفعة**. البياناتوالخططالأقدمأسفلهذاالتحديثللتاريخولا تتغلبعلىالحالةالأحدث.
+
+---
+
 **التشغيل الحالي بعد الإصلاح:** APK44872995034in_progress،core44872995111،source678536b205506be6cfcc4ca86a18afe3391e0aa9. تابعهمابدلاًمن44872596889الفاشل.
 
 # أحدث نتيجة — جلسة22

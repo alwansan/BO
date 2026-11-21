@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-22-reset-guard-format.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-23-probe3-apk-ready.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -436,6 +436,21 @@
       "linuxJob": 136750222857,
       "androidJob": 136750223038,
       "phoneRuntimeTested": false
+    },
+    "PROBE3_ANDROID_BUILD": {
+      "status": "CI_SUCCESS_APK_INDEPENDENTLY_DOWNLOADED_AND_HASHED_NO_PHONE_TEST",
+      "run": 44872995034,
+      "job": 136751453503,
+      "code": "678536b205506be6cfcc4ca86a18afe3391e0aa9",
+      "artifact": 14695275729,
+      "metadataArtifact": 14694647493,
+      "sha256": "352d78ed1811b918b91f344e0ba613eb7a0a9f1cc43ba93ae952fccb83ffec44",
+      "bytes": 21746299,
+      "package": "org.bocoop.black.probe3",
+      "coreRun": 44872995111,
+      "deviceTested": false,
+      "multiplayer": false,
+      "evidence": "memory/evidence/PROBE3-apk-44872995034.json"
     }
   },
   "pending": {
@@ -446,7 +461,7 @@
     },
     "ACTOR_001": "Real Probe2 13 LOD+animation correlations, 9 first observed late, 2 10s sampling gaps; NOT NPC death/spawn or ownership proof. ACTOR001A analyzer and value-only mock remote roster pass isolated CI, actual game actor factory/proxy unimplemented.",
     "COMBAT_001": "not_started",
-    "DEVICE": "Baseline owner accepted; Probe1 game/capture started; Probe2 import/MediaStore exporter PASS; CO-OP/ROOM menu UI still unverified; two-phone gameplay NOT started.",
+    "DEVICE": "Baseline and Probe2 owner accepted; Probe3 build verified, focused NPC damage/death/checkpoint reload capture required on owner phone",
     "SRC_002": "Separate candidate build and owner baseline runtime accepted for this limited device test; not original Arabic source equivalence/full campaign proof.",
     "NET_004": "Synthetic host+scene inbox composition PASS. Real Android LAN/ZeroTier, secure session auth, actor mapping and game-thread integration NOT tested.",
     "SRC_002B": {
@@ -510,7 +525,7 @@
       "next": "Android opt-in room browser & LAN interface binding, 2-device discovery; authenticated session before gameplay; no game actor use yet"
     },
     "PROBE3_DEVICE_BUILD": {
-      "status": "CORRECTED_GUARD_APK_RUN_IN_PROGRESS",
+      "status": "BUILD_COMPLETE_OWNER_PHONE_ACTOR_TEST_REQUIRED",
       "workflow": ".github/workflows/black-coop-probe3-apk.yml",
       "package": "org.bocoop.black.probe3",
       "session": "memory/sessions/2026-11-21_bo-coop-21-probe3-device-build.md",
@@ -521,34 +536,35 @@
       "failedApkRun": 44872596889,
       "failedJob": 136750222861,
       "failureReason": "Generated MOV uses ea temporary; handwritten shape fixture wrongly expected inline memory address",
-      "fixSession": "memory/sessions/2026-11-21_bo-coop-22-reset-guard-format.md"
+      "fixSession": "memory/sessions/2026-11-21_bo-coop-22-reset-guard-format.md",
+      "artifact": 14695275729
     }
   },
   "apk": {
-    "kind": "Probe2 read-only export+room candidate",
-    "run": 44860874976,
-    "artifact": 14690036713,
-    "package": "org.bocoop.black.probe2",
-    "sha256": "861fd501497f2251feeb544c56430e084c3b48d3afa87e0d3a65c12e8a1115c0",
-    "bytes": 21739739,
+    "kind": "Probe3 read-only pool/resource/reset diagnostic",
+    "run": 44872995034,
+    "artifact": 14695275729,
+    "package": "org.bocoop.black.probe3",
+    "sha256": "352d78ed1811b918b91f344e0ba613eb7a0a9f1cc43ba93ae952fccb83ffec44",
+    "bytes": 21746299,
     "deviceAccepted": false,
     "gameplayCoop": false,
-    "sourceCommit": "d8dba8d8da2da69c62718a87f3e6f03f16be0d2f"
+    "sourceCommit": "678536b205506be6cfcc4ca86a18afe3391e0aa9"
   },
-  "next": "Launch corrected generated-reset guard build then follow its new APK/core run to completion",
+  "next": "Need owner focused Probe3 phone capture according to docs/PROBE3_DEVICE_TEST_AR.md; no baseline retest or duplicate toy networking",
   "latestHandoff": {
     "date": "2026-11-21",
-    "session": 22,
+    "session": 23,
     "kind": "documentation_and_static_analysis_only",
     "newApk": false,
     "newCI": false,
     "actorPoolEvidence": "memory/sessions/2026-11-21_bo-coop-19-cloud-handoff.md",
-    "next": "Verify serial reset and init return/ABI, then implement isolated read-only sparse pool snapshot Probe3",
+    "next": "Owner Probe3 actor lifecycle test, then analyze pool observations before real remote actor work",
     "cloudFilesRequiredFromOwner": false,
     "actorPoolContracts": "docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md",
     "fullOwnerObjective": "docs/OWNER_PROJECT_OBJECTIVE_AR.md",
     "serialReset": "1D5E00 successful AL1 path restores pool and sets counter8524=1; instrument return without changing context",
     "poolReader": "coop/probe3/pool_snapshot.hpp",
-    "poolReaderStatus": "CORE_CI_SUCCESS_AT_E5B7999_NEW_DEVICE_INTEGRATION_LOCAL_PASS_BUILD_PENDING"
+    "poolReaderStatus": "PROBE3_APK_READY_WAITING_OWNER_PHONE_CAPTURE"
   }
 }

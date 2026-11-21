@@ -226,3 +226,7 @@ pool32 ثابت وserial مرشح لا يثبتان active lifetime أو remote 
 
 ## جلسة22 — generatedguardfalsepositive
 APK44872596889FAILقبلGradle؛توقعاتصيغةea/castsفيالفاحصصححتوفقSDK،Python12/preparers6PASSومراجعةPASS. اقرأ memory/sessions/2026-11-21_bo-coop-22-reset-guard-format.md وتابعالبناءالجديد. لاAPKجديدةجاهزةبعد.
+
+
+## جلسة23 — Probe3 جاهز للهاتف
+APK44872995034SUCCESS/core44872995111SUCCESS،artifact14695275729 نُزلوفُحصsha256352d78ed1811b918b91f344e0ba613eb7a0a9f1cc43ba93ae952fccb83ffec44. اقرأ memory/sessions/2026-11-21_bo-coop-23-probe3-apk-ready.md؛التالياختبارمالكوفقdocs/PROBE3_DEVICE_TEST_AR.md ثمlifetime/modelanalysis. لاco-op/ISOجديدبعد.
