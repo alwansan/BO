@@ -61,6 +61,12 @@ public final class RoomTls {
         private int nextId=2;
         private long revision=1;
         private volatile boolean closed;
+        // The compact story masks use order within the CURRENT roster rather
+        // than RoomWire.Player.id (which never reuses its numeric room ID).
+        private RoomStoryWire.Ticket story;
+        private final Map<Integer,Integer> storySlots=new HashMap<>();
+        private int storyReadyMask;
+        private boolean storyCommitted;
         // Pre-JOIN handshake diagnostics only; never store PINs or peer identities.
         private volatile String handshakeFailureKind="none";
         public String handshakeFailureKind(){return handshakeFailureKind;}
@@ -89,6 +95,73 @@ public final class RoomTls {
         }
         public int port(){return listener.getLocalPort();}
         public boolean isRunning(){return !closed;}
+        public RoomStoryWire.Ticket storyTicket(){synchronized(lock){return story;}}
+        public boolean storyCommitted(){synchronized(lock){return story!=null&&storyCommitted;}}
+        /**
+         * Only a future VERIFIED game-thread mission-choice hook may invoke
+         * this. The network must never trigger BLACK's scene loader itself.
+         */
+        public RoomStoryWire.Ticket prepareStory(int mission,int stage,int epoch)throws IOException{
+            synchronized(lock){
+                if(closed||story!=null||peers.isEmpty()||peers.size()>3)
+                    throw new IOException("Story unavailable or already prepared");
+                List<RoomWire.Player> roster=players();
+                int mask=(1<<roster.size())-1; // host is slot1; 1..3 guests
+                long token;
+                do{token=RANDOM.nextLong()&Long.MAX_VALUE;}while(token==0);
+                RoomStoryWire.Ticket ticket=new RoomStoryWire.Ticket(session,token,revision,
+                    mission,stage,epoch,mask);
+                byte[] prepare=RoomStoryWire.encode(RoomWire.STORY_PREPARE,ticket);
+                // Reserve two frames (fresh roster then prepare) atomically
+                // under the same lock as the periodic roster sender.
+                for(Peer peer:peers.values())
+                    if(peer.dead.get()||peer.outbound.remainingCapacity()<2)
+                        throw new IOException("Peer cannot accept story prepare");
+                Map<Integer,Integer> slots=new HashMap<>();
+                for(int index=1;index<roster.size();index++)
+                    slots.put(roster.get(index).id,index+1);
+                for(Peer peer:peers.values()){
+                    if(!peer.outbound.offer(state(RoomWire.ROSTER,peer.id,peer.echo))||
+                       !peer.outbound.offer(prepare))
+                        throw new IOException("Peer story prepare queue unexpectedly filled");
+                }
+                story=ticket;storyReadyMask=0;storyCommitted=false;
+                storySlots.clear();storySlots.putAll(slots);
+                return ticket;
+            }
+        }
+        /** Engine callback only, AFTER local host stage is actually loaded. */
+        public boolean hostSceneLoaded(int mission,int stage,int epoch)throws IOException{
+            synchronized(lock){
+                if(closed||story==null||storyCommitted||
+                   mission!=story.mission||stage!=story.stage||epoch!=story.sceneEpoch||
+                   (storyReadyMask&1)!=0||revision!=story.rosterRevision)return false;
+                storyReadyMask|=1;
+                return maybeCommitStoryLocked();
+            }
+        }
+        private boolean maybeCommitStoryLocked()throws IOException{
+            if(story==null||storyCommitted)return false;
+            if(storyReadyMask!=story.participants)return false;
+            byte[] commit=RoomStoryWire.encode(RoomWire.STORY_COMMIT,story);
+            for(Peer peer:peers.values())
+                if(peer.dead.get()||peer.outbound.remainingCapacity()<1){
+                    abortStoryLocked();return false;
+                }
+            for(Peer peer:peers.values())if(!peer.outbound.offer(commit)){
+                abortStoryLocked();return false;
+            }
+            storyCommitted=true;
+            return true;
+        }
+        private void abortStoryLocked(){
+            RoomStoryWire.Ticket old=story;
+            story=null;storyReadyMask=0;storyCommitted=false;storySlots.clear();
+            if(old!=null)try{
+                byte[] cancel=RoomStoryWire.encode(RoomWire.STORY_ABORT,old);
+                for(Peer peer:peers.values())peer.outbound.offer(cancel);
+            }catch(IOException ignored){}
+        }
         public RoomWire.State snapshot()throws IOException{synchronized(lock){return RoomWire.parseState(RoomWire.decode(state(RoomWire.ROSTER,1,new byte[16])));}}
         private List<RoomWire.Player> players(){
             List<RoomWire.Player> list=new ArrayList<>();list.add(new RoomWire.Player(1,host));
@@ -129,6 +202,9 @@ public final class RoomTls {
                 synchronized(lock){
                     if(closed)return;
                     if(peers.size()<3&&nextId<Integer.MAX_VALUE&&revision<0xffffffffL){
+                        // Any roster revision change invalidates an uncommitted
+                        // barrier; it must not silently start a solo mission.
+                        abortStoryLocked();
                         peer=new Peer(nextId++,request,socket);peers.put(peer.id,peer);revision++;
                         // Fresh queue; no network write occurs under the roster lock.
                         if(!peer.outbound.offer(state(RoomWire.ACCEPT,peer.id,peer.echo)))throw new IOException("Fresh queue full");
@@ -147,6 +223,19 @@ public final class RoomTls {
                     long current=now()/1000;if(current!=window){window=current;packets=0;}
                     if(++packets>10)throw new IOException("Peer rate exceeded");
                     if(p.type==RoomWire.LEAVE){RoomWire.parseLeave(p);break;}
+                    if(p.type==RoomWire.STORY_READY){
+                        RoomStoryWire.Ticket ready=RoomStoryWire.parse(p);
+                        synchronized(lock){
+                            Integer slot=storySlots.get(owned.id);
+                            if(story==null||storyCommitted||revision!=story.rosterRevision||
+                               slot==null||!story.same(ready)||
+                               (storyReadyMask&(1<<(slot-1)))!=0)
+                                throw new IOException("Unexpected, stale or repeated story READY");
+                            storyReadyMask|=(1<<(slot-1));
+                            maybeCommitStoryLocked();
+                        }
+                        continue;
+                    }
                     if(p.type!=RoomWire.PING)throw new IOException("Unexpected peer message");
                     long sequence=RoomWire.parsePulse(p);if(sequence<=lastSequence)throw new IOException("Replayed pulse");
                     lastSequence=sequence;owned.lastSeen=now();owned.send(RoomWire.pulse(RoomWire.PONG,sequence));
@@ -163,7 +252,7 @@ public final class RoomTls {
                 }
                 // Untrusted peers are closed; no incoming JOIN bytes are logged.
             }finally{
-                if(peer!=null){peer.stop();synchronized(lock){if(peers.remove(peer.id)!=null)revision++;}broadcast();}
+                if(peer!=null){peer.stop();synchronized(lock){if(peers.remove(peer.id)!=null){revision++;abortStoryLocked();}}broadcast();}
                 pending.remove(socket);sockets.remove(socket);closeSocket(socket);
             }
         }
@@ -178,7 +267,7 @@ public final class RoomTls {
             broadcast();
         }
         public void close(){
-            synchronized(lock){if(closed)return;closed=true;}
+            synchronized(lock){if(closed)return;closed=true;abortStoryLocked();}
             try{listener.close();}catch(IOException ignored){}
             for(SSLSocket s:sockets)closeSocket(s);
             List<Peer> closing;
