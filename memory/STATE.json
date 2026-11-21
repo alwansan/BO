@@ -405,6 +405,22 @@
       "productionAuthentication": false,
       "originalImplementation": true,
       "referenceDoc": "docs/NET_LAN_DISCOVERY_AR.md"
+    },
+    "NET_LAN_LOOPBACK_POSIX": {
+      "status": "PASS_REAL_LOCALHOST_UDP_HOST_SANITIZERS_ANDROID_ARM64_CROSSCOMPILE",
+      "sourceCommit": "d97c3ffe3bb19c2950acca7db7db3943fee16d2d",
+      "run": 44869388876,
+      "hostJob": 136740257311,
+      "androidCrossCompileJob": 136740257470,
+      "actualUdpLoopbackQueriedAndReplied": true,
+      "duplicatePortBindRejected": true,
+      "roomFieldsValidated": true,
+      "sourceEndpointChecked": true,
+      "rateLimitedPeerSlots": 16,
+      "broadcastOrLanDeviceTested": false,
+      "actualGameOrMenuIntegrated": false,
+      "authOrEncryption": false,
+      "docs": "docs/NET_LAN_DISCOVERY_AR.md"
     }
   },
   "pending": {
@@ -474,8 +490,9 @@
       "realGameplay": false
     },
     "NET_LAN_DISCOVERY_SOCKET_INTEGRATION": {
-      "status": "NOT_IMPLEMENTED",
-      "next": "POSIX UDP client/server discovery adapter, no game JNI/network broadcast yet; enforce per-IP rate limits and port separation"
+      "status": "HOST_LOOPBACK_UDP_PASS_REAL_LAN_BROADCAST_AND_ANDROID_JNI_NOT_IMPLEMENTED",
+      "run": 44869388876,
+      "next": "Android opt-in room browser & LAN interface binding, 2-device discovery; authenticated session before gameplay; no game actor use yet"
     }
   },
   "apk": {
@@ -489,5 +506,5 @@
     "gameplayCoop": false,
     "sourceCommit": "d8dba8d8da2da69c62718a87f3e6f03f16be0d2f"
   },
-  "next": "ACTOR001A real NPC lifetime/model-owner/ABI proof remains main critical path; portable BCLN-v1 discovery codec now passes Linux ASAN and Android NDK cross compile, but no sockets or device test. Next implement isolated discovery UDP listener/host browser with bounded endpoint policy, and top-level CO-OP room UI experiment without touching accepted Probe2."
+  "next": "Prioritize ACTOR001A actual NPC lifetime/model ownership and story coop actor spawn. NET-LAN independently has bounded real POSIX loopback discovery and ARM64 compile success, but needs Android LAN broadcast/UI/testing, auth & original game integration. Top-level CO-OP menu remains a separate safe experiment."
 }

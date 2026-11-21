@@ -233,3 +233,13 @@ HOOK001 fairness source e9ad056: host sanitizer + pinned-source [44856368591](ht
 - [x] Portable discovery Query/Reply codec, room and port guards, 1 Hz outgoing rate,5000 malformed packet tests; Linux ASAN/UBSAN and Android ARM64 NDK28 compile SUCCESS [44869092957](https://github.com/alwansan/BO/actions/runs/44869092957).
 - [ ] POSIX socket LAN responder/browser isolated mock + per-peer inbound rate cap, Android broadcast viability and explicit JOIN/authentication gate.
 - [ ] Separate game/room UI Host/Join; no source/animation media copied.
+
+## جلسة18 — POSIX UDP LAN discovery loopback فعلي (2026-11-21)
+- Added original `coop/native/lan_socket.hpp` and `test_lan_socket.cpp`, source commit `d97c3ffe3bb19c2950acca7db7db3943fee16d2d`. Portable Linux/Android-NDK POSIX socket RAII, default loopback bind, no SO_REUSEADDR to prevent duplicate port consumption, bounded MSG_TRUNC recv, source IP+port checks, 16-slot inbound per-endpoint 500ms PeerRateGate/5s slot expiry, outgoing1Hz budget from BCLN-v1, strict version/nonce/room/port validation. **No broadcast, app/JNI integration, WAN auth/encryption or actual BLACK player**.
+- [44869388876](https://github.com/alwansan/BO/actions/runs/44869388876) **SUCCESS** BOTH JOBS on source `d97c3ffe`: Linux job136740257311 used ASAN/UBSAN and validated **actual UDP IPv4 loopback** Query/Reply, source+challenge, duplicate binding rejected, bounded timeout, incoming/outgoing rate caps and synthetic 5000 malformed datagram decodes. Android ARM64 job136740257470 successfully NDK28 cross-compiled test and checked ELF AArch64; **not executed on actual phone**. Separate toy UDP CI [44869388854](https://github.com/alwansan/BO/actions/runs/44869388854) SUCCESS.
+- Peterson047 reference remains read-only and unlicensed external binaries/media unavailable for copying. Their Windows Team Deathmatch source `Peterson047/BLACK-Coop` 404; the independent BO room discovery now has a bounded real UDP loopback transport, but it **cannot be marketed as LAN game hosting** until Android sockets interface, LAN network discovery, authenticated join and a real NPC-player render hook exist.
+
+### NET-LAN-002 host socket test result
+- [x] Real POSIX UDP `127.0.0.1` Query/Reply transport between separate sockets with bounded recv, no SO_REUSEADDR, peer rate caps, explicit source/challenge verification, timeout and collision test; host ASAN/UBSAN + Android ARM64 cross compile [44869388876](https://github.com/alwansan/BO/actions/runs/44869388876) SUCCESS.
+- [ ] Actual LAN broadcast discovery on Android and on two devices, in-game menu, authenticated JOIN. Do not use external binary/animation assets.
+- [ ] ACTOR-001A remains blocking the real co-op player/animation/AI mission sync.

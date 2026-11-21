@@ -16,3 +16,8 @@
 2. اختبر packet-loss/duplicate replies/timeouts وتجاهل إعلانات الإصدار المخالف. راجع Android 15 multicast/broadcast والجدار الناري على جهاز حقيقي قبل الادعاء.
 3. أبقِ Host authoritative على هاتف اللاعب، وصمم UI CO-OP مباشرة تحت SETTINGS. لا تعمل JOIN فعلياً أو تستدعي BLACK actor قبل ACTOR-001 proof وsession authentication.
 4. فقط بعد إثبات موديل NPC والـABI وlifecycle، اربط network worker→SceneInbox→RemoteProxyRoster→render proxy عبر thread اللعبة، وبعدها NPC/mission/checkpoint sync للطور القصصي.
+
+## تنفيذ UDP منفصل مثبت — NET-LAN-002
+أُضيف `coop/native/lan_socket.hpp` مع POSIX IPv4 socket RAII على Linux/Android NDK، يربط على loopback افتراضياً (بدلاً من البث العام)، ويدعم bind الصريح لشبكة LAN لاحقاً، ولا يستعمل `SO_REUSEADDR`. يرفض تداخل منافذ الخدمات، يستقبل datagrams حتى64 بايت مع رفض أي طول غير صالح، يتحقق من endpoint IP/port وحقل التحدي، يفرض محدد inbound 16 endpoint بمسافة500ms/طلب ونافذة تنظيف5000ms (ليس مكافحة هجمات شاملة). اختبارات `coop/native/test_lan_socket.cpp` تفتح sockets حقيقة على localhost وترسل Query/Reply، وتختبر bind collision وtimeout وعدم التسريب عبر الرد. **لا يوجد broadcast فعلي ولا اتصال من هاتف إلى هاتف حتى الآن**.
+
+اختبار [44869388876](https://github.com/alwansan/BO/actions/runs/44869388876) **SUCCESS**: Linux ASAN+UBSAN يدعم مرور UDP loopback الحقيقي، وAndroid ARM64 NDK28 cross compile فقط (لا تشغيل على الهاتف). معاً مع اختبارات codec السابقة [44869092957](https://github.com/alwansan/BO/actions/runs/44869092957) تنجح 5000 malformed packet probes.
