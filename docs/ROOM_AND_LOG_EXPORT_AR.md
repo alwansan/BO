@@ -15,6 +15,14 @@
 - NETWORK = LAN / VPN PLANNED
 
 تجربة الصفحة تتم عبر إعدادات اللعبة (في pause OPTIONS اختر page Co-op/Room، أو من قائمة الخيارات في الواجهة الرئيسية). لا شبكة أو player2 حتى الآن؛ جميع البنود معلومات فقط. Fail-closed على هوية المصدر، لا writes للشخصيات ولا مساس بحفظ الطور الفردي.
-## القبول
-- `44860875040`: Host/pinned source PASS. Android `44860874976` **pending** وقت الكتابة؛ ليس APK مثبتاً. جهز فقط عند PASS للتحقق من package وABI وJNI والـsignature وأصول اللعبة وحجم وبصمة APK.
-- المستخدم يحتاج اختبار **Probe2 فقط** بعد جاهزيته، وليس baseline القديمة أو XBE. الحزمة الجديدة لا تمس Probe1 القديمة، لكن يجب استيراد ISO من الملفات الموجودة على الهاتف مرة ثانية داخل مساحة Probe2 عبر المنتقي.
+## حالة البناء المُثبتة
+- Host/pinned source [44860875040](https://github.com/alwansan/BO/actions/runs/44860875040) SUCCESS. Android [44860874976](https://github.com/alwansan/BO/actions/runs/44860874976) SUCCESS on `d8dba8d8da2da69c62718a87f3e6f03f16be0d2f`, artifact `14690036713`, size **21,739,739B**, SHA256 `861fd501497f2251feeb544c56430e084c3b48d3afa87e0d3a65c12e8a1115c0`.
+- APK الحقيقي استُخرج وفُحص بشكل مستقل: ثلاث مكتبات ARM64، وفي DEX كود MediaStore، وفي libmain.so نصوص CO-OP / ROOM. لا أصول ISO/XBE في الحزمة.
+- **غير مختبر بعد على الهاتف** تصدير Downloads وظهور صفحة الغرفة. الحزمة لا تمس Probe1 القديمة ولا الـBaseline المقبولة.
+- الطلب الأصلي يشير إلى خيار تحت `الإعدادات`؛ التنفيذ الحالي صفحة سادسة **داخل** OPTIONS (وليست زر أعلى مستوى أسفل الإعدادات). يجب قياس ملاءمة موضعها على هاتف المالك قبل تطوير injection إضافي.
+## تجربة الهاتف القادمة
+1. نزّل APK Probe2 من Artifact 14690036713 أو ملف APK المباشر في المحادثة وثبّته دون حذف Probe1 أو Baseline.
+2. عند أول فتح، اختَر `game.iso` الموجود على هاتفك من منتقي Android (من دون إعادة رفعه للمشروع). عند ظهور الاختيار اختر `Start capture`. سيصبح نسخ السجلات **مشتركاً في Downloads ويمكن لتطبيقات أخرى قراءته**؛ لا تنشره في GitHub عام.
+3. ادخل مهمة وتحرّك قرب الجنود، وانتظر 30–90 ثانية، ثم افتح OPTIONS وابحث عن `CO-OP / ROOM` (قد يكون آخر صفحة) والتقط صورة إذا ظهرت. HOST/JOIN يجب أن تكون NOT AVAILABLE.
+4. افحص `/storage/emulated/0/Download/Games/cl/black log/logs/` وابحث عن آخر مجلد `BLACK-Probe-YYYYMMDD-HHMMSS-SSS` وداخلَه `coop_probe.txt` و`black_log.txt`. أرسل السجل/الملخص **خاصاً في المحادثة** لتقييم ACTOR-001، وليس إلى مستودع CL العام. إذا لم يظهر، صوّر محتويات Download وتعامل معه كـruntime bug لا تستنتج منه عدم وجود actor.
+5. لا تعِد اختبار Baseline أو Probe1 القديمة.

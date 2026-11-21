@@ -1,0 +1,64 @@
+{
+  "gate": "HOOK001_PROBE2_EXPORT_AND_ROOM",
+  "sourceCommit": "d8dba8d8da2da69c62718a87f3e6f03f16be0d2f",
+  "ci": {
+    "run": 44860874976,
+    "job": 136715739613,
+    "status": "completed_success",
+    "artifact": 14690036713,
+    "artifactName": "black-probe2-android-arm64-READ-ONLY-NO-COOP",
+    "metadataArtifact": 14690226530,
+    "hostPreflightRun": 44860875040,
+    "olderBuildRun": 44860718925,
+    "olderBuildStatus": "success_superseded"
+  },
+  "package": {
+    "id": "org.bocoop.black.probe2",
+    "label": "BLACK Probe 2 - READ ONLY",
+    "bytes": 21739739,
+    "sha256": "861fd501497f2251feeb544c56430e084c3b48d3afa87e0d3a65c12e8a1115c0",
+    "abi": "arm64-v8a",
+    "compileImageSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+    "jni": true,
+    "debugSigned": true,
+    "isolatedPackage": true,
+    "noInternetPermission": true,
+    "noBroadStoragePermission": true,
+    "noGameAssetsBundled": true
+  },
+  "independentCheck": {
+    "archiveDownloaded": true,
+    "zipEntry": "black-probe2-candidate-READ-ONLY-NO-COOP.apk",
+    "zipSizeBytes": 8729164,
+    "actualApkShaMatchesCI": true,
+    "apkZipEntryCount": 16,
+    "libraries": [
+      "libSDL3.so",
+      "libc++_shared.so",
+      "libmain.so"
+    ],
+    "classesDexContains": [
+      "ProbeLogExporter",
+      "MediaStore",
+      "black log/logs",
+      "org.bocoop.black.probe2"
+    ],
+    "libmainStringsContain": [
+      "CO-OP / ROOM",
+      "NOT AVAILABLE",
+      "OFFLINE / PREVIEW"
+    ],
+    "gameAssetsInApk": false,
+    "localEphemeralPath": "/mnt/data/BLACK-Coop-Probe2-ROOM-LOGS-20261121.apk"
+  },
+  "scope": {
+    "baselineUntouched": true,
+    "probe1Untouched": true,
+    "deviceTested": false,
+    "mediaStoreExportOnAndroid15Verified": false,
+    "inGameMenuOnAndroid15Verified": false,
+    "actualMultiplayer": false,
+    "actorLifetimeProof": false
+  },
+  "note": "The old Probe1 phone test confirms only startup/import/activation; no private records were inspected. Probe2 is CI-verified and independently extracted but not device-tested."
+}

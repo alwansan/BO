@@ -127,3 +127,8 @@ HOOK001 starvation under LOD: reserved per-second/lifetime player opportunity wi
 - Android15 storage: exporting through MediaStore.Downloads by the owning app needs no all-files permission; Android OEM runtime still requires phone verification. Shared copies accessible to other apps, user opt-in required and text disclosed. If copy fails, preserve original and log minimal generic failure.
 - New standalone Probe2 package avoids replacing Probe1 with a potentially different debug certificate, but requires importing ISO into Probe2's own app-specific assets via existing picker. Don't request missing XBE.
 - Room menu contains read-only planned host/join status; no actual multiplayer, room creation, reliable network transport or actor cloning; prove Android build then UI runtime.
+
+## جلسة14 — unresolved despite CI success
+- Despite APK successful compile and binary presence, **MediaStore Downloads export has not been exercised on Android 15**; provider handling/permissions, file-manager discoverability and exact path may vary. Private log still mode0600 and CL copy 0 bytes. No assertion of export success or actor samples.
+- CO-OP / ROOM is currently a sixth internal OPTIONS page, **not** a top-level Flash pause entry immediately below SETTINGS. Verify on owner's UI, then consider safe separate menu hook; don't misrepresent hierarchy.
+- Probe2 app has separate app-private assets; import via SAF needed once on that package; baseline saves/ISO remain untouched. No secure production sessions, guest actor creation or gameplay co-op.

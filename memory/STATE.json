@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-13-device-result-public-logs-room-ui.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-14-probe2-apk-verified.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -233,6 +233,21 @@
       "run": 44860875040,
       "sourceCommit": "d8dba8d8da2da69c62718a87f3e6f03f16be0d2f",
       "noDeviceTest": true
+    },
+    "PROBE2_ANDROID_CI": {
+      "status": "PASS_BUILD_SIGNATURE_JNI_ARTIFACT_HASH_NOT_DEVICE_TESTED",
+      "sourceCommit": "d8dba8d8da2da69c62718a87f3e6f03f16be0d2f",
+      "run": 44860874976,
+      "job": 136715739613,
+      "artifact": 14690036713,
+      "metadataArtifact": 14690226530,
+      "sha256": "861fd501497f2251feeb544c56430e084c3b48d3afa87e0d3a65c12e8a1115c0",
+      "apkBytes": 21739739,
+      "package": "org.bocoop.black.probe2",
+      "evidence": "memory/evidence/PROBE2-android-44860874976.json",
+      "independentDownloadedApkVerified": true,
+      "deviceTested": false,
+      "actualMultiplayer": false
     }
   },
   "pending": {
@@ -259,7 +274,7 @@
     },
     "DEVICE_BASELINE": "Already accepted by owner; do not ask to repeat.",
     "HOOK_001": {
-      "status": "Probe1 game runtime accepted limited scope; private capture inaccessible; Probe2 shared-logs Android build pending",
+      "status": "Probe1 device confirms game and capture opt-in; Probe2 Android CI+artifact PASS, awaiting first Probe2 device MediaStore+in-game UI verification",
       "workflowRun": 44856368592,
       "sourceCommit": "e9ad056805cabacadcf3882d5ff7aeb5f45df914",
       "apkSha256": "371de65dd7972d1505713d31d2a41080aa99877f848ac35a24fefe8b825ca2d7",
@@ -270,31 +285,41 @@
       "plan": "docs/superpowers/plans/2026-11-21-readonly-probe.md",
       "probe2Run": 44860874976,
       "probe2Code": "d8dba8d8da2da69c62718a87f3e6f03f16be0d2f",
-      "probe2BuildConfirmed": false,
+      "probe2BuildConfirmed": true,
       "probe2Package": "org.bocoop.black.probe2",
-      "waitingFor": "Public copied log from new Probe2 / optional run-as old private file"
+      "waitingFor": "Optional owner Probe2 exported logs from Downloads; read-only room menu screenshot",
+      "probe2Artifact": 14690036713,
+      "probe2Sha256": "861fd501497f2251feeb544c56430e084c3b48d3afa87e0d3a65c12e8a1115c0",
+      "probe2DeviceTested": false
     },
     "PROBE2_LOG_EXPORT": {
-      "status": "Android candidate unverified yet; MediaStore Downloads auto snapshots opt-in",
-      "target": "Download/Games/cl/black log/logs/BLACK-Probe-<timestamp>/",
+      "status": "COMPILED_IN_CI_ONLY_ANDROID15_MEDISTORE_RUNTIME_UNTESTED",
       "run": 44860874976,
-      "permission": "No broad storage needed",
-      "source": "coop/android/ProbeLogExporter.java"
+      "package": "org.bocoop.black.probe2",
+      "target": "Download/Games/cl/black log/logs/BLACK-Probe-<timestamp>/",
+      "expectedFiles": [
+        "coop_probe.txt",
+        "black_log.txt"
+      ],
+      "ownerPrivateLogsCaptured": false
     },
     "COOP_ROOM_MENU": {
-      "status": "In-game OPTIONS native Flash page patched; CI host-preflight success, Android/device unverified; host/join intentionally disabled",
-      "run": 44860874976
+      "status": "COMPILED_IN_NATIVE_LIBRARY_NOT_DEVICE_VERIFIED; sixth OPTIONS page not separate pause top-level entry",
+      "run": 44860874976,
+      "package": "org.bocoop.black.probe2",
+      "hostJoinEnabled": false
     }
   },
   "apk": {
-    "kind": "read_only_probe_candidate",
-    "package": "org.bocoop.black.probe1",
-    "run": 44856368592,
-    "artifact": 14687833595,
-    "sha256": "371de65dd7972d1505713d31d2a41080aa99877f848ac35a24fefe8b825ca2d7",
+    "kind": "Probe2 read-only export+room candidate",
+    "run": 44860874976,
+    "artifact": 14690036713,
+    "package": "org.bocoop.black.probe2",
+    "sha256": "861fd501497f2251feeb544c56430e084c3b48d3afa87e0d3a65c12e8a1115c0",
+    "bytes": 21739739,
     "deviceAccepted": false,
-    "gameplay": false,
-    "independentSha256Verified": true
+    "gameplayCoop": false,
+    "sourceCommit": "d8dba8d8da2da69c62718a87f3e6f03f16be0d2f"
   },
-  "next": "Verify Probe2 Android run 44860874976, record APK metadata; test native in-game CO-OP page and MediaStore public export on phone without touching accepted baseline; analyze raw private capture safely."
+  "next": "Use verified Probe2 APK for the first optional MediaStore export and in-game CO-OP / ROOM page device check. No baseline/Probe1 retest. If logs accessible privately, analyze actor correlation and safety. Separate top-level button below Settings not yet implemented."
 }

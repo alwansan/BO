@@ -157,3 +157,10 @@ HOOK001 fairness source e9ad056: host sanitizer + pinned-source [44856368591](ht
 - [ ] Android package2 compile [44860874976](https://github.com/alwansan/BO/actions/runs/44860874976) pending. Verify JNI, native image, package, no game assets/network/storage permissions and exporter compiled; obtain artifact/hash.
 - [ ] On phone: optional new Probe2 session and public snapshots at exact Download path + actual menu screenshot. Existing baseline remains tested, no repeat.
 - [ ] Use capture samples for ACTOR-001 read-only lifecycle evidence; no guest writes/host/join feature until validated.
+
+## جلسة14 — Probe2 CI/artifact verified and next device gate
+- [x] Android final [44860874976](https://github.com/alwansan/BO/actions/runs/44860874976) SUCCESS, source `d8dba8d8da2da69c62718a87f3e6f03f16be0d2f`, artifact 14690036713, APK SHA256 `861fd501497f2251feeb544c56430e084c3b48d3afa87e0d3a65c12e8a1115c0`, verified actual archive/DEX/native strings. Evidence `memory/evidence/PROBE2-android-44860874976.json`.
+- [x] Prior e2 Android build 44860718925 SUCCESS but superseded; intermediate 44860822227 cancelled. Host ASAN/UBSAN 44860875040 PASS.
+- [ ] First **Probe2 only** Android15 run: check actual MediaStore directory, non-empty `coop_probe.txt`, `black_log.txt`, assess if sampler ends/has records; avoid pushing raw logs to public CL.
+- [ ] Verify native in-game SETTINGS -> CO-OP / ROOM sixth page, scroll and back; design change later if owner wants directly under main/pause SETTINGS button.
+- [ ] Only after real character trace: pursue ACTOR-001 lifecycle proof. No gameplay write/network integration until then.

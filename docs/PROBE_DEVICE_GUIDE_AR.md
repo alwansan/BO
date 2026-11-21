@@ -1,3 +1,6 @@
+# أحدث تجربة — Probe2 (جلسة14، 2026-11-21)
+Android CI [44860874976](https://github.com/alwansan/BO/actions/runs/44860874976) SUCCESS; package `org.bocoop.black.probe2`, artifact 14690036713, APK SHA256 `861fd501497f2251feeb544c56430e084c3b48d3afa87e0d3a65c12e8a1115c0`. **ليس اختبار جهاز**. اقرأ docs/ROOM_AND_LOG_EXPORT_AR.md للتفاصيل وخطوات تجربة تصدير `coop_probe.txt` و`black_log.txt` إلى Downloads، وصفحة CO-OP / ROOM الداخلية. Baseline/Probe1 القديمة لا تعاد تجربتهما.
+---
 # حالة Probe1 الموثوقة — جلسة12 (21 نوفمبر 2026)
 **أحدث إصدار للـAPK الاختبارية للرصد فقط (لا multiplayer):**
 - Windows/Android ARM64 [run 44856368592](https://github.com/alwansan/BO/actions/runs/44856368592) completed SUCCESS on source e9ad056805cabacadcf3882d5ff7aeb5f45df914.
