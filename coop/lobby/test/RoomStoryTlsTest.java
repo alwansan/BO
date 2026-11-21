@@ -85,7 +85,7 @@ public final class RoomStoryTlsTest {
         try(RoomTls.Server first=RoomTls.Server.start(hostContext,loop,0,"Host","Restart")){
             reusablePort=first.port();
             try(RoomTls.Server illegal=RoomTls.Server.start(hostContext,loop,reusablePort,"Other","Other")){
-                throw new AssertionError("Concurrent host unexpectedly bound the same TCP port");
+                throw new AssertionError("Concurrent host unexpectedly bound TCP port "+illegal.port());
             }catch(java.net.BindException expected){}
             try(RoomTls.Client connected=RoomTls.Client.connect(guestContext,loop,reusablePort,"Before leave")){
                 ok(connected.snapshot().players.size()==2);
