@@ -8,7 +8,8 @@ permissions:
   contents: read
 concurrency:
   group: black-coop-room-network-apk
-  cancel-in-progress: false
+  # Only the newest candidate is useful; avoid building superseded APKs for hours.
+  cancel-in-progress: true
 jobs:
   observer-core:
     runs-on: ubuntu-latest
