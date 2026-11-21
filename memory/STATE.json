@@ -199,7 +199,9 @@
       "package": "org.bocoop.black.probe1",
       "baselineStillAccepted": true,
       "deviceTested": false,
-      "gameplayCoop": false
+      "gameplayCoop": false,
+      "independentArtifactDownloadVerified": true,
+      "phoneRuntimeTested": false
     },
     "HOOK001_INTERMEDIATE_PROMOTION_ANDROID_CI": {
       "status": "PASS_CI_SUPERSEDED_BY_FAIRNESS",
@@ -258,7 +260,8 @@
     "artifact": 14687833595,
     "sha256": "371de65dd7972d1505713d31d2a41080aa99877f848ac35a24fefe8b825ca2d7",
     "deviceAccepted": false,
-    "gameplay": false
+    "gameplay": false,
+    "independentSha256Verified": true
   },
   "next": "First independent HOOK001 Probe1 phone mission capture privately; analyze aggregate overlap counts and LOD observations. No baseline retest, no missing XBE request; then gate actor lifecycle research."
 }

@@ -15,3 +15,7 @@
 2. إذا توفر سجل الرصد الجديد، حلّل correlation وthreads وLOD بحذر وميز بين ملاحظات مجسم/animation وشخصية مستقلة؛ لا تعتبر correlation actor lifetime. ثم خطط ACTOR-001 على الأدلة، لا على التخمين.
 3. إذا طلب المستخدم الاستمرار دون بيانات الهاتف، واصل العمل في التحاليل الساكنة المعزولة ونقل الشبكة الموثوق/الآمن دون تعديل لعب أو تعطيل هويات اللعبة؛ لا تبدأ إعادة بناء APK نفسها دون تغييرات لازمة.
 4. حدّث STATE/MEMORY/PLAN/ISSUES والجلسة وRESTORE بعد كل دفعة أو نتيجة CI، commit في experiment/black-coop فقط وتحقق من HEAD. لا تدّع العمل في الخلفية خارج الجلسة.
+
+## Final APK extraction verified, session12 (2026-11-21)
+- Downloaded GitHub Actions **artifact14687833595** from run44856368592 through GitHub connector into this session's isolated container. ZIP extraction yielded actual `black-probe1-candidate-READ-ONLY-NO-COOP.apk` at **21,738,563 bytes** SHA256 **371de65dd7972d1505713d31d2a41080aa99877f848ac35a24fefe8b825ca2d7**, exact CI metadata match. Checked APK ZIP has16 entries and three ARM64 native libraries: libSDL3.so, libc++_shared.so, libmain.so; no files ending .iso/.xbe/.enc/.cpp. Original JNI/signature/package checks were verified in Windows job, not re-run by the container.
+- Delivered temporary sandbox APK link in chat `/mnt/data/BLACK-Coop-Probe1-ReadOnly-20261121.apk` after verifying exact path; local container files **are not guaranteed durable across sessions**. Durable download remains GitHub Actions run44856368592 (retention 14 days). Do not commit APK or ISO to BO. No phone runtime report yet.

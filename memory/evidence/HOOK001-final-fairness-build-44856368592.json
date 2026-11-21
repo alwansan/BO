@@ -34,5 +34,23 @@
     "superseded_by_fairness_build": true
   },
   "original_baseline": "Owner-tested and accepted; do not request repeat or missing XBE",
-  "source": "GitHub Actions job reports read-only candidate, no device data"
+  "source": "GitHub Actions job reports read-only candidate, no device data",
+  "independent_archive_and_apk_verification": {
+    "source": "Downloaded owner project GitHub Actions artifact 14687833595 directly via GitHub connector, inspected ZIP and extracted APK in current session container",
+    "artifact_archive_bytes": 8721307,
+    "apk_entry": "black-probe1-candidate-READ-ONLY-NO-COOP.apk",
+    "apk_bytes": 21738563,
+    "apk_sha256": "371de65dd7972d1505713d31d2a41080aa99877f848ac35a24fefe8b825ca2d7",
+    "apk_zip_entry_count": 16,
+    "native_lib_entries": [
+      "lib/arm64-v8a/libSDL3.so",
+      "lib/arm64-v8a/libc++_shared.so",
+      "lib/arm64-v8a/libmain.so"
+    ],
+    "forbidden_original_game_file_extensions_found": false,
+    "match_github_ci_sha": true,
+    "current_turn_sandbox_copy": "/mnt/data/BLACK-Coop-Probe1-ReadOnly-20261121.apk",
+    "sandbox_persistence_guaranteed": false,
+    "phone_runtime_tested": false
+  }
 }
