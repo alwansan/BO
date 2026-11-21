@@ -828,7 +828,7 @@
       "physicalPhoneTrial": false,
       "reportLogContentWhitelist": true,
       "eventLogRotatedSegmentsCombined": true,
-      "latestJvmRun": 44956904362,
+      "latestJvmRun": 44957104351,
       "android29RetryRun": 44956919973,
       "android29InitialFailureRun": 44956473707,
       "android29InitialFailureCause": "SYNTHETIC_EMULATOR_PM_INSTALL_TIMEOUT_124_BEFORE_TEST",
@@ -836,7 +836,12 @@
       "android29RetryStatus": "CHECK_LIVE",
       "newAndroidLobbyOnlyApkRun": 44956904350,
       "newAndroidLobbyOnlyApkStatus": "CHECK_LIVE",
-      "android29SyntaxGuardCommit": "c8c734bcba402a996157f6040b6d4ecde890901e"
+      "android29SyntaxGuardCommit": "c8c734bcba402a996157f6040b6d4ecde890901e",
+      "latestAndroid29PassedRun": 44956919973,
+      "latestAndroid29Status": "SUCCESS",
+      "combinedSafeLogAndroidTestRun": 44957104337,
+      "combinedSafeLogAndroidTestStatus": "CHECK_LIVE",
+      "combinedSafeLogAndroidTestCommit": "b21e0e01320c2f87110405728214f13008248e04"
     }
   },
   "pending": {
@@ -1010,7 +1015,7 @@
     "deviceTested": true,
     "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "Verify latest Android29 emulator run44956919973 (with bash -n fast check), and lobby-only candidate44956904350. Then focus actual verified BLACK scene-load game-thread callback and human remote full-body AllyBody/input/host world. Owner CI-first major test only, no phone request now.",
+  "next": "CI-only: verify Android29 combined rotated-safe log export/tamper test run44957104337 and Android room-only APK44957104347. Then true BLACK game-thread stage-load event + host authoritative shared world + remote human-owned fullbody AllyBody, CI first. No physical owner trial yet.",
   "latestHandoff": {
     "date": "2026-11-22",
     "session": 40,
@@ -1051,7 +1056,7 @@
     "fullbodyRemoteHumanRigImplemented": false,
     "actualBlackSceneLoaded": false
   },
-  "executionStatus": "Session40: actual owner c5 XBE private 3-window static audit PASS44956138064; JVM TLS story fixed-event diagnostics PASS44956904362, source preflight PASS44956904317. Android29 cold package install timeout then malformed Bash replacement diagnosed; code fix5dd84a4a plus bash -n guardc8c734bc; new run44956919973 pending. No real BLACK shared gameplay; no phone test requested.",
+  "executionStatus": "Session40: owner XBE entry window audit SUCCESS44956138064; JVM story safe logs SUCCESS44957104351; source preflight SUCCESS44957104363; Android29 TLS Keystore SUCCESS44956919973; new Android29 rotated-safe MediaStore log export test44957104337 pending; room-only APK44957104347 pending. No actual BLACK world/scene/remote AllyBody gameplay. CI-first owner trial policy active.",
   "ownerClarifications": {
     "session": 28,
     "previousPhoneTests": "Solo gameplay and two-phone real LAN lobby now confirmed, but no two-phone SAME WORLD gameplay",
@@ -1079,7 +1084,7 @@
     "storyProfile": 3,
     "storyJVMRun": 44952822531,
     "android29StoryRun": 44952822499,
-    "sourcePreflightRun": 44956739276,
+    "sourcePreflightRun": 44957104363,
     "rapidRehostCITest": 44953176046,
     "rapidRehostTestStatus": "PASS_4_REAL_TCP_RESTARTS_AND_ACTIVE_LISTENER_REFUSED",
     "latestOwnerTestedApkRun": 44946597973,
@@ -1095,19 +1100,26 @@
     "storyBridgeSourcePreflight": 44954581651,
     "gameThreadHookVerified": false,
     "ownerPhoneV3Tested": false,
-    "androidLobbyOnlyApkRun": 44956904350,
+    "androidLobbyOnlyApkRun": 44957104347,
     "xbeStaticRun": 44956138064,
-    "safeDiagnosticsJvmRun": 44956904362,
-    "appAndroid29Run": 44956919973,
+    "safeDiagnosticsJvmRun": 44957104351,
+    "appAndroid29Run": 44957104337,
     "deviceTestRequiredNow": false,
     "android29PreviousFailedRun": 44956473707,
     "android29PreviousFailure": "COLD_EMULATOR_INSTALL_TIMEOUT_THEN_RETRY_SCRIPT_SYNTAX_ERROR",
     "android29RetrySourceCommit": "5dd84a4a70a4c078b543fd1a6353be7c6b592a96",
-    "android29RetryResult": "CHECK_LIVE",
+    "android29RetryResult": "PENDING_NEW_SAFE_ROTATION_EXPORT_INSTRUMENTATION",
     "androidLobbyOnlyApkResult": "CHECK_LIVE",
     "safeDiagnosticsJvmStatus": "SUCCESS",
     "sourcePreflightStatus": "SUCCESS",
-    "android29ShellGuardCommit": "c8c734bcba402a996157f6040b6d4ecde890901e"
+    "android29ShellGuardCommit": "c8c734bcba402a996157f6040b6d4ecde890901e",
+    "latestAndroid29PassedRun": 44956919973,
+    "latestAndroid29PassedMarkers": [
+      "BO_TLS_ANDROID_PACKAGE_INSTALL_PASS",
+      "TLS_PLATFORM_PASS"
+    ],
+    "consolidatedLogAndroidTestCommit": "b21e0e01320c2f87110405728214f13008248e04",
+    "consolidatedLogAndroidTestStatus": "CHECK_LIVE"
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
