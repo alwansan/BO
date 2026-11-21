@@ -32,3 +32,8 @@
 python3 coop/analysis/summarize_probe.py /private/path/coop_probe.jsonl --output /private/path/bo_probe_safe_summary.json
 ```
 يمكن مشاركة `bo_probe_safe_summary.json` الملخص فقط عند الاكتفاء بالإحصاءات؛ إذا احتجنا تشخيص دلالات LOD/animation الأكثر عمقاً فقد يلزم raw log **مرفقاً خاصاً فقط** في المحادثة، ولا يرفع إلى فرع GitHub العام. هذا الملخص لا يثبت نوع actor أو factory أو gameplay.
+
+## Latest candidate chain (session10)
+- Namespace-aligned APK [44852913117](https://github.com/alwansan/BO/actions/runs/44852913117) SUCCESS with APK SHA256 ef22e95004f85db1629be42fc125a42aec7a889ed2a37ed9ccea44f76159527f and artifact14686991561. This is a valid **CI-built** candidate, not phone-tested.
+- New player-ID-reservation source passed [44854667613](https://github.com/alwansan/BO/actions/runs/44854667613); Android [44854667587](https://github.com/alwansan/BO/actions/runs/44854667587) was in progress while recording. Prefer latest APK only after new verification. Reserved local ID is a correlation convenience, not a lifetime guarantee or proof of full-body characters.
+- Do not repeat existing baseline phone test. Test only the independent optional Probe1 APK when the latest CI artifact has been validated; share private logs via chat only, never public repo.

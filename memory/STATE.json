@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-09-readonly-probe-and-owner-iso.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-10-player-slot-and-probe-build.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -127,6 +127,21 @@
       "sourceCommit": "ff3143ec7a30445f62e340ebcb9815e0b6135c3d",
       "script": "coop/analysis/summarize_probe.py",
       "scope": "aggregate only; no user logs processed"
+    },
+    "HOOK001_NAMESPACE_APK": {
+      "status": "CI_build_verified_only_device_untested",
+      "run": 44852913117,
+      "job": 136689036982,
+      "artifact": 14686991561,
+      "apkSha256": "ef22e95004f85db1629be42fc125a42aec7a889ed2a37ed9ccea44f76159527f",
+      "code": "5c5be3972e2131d4b34bad273f41b89e54de5c74",
+      "scope": "APK ARM64 compilation, JNI, hash, signature, permissions, package. Not device runtime."
+    },
+    "HOOK001_PLAYER_SLOT_PREFLIGHT": {
+      "status": "pass_host_and_pinned_source_only",
+      "run": 44854667613,
+      "code": "457740830d2ba1b65ac9694759c86daf38fc27ee",
+      "deviceTested": false
     }
   },
   "pending": {
@@ -153,17 +168,17 @@
     },
     "DEVICE_BASELINE": "Already accepted by owner; do not ask to repeat.",
     "HOOK_001": {
-      "status": "First CI candidate 44852419929 successful, latest namespace-aligned build 44852913117 in progress at last check; device probe not tested",
-      "workflowRun": 44852913117,
+      "status": "current player-slot host preflight PASS; Windows Android build in progress",
+      "workflowRun": 44854667587,
       "package": "org.bocoop.black.probe1",
       "baselineAccepted": true,
       "appBuildConfirmed": false,
       "deviceTest": false,
       "plan": "docs/superpowers/plans/2026-11-21-readonly-probe.md",
-      "previousCandidateRun": 44852419929,
-      "previousCandidateStatus": "pass"
+      "previousCandidateRun": 44852913117,
+      "previousCandidateStatus": "pass_ci_only"
     }
   },
   "apk": null,
-  "next": "Verify latest namespace-aligned run 44852913117, then publish latest artifact and optional probe-only device capture; baseline already accepted"
+  "next": "Verify run 44854667587 and accept artifact if APK signature/package/identity pass; then optional first HOOK001 device capture only. No baseline re-test, XBE request or actor spawn claim."
 }

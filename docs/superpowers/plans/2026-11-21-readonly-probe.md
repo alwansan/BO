@@ -32,3 +32,10 @@ User interrupted implementation to move work to another session. Core tests pass
 - New owner upload: five ZIP parts verified and assembled locally; extracted ISO SHA256 matches BO repository manifest. See docs/OWNER_ISO_UPLOAD_AR.md. Sandbox copies are temporary, GitHub manifest copy is durable; no raw assets published.
 - Linux ASAN/UBSAN and exact v1.5.0 preparer run 44852312025 completed SUCCESS. Follow-up 44852419894 completed SUCCESS. Pinned source preparer inherits accepted baseline private ISO import without touching original baseline, adds org.bocoop.black.probe1 and explicit Start capture UI; removes broad storage/network permissions. Source deltas confined to two observers plus new src/coop.
 - Windows build run 44852419929 remains a separate acceptance gate; avoid assuming success from early steps. Device guide docs/PROBE_DEVICE_GUIDE_AR.md is for a verified probe candidate only.
+
+## Session10 continuation (2026-11-21)
+- [x] Complete original HOOK001 integration and Windows probe build [44852913117](https://github.com/alwansan/BO/actions/runs/44852913117) SUCCESS; **Android runtime not tested**.
+- [x] Improve Registry player priority (local reservation) and negative tests; ASAN/UBSAN/pinned source [44854667613](https://github.com/alwansan/BO/actions/runs/44854667613) PASS.
+- [ ] Wait for actual CI outcome of [44854667587](https://github.com/alwansan/BO/actions/runs/44854667587), then record hashes/artifact and choose latest candidate.
+- [ ] First owner device probe run for runtime evidence; no request to repeat accepted baseline.
+- [ ] Only then evaluate actor classifications; no spawn/factory claim or guest memory writes before evidence.

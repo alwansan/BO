@@ -114,3 +114,10 @@ Owner ISO uploaded 5 parts and fully SHA-verified. See docs/OWNER_ISO_UPLOAD_AR.
 ## جلسة09 — تحليل سجلات الرصد دون نشر البيانات
 - `coop/analysis/summarize_probe.py` يدقق start header/حدود2MiB و8192 سطر و4096B للسطر، يحصي event/epoch/thread IDs كأعداد إجمالية فقط، يحذف من المخرجات أي raw position/vtable/animation names/actor pointer/ID/phone-specific path. `capture_analysis_checks.py` يختبر التسريب والحالات السالبة بما فيها سبب End غير قابل للتجزئة.
 - [44853385306](https://github.com/alwansan/BO/actions/runs/44853385306) و[44853421222](https://github.com/alwansan/BO/actions/runs/44853421222) completed SUCCESS على synthetic inputs فقط. لا raw phone logs، ولا device runtime proof. تعليمات docs/PROBE_DEVICE_GUIDE_AR.md.
+
+## جلسة 10 — HOOK001 coverage
+- [x] Android namespace-aligned previous Probe1 APK CI [44852913117](https://github.com/alwansan/BO/actions/runs/44852913117) SUCCESS; phone execution open.
+- [x] Prevent local-player sample starvation by reserving local slot; host sanitizer + pinned-source [44854667613](https://github.com/alwansan/BO/actions/runs/44854667613) SUCCESS.
+- [ ] Verify Android rebuild [44854667587](https://github.com/alwansan/BO/actions/runs/44854667587) and associated signed APK metadata before recommending artifact.
+- [ ] HOOK001 phone runtime: optional capture only, store logs privately, summarize without raw locations; **not** baseline retest.
+- [ ] ACTOR-001 (full body proxy) remains unproven; no networked gameplay yet.
