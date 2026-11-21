@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-39-roomsession-story-thread-bridge.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-40-ci-first-story-audit-automatic-evidence.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -799,6 +799,35 @@
       "sharedStory": false,
       "ownerPrimaryActorUnchanged": true,
       "evidence": "memory/sessions/2026-11-22_bo-coop-39-roomsession-story-thread-bridge.md"
+    },
+    "STORY_XBE_OWNER_STATIC_20261122": {
+      "status": "SUCCESS_OWNER_HASH_VERIFIED_THREE_EXECUTABLE_WINDOWS_ONLY",
+      "run": 44956138064,
+      "artifact": 14727458498,
+      "evidence": "memory/evidence/STORY-ENTRY-XBE-STATIC-44956138064.json",
+      "ownerCodeBinaryPublished": false,
+      "realGameStageLoaderProven": false,
+      "gameThreadHookProven": false
+    },
+    "STORY_LIFECYCLE_SAFE_CODES_JVM_20261122": {
+      "status": "PASS_REAL_TLS_JVM_SYNTHETIC_ENGINE_CALLBACK_ONLY",
+      "run": 44956473684,
+      "sourcePreflight": 44956473685,
+      "markers": [
+        "STORY_DIAGNOSTICS_PASS",
+        "SESSION_STORY_BRIDGE_PASS",
+        "STORY_TLS_PASS",
+        "ROOM_REHOST_PASS"
+      ],
+      "appAndroid29Run": 44956473707,
+      "appAndroid29Status": "CHECK_LIVE",
+      "lobbyOnlyAndroidApkRun": 44956473687,
+      "lobbyOnlyAndroidApkStatus": "CHECK_LIVE",
+      "actualGameActors": false,
+      "actualStory": false,
+      "physicalPhoneTrial": false,
+      "reportLogContentWhitelist": true,
+      "eventLogRotatedSegmentsCombined": true
     }
   },
   "pending": {
@@ -972,11 +1001,11 @@
     "deviceTested": true,
     "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "Session39: read memory/sessions/2026-11-22_bo-coop-39-roomsession-story-thread-bridge.md and docs/BLACK_STORY_ENTRY_AUDIT_AR.md. Validate pinned owner c5 mission function 00124CF0 and an actual scene epoch/loaded game-thread hook. Only then attach RoomSession story facade to JNI. Next independent AllyBody remote-human-only visuals and host shared input/world/AI/quest. No repeat ISO/model probe; no false gameplay Start. Android-only lobby APK run44954581624 check completion.",
+  "next": "Session40: use owner XBE static report memory/evidence/STORY-ENTRY-XBE-STATIC-44956138064.json and docs/BLACK_STORY_ENTRY_AUDIT_AR.md; validate real mission scene loader/epoch + game thread and narrow JNI before invoking RoomSession facade. Then independently render human remote AllyBody, share input/world/combat/quest; CI first. Ask owner for ONE combined two-phone major acceptance ONLY after these major gates. Android29 CI44956473707 and room-only APK44956473687 check live.",
   "latestHandoff": {
     "date": "2026-11-22",
-    "session": 39,
-    "kind": "room_session_game_thread_facade_jvm_android29_synthetic_pass",
+    "session": 40,
+    "kind": "owner_CI_only_stage_static_plus_safe_tls_story_diagnostics",
     "plan": "docs/superpowers/plans/2026-11-22-host-story-remote-ally.md",
     "sourceCiRun": 44951425780,
     "latestVerifiedAndroidBuild": 44946597973,
@@ -1004,9 +1033,16 @@
     "roomOnlyAndroidApkRun": 44954581624,
     "engineHookVerified": false,
     "remoteHumanActorRendered": false,
-    "ownerV3DeviceAccepted": false
+    "ownerV3DeviceAccepted": false,
+    "sessionFile": "memory/sessions/2026-11-22_bo-coop-40-ci-first-story-audit-automatic-evidence.md",
+    "ownerTestPolicy": "CI_FIRST_MAJOR_TRIAL_ONLY",
+    "ownerXbeStaticRun": 44956138064,
+    "storyDiagnosticJvmRun": 44956473684,
+    "physicalPhoneRequest": false,
+    "fullbodyRemoteHumanRigImplemented": false,
+    "actualBlackSceneLoaded": false
   },
-  "executionStatus": "Session39: RoomSession Java TLS story/game-thread-identity facade and synthetic load regression PASS JVM44954581676, Android29 TLS/platform44954581718, source preflight44954581651. No BLACK game-thread scene loader callback, real shared mission, remote human AllyBody actor, input/world/quest sync or physical owner v3 test.",
+  "executionStatus": "Session40: owner XBE 3 candidate executable windows verified in runner CI44956138064; automatic TLS story safe codes with JVM real sockets pass CI44956473684, source preflight44956473685. Rotated room event exports preserved and whitelisted; Android29 and lobby-only APK runs open. No BLACK world/scene/remote ally human gameplay. Owner phone trial NOT requested.",
   "ownerClarifications": {
     "session": 28,
     "previousPhoneTests": "Solo gameplay and two-phone real LAN lobby now confirmed, but no two-phone SAME WORLD gameplay",
@@ -1018,9 +1054,9 @@
   },
   "integrationRoadmap": "docs/COOP_INTEGRATION_ROADMAP_AR.md",
   "currentWork": {
-    "session": 39,
-    "task": "verify exact BLACK mission and actual loaded scene callback; connect RoomSession TLS story facade only on verified game thread",
-    "status": "RoomSession facade + real TLS synthetic JVM PASS and Android29 TLS platform PASS; actual engine hook/render/gameplay still OPEN",
+    "session": 40,
+    "task": "use owner XBE static evidence to locate real stage-loaded game-thread callback; integrate TLS v3 story with genuine BLACK scene and remote human AllyBody, CI-first",
+    "status": "CI owner XBE candidate window mapping PASS, JVM TLS story safe codes PASS, Android29/APK latest pending; real game scene + remote actors + shared world still OPEN",
     "sourceCi": 44951425780,
     "sourceCode": "9938283748ad1bdb06f15259d7e4fcb791a47574",
     "latestOwnerTestedAndroidApkRun": 44946597973,
@@ -1050,7 +1086,11 @@
     "storyBridgeSourcePreflight": 44954581651,
     "gameThreadHookVerified": false,
     "ownerPhoneV3Tested": false,
-    "androidLobbyOnlyApkRun": 44954581624
+    "androidLobbyOnlyApkRun": 44956473687,
+    "xbeStaticRun": 44956138064,
+    "safeDiagnosticsJvmRun": 44956473684,
+    "appAndroid29Run": 44956473707,
+    "deviceTestRequiredNow": false
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
@@ -1131,5 +1171,15 @@
     "latestCode": "c7a636ead9334605aab823c35c4a5383cf688e0a",
     "phoneCaptureReceivedAfterLatestRequest": true,
     "next": "Check newest CIs including rapid TCP rehost source regression, then audit actual BLACK mission scene event hooks and remote ally rig lifetimes. No ISO, no false gameplay Start."
+  },
+  "ownerTestPolicy": {
+    "directiveDate": "2026-11-22",
+    "preference": "CI_FIRST_NO_SMALL_OWNER_PHONE_TESTS",
+    "deviceTrialRequiredNow": false,
+    "physicalDeviceTrials": "ONLY_SUBSTANTIAL_END_TO_END_MILESTONE_CI_CANNOT_PROVE",
+    "combineMinorQuestionsIntoOneAutomaticBoundedSafeLogExport": true,
+    "majorGate": "docs/MAJOR_DEVICE_TEST_GATE_AR.md",
+    "oneMatchingApkForBothPhones": true,
+    "noRepeatIsoOrPrimaryArmsModelProbe": true
   }
 }
