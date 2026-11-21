@@ -38,4 +38,5 @@ jobs:
           timeout 60s java -ea -cp "$out/classes" com.racas.black.coop.TlsRoomTest "$out/test-identity.p12"
           timeout 30s java -ea -cp "$out/classes" com.racas.black.coop.HeartbeatTest "$out/test-identity.p12"
           timeout 30s java -ea -cp "$out/classes" com.racas.black.coop.DiscoveryTest "$out/test-identity.p12"
+          timeout 30s java -ea -cp "$out/classes" com.racas.black.coop.DirectTest "$out/test-identity.p12"
           echo 'PASS actual JVM loopback TLS room; Android adapter and gameplay not implemented by this job'
