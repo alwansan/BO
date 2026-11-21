@@ -1,0 +1,170 @@
+{
+  "scope": "Manual inspection of candidate x86 register/stack-use patterns only; not full ABI or semantic acceptance",
+  "candidateSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+  "candidateSha256": "df2739c372d254a90aeeccf5971d12097f22d89fbb90db021fda96dd4deb68f6",
+  "source": "f3754d6985a8c35204e7df071546e586b10f1806",
+  "sdk": "99078b119b5d5e0d1d6afb1390e29437c0c984c0",
+  "tool": "llvm-objdump 21.1.8, elf32-i386 private container of executable XBE sections",
+  "method": "Read provided ISO with upstream xdvdfs.py in TemporaryDirectory; wrap executable sections for disassembler, inspect prefixes at configured addresses, delete temporary originals/derivatives on context exit. No original file writes.",
+  "reviewed": [
+    {
+      "name": "CDevice_KickOff",
+      "address": "0026cf10",
+      "configuredArguments": [
+        "edx"
+      ],
+      "observations": [
+        "0026cf10: dereference incoming edx as device",
+        "0026cf77: plain return observed"
+      ],
+      "status": "input_patterns_support_configuration_not_full_proof"
+    },
+    {
+      "name": "D3D_BlockOnResource",
+      "address": "0026d030",
+      "configuredArguments": [
+        "eax"
+      ],
+      "observations": [
+        "0026d03b: dereference incoming eax as resource",
+        "0026d074 and 0026d0bb: plain return observed"
+      ],
+      "status": "input_patterns_support_configuration_not_full_proof"
+    },
+    {
+      "name": "D3D_InternalRelease",
+      "address": "0026c410",
+      "configuredArguments": [
+        "esi"
+      ],
+      "observations": [
+        "0026c410: dereference incoming esi as resource",
+        "0026c468: plain return observed"
+      ],
+      "status": "input_patterns_support_configuration_not_full_proof"
+    },
+    {
+      "name": "D3D_MakeRequestedSpace",
+      "address": "0026cdc0",
+      "configuredArguments": [
+        "stack",
+        "eax"
+      ],
+      "observations": [
+        "0026cdcb: preserve incoming eax in ebx",
+        "0026ce24: read entry-stack argument at saved-stack+0x1c",
+        "0026cdfa: ret 4 on early path"
+      ],
+      "status": "input_patterns_support_configuration_not_full_proof"
+    },
+    {
+      "name": "D3DDevice_LoadVertexShader",
+      "address": "00268f80",
+      "configuredArguments": [
+        "eax",
+        "stack"
+      ],
+      "observations": [
+        "00268f8c: preserve incoming eax in edi",
+        "00268f96: read entry-stack argument after four pushes",
+        "00268fff: ret 4"
+      ],
+      "status": "input_patterns_support_configuration_not_full_proof"
+    },
+    {
+      "name": "D3DDevice_SelectVertexShader",
+      "address": "00269010",
+      "configuredArguments": [
+        "eax",
+        "ebx"
+      ],
+      "observations": [
+        "00269010: test incoming eax",
+        "002690a2: write incoming ebx into GPU push data without prior ebx assignment in examined prefix"
+      ],
+      "status": "input_patterns_support_configuration_not_full_proof"
+    },
+    {
+      "name": "D3DDevice_SetFlickerFilter",
+      "address": "0026ba10",
+      "configuredArguments": [
+        "esi"
+      ],
+      "observations": [
+        "0026ba1f: compare incoming esi to saved filter",
+        "0026ba2f: pass incoming esi to kernel video option call",
+        "0026ba49: plain return"
+      ],
+      "status": "input_patterns_support_configuration_not_full_proof"
+    },
+    {
+      "name": "D3DDevice_SetPixelShaderConstant",
+      "address": "0026bf10",
+      "configuredArguments": [
+        "ecx",
+        "stack",
+        "eax"
+      ],
+      "observations": [
+        "0026bf16: test incoming eax as count",
+        "0026bf1f: preserve incoming ecx in edi",
+        "0026bf2d: read first entry-stack argument through ebp",
+        "0026bf44: dereference stack-supplied data pointer"
+      ],
+      "status": "input_patterns_support_configuration_not_full_proof"
+    },
+    {
+      "name": "D3DDevice_SetShaderConstantMode",
+      "address": "002690c0",
+      "configuredArguments": [
+        "eax"
+      ],
+      "observations": [
+        "002690c0: test incoming al",
+        "002690e2: save masked incoming eax as device mode"
+      ],
+      "status": "input_patterns_support_configuration_not_full_proof"
+    },
+    {
+      "name": "D3DResource_IsBusy",
+      "address": "0026c580",
+      "configuredArguments": [
+        "ecx"
+      ],
+      "observations": [
+        "0026c580: dereference incoming ecx as resource",
+        "0026c5fa and 0026c601: plain return"
+      ],
+      "status": "input_patterns_support_configuration_not_full_proof"
+    },
+    {
+      "name": "Lock2DSurface",
+      "address": "0026d910",
+      "configuredArguments": [
+        "stack",
+        "stack",
+        "stack",
+        "esi",
+        "eax",
+        "stack"
+      ],
+      "observations": [
+        "0026d912: read fourth entry-stack slot as flags",
+        "0026d91a: read first entry-stack slot as resource",
+        "0026d91f: preserve incoming eax as rectangle pointer",
+        "0026d98b: write output pitch through incoming esi",
+        "0026d98d: write output data pointer through incoming esi+4",
+        "0026d992: ret 16"
+      ],
+      "status": "input_patterns_support_configuration_not_full_proof"
+    }
+  ],
+  "limitations": [
+    "Input use does not establish every API semantic argument role.",
+    "Only observed return paths recorded; no full CFG cleanup/preservation proof.",
+    "No original82d058 image available for code-byte comparison.",
+    "46 scanner-unresolved library symbols and5 data locations remain unresolved.",
+    "No engine build, phone execution, actor spawn or model proof."
+  ],
+  "nextRequiredEvidence": "Existing phone mission result and startup log identifying actual loaded image/build; no user response received."
+}

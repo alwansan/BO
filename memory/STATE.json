@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-05-candidate-audit.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-06-manual-abi.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -84,10 +84,15 @@
       "status": "candidate translation possible; 46 library symbols, 5 data locations, 11 ABI unresolved; semantics not accepted",
       "candidateSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
       "scope": "Read-only analysis of supplied owner image; no baseline acceptance, no APK",
-      "firstRun": 44840599544
+      "firstRun": 44840599544,
+      "manualAbiInputReview": {
+        "status": "11 configured sites inspected; input patterns supportive only",
+        "evidence": "memory/evidence/SRC-002b-manual-abi-inputs.json",
+        "fullAbiSemanticsAccepted": false
+      }
     },
-    "DEVICE_BASELINE": "Asked owner to enter mission on existing Arabic APK and supply latest app log; no response yet"
+    "DEVICE_BASELINE": "Still awaiting owner existing-app mission result/log; required to identify image actually loaded from shared Black folder vs supplied bundle"
   },
   "apk": null,
-  "next": "Read owner existing-app mission result/log; resolve candidate static ABI/offsets. No candidate engine/APK built; full co-op scope remains docs/COOP_REQUIREMENTS_AR.md."
+  "next": "Read owner phone mission result/log before selecting active baseline image. Preserve full co-op scope; no APK or in-game networking exists."
 }
