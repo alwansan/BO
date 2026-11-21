@@ -48,30 +48,37 @@ public:
 };
 
 struct Registry {
-    struct Slot { uint32_t address=0,vtable=0; };
+    struct Slot { uint32_t address=0,vtable=0; uint64_t serial=0; };
     std::array<Slot,64> slots{};
     uint32_t world=0,epoch=0;
+    uint64_t next_serial=0;
     void World(uint32_t value) noexcept {
         if(world==value) return;
         world=value; ++epoch; slots={};
     }
-    // Preserve one slot for the local player. Render/animation hooks can see
-    // many NPCs before the first player update; otherwise the 64-ID cap could
-    // prevent every later local-player sample. IDs are correlations, not
-    // persistent actor identities or lifetime-proof handles.
+    // Slot #1 belongs exclusively to the local player even if an animation or
+    // LOD hook discovered the same pointer first. A new serial invalidates
+    // that slot's old sampling cooldown. Neither ID nor serial proves lifetime.
     uint32_t Id(uint32_t address,uint32_t vtable,bool local=false) noexcept {
         if(!address || !vtable) return 0;
-        for(size_t i=0;i<slots.size();++i)
-            if(slots[i].address==address && slots[i].vtable==vtable) return static_cast<uint32_t>(i+1);
         if(local) {
-            // A respawn in the same world may re-use ID 1. Consumers must not
-            // treat these numbers as stable across character lifetimes.
-            slots[0]={address,vtable};
+            if(slots[0].address==address && slots[0].vtable==vtable) return 1;
+            // Promote an already observed player out of the NPC slots,
+            // including when all 63 NPC slots are occupied.
+            for(size_t i=1;i<slots.size();++i)
+                if(slots[i].address==address && slots[i].vtable==vtable)
+                    slots[i]={};
+            slots[0]={address,vtable,++next_serial};
             return 1;
         }
-        // Non-local objects cannot consume the player's reserved slot.
+        for(size_t i=0;i<slots.size();++i)
+            if(slots[i].address==address && slots[i].vtable==vtable)
+                return static_cast<uint32_t>(i+1);
         for(size_t i=1;i<slots.size();++i)
-            if(!slots[i].address) {slots[i]={address,vtable}; return static_cast<uint32_t>(i+1);}
+            if(!slots[i].address) {
+                slots[i]={address,vtable,++next_serial};
+                return static_cast<uint32_t>(i+1);
+            }
         return 0;
     }
 };

@@ -61,6 +61,34 @@ int main() {
     assert(prioritised.Id(7777,8888,true)==1);
     assert(prioritised.Id(9000,8888)==2);
 
+    // A render hook can observe the eventual local player first. The player
+    // must still get ID 1 (and free the old NPC slot on promotion).
+    Registry promoted;
+    promoted.World(810);
+    assert(promoted.Id(1111,2222)==2);
+    const uint64_t old_serial=promoted.slots[1].serial;
+    assert(old_serial>0);
+    assert(promoted.Id(1111,2222,true)==1);
+    assert(promoted.slots[1].address==0);
+    const uint64_t local_serial=promoted.slots[0].serial;
+    assert(local_serial>old_serial);
+    assert(promoted.Id(1111,2222,false)==1);
+    assert(promoted.Id(3333,2222)==2);
+    assert(promoted.slots[1].serial>local_serial);
+    assert(promoted.Id(1111,2222,true)==1);
+    assert(promoted.slots[0].serial==local_serial); // repeated observation
+    assert(promoted.Id(4444,2222,true)==1); // local character replaced
+    assert(promoted.slots[0].serial>local_serial);
+    // Local promotion must also work after the NPC registry is saturated.
+    Registry packed;
+    packed.World(820);
+    for(uint32_t i=0;i<63;++i)
+        assert(packed.Id(10000+i,24000)==i+2);
+    assert(packed.Id(10040,24000,true)==1);
+    assert(packed.slots[40+1].address==0);
+    assert(packed.Id(10040,24000,false)==1);
+    assert(packed.Id(99999,24000)==42);
+
     Budget warm;
     assert(warm.Attempt(1000));
     warm.Start(120000);

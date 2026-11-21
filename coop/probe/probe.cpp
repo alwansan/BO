@@ -27,6 +27,7 @@ Registry registry;
 Budget budget;
 ByteBudget bytes;
 std::array<std::array<uint64_t,3>,64> last{};
+std::array<uint64_t,64> last_serial{};
 int output=-1;
 bool initialized=false;
 uint64_t opened_at=0,failures=0,attempts=0;
@@ -80,7 +81,7 @@ void Observe(Kind kind,uint32_t argument,const uint8_t* base) noexcept {
             if(errno==EPERM || errno==ENOSYS || failures>=64) End("world_read_unavailable");
             return;
         }
-        if(world!=registry.world) {registry.World(world);last={};}
+        if(world!=registry.world) {registry.World(world);last={};last_serial={};}
         if(!world || uint64_t(world)+0x30>UINT32_MAX) return;
         budget.Start(now);
         uint32_t object=argument,controller=0;
@@ -97,6 +98,13 @@ void Observe(Kind kind,uint32_t argument,const uint8_t* base) noexcept {
         const bool is_local=object==world+0x30;
         uint32_t id=registry.Id(object,vtable,is_local);
         if(!id) return;
+        // Moving or replacing a correlation slot must not inherit its former
+        // occupant's 1000ms sampling throttle. All access is under lock.
+        const uint64_t serial=registry.slots[id-1].serial;
+        if(serial!=last_serial[id-1]) {
+            last[id-1]={};
+            last_serial[id-1]=serial;
+        }
         auto index=static_cast<size_t>(kind);
         // Rotate eligible IDs rather than sampling only the first rendered NPC.
         if(kind!=Kind::Player && id%8!=(now/1000)%8) return;
