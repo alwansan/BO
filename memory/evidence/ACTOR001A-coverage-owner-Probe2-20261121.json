@@ -1,0 +1,34 @@
+{
+  "schema": "BO-COOP-ACTOR001A-observation-coverage-aggregates-v1",
+  "source": {
+    "repository": "alwansan/CL",
+    "branch": "main",
+    "folder": "black log/logs/BLACK-Probe-20261121-064812-388",
+    "capture": "coop_probe.txt",
+    "package": "org.bocoop.black.probe2"
+  },
+  "inputScope": "User-uploaded shared read-only capture, inspected without copying original content to BO",
+  "partialCapture": true,
+  "captureEndSeen": false,
+  "events": {
+    "player": 131,
+    "lod": 172,
+    "animation": 97
+  },
+  "observedEpochs": 1,
+  "temporaryCorrelations": 14,
+  "lodCorrelations": 13,
+  "lodWithAnimationCorrelations": 13,
+  "lodCorrelationsFirstObserved10sAfterFirstSample": 9,
+  "lodCorrelationsLastObserved10sBeforeLastSample": 0,
+  "lodCorrelationsWithGapsAtLeast10s": 2,
+  "observedGapsAtLeast10s": 2,
+  "samplingGapProofOfDeath": false,
+  "firstObservationProofOfSpawn": false,
+  "epochTransitionObserved": false,
+  "actorLifetimeProven": false,
+  "npcDeallocationProven": false,
+  "actorFactoryProven": false,
+  "guestWrites": false,
+  "sourceNote": "Derived read-only via per-(epoch,id) timestamp aggregations. Unseen hooks and round-robin sampling can cause gaps; no object birth/death inferred. No raw guest coordinates/pointers/IDs/files stored."
+}

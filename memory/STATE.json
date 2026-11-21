@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-16-biso-extracted-owner-assets.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-17-actor-lifecycle-gaps-proxy-roster.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -332,6 +332,20 @@
       "run": 44867209688,
       "code": "28d08eed70241dfbf34ede0802aba576cfc721f5",
       "copyrightedAssetsDownloadedInActions": false
+    },
+    "ACTOR001A_COVERAGE_ANALYZER": {
+      "status": "PASS_SYNTHETIC_PRIVACY_TEST_CI_NOT_LIFETIME_PROOF",
+      "run": 44867782174,
+      "code": "31240e47f64ca890c3844b1ad9a66aaecba3bfc8",
+      "safeEvidence": "memory/evidence/ACTOR001A-coverage-owner-Probe2-20261121.json",
+      "originalOwnerCaptureCopiedToBO": false
+    },
+    "ACTOR001A_VALUE_ONLY_PROXY_HOST": {
+      "status": "PASS_ISOLATED_SANITIZER_CI_NO_GAME_ACTOR",
+      "run": 44867858529,
+      "code": "33f08e654ba624d4fb44cbdb562128f65fb44894",
+      "secureSession": false,
+      "gameIntegrated": false
     }
   },
   "pending": {
@@ -340,7 +354,7 @@
       "discSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
       "compiledSha1": "82d0588124e70102ee650f8969c0a56374476234"
     },
-    "ACTOR_001": "Actual Probe2 read-only player131/lod172/animation97, 13 NPC-like LOD+anim cohorts and 1 local player+anim, same player+LOD none. Need ownership/lifetime/factory proof; no memory writes or network gameplay.",
+    "ACTOR_001": "Real Probe2 13 LOD+animation correlations, 9 first observed late, 2 10s sampling gaps; NOT NPC death/spawn or ownership proof. ACTOR001A analyzer and value-only mock remote roster pass isolated CI, actual game actor factory/proxy unimplemented.",
     "COMBAT_001": "not_started",
     "DEVICE": "Baseline owner accepted; Probe1 game/capture started; Probe2 import/MediaStore exporter PASS; CO-OP/ROOM menu UI still unverified; two-phone gameplay NOT started.",
     "SRC_002": "Separate candidate build and owner baseline runtime accepted for this limited device test; not original Arabic source equivalence/full campaign proof.",
@@ -394,7 +408,13 @@
       "topLevelFeasibility": "Pinned source exit_menu.cpp already clones a Quit button below Options",
       "design": "docs/ROOM_TOP_LEVEL_FEASIBILITY_AR.md"
     },
-    "OWNER_BISO_FULL_SHA": "COMPLETE: owner's actual ISO all 574 per-file SHA256 were streamed and hashed; their lexicographically ordered 256-bit rolling digest matches pinned biso manifest; all relative paths and sizes canonical digest matches. STILL OPEN: bytes of split part blobs in GitHub biso not independently downloaded/hashed. Use restore_github_upload.py locally if required."
+    "OWNER_BISO_FULL_SHA": "COMPLETE: owner's actual ISO all 574 per-file SHA256 were streamed and hashed; their lexicographically ordered 256-bit rolling digest matches pinned biso manifest; all relative paths and sizes canonical digest matches. STILL OPEN: bytes of split part blobs in GitHub biso not independently downloaded/hashed. Use restore_github_upload.py locally if required.",
+    "ACTOR001A_TOY_HOST_PROXY_INTEGRATION": {
+      "status": "CI_PENDING",
+      "run": 44867924228,
+      "code": "15092111638cd68ba38715712ebe0b0399b8630f",
+      "scope": "Synthetic toy Host snapshots to proxy roster/game thread inbox only"
+    }
   },
   "apk": {
     "kind": "Probe2 read-only export+room candidate",
@@ -407,5 +427,5 @@
     "gameplayCoop": false,
     "sourceCommit": "d8dba8d8da2da69c62718a87f3e6f03f16be0d2f"
   },
-  "next": "Use pinned biso actor-relevant resources; manifest to ISO full 574 SHA sequence matched. If needing actual restored data, verify fetched GitHub blob bytes via restore_github_upload.py; no ISO reupload needed. ACTOR-001A ownership/lifetime and room entry remain open."
+  "next": "Verify integrated game-thread bridge CI44867924228, then ACTOR-001A explicit NPC lifetime/owner hook design and in-game top-level CO-OP UI (separate experiment). No rerun of successful Baseline/Probe2. Never use sampling gaps as despawn evidence."
 }
