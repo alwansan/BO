@@ -1,3 +1,8 @@
+## REQUIRED OWNER TEST FREQUENCY POLICY — 2026-11-22
+Owner wants as few physical phone trials as possible. Continue autonomously with GitHub Actions synthetic/static/Android emulator/packaging tests. Do not ask for phone testing of lobby-only, individual hooks, small UI or simple diagnostic details. Save automatic safe bounded event/log/scene/remote-player capture for one substantial two-phone integration acceptance test when ready. Include all minor unanswered questions in that one test (network, rehost, story scene, remote body, movement, enemy/world/quest synchronization, performance/crash) with one combined export and clear instructions. If gameplay is not integrated, **NO owner test requested**. Preserve first-person original local and human-controlled ally for others; one host world. Owner ISO and 8/8 model evidence already supplied; don't re-request. Read docs/MAJOR_DEVICE_TEST_GATE_AR.md and Session39, check HEAD/Actions. Update memory continuously.
+
+---
+
 ## Session39 CI verified follow-up (2026-11-22)
 Android29 instrumented TLS platform workflow **44954581718 SUCCESS**, literal `TLS_PLATFORM_PASS` in job log; JVM bridge **44954581676 SUCCESS**, `SESSION_STORY_BRIDGE_PASS` + story/rehost. Game bridge source preflight **44954581651 SUCCESS**, isolated UDP **44954581696 SUCCESS**. **Room-network Android APK workflow 44954581624 was still in progress**, check latest before claiming artifact. Current new source is only story-control room facade and synthetic game callback test; actual BLACK engine callback, scene loading, shared world and fullbody remote AllyBody remain OPEN. Session39 source commits 86faa014 and 5370dcae. The old phone-tested 44946597973 is v2, incompatible with v3. See session39 and STATE.
 
