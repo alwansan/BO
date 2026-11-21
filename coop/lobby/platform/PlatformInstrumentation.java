@@ -28,6 +28,26 @@ public final class PlatformInstrumentation extends Instrumentation {
                     throw failure;
                 }
             }
+            // Exercise the same bounded session lifecycle on a real Android
+            // socket provider. This remains independent of the game's Flash/UI.
+            try(RoomSession hosting=RoomSession.create();RoomSession joining=RoomSession.create()){
+                hosting.startHost(()->new RoomSession.HostIdentity(
+                    first.serverContext(),first.fingerprint()),loop,0,
+                    "Phone Host","Android Room","01234567");
+                long until=System.nanoTime()+7_000_000_000L;
+                while(hosting.snapshot().phase!=RoomSession.Phase.HOSTING) {
+                    check(System.nanoTime()<until);Thread.sleep(20);
+                }
+                RoomSession.Status info=hosting.snapshot();
+                joining.join("127.0.0.1:"+info.port,info.fingerprint,"Phone Client","01234567");
+                until=System.nanoTime()+7_000_000_000L;
+                while(joining.snapshot().phase!=RoomSession.Phase.JOINED ||
+                      hosting.snapshot().roster.players.size()!=2) {
+                    check(System.nanoTime()<until);Thread.sleep(20);
+                }
+                joining.stop();hosting.stop();
+                check(joining.snapshot().phase==RoomSession.Phase.IDLE);
+            }
             long deadline=System.nanoTime()+8_000_000_000L;
             while(Thread.getAllStackTraces().keySet().stream().anyMatch(t->t.isAlive()&&t.getName().startsWith("bo-room-"))){
                 if(System.nanoTime()>deadline)throw new AssertionError("Room threads survived close");Thread.sleep(10);
