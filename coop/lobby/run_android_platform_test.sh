@@ -71,7 +71,15 @@ if [[ "$booted" != true ]]; then
     tail -120 "$out/emulator.log"
     exit 1
 fi
-timeout -k 5s 90s "$adb" -s emulator-5554 install -t "$out/test.apk"
+# Android SDK adb may stall in its incremental/streaming install server
+# even though the emulator has booted. Stage as an ordinary shell-owned file
+# and ask PackageManager to install it directly. No game assets are involved.
+remote=/data/local/tmp/bo_coop_tls_platform.apk
+timeout -k 5s 40s "$adb" -s emulator-5554 push "$out/test.apk" "$remote"
+installed="$(timeout -k 5s 60s "$adb" -s emulator-5554 shell pm install -r -t "$remote" | tr -d '\r')"
+printf '%s\n' "$installed"
+[[ "$installed" == *Success* ]]
+timeout -k 3s 10s "$adb" -s emulator-5554 shell rm -f "$remote" || true
 timeout -k 5s 90s "$adb" -s emulator-5554 shell am instrument -w -r org.bocoop.black.tlsplatform/com.racas.black.coop.PlatformInstrumentation | tee "$out/result.txt"
 if command -v rg >/dev/null 2>&1; then
     passed=$(rg -c 'TLS_PLATFORM_PASS' "$out/result.txt" || true)
