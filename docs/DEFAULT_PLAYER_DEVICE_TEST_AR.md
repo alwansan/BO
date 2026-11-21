@@ -1,3 +1,6 @@
+## Session38 — THIS TEST HAS ALREADY ARRIVED; do not ask again
+Read CL black log/logs/BLACK-Probe-20261121-235407-267/coop_probe.txt. Eight complete default_player_model records: primary loaded model has 44 bones, 2 buffers, mask32 (draw-list5), arms but no head/torso/legs; this is not an exhaustive asset inventory. Xiaomi owner run confirms matching XBE; Huawei Android10 also ran org.bocoop.black.defaultplayer. New directive: original local first person plus full-body ally appearance for OTHER human players. Next meaningful phone gate requires new implemented story/remote body, not repeating this observation.
+
 # اختبار شخصية اللعبة الأصلية — جلسة36
 
 هذه الحزمة **BLACK ORIGINAL PLAYER TEST**، `org.bocoop.black.defaultplayer`، تختبر النموذج المرتبط بشخصية اللعب الأساسية فعلياً، دون إنشاء جسم بوت أوحليف ودون تغييرشخصيتك أوالحفظ. ليستنسخةلعبجماعيجاهزة؛Startالمشتركوالجسمالبعيدلمُينفذابعد.
