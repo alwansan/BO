@@ -102,15 +102,15 @@ public final class RoomOverlay {
         button(root,"FIND LAN ROOM",()->select(-103));
         hostPanel=group(root);
         label(hostPanel,"CREATE ROOM",18,FG);
-        hostName=field(hostPanel,"PLAYER NAME","Host",32,false);
-        roomName=field(hostPanel,"ROOM NAME","BLACK LAN",32,false);
+        hostName=field(hostPanel,"PLAYER NAME","Host",32,false);hostName.setText("Host");
+        roomName=field(hostPanel,"ROOM NAME","BLACK LAN",32,false);roomName.setText("BLACK LAN");
         hostPin=field(hostPanel,"PRIVATE 8-DIGIT PIN","",8,true);
         port=field(hostPanel,"PORT","24872",5,false);
         port.setInputType(InputType.TYPE_CLASS_NUMBER);port.setText("24872");
         button(hostPanel,"START HOST",this::host);
         joinPanel=group(root);
         label(joinPanel,"AVAILABLE WI-FI ROOMS",18,FG);
-        guestName=field(joinPanel,"YOUR NAME","Player 2",32,false);
+        guestName=field(joinPanel,"YOUR NAME","Player 2",32,false);guestName.setText("Player 2");
         guestPin=field(joinPanel,"ROOM'S 8-DIGIT PIN","",8,true);
         button(joinPanel,"REFRESH LAN",this::scan);
         scanStatus=label(joinPanel,"Looking for nearby rooms...",12,MUTED);
@@ -250,16 +250,20 @@ public final class RoomOverlay {
         RoomDiagnostics.event("SCAN_STARTED");
         worker.execute(()->{
             List<RoomDiscovery.Found> found=null;
+            boolean failed=false;
             try{found=RoomDiscovery.scan(RoomDiscovery.broadcastTargets(),
                 RoomDiscovery.PORT,1900,cancelled);}
-            catch(Exception error){RoomDiagnostics.event("SCAN_FAILED");}
+            catch(Exception error){failed=true;RoomDiagnostics.event("SCAN_FAILED");}
             List<RoomDiscovery.Found> rooms=found;
+            final boolean scanFailed=failed;
             handler.post(()->{
                 scanning.set(false);
                 if(closed||cancelled.get()||tab!=-103)return;
                 int count=rooms==null?0:rooms.size();
                 RoomDiagnostics.event("SCAN_RESULTS_"+Math.min(count,16));
-                if(count==0){
+                if(scanFailed){
+                    scanStatus.setText("LAN search error. Check Wi-Fi connectivity and system restrictions.");
+                }else if(count==0){
                     scanStatus.setText("No rooms found. Check same Wi-Fi / AP isolation, or use MANUAL JOIN.");
                 }else{
                     scanStatus.setText(count+" room(s). Tap a room after entering its PIN.");
