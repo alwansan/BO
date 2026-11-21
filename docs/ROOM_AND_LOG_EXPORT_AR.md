@@ -26,3 +26,6 @@
 3. ادخل مهمة وتحرّك قرب الجنود، وانتظر 30–90 ثانية، ثم افتح OPTIONS وابحث عن `CO-OP / ROOM` (قد يكون آخر صفحة) والتقط صورة إذا ظهرت. HOST/JOIN يجب أن تكون NOT AVAILABLE.
 4. افحص `/storage/emulated/0/Download/Games/cl/black log/logs/` وابحث عن آخر مجلد `BLACK-Probe-YYYYMMDD-HHMMSS-SSS` وداخلَه `coop_probe.txt` و`black_log.txt`. أرسل السجل/الملخص **خاصاً في المحادثة** لتقييم ACTOR-001، وليس إلى مستودع CL العام. إذا لم يظهر، صوّر محتويات Download وتعامل معه كـruntime bug لا تستنتج منه عدم وجود actor.
 5. لا تعِد اختبار Baseline أو Probe1 القديمة.
+
+## تأكيد Android15 — جلسة15
+سجل تجربة المالك [BLACK-Probe-20261121-064812-388](https://github.com/alwansan/CL/tree/main/black%20log/logs/BLACK-Probe-20261121-064812-388) يؤكد نجاح التصدير إلى Downloads ووجود ملف `coop_probe.txt` غير فارغ 130243B (401 سطر) و`black_log.txt` 2253B. تم تحليل400 ملاحظة ونتائجها في `docs/ACTOR_DEVICE_TRACE_FINDINGS_AR.md`. **لا يُعاد اختبار التصدير فقط**، إلا عند ظهور خطأ جديد. الصور لا تؤكد صفحة CO-OP/ROOM؛ تظل داخل OPTIONS وتحتاج تحققاً من UI، والزر المباشر تحت الإعدادات لم يُضف بعد. إرسال السجل الخام إلى public CL ليس المسار المفضل لاحقاً لأسباب خصوصية.

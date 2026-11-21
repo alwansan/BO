@@ -132,3 +132,10 @@ HOOK001 starvation under LOD: reserved per-second/lifetime player opportunity wi
 - Despite APK successful compile and binary presence, **MediaStore Downloads export has not been exercised on Android 15**; provider handling/permissions, file-manager discoverability and exact path may vary. Private log still mode0600 and CL copy 0 bytes. No assertion of export success or actor samples.
 - CO-OP / ROOM is currently a sixth internal OPTIONS page, **not** a top-level Flash pause entry immediately below SETTINGS. Verify on owner's UI, then consider safe separate menu hook; don't misrepresent hierarchy.
 - Probe2 app has separate app-private assets; import via SAF needed once on that package; baseline saves/ISO remain untouched. No secure production sessions, guest actor creation or gameplay co-op.
+
+## جلسة15 — مخاطر بعد إثبات الرصد الحقيقي
+- Raw public CL `coop_probe.txt` exposes guest pointers, positions and animation labels; **do not copy raw lines into BO**. Next user logs should be private or anonymized with `summarize_probe.py` if possible.
+- LOD sample's read success for resource320/render35c doesn't prove ownership; observed render35c has only1 distinct nonzero value across13 LOD groups (possibly shared). No body rig ownership guaranteed.
+- clip_hash field in source actually reads `clip+0x18`, not proven hashed clip ID; a changing value is **not** 12 animation clip transitions; safe analyzer corrects the name.
+- Epoch count only1 and no end event, so object disappearance/reappearance and safe allocator/factory remain unresolved. One observed callback thread is not proof of single-threaded game.
+- Current screenshots show only main menu and Probe2 opt-in, not the injected in-OPTIONS page; requested direct menu option below Settings still open.

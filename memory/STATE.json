@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-14-probe2-apk-verified.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-15-probe2-actual-actor-trace.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -248,6 +248,47 @@
       "independentDownloadedApkVerified": true,
       "deviceTested": false,
       "actualMultiplayer": false
+    },
+    "PROBE2_OWNER_MEDISTORE_EXPORT": {
+      "status": "PASS_ON_OWNER_ANDROID15_FULL_RAW_CAPTURE_AVAILABLE",
+      "source": "alwansan/CL main black log/logs/BLACK-Probe-20261121-064812-388",
+      "evidence": "memory/evidence/DEVICE-probe2-owner-20261121-064812-safe-summary.json",
+      "package": "org.bocoop.black.probe2",
+      "copyBytes": 130243,
+      "logBytes": 2253,
+      "captureStarted": true,
+      "recordsObserved": 400,
+      "partialSnapshot": true,
+      "roomMenuOpenedOnPhone": false
+    },
+    "ACTOR001_DEVICE_READONLY_CORRELATIONS": {
+      "status": "REAL_DEVICE_EVIDENCE_ONLY_NO_FACTORY_OR_OWNERSHIP_PROOF",
+      "evidence": "memory/evidence/DEVICE-probe2-owner-20261121-064812-safe-summary.json",
+      "samples": {
+        "player": 131,
+        "lod": 172,
+        "animation": 97
+      },
+      "temporaryCorrelations": 14,
+      "epochs": 1,
+      "observedThreads": 1,
+      "playerLodOverlap": 0,
+      "playerAnimationOverlap": 1,
+      "lodAnimationOverlap": 13,
+      "positionVariantLodGroups": 13,
+      "animationLabelVariantLodGroups": 11,
+      "unknownClipField0x18VariantLodGroups": 12,
+      "actorFactoryProven": false,
+      "fullBodyLocalPlayerProven": false
+    },
+    "PROBE2_SAFE_ANALYZER_EXTENDED": {
+      "status": "PASS_SYNTHETIC_PRIVACY_CI_ONLY",
+      "run": 44863742397,
+      "sourceCommit": "063ce80df55b57b1dcfa1f8136ecd2c2e9797be0",
+      "snapshotCompleteness": true,
+      "fieldCoverage": true,
+      "anonymousMotion": true,
+      "unverifiedClipFieldClearlyLabeled": true
     }
   },
   "pending": {
@@ -256,9 +297,9 @@
       "discSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
       "compiledSha1": "82d0588124e70102ee650f8969c0a56374476234"
     },
-    "ACTOR_001": "Owner Probe1 capture started in mission, but private JSONL unreadable and CL copy 0B. Need actual samples before proof of full-body actor lifetime/factory.",
+    "ACTOR_001": "Actual Probe2 read-only player131/lod172/animation97, 13 NPC-like LOD+anim cohorts and 1 local player+anim, same player+LOD none. Need ownership/lifetime/factory proof; no memory writes or network gameplay.",
     "COMBAT_001": "not_started",
-    "DEVICE": "Owner-tested rebuilt baseline ACCEPTED; HOOK001 probe device test NOT STARTED; co-op device-pair test NOT STARTED.",
+    "DEVICE": "Baseline owner accepted; Probe1 game/capture started; Probe2 import/MediaStore exporter PASS; CO-OP/ROOM menu UI still unverified; two-phone gameplay NOT started.",
     "SRC_002": "Separate candidate build and owner baseline runtime accepted for this limited device test; not original Arabic source equivalence/full campaign proof.",
     "NET_004": "Synthetic host+scene inbox composition PASS. Real Android LAN/ZeroTier, secure session auth, actor mapping and game-thread integration NOT tested.",
     "SRC_002B": {
@@ -274,7 +315,7 @@
     },
     "DEVICE_BASELINE": "Already accepted by owner; do not ask to repeat.",
     "HOOK_001": {
-      "status": "Probe1 device confirms game and capture opt-in; Probe2 Android CI+artifact PASS, awaiting first Probe2 device MediaStore+in-game UI verification",
+      "status": "Probe2 game import, capture and public MediaStore log export OWNER-TESTED; captured 400 valid read-only events but partial snapshot no end",
       "workflowRun": 44856368592,
       "sourceCommit": "e9ad056805cabacadcf3882d5ff7aeb5f45df914",
       "apkSha256": "371de65dd7972d1505713d31d2a41080aa99877f848ac35a24fefe8b825ca2d7",
@@ -287,24 +328,22 @@
       "probe2Code": "d8dba8d8da2da69c62718a87f3e6f03f16be0d2f",
       "probe2BuildConfirmed": true,
       "probe2Package": "org.bocoop.black.probe2",
-      "waitingFor": "Optional owner Probe2 exported logs from Downloads; read-only room menu screenshot",
+      "waitingFor": "ACTOR001A lifetime/scene model evidence, not baseline or Probe2 export retest",
       "probe2Artifact": 14690036713,
       "probe2Sha256": "861fd501497f2251feeb544c56430e084c3b48d3afa87e0d3a65c12e8a1115c0",
-      "probe2DeviceTested": false
+      "probe2DeviceTested": true,
+      "rawRecordContentRead": true,
+      "captureComplete": false
     },
     "PROBE2_LOG_EXPORT": {
-      "status": "COMPILED_IN_CI_ONLY_ANDROID15_MEDISTORE_RUNTIME_UNTESTED",
-      "run": 44860874976,
-      "package": "org.bocoop.black.probe2",
-      "target": "Download/Games/cl/black log/logs/BLACK-Probe-<timestamp>/",
-      "expectedFiles": [
-        "coop_probe.txt",
-        "black_log.txt"
-      ],
-      "ownerPrivateLogsCaptured": false
+      "status": "PASSED_OWNER_ANDROID15",
+      "source": "memory/evidence/DEVICE-probe2-owner-20261121-064812-safe-summary.json",
+      "ownerPrivateLogsCaptured": true,
+      "sampleFile": "black log/logs/BLACK-Probe-20261121-064812-388/coop_probe.txt",
+      "sampleSize": 130243
     },
     "COOP_ROOM_MENU": {
-      "status": "COMPILED_IN_NATIVE_LIBRARY_NOT_DEVICE_VERIFIED; sixth OPTIONS page not separate pause top-level entry",
+      "status": "Native in-OPTIONS page compiled but NOT visually confirmed on owner Android; main menu screenshots only; original requested separate item below Settings remains open",
       "run": 44860874976,
       "package": "org.bocoop.black.probe2",
       "hostJoinEnabled": false
@@ -321,5 +360,5 @@
     "gameplayCoop": false,
     "sourceCommit": "d8dba8d8da2da69c62718a87f3e6f03f16be0d2f"
   },
-  "next": "Use verified Probe2 APK for the first optional MediaStore export and in-game CO-OP / ROOM page device check. No baseline/Probe1 retest. If logs accessible privately, analyze actor correlation and safety. Separate top-level button below Settings not yet implemented."
+  "next": "ACTOR-001A read-only ownership and lifetime research for NPC LOD+animation cohorts; verify actual in-game room page and eventual top-level placement below Settings; no baseline or Probe2 export retest needed."
 }

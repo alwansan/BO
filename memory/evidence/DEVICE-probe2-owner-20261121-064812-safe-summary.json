@@ -1,0 +1,100 @@
+{
+  "schema": "BO-COOP-probe2-device-trace-safe-aggregates-v1",
+  "source": {
+    "repository": "alwansan/CL",
+    "branch": "main",
+    "path": "black log/logs/BLACK-Probe-20261121-064812-388",
+    "files": [
+      {
+        "name": "coop_probe.txt",
+        "sizeBytes": 130243
+      },
+      {
+        "name": "black_log.txt",
+        "sizeBytes": 2253
+      }
+    ],
+    "providedByOwner": true
+  },
+  "device": {
+    "package": "org.bocoop.black.probe2",
+    "androidApi": 35,
+    "ownerScreenshotsShow": [
+      "BLACK main menu loaded",
+      "BLACK Probe 2 - READ ONLY and Start capture opt-in dialog"
+    ],
+    "actualSettingsPageVerified": false
+  },
+  "gameLog": {
+    "discXbeSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+    "imageLoaded": true,
+    "captureStarted": true,
+    "exitSeen": false,
+    "noGameWarningBeforeISOImport": true
+  },
+  "capture": {
+    "bytes": 130243,
+    "lines": 401,
+    "headerCount": 1,
+    "endCount": 0,
+    "malformedLines": 0,
+    "scope": "read_only_no_multiplayer",
+    "events": {
+      "player": 131,
+      "lod": 172,
+      "animation": 97
+    },
+    "localPlayerEventCount": 131,
+    "localAnimationEventCount": 13,
+    "epochsObserved": 1,
+    "temporaryCorrelationGroups": 14,
+    "observedThreads": 1,
+    "observedSpanSecondsRoundedDown": 139,
+    "validPosition": {
+      "player": 131,
+      "lod": 172,
+      "animation": 0
+    },
+    "validHealth": {
+      "player": 131,
+      "lod": 0,
+      "animation": 0
+    },
+    "resourceReadSuccess": {
+      "lod": 172
+    },
+    "renderReadSuccess": {
+      "lod": 172
+    },
+    "nonzeroClipField0x18": {
+      "animation": 95
+    },
+    "kindOverlap": {
+      "playerLod": 0,
+      "playerAnimation": 1,
+      "lodAnimation": 13,
+      "allThree": 0,
+      "localPlayerAnimation": 1,
+      "localPlayerLod": 0
+    },
+    "cohortObservation": {
+      "lodGroups": 13,
+      "lodWithPositionFieldVariationGreaterThan0_1UnknownUnits": 13,
+      "lodWithMultipleObservedAnimationLabels": 11,
+      "lodWithChangingUnverifiedClipField0x18": 12,
+      "localPlayerPositionFieldVaried": true
+    },
+    "symbolCardinality": {
+      "lodResourcePointerNonzeroDistinctValues": 4,
+      "lodRenderPointerNonzeroDistinctValues": 1,
+      "animationLabelDistinctValues": 24
+    },
+    "captureEndMissing": true,
+    "actualActorLifecycleProven": false,
+    "fullBodyPlayerModelProven": false,
+    "secondPlayerSpawnProven": false,
+    "rawPointersOrPositionsStoredInBO": false
+  },
+  "interpretation": "Read-only device evidence supports 1 local player correlation and 13 separate LOD+animation correlations in one epoch. LOD resources and motion-like values observed; 0 same-ID player+LOD. Correlation does not prove actor ownership, model, factory, thread exclusivity, or lifetime. clip_hash originates at clip+0x18; semantic identity NOT proven.",
+  "privacy": "Only aggregate numbers, source path and protocol observations are stored here; no raw JSONL, guest pointers, coordinates, animation strings, saves, ISO or XBE are republished."
+}

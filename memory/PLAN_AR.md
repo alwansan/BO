@@ -164,3 +164,11 @@ HOOK001 fairness source e9ad056: host sanitizer + pinned-source [44856368591](ht
 - [ ] First **Probe2 only** Android15 run: check actual MediaStore directory, non-empty `coop_probe.txt`, `black_log.txt`, assess if sampler ends/has records; avoid pushing raw logs to public CL.
 - [ ] Verify native in-game SETTINGS -> CO-OP / ROOM sixth page, scroll and back; design change later if owner wants directly under main/pause SETTINGS button.
 - [ ] Only after real character trace: pursue ACTOR-001 lifecycle proof. No gameplay write/network integration until then.
+
+## جلسة15 — الرصد الحقيقي للـACTOR على جهاز المالك
+- [x] Read CL Probe2 exported JSONL: 400 valid observations (131 player,172 lod,97 animation), one epoch, one observed thread,14 correlations; end absent => partial. Evidence `memory/evidence/DEVICE-probe2-owner-20261121-064812-safe-summary.json`.
+- [x] Verify MediaStore export to `Download/Games/cl/black log/logs` **works on device**; Probe2 capture actually recorded events.
+- [x] Enrich privacy-safe analyzer: player/LOD vs NPC-like LOD/animation groups, resource/render coverage, in-memory anonymous position variance, animation label changes; field at clip+0x18 semantics **unproven**. Privacy [44863742397](https://github.com/alwansan/BO/actions/runs/44863742397) SUCCESS; UDP [44863742412](https://github.com/alwansan/BO/actions/runs/44863742412) SUCCESS. No APK rebuild needed.
+- [ ] ACTOR-001A: prove appearance/disappearance/respawn and model ownership across scene/epoch before factory/clone.
+- [ ] In-game CO-OP/ROOM page still not pictured/confirmed; top-level option immediately below `الإعدادات` not yet built. Review safe UI hook points separately.
+- [ ] ACTOR-001/COMBAT-001/gameplay network remain unimplemented; no guesswork about remote render proxy.

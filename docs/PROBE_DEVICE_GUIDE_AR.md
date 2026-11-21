@@ -83,3 +83,6 @@ does not require rebuilding the already CI-verified Android Probe APK.
 
 ## جلسة13 — جهاز Probe1 وما سنجربه في Probe2
 سجل المالك من CL يثبت أن Probe1 يعمل وبدأ الالتقاط لكن محتويات JSONL غير قابلة للوصول من shell ونسخة CL=0 بايت. لا تطلب إعادة اختبار الـBaseline. يجري تطوير Probe2 package مستقلة org.bocoop.black.probe2 مع تصدير دوري `coop_probe.txt` و`black_log.txt` إلى `/storage/emulated/0/Download/Games/cl/black log/logs/BLACK-Probe-[date]/` بوساطة MediaStore، وإضافة `CO-OP / ROOM` للخيارات داخل اللعبة. فحص المصدر [44860875040](https://github.com/alwansan/BO/actions/runs/44860875040) PASS، Android [44860874976](https://github.com/alwansan/BO/actions/runs/44860874976) pending عند التسجيل. لا تستخدم APK قبل قبول CI. وثيقة docs/ROOM_AND_LOG_EXPORT_AR.md.
+
+## نتيجة الجلسة15
+Probe2 Android15 actual public text export PASS، وعينات400 من player/LOD/animation محفوظة بأرقام فقط في `memory/evidence/DEVICE-probe2-owner-20261121-064812-safe-summary.json`. لا حاجة إلى استيراد ISO أو تكرار Probe2 لمجرد التصدير. القادم دراسة lifecycle/scene عبر read-only وبعدها محاولة avatar proxy بناءً على إثبات، وليس اختبارات baseline. اقرأ docs/ACTOR_DEVICE_TRACE_FINDINGS_AR.md. صفحة CO-OP/ROOM داخل OPTIONS ما زالت غير مؤكدة بالصورة.
