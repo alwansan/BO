@@ -12,3 +12,6 @@
 
 ## مصدر Multiplayer مرجعي إلزامي (جلسة18)
 المالك وجد `https://github.com/Peterson047/BLACK-XBEMultiplayer` (للقراءة فقط)، pin `0ee3ae6411c7f0989c62cbe36b224d3f55043923`. ارجع إلى `docs/REFERENCE_BLACK_XBEMULTIPLAYER_AR.md` و`memory/evidence/REFERENCE-BLACK-XBEMultiplayer-20261121.json` عند دراسة multiplayer/actor/animation/net/ISO/menu. هذا **Windows TDM binary-only** وليس co-op story source؛ كود `Peterson047/BLACK-Coop` المشار إليه بالـREADME أعاد 404. لا LICENSE شامل، و`body.bca` مقيد بترخيص للمود فقط. **لا تنسخ ملفات EXE/DLL أو ملفات الأنيميشن أو الشفرات غير المرخصة**. الاستفادة مسموحة من أفكار البنية وبيانات متطلبات الموارد مع كتابة كود أصلي واختبارات، وكتابة فقط في `experiment/black-coop`.
+
+## توسيع إذن المالك — جلسة28
+المالك أجاز إنشاء فرع تجريبي في alwansan/biso وتعديل نسخة ISO وإعادة تجميعها في Actions عند الحاجة. هذا يستثني الفروع التجريبية الجديدة من قيد قراءة biso فقط؛main يبقى محفوظاً. لا تعدّل الأصل المحلي. لإضافة زرCO-OP الحالي لا حاجة لتعديل ISO؛التنفيذ من APK على صورةc5المطابقة. لا تنشر نسخةISO لمجرد إعادة التجميع دون تعديل مطلوب ومتحقق.

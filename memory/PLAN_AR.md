@@ -301,3 +301,7 @@ APK44876183662SUCCESS؛artifact14696342069 نُزلوفُحصhash. راجع memo
 قُبل سجل المالك الجديد ضمن الرصد:111/111 pool و548/548 links صالحة،لا مشاكل حسب المالك،لا reload proof أوco-op. لا إعادة Probe4. الخطوة الحالية تدقيق تسجيل/إزالة مجسم إضافي ومسارات إصابته؛full factory مع null controller غير آمن. التفاصيل في `memory/sessions/2026-11-21_bo-coop-27-probe4-owner-graph.md`.
 
 قرار جلسة27 بعد المراجعة: رُفض مجسم null-brain المسجل؛1E7753يقرأ324+90دونguard. التاليacquisitionأصليمن1AF880مع324مستقلوفحصdescriptor/questIDsوالسعات. لاAPKجديد.
+
+
+## جلسة28 — طلب المالك وتنفيذ title UI
+اختبارات الهاتف السابقة فردية فقط؛الآخرونNPC. يريد المالك أجسام بشر مستقلين وانتقالهم مع المضيف بينالمراحل. إذن جديد بفرع تجريبيbiso وتعديلISOعندالحاجة،دونmain. CO-OP تحتOptionsنُفذفيprepare_room_ui.py،مباشرةإلىالغرفةمعBackللـtitle؛12preparer+12rootPython+native routePASSومراجعةمستقلةواضحة،NDKوالهاتفلميثبتابعد. HOST/JOINغيرمتاحينولاجسملاعبثانبعد. راجع`memory/sessions/2026-11-21_bo-coop-28-title-room-ui.md`.

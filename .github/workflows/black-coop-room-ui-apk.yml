@@ -1,0 +1,259 @@
+name: BO-COOP title room UI Android APK
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths: ['.github/workflows/black-coop-room-ui-apk.yml', 'coop/prepare_room_ui.py', 'coop/room_ui_prepare_checks.py', 'coop/room_ui/**']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: black-coop-room-ui-apk
+  cancel-in-progress: false
+jobs:
+  observer-core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Strict sanitizer tests of actual graph and observer code
+        env:
+          ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+          UBSAN_OPTIONS: halt_on_error=1
+        run: |
+          set -euo pipefail
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -fsanitize=address,undefined coop/room_ui/test_route.cpp -o /tmp/test_room_route
+          /tmp/test_room_route
+          for test in test_instance test_observer; do
+            g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -fno-omit-frame-pointer -fsanitize=address,undefined -pthread "coop/probe4/$test.cpp" -o "/tmp/$test"
+            "/tmp/$test" > "/tmp/$test.out"
+          done
+          python3 -c 'import json; r=[json.loads(x) for x in open("/tmp/test_observer.out")]; assert len(r)==3 and len(r[0]["instances"])==1 and len(r[2]["instances"])==2'
+          python3 -m unittest discover -s coop/analysis -p test_pool_capture.py -v
+  candidate-probe:
+    needs: observer-core
+    runs-on: windows-2025
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: bo
+          sparse-checkout: |
+            /coop/
+            /BLACK_FILE_MANIFEST.json
+            /BLACK-Arabic_src/assets/bundle/game.iso/
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - uses: actions/checkout@v4
+        with:
+          repository: RanggaCasper/Black-Android
+          ref: f3754d6985a8c35204e7df071546e586b10f1806
+          path: reference
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: TGP482/XboxXBE-Recomp
+          ref: 99078b119b5d5e0d1d6afb1390e29437c0c984c0
+          path: reference/sdk
+          persist-credentials: false
+      - name: Restore licensed owner input in runner only
+        shell: python
+        run: |
+          import hashlib, json, os, pathlib, subprocess, sys
+          root = pathlib.Path('bo').resolve()
+          sys.path.insert(0, str(root / 'coop'))
+          from source_audit import restore, xbe_from_iso, ISO
+          records = json.loads((root / 'BLACK_FILE_MANIFEST.json').read_text())['files']
+          rec = next(r for r in records if r['path'] == ISO)
+          iso = pathlib.Path(os.environ['RUNNER_TEMP']) / 'owner-disc.iso'
+          restore(root, rec, iso)
+          identity = xbe_from_iso(iso)
+          if identity['sha1'] != 'c5bfed25449c8212d7a976f15246e87ead57713f':
+              raise SystemExit('Unexpected candidate identity; inspect before continuing')
+          xbe = pathlib.Path('reference/assets/default.xbe')
+          xbe.parent.mkdir(exist_ok=True)
+          subprocess.run([sys.executable, 'reference/tools/xdvdfs.py', str(iso), 'default.xbe', str(xbe)], check=True)
+          if hashlib.sha1(xbe.read_bytes()).hexdigest() != identity['sha1']:
+              raise SystemExit('Extractor disagreement')
+          report = {'scope': 'isolated candidate baseline; rebuilt phone runtime and co-op untested',
+                    'candidate': identity,
+                    'reference': 'f3754d6985a8c35204e7df071546e586b10f1806',
+                    'sdk': '99078b119b5d5e0d1d6afb1390e29437c0c984c0',
+                    'existing_compile_image_sha1': '82d0588124e70102ee650f8969c0a56374476234',
+                    'matches_existing_compile_image': False,
+                    'runtime_compatible': None, 'apk_built': False}
+          (pathlib.Path(os.environ['RUNNER_TEMP']) / 'candidate-identity.json').write_text(json.dumps(report, indent=2))
+          iso.unlink()
+      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Build pinned analysis tools only
+        shell: pwsh
+        run: |
+          $compiler = Join-Path $env:VCINSTALLDIR 'Tools/Llvm/x64/bin/clang-cl.exe'
+          if (-not (Test-Path $compiler)) { throw 'Visual Studio bundled clang-cl missing' }
+          & $compiler --version
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cmake -S reference/tools -B tools-build -G Ninja -DCMAKE_BUILD_TYPE=Release "-DCMAKE_C_COMPILER=$compiler" "-DCMAKE_CXX_COMPILER=$compiler"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cmake --build tools-build --config Release --parallel 2
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Unit tests and prepare isolated app packaging
+        shell: python
+        run: |
+          import json, os, pathlib, subprocess, sys
+          subprocess.run([sys.executable, '-m', 'unittest', 'discover', '-s', 'bo/coop', '-p', 'test_*.py', '-v'], check=True)
+          sys.path.insert(0, str(pathlib.Path('bo/coop').resolve()))
+          from prepare_room_ui import prepare, PACKAGE
+          os.environ['BO_UPSTREAM_REFERENCE'] = str(pathlib.Path('reference').resolve())
+          subprocess.run([sys.executable, '-m', 'unittest', 'discover', '-s', 'bo/coop', '-p', '*prepare_checks.py', '-v'], check=True)
+          changed = prepare(pathlib.Path('reference'))
+          # Probe hooks are read-only and must be the only original game-code diffs.
+          actual=set(subprocess.check_output(['git','-C','reference','diff','--name-only','--','src','native','config','CMakeLists.txt'],text=True).splitlines())
+          if actual != {'src/game/cheats.cpp','src/game/hooks.cpp','src/game/options_menu.cpp','src/game/exit_menu.cpp'}:
+              raise SystemExit('Native/gameplay change outside the observer and title/room UI allowlist: '+str(actual))
+          additions={p.name for p in pathlib.Path('reference/src/coop').iterdir()}
+          if additions != {'probe.cpp','probe.h','probe_core.hpp','pool_snapshot.hpp','pool_observer.inc','instance_graph.hpp','room_ui.h','room_route.hpp'}:
+              raise SystemExit('Missing or unexpected probe source files: '+str(additions))
+          if not pathlib.Path('reference/app/src/main/java/com/racas/black/ProbeLogExporter.java').is_file():
+              raise SystemExit('Missing scoped-storage diagnostics exporter')
+          p = pathlib.Path(os.environ['RUNNER_TEMP']) / 'candidate-identity.json'
+          report = json.loads(p.read_text())
+          report.update(package=PACKAGE, changed_packaging=changed, observer_hook_source_allowlist_verified=True, read_only_room_menu=True, top_level_coop_entry=True, direct_room_route=True, iso_modified=False,
+                        shared_download_export=True, guest_memory_writes_added=False, probe_off_by_default=True,
+                        pool_snapshot_max_kernel_copies=300, pool_snapshot_max_hz=1, reset_hook_successful_AL1_only=True, instance_graph_max_npc_per_sample=4, instance_graph_local_sample=True)
+          p.write_text(json.dumps(report, indent=2))
+      - name: Regenerate candidate guest code in runner only
+        shell: python
+        run: |
+          import json, os, pathlib, subprocess
+          temp = pathlib.Path(os.environ['RUNNER_TEMP'])
+          with (temp / 'baseline-recompiler-private.log').open('w') as log:
+              result = subprocess.run(['tools-build/xbe_recomp.exe', 'reference/config/game.toml', '--xdk', 'reference/sdk/xdk'], stdout=log, stderr=log)
+          if result.returncode:
+              print('\n'.join((temp / 'baseline-recompiler-private.log').read_text(errors='replace').splitlines()[-20:]))
+              raise SystemExit(result.returncode)
+          stats = pathlib.Path('reference/generated/game/x86_recomp_stats.txt').read_text()
+          print(stats)
+          p = temp / 'candidate-identity.json'
+          report = json.loads(p.read_text())
+          report['recompiler_statistics'] = stats
+          p.write_text(json.dumps(report, indent=2))
+      - name: Verify generated original LOD and pool-reset definitions (fail closed)
+        shell: python
+        run: |
+          import pathlib, re, sys
+          sys.path.insert(0,str(pathlib.Path('bo/coop').resolve()))
+          from verify_probe3_reset import verify_body
+          files=list(pathlib.Path('reference/generated/game').glob('*.cpp'))
+          for symbol in ('001C55A0','001D5E00'):
+              pattern=re.compile(r'X86_FUNC\(__imp__sub_'+symbol+r'\)\s*\{(.*?)^\}',re.M|re.S)
+              matches=[]
+              for path in files:
+                  matches.extend(pattern.findall(path.read_text(encoding='utf-8',errors='replace')))
+              if len(matches)!=1 or 'x86_trap(' in matches[0]:
+                  raise SystemExit('Refuse missing/duplicate/trapping original definition '+symbol)
+              if symbol=='001D5E00':
+                  verify_body(matches[0])
+              print('PASS one nontrapping original definition',symbol)
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Install pinned Android build tools
+        shell: pwsh
+        run: |
+          & "$env:ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager.bat" --install "platforms;android-34" "build-tools;34.0.0" "ndk;28.2.13676358" "cmake;3.31.6"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Compile isolated Android baseline with bounded parallelism
+        working-directory: reference
+        shell: pwsh
+        env:
+          CMAKE_BUILD_PARALLEL_LEVEL: 2
+        run: |
+          .\gradlew.bat assembleDebug --no-daemon --max-workers=2 "-Dorg.gradle.jvmargs=-Xmx2g" "-PversionName=1.5.0-roomui" "-PversionCode=1"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Verify read-only probe package, JNI, signature, ABI and compile image
+        shell: python
+        run: |
+          import hashlib, json, os, pathlib, shutil, subprocess, sys, zipfile
+          sys.path.insert(0, str(pathlib.Path('bo/coop').resolve()))
+          from source_audit import elf_identity
+          temp = pathlib.Path(os.environ['RUNNER_TEMP'])
+          apk = pathlib.Path('reference/app/build/outputs/apk/debug/app-debug.apk').resolve()
+          bt = pathlib.Path(os.environ['ANDROID_HOME']) / 'build-tools/34.0.0'
+          badging = subprocess.check_output([str(bt / 'aapt.exe'), 'dump', 'badging', str(apk)], text=True)
+          if "package: name='org.bocoop.black.roomui'" not in badging:
+              raise SystemExit('Package isolation failed')
+          if "launchable-activity: name='com.racas.black.BlackActivity'" not in badging:
+              raise SystemExit('Activity/JNI namespace mismatch')
+          if any("uses-permission: name='android.permission." + permission + "'" in badging for permission in ('MANAGE_EXTERNAL_STORAGE', 'READ_EXTERNAL_STORAGE', 'WRITE_EXTERNAL_STORAGE')):
+              raise SystemExit('Broad storage permission leaked into probe APK')
+          if any("uses-permission: name='android.permission." + p + "'" in badging for p in ('INTERNET','ACCESS_NETWORK_STATE')):
+              raise SystemExit('Read-only probe must not request network permissions')
+          if "BLACK Co-op UI TEST" not in badging:
+              raise SystemExit('Incorrect visible probe app label')
+          signature = subprocess.check_output([str(bt / 'apksigner.bat'), 'verify', '--verbose', '--print-certs', str(apk)], text=True)
+          if 'CN=Android Debug' not in signature:
+              raise SystemExit('Expected separate debug test signature')
+          with zipfile.ZipFile(apk) as z:
+              names = z.namelist()
+              if any(n.lower().endswith(('.iso', '.xbe', '.enc', '.cpp')) for n in names):
+                  raise SystemExit('Unexpected original/derived game file in APK')
+              abis = {n.split('/')[1] for n in names if n.startswith('lib/') and n.endswith('.so')}
+              if abis != {'arm64-v8a'}:
+                  raise SystemExit('Expected ARM64 only')
+              lib = temp / 'probe-main-private.so'
+              lib.write_bytes(z.read('lib/arm64-v8a/libmain.so'))
+          ndk = pathlib.Path(os.environ['ANDROID_HOME']) / 'ndk/28.2.13676358/toolchains/llvm/prebuilt/windows-x86_64/bin/llvm-readelf.exe'
+          identity = elf_identity(lib, 'c5bfed25449c8212d7a976f15246e87ead57713f', readelf=ndk)
+          if not identity['symbol_matches_disc']:
+              raise SystemExit('Compiled image is not the exact candidate XBE')
+          report_path = temp / 'candidate-identity.json'
+          report = json.loads(report_path.read_text())
+          symbol_dump = subprocess.check_output([str(ndk),'-Ws',str(lib)],text=True)
+          if 'Java_com_racas_black_BlackActivity_nativeCoopProbeEnable' not in symbol_dump:
+              raise SystemExit('Optional JNI entry not exported in Android ELF')
+          report.update(probe_jni_export_verified=True, package_label='BLACK Co-op UI TEST',
+                        no_network_permission=True, apk_built=True, apk_sha256=hashlib.sha256(apk.read_bytes()).hexdigest(),
+                        apk_bytes=apk.stat().st_size, native=identity, debug_signature_verified=True,
+                        package_and_activity_verified=True, no_original_assets_in_apk=True,
+                        device_tested=False, multiplayer=False, probe_device_tested=False, baseline_owner_test_already_accepted=True)
+          report_path.write_text(json.dumps(report, indent=2))
+          artifact = temp / 'probe-verified-output'
+          artifact.mkdir()
+          shutil.copy2(apk, artifact / 'black-room-ui-NO-GAMEPLAY-COOP.apk')
+          shutil.copy2(report_path, artifact / 'probe-metadata.json')
+          notices = ['TITLE/ROOM UI TEST ONLY. Host/join remain unavailable. No playable co-op. APK untested on phone; original ISO unchanged.\n',
+                     'Game image/assets are not included and are not licensed by the open source MIT notices.\n']
+          for source in ('reference/LICENSE', 'reference/sdk/LICENSE'):
+              p = pathlib.Path(source)
+              if not p.exists():
+                  raise SystemExit('Missing required source license')
+              notices.append('\n' + source + '\n' + p.read_text())
+          for p in pathlib.Path('reference').rglob('*'):
+              if p.is_file() and p.name.lower() in ('license', 'license.txt', 'license.md', 'copying'):
+                  if '.git' not in p.parts and p.stat().st_size < 128*1024:
+                      notices.append('\n' + str(p) + '\n' + p.read_text(errors='replace'))
+          (artifact / 'NOTICES.txt').write_text('\n'.join(notices), encoding='utf-8')
+          print(json.dumps(report, indent=2))
+      - uses: actions/upload-artifact@v4
+        with:
+          name: black-room-ui-android-arm64-NO-GAMEPLAY-COOP
+          path: ${{ runner.temp }}/probe-verified-output/
+          if-no-files-found: error
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        with:
+          name: black-room-ui-build-metadata
+          path: ${{ runner.temp }}/candidate-identity.json
+          if-no-files-found: warn
+      - name: Remove temporary game derivatives
+        if: always()
+        shell: pwsh
+        run: |
+          Remove-Item reference/assets/default.xbe -Force -ErrorAction SilentlyContinue
+          Remove-Item reference/generated -Recurse -Force -ErrorAction SilentlyContinue
+          Remove-Item "$env:RUNNER_TEMP/owner-disc.iso" -Force -ErrorAction SilentlyContinue
+          Remove-Item "$env:RUNNER_TEMP/probe-main-private.so" -Force -ErrorAction SilentlyContinue

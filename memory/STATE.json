@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-27-probe4-owner-graph.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-28-title-room-ui.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -556,11 +556,11 @@
       "sampleSize": 130243
     },
     "COOP_ROOM_MENU": {
-      "status": "Native in-OPTIONS page compiled but NOT visually confirmed on owner Android; main menu screenshots only; original requested separate item below Settings remains open",
+      "status": "TOP_LEVEL_COOP_IMPLEMENTED_SOURCE_TESTED_AWAITING_NDK_AND_PHONE",
       "run": 44860874976,
-      "package": "org.bocoop.black.probe2",
+      "package": "org.bocoop.black.roomui",
       "hostJoinEnabled": false,
-      "topLevelUnderSettings": "NOT_IMPLEMENTED_YET",
+      "topLevelUnderSettings": "IMPLEMENTED_NOT_DEVICE_VERIFIED",
       "topLevelFeasibility": "Pinned source exit_menu.cpp already clones a Quit button below Options",
       "design": "docs/ROOM_TOP_LEVEL_FEASIBILITY_AR.md"
     },
@@ -612,15 +612,15 @@
     "deviceAccepted": true,
     "gameplayCoop": false
   },
-  "next": "Trace native acquisition 1AF880/controller freelist and independent quest/descriptor ownership before isolated factory-created body. Registered null-brain proxy rejected due unguarded target324 damage dereference.",
+  "next": "Build and inspect title room UI APK in Actions, then native independent controller acquisition and real gameplay integration; no passive Probe4 retest.",
   "latestHandoff": {
     "date": "2026-11-21",
-    "session": 27,
-    "kind": "owner_capture_analysis_and_static_lifecycle_audit",
+    "session": 28,
+    "kind": "title_room_ui_implementation",
     "newApk": false,
-    "newCI": false,
+    "newCI": true,
     "actorPoolEvidence": "memory/sessions/2026-11-21_bo-coop-19-cloud-handoff.md",
-    "next": "Trace native acquisition 1AF880/controller freelist and independent quest/descriptor ownership before isolated factory-created body. Registered null-brain proxy rejected due unguarded target324 damage dereference.",
+    "next": "Build and inspect title room UI APK in Actions, then native independent controller acquisition and real gameplay integration; no passive Probe4 retest.",
     "cloudFilesRequiredFromOwner": false,
     "actorPoolContracts": "docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md",
     "fullOwnerObjective": "docs/OWNER_PROJECT_OBJECTIVE_AR.md",
@@ -628,5 +628,14 @@
     "poolReader": "coop/probe3/pool_snapshot.hpp",
     "poolReaderStatus": "OWNER_PROBE3_AND_PROBE4_CAPTURE_ACCEPTED"
   },
-  "executionStatus": "probe4_accepted_native_actor_controller_acquisition_audit"
+  "executionStatus": "title_room_ui_source_verified_android_ci_pending",
+  "ownerClarifications": {
+    "session": 28,
+    "previousPhoneTests": "solo local human plus enemy/friendly NPCs only; never two phones",
+    "realHumans": "each needs independent full body; host also visible to peers",
+    "campaign": "host selects missions; connected humans follow mission transitions",
+    "npcPolicy": "preserve existing NPC behavior; multiplayer targeting is an explicit verification/integration task",
+    "bisoAuthorization": "new experimental branch and ISO content changes/repack via Actions when necessary; main unchanged",
+    "sharedChat": "fetch failed; content not read"
+  }
 }
