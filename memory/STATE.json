@@ -727,6 +727,36 @@
       "newMissionBarrier": true,
       "realBlackRemoteActor": false,
       "actualSharedStory": false
+    },
+    "STORY_TLS_V3_JVM": {
+      "status": "PASS_REAL_LOCALHOST_TLS_TRANSPORT_ONLY",
+      "run": 44952822531,
+      "job": 136994339300,
+      "result": "STORY_WIRE_PASS + STORY_TLS_PASS",
+      "mission0AndStage0": true,
+      "rosterGenerationRejoinTested": true,
+      "preparedReadyCommittedOverTls": true,
+      "storySecondMissionAfterAbort": true,
+      "actorSpawned": false,
+      "sharedStageLoaded": false,
+      "phoneTested": false
+    },
+    "STORY_TLS_V3_ANDROID_EMULATOR": {
+      "status": "PASS_ANDROID29_CONSCRYPT_KEYSTORE_SOCKET_STORY_ONLY",
+      "run": 44952822499,
+      "job": 136994356268,
+      "result": "TLS_PLATFORM_PASS; host PREPARE, guest simulated READY, host COMMIT over real Android29 TLS; no BLACK scene loader",
+      "gameplayCoop": false,
+      "phoneTested": false
+    },
+    "STORY_REHOST_MITIGATION": {
+      "status": "SOURCE_CHANGE_LATEST_CI_IN_PROGRESS",
+      "tcpListenerReuseAddress": true,
+      "sourceCommit": "c42508a15b0ef80a8370433d13d6823e066a865b",
+      "jvmTest": 44953055433,
+      "androidTest": 44953055469,
+      "ownerPhoneTested": false,
+      "rootCauseProven": false
     }
   },
   "pending": {
@@ -862,6 +892,29 @@
       "androidRuntimeVerified": false,
       "diagnostic": "Android Conscrypt requested EC certificate while previous X509KeyManager was RSA-only. New EC P-256 non-exportable KeyStore identity tested in next run.",
       "noCredentialsLogged": true
+    },
+    "WIRE_001": {
+      "status": "PASS_TLS_FRAMES_ONLY_ENGINE_NOT_INTEGRATED",
+      "version": 3,
+      "profile": 3,
+      "ciJVM": 44952822531,
+      "ciAndroid29": 44952822499,
+      "source": "coop/lobby/java/com/racas/black/coop/RoomStoryWire.java + RoomTls.java",
+      "engineCallback": false
+    },
+    "ENGINE_001": {
+      "status": "OPEN_PINNED_MISSION_ENTRY_CANDIDATE_ONLY",
+      "candidateXbeAddress": "0x00124CF0",
+      "source": "docs/BLACK_STORY_ENTRY_AUDIT_AR.md",
+      "missionZeroBased": true,
+      "stageMappingUnproven": true,
+      "actualGameStart": false
+    },
+    "BODY_001": {
+      "status": "OPEN_REMOTE_ALLY_HUMAN_VISUAL_UNIMPLEMENTED",
+      "sourceContract": "coop/bridge/remote_ally_roster.hpp",
+      "readOnlyFullBodyAllyTemplateCandidates": 10,
+      "renderedOnPhone": false
     }
   },
   "apk": {
@@ -877,18 +930,28 @@
     "deviceTested": true,
     "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "Actual TLS host mission PREPARE/READY/COMMIT messages, game-thread host-authoritative real mission load and READY, independently-owned human-controlled remote ally body and input/world sync. No fake separate solo starts, no new ISO request.",
+  "next": "Audit and hook actual BLACK game-thread mission-select/load/ready (pinned candidate sub_00124CF0) to RoomSession/RoomTls story prepare and readiness, without single-player side effects. Then implement separately-owned remote full-body ally visual for OTHER humans, with real pose/input/world/AI/quest sync. Verify v3 on two phones with new candidate after actual engine milestone; do not repeat primary model probe or request ISO.",
   "latestHandoff": {
     "date": "2026-11-22",
     "session": 38,
-    "kind": "new_owner_primary_model_capture_and_remote_ally_visual_override",
+    "kind": "owner_capture_remote_ally_view_real_tls_host_mission_control_source_verified",
     "plan": "docs/superpowers/plans/2026-11-22-host-story-remote-ally.md",
     "sourceCiRun": 44951425780,
     "latestVerifiedAndroidBuild": 44946597973,
     "artifact": 14724535514,
-    "sourceOnlyNoNewApk": true
+    "sourceOnlyNoNewApk": true,
+    "storyProtocol": "docs/ROOM_STORY_TLS_PROTOCOL_AR.md",
+    "storyJVMRun": 44952822531,
+    "storyAndroid29Run": 44952822499,
+    "storyTransportTestsPass": true,
+    "actualSceneLoaded": false,
+    "actualSharedStory": false,
+    "latestOwnerVerifiedApkRun": 44946597973,
+    "latestOwnerVerifiedArtifact": 14724535514,
+    "noNewAcceptedAndroidGameApk": true,
+    "latestRehostTestAttempt": 44953055433
   },
-  "executionStatus": "owner_defaultplayer_model_capture_verified_primary_arms_only; source_ally_and_host_barrier_ci_PASS; TLS_story/BLACK_mission_loader/remote_render/world_sync_OPEN",
+  "executionStatus": "Session38: owner primary-local-model capture verified; remote human AllyBody visual C++ contract PASS; real TLS v3 host story PREPARE/READY/COMMIT/ABORT JVM and Android29 PASS; actual BLACK scene loader/remote body/world sync OPEN; rapid rehost mitigation awaiting latest CI",
   "ownerClarifications": {
     "session": 28,
     "previousPhoneTests": "Solo gameplay and two-phone real LAN lobby now confirmed, but no two-phone SAME WORLD gameplay",
@@ -901,8 +964,8 @@
   "integrationRoadmap": "docs/COOP_INTEGRATION_ROADMAP_AR.md",
   "currentWork": {
     "session": 38,
-    "task": "host-owned shared mission and remote full-body ally visual for OTHER human peers",
-    "status": "new owner primary-model phone evidence parsed, source-only contract CI PASS; no actual game actor or TLS story",
+    "task": "connect proven transport-only host-selected story handshake to real game-thread scene entry and human ally remote avatars",
+    "status": "STORY TLS v3 JVM+Android29 PASS, remote human AllyBody value-only source PASS; engine/story/renderer unimplemented",
     "sourceCi": 44951425780,
     "sourceCode": "9938283748ad1bdb06f15259d7e4fcb791a47574",
     "latestOwnerTestedAndroidApkRun": 44946597973,
@@ -911,7 +974,18 @@
     "androidSharedGameplayVerified": false,
     "remoteBodyRenderedOnPhone": false,
     "ownerPrimaryModelCaptureAvailable": true,
-    "imagePixelsInspected": false
+    "imagePixelsInspected": false,
+    "storyWireVersion": 3,
+    "storyProfile": 3,
+    "storyJVMRun": 44952822531,
+    "android29StoryRun": 44952822499,
+    "sourcePreflightRun": 44952822545,
+    "rapidRehostCITest": 44953055433,
+    "rapidRehostTestStatus": "in_progress_at_record",
+    "latestOwnerTestedApkRun": 44946597973,
+    "actualSharedStory": false,
+    "gameActorSpawned": false,
+    "phoneV3Tested": false
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
@@ -989,8 +1063,8 @@
     "reason": "owner temporarily continues in another cloud session",
     "guide": "docs/CLOUD_HANDOFF_AR.md",
     "allRequiredSourceToolsCommitted": true,
-    "latestCode": "9938283748ad1bdb06f15259d7e4fcb791a47574",
+    "latestCode": "c7a636ead9334605aab823c35c4a5383cf688e0a",
     "phoneCaptureReceivedAfterLatestRequest": true,
-    "next": "Continue Session38 remote ally and host story, no model capture rerun."
+    "next": "Check newest CIs including rapid TCP rehost source regression, then audit actual BLACK mission scene event hooks and remote ally rig lifetimes. No ISO, no false gameplay Start."
   }
 }
