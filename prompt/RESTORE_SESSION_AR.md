@@ -1,3 +1,8 @@
+## LATEST Session40 Android29 pass + consolidated log test — 2026-11-22
+Owner wants GH Actions first, NO small phone tests. Corrected Android29 cold PackageManager script with `bash -n` early gate: **run44956919973 SUCCESS** read job log `BO_TLS_ANDROID_PACKAGE_INSTALL_PASS`, `TLS_PLATFORM_PASS`. Follow-on code `b21e0e01` tests safe rotated + current room log combined MediaStore export and rejection of untrusted lines on Android29, run **44957104337 check live**. JVM TLS44957104351 SUCCESS; source preflight44957104363 SUCCESS; UDP44957104323 SUCCESS. Room-only APK44957104347 check live; NO actual shared BLACK game stage or remote human AllyBody yet. Main active session memory/sessions/2026-11-22_bo-coop-40-ci-first-story-audit-automatic-evidence.md. Read MAJOR_DEVICE_TEST_GATE_AR and owner XBE static report; only write experiment/black-coop.
+
+---
+
 ## Session40 second Android29 CI fix — 2026-11-22
 First bounded pm retry commit449cc1d7 produced Android29 run44956739205 FAILURE **before instrumentation**, due to Bash string-replacement corruption: `unexpected EOF while looking for matching quote`. Reconstructed script tail correctly in code commit `5dd84a4a70a4c078b543fd1a6353be7c6b592a96`, confirmed source contains entire bounded PackageManager preflight/retry and instrumentation steps, no duplicate/corrupt tail. Commit `c8c734bcba402a996157f6040b6d4ecde890901e` adds `bash -n` fail-fast before SDK/emulator. New Android29 run **44956919973** CHECK LIVE, not yet declared PASS. JVM44956904362 SUCCESS, preflight44956904317 SUCCESS, UDP44956904308 SUCCESS; Android room-only APK44956904350 in progress. Owner phone trial NOT needed. Continue actual engine-scene/remote human co-op, not tests of minor device buttons. See Session40 and major device gate.
 
