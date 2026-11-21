@@ -222,3 +222,7 @@ pool32 ثابت وserial مرشح لا يثبتان active lifetime أو remote 
 
 ### Probe3 core CI مغلق
 44872596855 SUCCESS لكلاjob،logs مقروءة؛الدليل memory/evidence/PROBE3-core-44872596855.json. APK44872596889 لايزالجارياً؛تابعهقبلأيطلبهاتف،ثم docs/PROBE3_DEVICE_TEST_AR.md.
+
+
+## جلسة22 — generatedguardfalsepositive
+APK44872596889FAILقبلGradle؛توقعاتصيغةea/castsفيالفاحصصححتوفقSDK،Python12/preparers6PASSومراجعةPASS. اقرأ memory/sessions/2026-11-21_bo-coop-22-reset-guard-format.md وتابعالبناءالجديد. لاAPKجديدةجاهزةبعد.

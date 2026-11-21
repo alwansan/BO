@@ -1,3 +1,6 @@
+# أحدث نتيجة — جلسة22
+APK44872596889 **FAILED قبلGradle**: فاحصنا كانيتوقعinlineaddress،لكنSDKالمثبتينشئeaثمstore. أصلحverify_probe3_reset.py والfixture،واختباراتسالبة/مراجعةPASS. اقرأmemory/sessions/2026-11-21_bo-coop-22-reset-guard-format.md. يجبمتابعةrunجديدعلىcommitالإصلاح؛لاrerunللقديم. Core44872596855SUCCESS؛لاAPKProbe3موثوقبعد. لاطلبهاتفحتىنجاحالبناء.
+
 **تحديث النتائج:** core44872596855SUCCESS بكلاjob وقرئتlogs؛APK44872596889لايزالجارياً. بروتوكولاختبارالهاتفdocs/PROBE3_DEVICE_TEST_AR.md؛لايُطلبقبلنجاحAPK.
 
 **Actions قيد المتابعة:** APK44872596889 وcore44872596855،source96b9c8366a80dd321be47857dc67f1000213fe7f. تحقّقمنحالتهمانفسهماأولاً؛لمتثبتنتيجةAPKبعد.
