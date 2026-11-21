@@ -1,0 +1,81 @@
+name: BO-COOP read-only CL two-phone room evidence triage
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/analysis/room_event_triage.py'
+      - 'coop/analysis/test_room_event_triage.py'
+      - '.github/workflows/black-coop-cl-room-evidence.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: black-coop-cl-room-evidence
+  cancel-in-progress: true
+jobs:
+  synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Verify strict privacy and historical CL event triage
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s coop/analysis -p test_room_event_triage.py -v
+          echo 'BO_CL_ROOM_TRIAGE_SYNTHETIC_PASS'
+  owner-evidence:
+    needs: synthetic
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: bo
+          sparse-checkout: |
+            /coop/analysis/room_event_triage.py
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - uses: actions/checkout@v4
+        with:
+          repository: alwansan/CL
+          ref: main
+          path: cl
+          persist-credentials: false
+          sparse-checkout: |
+            /black log/logs/
+            /black log/من الهاتف الثاني/
+          sparse-checkout-cone-mode: false
+          filter: blob:none
+          lfs: false
+      - name: Analyze owner-provided room event codes without emitting raw logs
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          set -euo pipefail
+          python3 bo/coop/analysis/room_event_triage.py \
+            --first 'cl/black log/logs' \
+            --second 'cl/black log/من الهاتف الثاني' \
+            --report "$RUNNER_TEMP/bo-cl-room-safe-summary.json"
+          python3 - <<'PY'
+          import json,os,pathlib
+          p=pathlib.Path(os.environ['RUNNER_TEMP'])/'bo-cl-room-safe-summary.json'
+          x=json.loads(p.read_text())
+          assert x['schema']=='BO-COOP-two-device-room-log-triage-v1'
+          assert not x['shared_black_world_proven']
+          print('BO_CL_ROOM_OWNER_AGGREGATE_PASS: no assets, names, IPs, PINs, timestamps or raw log lines emitted')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bo-cl-room-safe-summary-only
+          path: ${{ runner.temp }}/bo-cl-room-safe-summary.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Remove owner logs and temporary summary
+        if: always()
+        run: |
+          rm -rf cl
+          rm -f "$RUNNER_TEMP/bo-cl-room-safe-summary.json"
