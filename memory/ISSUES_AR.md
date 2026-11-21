@@ -1,3 +1,9 @@
+## Session42 actual CI status — 2026-11-22
+Closed for synthetic CI: async room diagnostics first Android failure44960759104 was a pre-flush test assumption; second44960934419 was process logger name accidentally matching bo-room network thread leak prefix. Both corrected without relaxing network teardown assertions. Android29 latest44961110132 **SUCCESS** with ROOM_LOG_ASYNC_PASS, TLS_PLATFORM_PASS, STORY_READY_ASYNC_ANDROID_PASS, ROOM_LOG_ROTATION_PASS; source44961110163 PASS. No physical device test warranted.
+Unresolved: world global 0x2D45D4 sites 0020BF48 and 0020BF51 are x86 static register-source write candidates, NOT proven scene-loaded callbacks. Original game mission/stage identity, verified game-thread hook, real remote ALLY body model ownership/renderer, input/world/AI/quest/combat replication still absent. Report docs/BLACK_WORLD_POINTER_XREF_AUDIT_AR.md, Session42.
+
+---
+
 ## Session42 residual engine and diagnostics blockers — 2026-11-22
 - RESOLVED for synthetic host/guest TLS: synchronous guest READY write on future BLACK game thread replaced with capacity-one async writer and stale ticket checks. JVM44960452007/Android29 44960451936 SUCCESS. No actual BLACK scene callback yet.
 - CI issue: Android29 44960759104 FAILED because instrumentation asserted files before asynchronous writer export barrier. Fixed 0de18eb19. Android29 44960934419 FAILED because persistent diagnostic thread named bo-room-safe-log-io collided with bo-room-* network worker leak assertion; renamed to bo-diagnostic-io 367052097. Check fresh run44961110132. Not a gameplay failure or request for phone trial.
