@@ -43,6 +43,17 @@
       "androidSha256": "0ca758a2ae4ac13a322cfa5106ff49ab58f753cb5758d43e7d9a296a2ccbe100",
       "evidence": "memory/evidence/NET-003-cpp-android-44834027711.json",
       "scope": "Linux UDP real loopback and Android ARM64 cross compilation only"
+    },
+    "SRC_002B_STATIC": {
+      "status": "pass_static_translation_only",
+      "run": 44840960136,
+      "job": 136648896882,
+      "code": "dd5261a28db3443a6bacbccc7e8fdd1114e818a2",
+      "artifact": 14680518020,
+      "functions": 15042,
+      "instructions": 798292,
+      "containsUnimplementedInstructions": true,
+      "evidence": "memory/evidence/SRC-002b-static-44840960136.json"
     }
   },
   "pending": {
@@ -57,12 +68,12 @@
     "SRC_002": "Exact original XBE unavailable per owner; candidate static analysis pending, no engine build authorized by evidence",
     "NET_004": "Phone/ZeroTier runtime and authenticated production protocol untested",
     "SRC_002B": {
-      "status": "toolchain_failure_before_analysis; explicit VS bundled compiler selected for next run",
+      "status": "static_translation_pass; independent symbols/ABI/host-target audit prepared",
       "candidateSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
       "scope": "Read-only analysis of supplied owner image; no baseline acceptance, no APK",
       "firstRun": 44840599544
     }
   },
   "apk": null,
-  "next": "Inspect candidate static CI; investigate semantic compatibility without bypassing image checks. Owner does not possess original XBE or Arabic source."
+  "next": "Inspect independent candidate symbol/ABI scan and host trap report; no runtime or engine baseline accepted."
 }

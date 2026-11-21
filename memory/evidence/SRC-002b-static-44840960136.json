@@ -1,0 +1,22 @@
+{
+  "scope": "static recompiler probe only; no engine build or gameplay",
+  "candidate": {
+    "bytes": 2813952,
+    "sha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+    "sha256": "df2739c372d254a90aeeccf5971d12097f22d89fbb90db021fda96dd4deb68f6",
+    "partition_offset": 0
+  },
+  "reference": "f3754d6985a8c35204e7df071546e586b10f1806",
+  "sdk": "99078b119b5d5e0d1d6afb1390e29437c0c984c0",
+  "existing_compile_image_sha1": "82d0588124e70102ee650f8969c0a56374476234",
+  "matches_existing_compile_image": false,
+  "runtime_compatible": null,
+  "apk_built": false,
+  "recompiler_exit_code": 0,
+  "recompiler_statistics": "functions 15042\ninstructions 798292\nunimplemented aaa 15\nunimplemented aad 12\nunimplemented aam 18\nunimplemented aas 127\nunimplemented arpl 15\nunimplemented bound 27\nunimplemented daa 18\nunimplemented das 5\nunimplemented enter 13\nunimplemented fbstp 1\nunimplemented ffreep 1\nunimplemented insb 11\nunimplemented insd 11\nunimplemented int1 10\nunimplemented into 23\nunimplemented iretd 35\nunimplemented lar 1\nunimplemented lds 22\nunimplemented les 94\nunimplemented lfs 1\nunimplemented lldt 2\nunimplemented lss 1\nunimplemented outsb 12\nunimplemented outsd 7\nunimplemented salc 6\nunimplemented sldt 2\nunimplemented str 1\nunimplemented verr 1\n",
+  "interpretation": "Successful static translation is not semantic compatibility, a baseline engine build, or multiplayer acceptance.",
+  "run": 44840960136,
+  "job": 136648896882,
+  "code": "dd5261a28db3443a6bacbccc7e8fdd1114e818a2",
+  "artifact": 14680518020
+}

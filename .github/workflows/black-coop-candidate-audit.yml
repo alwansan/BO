@@ -75,10 +75,41 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           cmake --build tools-build --config Release --parallel 2
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Independently scan candidate library symbols and ABI
+        shell: python
+        run: |
+          import json, os, pathlib, subprocess, tomllib
+          temp = pathlib.Path(os.environ['RUNNER_TEMP'])
+          scan = temp / 'candidate-scanned.toml'
+          with (temp / 'candidate-symbol-scan-private.log').open('w') as log:
+              result = subprocess.run(['tools-build/xbe_symbols.exe', 'reference/assets/default.xbe',
+                                       'reference/sdk/xdk', '--out', str(scan)], stdout=log, stderr=log)
+          report_path = temp / 'candidate-identity.json'
+          report = json.loads(report_path.read_text())
+          report['symbol_scanner_exit_code'] = result.returncode
+          if result.returncode == 0:
+              expected = tomllib.loads(pathlib.Path('reference/config/game.toml').read_text())
+              actual = tomllib.loads(scan.read_text())
+              comparison = {}
+              for table in ('symbols', 'data', 'abi'):
+                  wanted = expected.get(table, {})
+                  got = actual.get(table, {})
+                  names = [name for name, value in wanted.items() if value]
+                  differences = [{'name': name, 'reference': wanted[name], 'scanned': got.get(name)}
+                                 for name in names if wanted[name] != got.get(name)]
+                  comparison[table] = {'reference_nonzero_count': len(names),
+                                       'matching_count': len(names) - len(differences),
+                                       'differences': differences}
+              report['independent_scan_comparison'] = comparison
+              report['scan_caveat'] = 'Signature/constant-based inference, not proof of semantic equivalence; manual review remains required.'
+          report_path.write_text(json.dumps(report, indent=2))
+          if result.returncode:
+              print('\n'.join((temp / 'candidate-symbol-scan-private.log').read_text(errors='replace').splitlines()[-20:]))
+              raise SystemExit(result.returncode)
       - name: Analyze candidate without compiling generated game code
         shell: python
         run: |
-          import json, os, pathlib, subprocess
+          import json, os, pathlib, re, subprocess, tomllib
           temp = pathlib.Path(os.environ['RUNNER_TEMP'])
           generated = temp / 'candidate-generated-private'
           with (temp / 'candidate-analysis-private.log').open('w') as log:
@@ -93,6 +124,34 @@ jobs:
               text = stats.read_text()
               report['recompiler_statistics'] = text
               print(text)
+          if result.returncode == 0:
+              # Inspect generated code in runner only; publish names/counts, never its contents.
+              source = '\n'.join(p.read_text(errors='replace') for p in pathlib.Path('reference/src').rglob('*.cpp'))
+              wanted = set(re.findall(r'X86_(?:EXTERN_)?FUNC\((sub_[0-9A-Fa-f]+)\)', source))
+              mapping = (generated / 'x86_func_mapping.cpp').read_text()
+              absent = set(re.findall(r'X86_FUNC\(__imp__(sub_[0-9A-Fa-f]+)\)', mapping))
+              defined, trapped = set(), {}
+              trap_addresses = set()
+              for path in generated.glob('x86_recomp.*.cpp'):
+                  content = path.read_text()
+                  starts = list(re.finditer(r'X86_FUNC\(__imp__(\w+)\)\s*\{', content))
+                  for i, start in enumerate(starts):
+                      name = start.group(1)
+                      defined.add(name)
+                      body = content[start.end():starts[i+1].start() if i+1 < len(starts) else len(content)]
+                      traps = re.findall(r'x86_trap\(ctx, 0x([0-9A-Fa-f]+), "unimplemented: ([^"]+)"', body)
+                      trap_addresses.update(int(address, 16) for address, _ in traps)
+                      if name in wanted and traps:
+                          trapped[name] = [{'address': address, 'instruction': op} for address, op in traps]
+              hooks = tomllib.loads(pathlib.Path('reference/config/game.toml').read_text()).get('hook', [])
+              report['host_target_analysis'] = {
+                  'source_named_targets': len(wanted),
+                  'generated_targets': len(wanted & defined),
+                  'absent_targets': sorted(wanted & absent),
+                  'unresolved_targets': sorted(wanted - defined - absent),
+                  'targets_with_unimplemented_instructions': trapped,
+                  'hook_addresses_with_unimplemented_instruction': [h['at'] for h in hooks if h['at'] in trap_addresses],
+                  'caveat': 'Function presence and trap locations do not prove calling conventions, reachability, field layout, or actor lifecycle.'}
           report['interpretation'] = 'Successful static translation is not semantic compatibility, a baseline engine build, or multiplayer acceptance.'
           report_path.write_text(json.dumps(report, indent=2))
           print(json.dumps(report, indent=2))
