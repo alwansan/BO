@@ -30,3 +30,8 @@ Branch HEAD `d4d989103de74c0d5ac35806d9d3eb4ae8083582` at opening. Room-only And
 
 ## Restoration
 Read `AGENTS.md`, `prompt/RESTORE_SESSION_AR.md`, `docs/CLOUD_HANDOFF_AR.md`, `memory/STATE.json`, this Session43, Session42/41, `docs/BLACK_WORLD_POINTER_XREF_AUDIT_AR.md`, `docs/BLACK_STORY_ENTRY_AUDIT_AR.md`, `docs/MAJOR_DEVICE_TEST_GATE_AR.md`. Verify current BO HEAD and live Actions; only write experiment/black-coop.
+
+## APK CI packaging allowlist follow-up
+- [Run44962275637](https://github.com/alwansan/BO/actions/runs/44962275637) failed during **Unit tests and prepare isolated app packaging**, NOT Android/JNI C++ compilation. All 19 staging unit tests PASS, but the Windows packaging workflow's old strict native/gameplay file allowlist omitted the newly intentionally staged, read-only `src/game/difficulty.cpp`; its added `src/coop/room_world_tick.hpp` and `src/coop/world_tick_contract.hpp` were also absent from the strict additional-file whitelist. Exact reported actual diff: cheats/hooks/options/exit/**difficulty**.
+- Commit **561eacc0362ec2a1a730e7d85f68511e0c8d5b82** updated ONLY those strict explicit allowlists in `.github/workflows/black-coop-room-network-apk.yml`, retaining fail-closed rejection for any other native modifications, player/actor write or unknown file. New room-only candidate [run44962611024](https://github.com/alwansan/BO/actions/runs/44962611024) was `in_progress` on latest check; verify final result and inspect compiler errors. No phone trial.
+- User's major test gate `docs/MAJOR_DEVICE_TEST_GATE_AR.md` now records the three fixed-code native witness events as automatic evidence and explicitly forbids treating them as real scene loaded.
