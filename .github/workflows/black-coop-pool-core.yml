@@ -1,0 +1,46 @@
+name: BO-COOP Probe3 sparse pool core preflight
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths: ['coop/probe3/**', 'coop/probe/probe_core.hpp', '.github/workflows/black-coop-pool-core.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  linux-sanitizers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Sparse pool and existing read-only reader regression
+        env:
+          ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+          UBSAN_OPTIONS: halt_on_error=1
+        run: |
+          set -euo pipefail
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -fno-omit-frame-pointer -fsanitize=address,undefined -pthread coop/probe3/test_pool.cpp -o /tmp/black-pool-test
+          /tmp/black-pool-test
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -fno-omit-frame-pointer -fsanitize=address,undefined -pthread coop/probe/test_probe.cpp -o /tmp/black-probe-test
+          /tmp/black-probe-test
+  android-crosscompile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Install NDK28
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install 'ndk;28.2.13676358' >/dev/null
+      - name: Compile ARM64 executable (not phone runtime)
+        run: |
+          set -euo pipefail
+          tool="$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android29-clang++"
+          "$tool" -std=c++20 -O2 -Wall -Wextra -Werror -pedantic -static-libstdc++ -pthread coop/probe3/test_pool.cpp -o /tmp/black-pool-aarch64
+          readelf -h /tmp/black-pool-aarch64 | grep -q AArch64

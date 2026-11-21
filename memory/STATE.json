@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-19-cloud-handoff.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-20-pool-reader.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -506,10 +506,10 @@
     "gameplayCoop": false,
     "sourceCommit": "d8dba8d8da2da69c62718a87f3e6f03f16be0d2f"
   },
-  "next": "Prioritize ACTOR001A actual NPC lifetime/model ownership and story coop actor spawn. NET-LAN independently has bounded real POSIX loopback discovery and ARM64 compile success, but needs Android LAN broadcast/UI/testing, auth & original game integration. Top-level CO-OP menu remains a separate safe experiment.",
+  "next": "Finish Probe3 pool core CI then Task2 isolated Android capture integration; preserve baseline/Probe2",
   "latestHandoff": {
     "date": "2026-11-21",
-    "session": 19,
+    "session": 20,
     "kind": "documentation_and_static_analysis_only",
     "newApk": false,
     "newCI": false,
@@ -518,6 +518,8 @@
     "cloudFilesRequiredFromOwner": false,
     "actorPoolContracts": "docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md",
     "fullOwnerObjective": "docs/OWNER_PROJECT_OBJECTIVE_AR.md",
-    "serialReset": "1D5E00 successful AL1 path restores pool and sets counter8524=1; instrument return without changing context"
+    "serialReset": "1D5E00 successful AL1 path restores pool and sets counter8524=1; instrument return without changing context",
+    "poolReader": "coop/probe3/pool_snapshot.hpp",
+    "poolReaderStatus": "LOCAL_STRICT_TESTS_PASS_REVIEW_FIX_APPLIED_CI_PENDING_NOT_GAME_INTEGRATED"
   }
 }

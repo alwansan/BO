@@ -210,3 +210,7 @@ pool32 ثابت وserial مرشح لا يثبتان active lifetime أو remote 
 
 ### متابعة19 — reset مثبت ونطاق المنتج
 دالة1D5E00 على مسارAL1 تعيد32 خانة إلى79A0 وتكتبcounter8524=1؛لا هوية دائمة بالserial وحده، ولاepoch بمجرد دخولreset الذي قد يفشل. التفاصيل docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md. نص هدف المالك الكامل محفوظ docs/OWNER_PROJECT_OBJECTIVE_AR.md. تحليل ثابت فقط،لاAPK/CI جديد.
+
+
+## جلسة20 — pool reader
+راجع memory/sessions/2026-11-21_bo-coop-20-pool-reader.md والخطةProbe3. core مستقلbounded sparse snapshot محليPASS،review fix rawarrayreorder مطبق،CIpending؛لاgameintegration/APK بعد. أداءsyscalls وepoch/reset وpackage/export ضمنTask2.

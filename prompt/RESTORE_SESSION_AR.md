@@ -1,3 +1,6 @@
+# أحدث متابعة — جلسة20
+اقرأ memory/sessions/2026-11-21_bo-coop-20-pool-reader.md والخطة docs/superpowers/plans/2026-11-21-probe3-pool.md. أضيفقارئpool مستقل واختباراتkernelselfread وworkflow؛المحليPASS معتصحيحمراجعةrawarrayreorder،CIقيدالانتظار،ولاAPK/ربطgameبعد. تحققآخرActions ثمأكملTask2. لا تكررbaseline/Probe2 tests أوتطلبأصولموجودة.
+
 **آخر دليل:** reset1D5E00 يعيدcounter8524 إلى1 ويعيد32 خانة إلىfree-list على مسارAL1 فقط؛راجع ملحق docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md. نطاق المنتج الكامل محفوظ في docs/OWNER_PROJECT_OBJECTIVE_AR.md.
 
 **تصحيح أحدث:** اقرأ docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md: container+4=capacity و+8=occupied، مصفوفات sparse؛ 1DF440 acquisition path إلىinit1DA4F0، و1B6770 نقل عضوية. لا تعتمد تسميات count القديمة.
