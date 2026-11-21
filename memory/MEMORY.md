@@ -1,3 +1,8 @@
+## Session40 — successful offline story static audit and safe always-on room evidence (2026-11-22)
+Owner policy is GitHub Actions/synthetic/emulator first; **only one substantial phone test** once same-world/remote-human integration is ready, with all small evidence captured automatically and exported together. No test requested now. Actions44956138064 SUCCESS maps pinned c5 XBE executable candidate windows; metadata artifact14727458498 and memory/evidence/STORY-ENTRY-XBE-STATIC-44956138064.json, NOT scene-loader proof. New RoomTls fixed lifecycle codes -> RoomSession persistent RoomDiagnostics; rotated safe logs included in one 128KiB max export and externally modified lines rejected. JVM real TLS44956473684 SUCCESS (STORY_DIAGNOSTICS_PASS) and source44956473685 SUCCESS; Android29 44956473707 and lobby-only APK44956473687 statuses to verify. Full story/host game thread and real remote AllyBody/AI combat quest still OPEN. Session memory/sessions/2026-11-22_bo-coop-40-ci-first-story-audit-automatic-evidence.md.
+
+---
+
 ## OWNER TEST POLICY — 2026-11-22 (binding)
 Owner requests **GitHub Actions first** and no device requests for minor checks. Reserve any phone test for a meaningful, end-to-end milestone that CI/emulation cannot verify; bundle room/network/scene/remote-actor/world/error evidence into one bounded automatic diagnostic package, so a single owner trial answers large and small questions. Do not request repeated screenshots/logs for small detail. Until shared-world gameplay is actually ready and preflighted, work from GitHub only. Never mark a CI success as real-phone proof. See AGENTS.md and docs/MAJOR_DEVICE_TEST_GATE_AR.md.
 
