@@ -870,12 +870,19 @@
     "session": 34,
     "base": "3608ac51b43a9cfd99eb91a47d9de4148293f285",
     "task": "names-only hosting, automatic room and idle device discovery, manual IP fallback",
-    "status": "local JVM eight suites and source seven checks passed; Android/APK pending",
+    "status": "JVM core and source preflight and Android29 actual UI Host/automatic JOIN/Back tests passed in Actions; full game APK building",
     "tcpPort": 24872,
     "presenceUdpPort": 1511,
     "wireVersion": 2,
     "profile": 2,
     "phoneJoinProven": false,
-    "gameplayCoopProven": false
+    "gameplayCoopProven": false,
+    "code": "4c9f8bb3ad0285931d3278a855f109a6f1ad59b7",
+    "runs": {
+      "core": 44942174361,
+      "sourcePreflight": 44942174338,
+      "androidPlatform": 44942174364,
+      "apk": 44942174355
+    }
   }
 }

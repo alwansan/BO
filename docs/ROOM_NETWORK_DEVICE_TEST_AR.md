@@ -1,35 +1,14 @@
-## Session33 UI and logging update
-The new HOST/JOIN is a same-Activity, landscape two-column dark dialog, not a replacement native Flash implementation. Android29 emulator Back success: run 44931363100, but two owner phones still need testing. Use SAVE ROOM LOG TO DOWNLOADS separately on both devices; exports only sanitized room event codes as BLACK-Room-<timestamp>-events.txt to Downloads/Games/cl/black log/logs. Alternatively COPY SAFE CONNECTION LOG. Status errors remain visible separately from periodically updated roster. Before re-installing a differently signed debug APK, back up existing private app assets; do not post ISO/game saves or private PIN.
+# اختبار اتصال الهاتفين — جلسة34
 
+هذه النسخة تختبر اتصال الغرفة واكتشاف الأجهزة؛ أجسام اللاعبين ومزامنة القصة لم تُنفذ بعد. يجب تثبيت نفس APK الجديدة على الهاتفين، لأن بروتوكول الغرفة أصبح VERSION2/PROFILE2.
 
+1. احفظ بيانات النسخة السابقة قبل أي إزالة للتطبيق إذا منع اختلاف توقيع البناء تحديثه. لا تحذف assets أو ملفات الحفظ دون نسخة احتياطية.
+2. صِل الهاتفين بنفس Wi-Fi وافتح اللعبة على الاثنين. افتح CO-OP ثم «الأجهزة والغرف». ينبغي ظهور الهاتف الآخر بحالة متاح حتى قبل إنشاء غرفة، خلال عدة ثوانٍ.
+3. على الهاتف الأول اختر «استضافة»: الاسم واسم الغرفة فقط، ثم «بدء الاستضافة». انتظر HOSTING و1/4. لا توجد كلمة مرور أو بصمة أو خانة منفذ.
+4. على الهاتف الثاني تظهر الغرفة تلقائياً؛ اضغط «انضمام». انتظر JOINED و2/4 على الطرفين، وقارن أسماء اللاعبين.
+5. إذا لم تظهر الغرفة، افتح «اتصال يدوي عند الحاجة» وأدخل IPv4 الخاص بالمضيف الظاهر في حالته. المنفذ24872 تلقائي، لا تدخل رمزاً أو بصمة. انتظر النتيجة.
+6. اختبر Back إلى اللعبة ثم فتح CO-OP: الاتصال يجب أن يستمر. «مغادرة الغرفة والرجوع» يغلق الاتصال؛ يظهر1/4 عند مغادرة الضيف وتختفي الغرفة عند مغادرة المضيف، مع بقاء الجهاز متاحاً إذا اللعبة مفتوحة.
+7. بعد نجاح Wi-Fi كرر عبر ZeroTier/VPN. يجب السماح بمرور الأقران. الاكتشاف يستخدم broadcast ومسح /24 محدود، ولا يستطيع سرد جميع أعضاء حسابVPN أو شبكات بعيدة عشوائية؛ IP اليدوي احتياطي عند غياب الاكتشاف. UDP1511 لاكتشاف الأجهزة، UDP1510 لإعلان الغرفة وTCP24872 للاتصال.
+8. احفظ SAVE ROOM LOG TO DOWNLOADS على الهاتفين، وصورة الحالة إن حدث فشل. الملفات BLACK-Room-<timestamp>-events.txt في Downloads/Games/cl/black log/logs، ويمكن رفعها إلى https://github.com/alwansan/CL/tree/main/black%20log مع تحديد هاتف المضيف والضيف. لا ترفع ملفات اللعبة أو الحفظ أو المفاتيح.
 
-# BO-COOP — تحديث تجربة الهاتفين LAN (Session33, 2026-11-21)
-
-**هذه تجربة اتصالات TLS ورُوم فقط. لا يوجد Co-op gameplay أو لاعب ثانٍ داخل العالم أو مزامنة مهام بعد.**
-
-## التجربة السابقة والنتائج المثبتة
-- المالك جرّب نسخة org.bocoop.black.roomnet على هاتفين متصلين بالشبكة نفسها. وصف شاشة Android افتراضية مربكة، وزر LEAVE لا يرجع لقائمة BLACK، وخروج اللعبة عند الرجوع، وفشل استضافة/انضمام عملي، ونقص سجلات الشبكة من الهاتف الثاني.
-- فهرس الصور في alwansan/CL:main/black log/img يتضمن لقطات roomnet عند ~19:33–19:34، لكن JPG نفسها لم تكن قابلة للعرض بصرياً في جلسة الأدوات الحالية؛ لا تدّع تحليل pixels.
-- سجل BLACK-Probe-20261121-193320-285/black_log.txt يؤكد تشغيل الهاتف Xiaomi 23013PC75G / Android 15 / Adreno 730، وXBE sha1 c5bfed25449c8212d7a976f15246e87ead57713f؛ لا توجد أسطر لمصافحة TLS.
-- سجل black log/logs/black_log.txt للهاتف Xiaomi 22081283G / Android 14 / Mali-G57 MC2 يثبت تحميل الصورة المطابقة؛ FEAudio failed عند 294.6 ثانية في مسار quit، ليس تشخيصاً موثوقاً لفشل الشبكة. مجلد BLACK-Probe-20261121-194623-826 يحتوي black_log.txt صفر بايت.
-- بناء APK السابق GitHub run 44924346601 = SUCCESS، artifact 14715302629 black-room-network-android-arm64-NO-GAMEPLAY-COOP؛ هاتفان قاما بتجربة الاتصال لكن لا يوجد دليل نجاح JOIN.
-
-## الإصلاحات في الإصدار التالي
-- HOST/JOIN صار Dialog داخل نفس BlackActivity فوق قائمة Flash، وليس Activity منفصلة؛ Android Back يغلق النافذة ويرجع للعبة. هذه واجهة داكنة متناسقة لكن ليست 100% عناصر Flash الأصلية.
-- BACK TO GAME KEEP ROOM يحافظ على الجلسة، LEAVE ROOM & BACK يغلق sockets ويعود للعبة.
-- HOST يفعّل خادم TLS TCP وUDP LAN discovery على منفذ 1510. الإعلان يحتوي اسم الغرفة وعدد الأعضاء والملف المتوافق وبصمة TLS كاملة، دون PIN. JOIN يبحث عن الغرف بمجرد فتحه وزر REFRESH.
-- الضغط على اسم الغرفة يختار IP/port/fingerprint تلقائياً. يجب إدخال PIN من 8 أرقام. أول اتصال يتطلب مقارنة بصمة SHA256 كاملة مع شاشة المضيف؛ إعلانات UDP غير موثوقة. عند الثقة بالهوية يُسمح بضم الغرفة لاحقاً بنفس IP والبصمة من غير إعادة التأكيد، لكن لا تحفظ PIN.
-- سجل جديد لكل جهاز: Android/data/org.bocoop.black.roomnet/files/logs/coop_room_events.log، وقابل لنسخه من واجهة الغرفة. يحتوي رموز أحداث فقط دون PIN أو IP أو شهادة أو مفاتيح.
-
-## تحقق الهاتفين بعد نجاح بناء APK الجديد
-1. لا تحذف بيانات الحزمة القديمة قبل نسخ assets الخاصة بصورتك المرخصة. مفاتيح debug بين CI runs قد تتغير وتمنع التحديث المباشر.
-2. نفس Wi-Fi؛ تحقق من إلغاء AP/client isolation. TCP 24872 وUDP 1510 على الشبكة الخاصة فقط.
-3. المضيف: CO-OP → HOST، اكتب PIN، START HOST. انتظار HOSTING و1/4 وبصمة الشهادة وعنوان IPv4.
-4. العميل: CO-OP → JOIN؛ تظهر الغرفة، أدخل PIN واضغط عليها، قارن البصمة كاملة على جهاز المضيف ثم أكد. انتظار JOINED و2/4 لدى الطرفين.
-5. Back ثم العودة من CO-OP، LEAVE ثم إعادة HOST، PIN خاطئ، بصمة خاطئة، إغلاق المضيف، عدم وجود غرفة، وغياب Wi-Fi. احفظ النتيجة لاختبار كل مسار.
-6. اجمع على كلا الجهازين coop_room_events.log وblack_log.txt والحالات المرئية، مع حذف الأسرار قبل النشر. لا ترفع ISO أو ملفات اللعبة أو بيانات الحفظ.
-
-## الحدود المتبقية
-- لا يضمن بث UDP اكتشاف غرف على شبكة معزولة أو VPN؛ يبقى manual IPv4:port + fingerprint.
-- JOIN دون PIN أو تحقق هوية على أول مرة ليس آمناً؛ يحتاج آلية دعوة أو قبول مضيف لم تُنفذ.
-- اللعبة لا تنشئ جسم إنسان مستقل، ولا Start mission، ولا مزامنة AI/combat/story. لا تحول نجاح TLS إلى ادعاء co-op gameplay.
+آخر صور وسجلات المالك أثبتت HOST_INPUT_ERROR وJOIN_INPUT_ERROR بسببPIN فارغ قبل الاتصال. هذه الدفعة تزيل ذلك الشرط. نجاح CI لا يثبت الوصول بين هاتفي المالك أو بدء اللعب المشترك. TLS داخلي وتلقائي، دون تحقق هوية منفصل أو خطوات للمستخدم على شبكة أصدقائه.

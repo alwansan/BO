@@ -1,3 +1,5 @@
+
+تحقق Actions على4c9f8bb: source preflight44942174338 وJVM44942174361 وAndroid29 instrumentation44942174364 كلهاSUCCESS. سجلjob136961573450 قرئ ويؤكدTLS_PLATFORM_PASS: زرHost الفعلي بالأسماء الافتراضية فتحTCP24872، joinAutomaticنجح، وBackلميغلقActivity. APK44942174355مازالقيدالبناء؛لااختبارهاتفينبعد.
 # استعادة BO-COOP — جلسة34
 اقرأ AGENTS.md ثم memory/STATE.json وmemory/sessions/2026-11-21_bo-coop-34-simple-auto-network.md والخطة docs/superpowers/plans/2026-11-21-simple-auto-network.md، ثم MEMORY وPLAN وISSUES وdocs/SOURCE_MAP_AR.md وcoop/README_AR.md. افحصHEAD وActions الحيين فيalwansan/BO فرعexperiment/black-coop قبل التعديل. الملف القديم محفوظ فيmemory/sessions/2026-11-21_restore-before-34.md كتاريخ لا كتعليمات حالية.
 

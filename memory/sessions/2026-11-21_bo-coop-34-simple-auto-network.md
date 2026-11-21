@@ -19,3 +19,5 @@ RoomPresence خدمة مستقلة UDP1511 تبدأ مع BlackActivity، تعل�
 هذا إصلاح لوبي وشبكة فقط: لا جسم لاعب ثان حقيقي، لا مزامنة حركة/أعداء/ضرر/قصة أوrevive بعد. لا تعلن اكتمال هدفco-op. أدلة actor والسعة وbrain/factory ومخاطرvtable موثقة في جلسات أقدم؛ لا تنفذ كتابة guest منnetwork thread. لا حاجة لتعديلISO لهذه الدفعة. BOmain وbisomain والأصل والحفظ والمفاتيح محفوظة.
 
 المراجعة المستقلة وجدت أن JOINمعلقاً قد يبدأ بعدLeave؛ أضيف فحصgenerationقبلالعمل وبعدinspection وقبلJOINوإغلاقsocketكل50msعندالإلغاء. اختبارblockedworkerثمqueuedjoinثمstopيتحققأنالمضيفلايستهلكIDللطلبالملغى.
+
+تحقق Actions على4c9f8bb: source preflight44942174338 وJVM44942174361 وAndroid29 instrumentation44942174364 كلهاSUCCESS. سجلjob136961573450 قرئ ويؤكدTLS_PLATFORM_PASS: زرHost الفعلي بالأسماء الافتراضية فتحTCP24872، joinAutomaticنجح، وBackلميغلقActivity. APK44942174355مازالقيدالبناء؛لااختبارهاتفينبعد.
