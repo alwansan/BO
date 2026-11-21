@@ -59,9 +59,9 @@ public final class DirectTest {
             TlsRoomTest.await(()->host.snapshot().players.size()==1);
             byte[] wrong=pin.clone();wrong[31]^=1;
             rejected(()->{try(RoomTls.Client unused=RoomDirect.join(endpoint,toHex(wrong),
-                                           "Wrong fingerprint","12345678")){}});
+                                           "Wrong fingerprint","12345678")){check(unused.isRunning());}});
             rejected(()->{try(RoomTls.Client unused=RoomDirect.join(endpoint,canonical,
-                                           "Wrong PIN","99999999")){}});
+                                           "Wrong PIN","99999999")){check(unused.isRunning());}});
             check(host.snapshot().players.size()==1);
         }
         TlsRoomTest.await(()->Thread.getAllStackTraces().keySet().stream()
