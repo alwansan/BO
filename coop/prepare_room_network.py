@@ -13,7 +13,7 @@ from prepare_room_ui import prepare as prepare_room_ui
 
 HERE = pathlib.Path(__file__).resolve().parent
 PACKAGE = 'org.bocoop.black.roomnet'
-INPUTS = BASE_FILES + GAME_FILES + ('src/game/exit_menu.cpp',)
+INPUTS = BASE_FILES + GAME_FILES + ('src/game/exit_menu.cpp','src/game/difficulty.cpp')
 
 
 def prepare(root: pathlib.Path):
@@ -80,6 +80,7 @@ def prepare(root: pathlib.Path):
         '''    public void coopRecordWorldTick(int code) {
         if (code == 1) com.racas.black.coop.RoomDiagnostics.event("WORLD_LOCAL_PLAYER_UPDATE_SEEN");
         else if (code == 2) com.racas.black.coop.RoomDiagnostics.event("WORLD_POINTER_CHANGED_UNVERIFIED");
+        else if (code == 3) com.racas.black.coop.RoomDiagnostics.event("WORLD_MISSION_LAUNCH_ATTEMPT");
     }
     public String coopRoomStatusLine(int row) {''', java)
     pending[java] = text
@@ -162,6 +163,18 @@ def prepare(root: pathlib.Path):
         blackcoop::ObserveLocalWorldTick(R32(kWorld));
     __imp__sub_001E5FA0(ctx, base);''',cheat)
     pending[cheat]=game
+
+    # The pinned source already wraps this genuine difficulty-menu launch
+    # candidate. We observe invocation only; it can return without loading.
+    # Stage/mission IDs remain unknown, so NEVER publish a story PREPARE/READY.
+    difficulty='src/game/difficulty.cpp'
+    launch=pending.get(difficulty,originals[difficulty].decode('utf-8'))
+    launch=once(launch,'#include "xdk/hle.h"',
+                '#include "xdk/hle.h"\n#include "coop/room_world_tick.hpp"',difficulty)
+    launch=once(launch,'    __imp__sub_00124CF0(ctx, base);',
+        '''    blackcoop::ObserveMissionLaunchCandidate(); // attempt, NOT loaded scene
+    __imp__sub_00124CF0(ctx, base);''',difficulty)
+    pending[difficulty]=launch
     for name in pending:
         if name not in originals and (root / name).exists():
             raise ValueError('Refusing preexisting addition: ' + name)
