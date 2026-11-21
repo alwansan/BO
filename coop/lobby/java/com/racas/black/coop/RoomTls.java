@@ -317,6 +317,12 @@ public final class RoomTls {
         private final DataInputStream in;
         private final DataOutputStream out;
         private final Thread reader;
+        // TLS writes must NEVER run on the verified BLACK game thread.
+        // READY is a single, bounded, fail-closed task: no per-frame queueing.
+        // Heartbeat uses its existing dedicated background scheduler.
+        private final ThreadPoolExecutor readyWriter=new ThreadPoolExecutor(
+            1,1,0L,TimeUnit.MILLISECONDS,new ArrayBlockingQueue<>(1),
+            RoomTls::thread,new ThreadPoolExecutor.AbortPolicy());
         private final ScheduledExecutorService heartbeat;
         private final AtomicBoolean closed=new AtomicBoolean();
         private final Object lifecycle=new Object();
@@ -368,10 +374,9 @@ public final class RoomTls {
          * joining a lobby never calls this and cannot start a solo mission.
          */
         public boolean acknowledgeSceneLoaded(int mission,int stage,int epoch)throws IOException{
-            RoomStoryWire.Ticket ticket;
             synchronized(lifecycle){
                 RoomWire.State state=view;
-                ticket=story;
+                RoomStoryWire.Ticket ticket=story;
                 if(closed.get()||ticket==null||storyReadySent||storyCommitted||
                    mission!=ticket.mission||stage!=ticket.stage||epoch!=ticket.sceneEpoch||
                    state==null||state.revision!=ticket.rosterRevision||
@@ -380,13 +385,40 @@ public final class RoomTls {
                 for(int i=0;i<state.players.size();i++)
                     if(state.players.get(i).id==state.self){slot=i+1;break;}
                 if(slot==0||!ticket.includes(slot)||slot==1)return false;
+                // The packet is at most 36 bytes and encoded in memory. Never
+                // hold the story or output locks while doing socket I/O here.
+                final byte[] ready=RoomStoryWire.encode(RoomWire.STORY_READY,ticket);
+                try{
+                    readyWriter.execute(()->sendReadyFromNetworkWorker(ticket,ready));
+                }catch(RejectedExecutionException unavailable){
+                    record("STORY_GUEST_READY_QUEUE_FULL");
+                    return false;
+                }
                 storyReadySent=true;
+                record("STORY_GUEST_READY_QUEUED");
+                return true; // queued, NOT evidence the host received READY
+            }
+        }
+        private void sendReadyFromNetworkWorker(RoomStoryWire.Ticket expected,byte[] ready){
+            // If the scene/roster was cancelled while waiting for the worker,
+            // drop the stale ready before touching the socket.
+            synchronized(lifecycle){
+                RoomWire.State state=view;
+                if(closed.get()||story==null||!story.same(expected)||
+                   !storyReadySent||storyCommitted||state==null||
+                   state.revision!=expected.rosterRevision)return;
             }
             try{
-                synchronized(out){RoomWire.write(out,RoomStoryWire.encode(RoomWire.STORY_READY,ticket));}
+                synchronized(out){
+                    if(closed.get())return;
+                    RoomWire.write(out,ready);
+                }
                 record("STORY_GUEST_READY_SENT");
-                return true;
-            }catch(IOException e){close();throw e;}
+            }catch(IOException failure){
+                this.failure="Connection lost";
+                record("STORY_GUEST_READY_SEND_FAILED");
+                close();
+            }
         }
         public String failure(){return failure;}
         public boolean isRunning(){return !closed.get();}
@@ -468,6 +500,7 @@ public final class RoomTls {
                 if(!closed.compareAndSet(false,true))return;
                 view=null;story=null;storyReadySent=false;storyCommitted=false;
             }
+            readyWriter.shutdownNow();
             closeSocket(socket);heartbeat.shutdownNow();reader.interrupt();
         }
     }
