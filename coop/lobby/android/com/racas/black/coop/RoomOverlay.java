@@ -98,9 +98,28 @@ public final class RoomOverlay {
         label(root,"B L A C K    /    C O - O P",24,Color.rgb(176,55,47));
         label(root,"LOCAL NETWORK  —  SECURE ROOM",14,FG);
         label(root,"This is a real TLS lobby; human game actors and story sync are not ready.",12,MUTED);
-        button(root,"HOST ROOM",()->select(-102));
-        button(root,"FIND LAN ROOM",()->select(-103));
-        hostPanel=group(root);
+        LinearLayout tabs=new LinearLayout(context);
+        tabs.setOrientation(LinearLayout.HORIZONTAL);
+        root.addView(tabs);
+        button(tabs,"HOST ROOM",()->select(-102));
+        button(tabs,"FIND LAN ROOM",()->select(-103));
+        // A real landscape game needs two columns, not a tall Android settings page.
+        boolean wide=context.getResources().getConfiguration().screenWidthDp>=600;
+        LinearLayout sections=new LinearLayout(context);
+        sections.setOrientation(wide?LinearLayout.HORIZONTAL:LinearLayout.VERTICAL);
+        root.addView(sections,new LinearLayout.LayoutParams(-1,-2));
+        LinearLayout controls=new LinearLayout(context);
+        controls.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout side=new LinearLayout(context);
+        side.setOrientation(LinearLayout.VERTICAL);
+        if(wide){
+            sections.addView(controls,new LinearLayout.LayoutParams(0,-2,2f));
+            sections.addView(side,new LinearLayout.LayoutParams(0,-2,1f));
+        }else{
+            sections.addView(controls,new LinearLayout.LayoutParams(-1,-2));
+            sections.addView(side,new LinearLayout.LayoutParams(-1,-2));
+        }
+        hostPanel=group(controls);
         label(hostPanel,"CREATE ROOM",18,FG);
         hostName=field(hostPanel,"PLAYER NAME","Host",32,false);hostName.setText("Host");
         roomName=field(hostPanel,"ROOM NAME","BLACK LAN",32,false);roomName.setText("BLACK LAN");
@@ -108,7 +127,7 @@ public final class RoomOverlay {
         port=field(hostPanel,"PORT","24872",5,false);
         port.setInputType(InputType.TYPE_CLASS_NUMBER);port.setText("24872");
         button(hostPanel,"START HOST",this::host);
-        joinPanel=group(root);
+        joinPanel=group(controls);
         label(joinPanel,"AVAILABLE WI-FI ROOMS",18,FG);
         guestName=field(joinPanel,"YOUR NAME","Player 2",32,false);guestName.setText("Player 2");
         guestPin=field(joinPanel,"ROOM'S 8-DIGIT PIN","",8,true);
@@ -121,13 +140,14 @@ public final class RoomOverlay {
         ip=field(manualPanel,"HOST IPv4:PORT","192.168.1.10:24872",21,false);
         pinHash=field(manualPanel,"VERIFIED HOST TLS SHA-256","",64,false);
         button(manualPanel,"JOIN VERIFIED ADDRESS",()->join(value(ip),value(pinHash)));
-        label(root,"REAL CONNECTION STATUS",15,FG);
-        status=label(root,"OFFLINE",14,FG);
-        button(root,"LEAVE ROOM & BACK",()->{
+        LinearLayout statusPanel=group(side);
+        label(statusPanel,"REAL CONNECTION STATUS",15,FG);
+        status=label(statusPanel,"OFFLINE",14,FG);
+        button(statusPanel,"LEAVE ROOM & BACK",()->{
             cancelScan.set(true);session.stop();RoomDiagnostics.event("ROOM_LEFT");dialog.dismiss();
         });
-        button(root,"BACK TO GAME  ·  KEEP ROOM",()->dialog.dismiss());
-        button(root,"COPY SAFE CONNECTION LOG",()->{
+        button(statusPanel,"BACK TO GAME  ·  KEEP ROOM",()->dialog.dismiss());
+        button(statusPanel,"COPY SAFE CONNECTION LOG",()->{
             ClipboardManager clip=(ClipboardManager)activity.getSystemService(Context.CLIPBOARD_SERVICE);
             if(clip!=null){clip.setPrimaryClip(ClipData.newPlainText("BLACK Co-op",RoomDiagnostics.read()));
                 status.setText("Log copied; collect a copy from EACH device.");}
@@ -161,7 +181,10 @@ public final class RoomOverlay {
         Button button=new Button(activity);
         button.setText(text);button.setAllCaps(false);button.setTextSize(13);
         button.setTextColor(FG);button.setBackground(style(Color.rgb(74,30,29)));
-        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(45));
+        boolean horizontal=parent.getOrientation()==LinearLayout.HORIZONTAL;
+        LinearLayout.LayoutParams lp=horizontal?
+            new LinearLayout.LayoutParams(0,dp(45),1f):
+            new LinearLayout.LayoutParams(-1,dp(45));
         lp.topMargin=dp(5);parent.addView(button,lp);
         button.setOnClickListener(v->click.run());
     }
