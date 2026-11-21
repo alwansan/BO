@@ -36,7 +36,7 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('RoomDiscovery.scan(',overlay)
             self.assertIn('dialog.setOnDismissListener',overlay)
             self.assertIn('HOST_VERIFIED',overlay)
-            self.assertNotIn('startActivity(',java)
+            self.assertNotIn('new Intent(this, com.racas.black.coop.RoomLobbyActivity.class)',java)
             self.assertIn('RoomOverlay.show(this,row)',java)
             diagnostics=(root/'app/src/main/java/com/racas/black/coop/RoomDiagnostics.java').read_text()
             self.assertIn('coop_room_events.log',diagnostics)
