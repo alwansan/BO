@@ -36,7 +36,7 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('RoomScanGate.shouldAutoScan(',overlay)
             self.assertIn('HOST_BLOCKED_ALREADY_ACTIVE',overlay)
             scan_gate=(root/'app/src/main/java/com/racas/black/coop/RoomScanGate.java').read_text(encoding='utf-8')
-            self.assertIn('RoomSession.Phase.JOINED',scan_gate)
+            self.assertIn('phase==RoomSession.Phase.IDLE || phase==RoomSession.Phase.ERROR',scan_gate)
             self.assertIn('RoomPresence.scan(',overlay)
             self.assertIn('dialog.setOnDismissListener',overlay)
             self.assertNotIn('HOST_VERIFIED',overlay)
