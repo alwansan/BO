@@ -102,7 +102,15 @@ public final class RoomDiagnostics {
                 count+=n;
             }
             if(count!=bytes.length)throw new java.io.IOException("Truncated room log");
-            return new String(bytes,StandardCharsets.UTF_8);
+            String text=new String(bytes,StandardCharsets.UTF_8);
+            // External-files logs might be modified by other software.
+            // Never copy arbitrary lines into a supposedly sanitized export.
+            for(String row:text.split("\\n",-1)){
+                if(row.isEmpty())continue;
+                if(!row.matches("[0-9]{13} [A-Z0-9_]{1,70}"))
+                    throw new java.io.IOException("Invalid room log content");
+            }
+            return text;
         }
     }
     /** One combined export keeps the previous rotated segment and current
