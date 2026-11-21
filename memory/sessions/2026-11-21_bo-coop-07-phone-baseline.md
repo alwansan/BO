@@ -9,3 +9,5 @@
 
 ## مراجعة مستقلة قبل CI
 راجع baseline_review النطاق كله. أصلح خطر import إلى Black المشترك: importer وجهته assets الخاصة، أزيلت صلاحيات MANAGE/READ/WRITE_EXTERNAL_STORAGE من manifest، وحوار البداية صار اختيار ISO دون طلب صلاحية واسعة. اختبار manifest فشل قبل الإصلاح ونجح بعده، suite4/4. أزيل upload metadata always؛ الآن لا APK أو metadata artifacts إلا بعد بوابات النجاح. لم تبق findings Important معلقة.
+
+Baseline CI بدأ فعلياً: run44845056293، job136662594366، code6aa718839d912d8924af62f11c4c55999847c24e؛ تابع نفس run ولا تعيد تشغيله بسبب مهلة رصد. قبول البناء/الفحص/الهاتف لم يثبت بعد. دليل تجربة الناتج عند نجاحه docs/CANDIDATE_BASELINE_DEVICE_AR.md. Python regression44845056127 SUCCESS؛ source audit44845056215 قيد الفحص.

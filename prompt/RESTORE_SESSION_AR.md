@@ -26,3 +26,5 @@
 بعد كل دفعة أو اكتشاف أو CI: حدّث STATE/MEMORY/PLAN/ISSUES حسب الحاجة، جلسة مستقلة وRESTORE، وcommit على الفرع التجريبي ثم تحقق من HEAD. الهدف لم يكتمل؛ لا عمل خلفي خارج الجلسة.
 
 مراجعة baseline قبل CI: الاستيراد داخل assets الخاصة فقط، لا صلاحيات تخزين واسعة، artifacts لا تصعد قبل نجاح تحقق APK. source packaging preview الحقيقي PASS واختبارات4/4 PASS. لا نتيجة بناء Android بعد.
+
+Baseline CI بدأ فعلياً: run44845056293، job136662594366، code6aa718839d912d8924af62f11c4c55999847c24e؛ تابع نفس run ولا تعيد تشغيله بسبب مهلة رصد. قبول البناء/الفحص/الهاتف لم يثبت بعد. دليل تجربة الناتج عند نجاحه docs/CANDIDATE_BASELINE_DEVICE_AR.md. Python regression44845056127 SUCCESS؛ source audit44845056215 قيد الفحص.
