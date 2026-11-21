@@ -1,3 +1,9 @@
+## Session43 event witness prepared for ONE future substantial phone acceptance (not now)
+The staged Android room-only source includes three **automatically collected bounded fixed codes**, using existing original BLACK source wrappers with no guest writes:
+`WORLD_MISSION_LAUNCH_ATTEMPT` (max eight), `WORLD_LOCAL_PLAYER_UPDATE_SEEN`, `WORLD_POINTER_CHANGED_UNVERIFIED`. They are emitted from original mission attempt/player update callbacks through JNI to `RoomDiagnostics.event`, which uses a bounded async disk worker. They contain NO mission ID, world pointer, character coordinates, IP, name, PIN, raw XBE or scene. **NONE of these alone proves actual stage loaded or authorizes STORY_READY**. This enables correlating future major user sessions' mission request and first local gameplay update without asking the owner to test another small button or manual log. C++ synthetic guard CI44962215874 and source staging CI44962275672 both PASS; full Android APK build for new native wrappers must be separately confirmed, currently CI44962611024 check live. No install request until actual host world and human remote AllyBody are implemented and CI verified.
+
+---
+
 ## CI achievement: safe combined log export verified without owner participation (2026-11-22)
 Run `44957104337` Android29 **SUCCESS** with `ROOM_LOG_ROTATION_PASS`: automatically generated 900 synthetic safe events; previous+current rotated room event log exported once through MediaStore; began/ended markers found; tampered previous log refused. TLS/Keystore and rehost also PASS. This validates ROOM transport diagnostics, not the FUTURE real BLACK scene/actor/combat/world instrumentation. Do not ask owner to test until the actual substantial shared-world milestone is ready.
 
