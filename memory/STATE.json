@@ -137,7 +137,7 @@
     },
     "ACTOR_001": "not_started",
     "COMBAT_001": "not_started",
-    "DEVICE": "No co-op phone/device-pair test; separate rebuilt baseline phone test pending",
+    "DEVICE": "Owner-tested rebuilt baseline ACCEPTED; HOOK001 probe device test NOT STARTED; co-op device-pair test NOT STARTED.",
     "SRC_002": "Separate candidate build and owner baseline runtime accepted for this limited device test; not original Arabic source equivalence/full campaign proof.",
     "NET_004": "Phone/ZeroTier runtime and authenticated production protocol untested",
     "SRC_002B": {
@@ -151,9 +151,9 @@
         "fullAbiSemanticsAccepted": false
       }
     },
-    "DEVICE_BASELINE": "Baseline test answered successfully; no repeat needed. Probe Android build/device capture not started.",
+    "DEVICE_BASELINE": "Already accepted by owner; do not ask to repeat.",
     "HOOK_001": {
-      "status": "Latest namespace-aligned CI queued; prior Windows build still in progress",
+      "status": "First CI candidate 44852419929 successful, latest namespace-aligned build 44852913117 in progress at last check; device probe not tested",
       "workflowRun": 44852913117,
       "package": "org.bocoop.black.probe1",
       "baselineAccepted": true,
