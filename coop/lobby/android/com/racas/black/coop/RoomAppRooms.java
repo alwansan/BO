@@ -9,7 +9,7 @@ public final class RoomAppRooms {
     private static RoomSession active;
     private RoomAppRooms(){}
     public static synchronized RoomSession obtain(){
-        if(active==null)active=RoomSession.create();
+        if(active==null){active=RoomSession.create();active.setReporter(RoomDiagnostics::event);}
         return active;
     }
     public static synchronized void shutdown(){
