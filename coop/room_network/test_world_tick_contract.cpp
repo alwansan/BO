@@ -18,6 +18,9 @@ int main(){
     assert(w.Observe(0x11110000,true)==WorldTickSignal::None);
     assert(w.Observe(0x22220000,true)==WorldTickSignal::WorldPointerChanged);
     assert(w.Observe(0x22220000,true)==WorldTickSignal::None);
+    // Attempts are bounded fixed-code evidence, never mission READY.
+    for(int i=0;i<8;++i)assert(w.ObserveLaunchAttempt());
+    assert(!w.ObserveLaunchAttempt());
     bool produced=false;
     std::thread thread([&] {
         produced=w.Observe(0x22220000,true)==WorldTickSignal::None;
