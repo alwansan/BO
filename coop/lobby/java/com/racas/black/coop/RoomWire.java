@@ -11,8 +11,10 @@ import java.util.*;
 /** Real room protocol only. It carries no fabricated actors or game snapshots. */
 public final class RoomWire {
     private RoomWire() {}
-    public static final int JOIN=1, ACCEPT=2, ROSTER=3, PING=4, PONG=5, LEAVE=6, REJECT=7;
-    public static final int MAX_FRAME=512, MAX_PLAYERS=4, VERSION=2, PROFILE=2;
+    public static final int JOIN=1, ACCEPT=2, ROSTER=3, PING=4, PONG=5, LEAVE=6, REJECT=7,
+        STORY_PREPARE=8, STORY_READY=9, STORY_COMMIT=10, STORY_ABORT=11;
+    // Story messages are incompatible with old room-only APKs; reject mixed versions.
+    public static final int MAX_FRAME=512, MAX_PLAYERS=4, VERSION=3, PROFILE=3;
     private static final byte[] IMAGE=hex("c5bfed25449c8212d7a976f15246e87ead57713f");
     public static final class Incompatible extends IOException {
         private static final long serialVersionUID=1L;
@@ -81,8 +83,8 @@ public final class RoomWire {
         return normalized;
     }
     private static void nonce(byte[] b)throws IOException{if(b==null||b.length!=16)throw new IOException("Bad nonce length");}
-    private static byte[] frame(int type,byte[] body)throws IOException {
-        if(type<JOIN||type>REJECT||body.length>MAX_FRAME-8)throw new IOException("Invalid frame");
+    static byte[] frame(int type,byte[] body)throws IOException {
+        if(type<JOIN||type>STORY_ABORT||body.length>MAX_FRAME-8)throw new IOException("Invalid frame");
         ByteArrayOutputStream b=new ByteArrayOutputStream();DataOutputStream out=new DataOutputStream(b);
         out.writeInt(0x4243524d);out.writeByte(VERSION);out.writeByte(type);out.writeShort(body.length);out.write(body);
         return b.toByteArray();
@@ -92,7 +94,7 @@ public final class RoomWire {
         DataInputStream in=new DataInputStream(new ByteArrayInputStream(raw));
         if(in.readInt()!=0x4243524d||in.readUnsignedByte()!=VERSION)throw new Incompatible();
         int type=in.readUnsignedByte(),n=in.readUnsignedShort();
-        if(type<JOIN||type>REJECT||n!=raw.length-8)throw new IOException("Invalid type or length");
+        if(type<JOIN||type>STORY_ABORT||n!=raw.length-8)throw new IOException("Invalid type or length");
         byte[] body=new byte[n];in.readFully(body);return new Packet(type,body);
     }
     public static byte[] read(DataInputStream in)throws IOException {
@@ -102,7 +104,7 @@ public final class RoomWire {
         byte[] raw=Arrays.copyOf(header,n+8);in.readFully(raw,8,n);decode(raw);return raw;
     }
     public static void write(DataOutputStream out,byte[] raw)throws IOException{decode(raw);out.write(raw);out.flush();}
-    private static DataInputStream body(Packet p,int type)throws IOException{
+    static DataInputStream body(Packet p,int type)throws IOException{
         if(p.type!=type)throw new IOException("Unexpected message");
         return new DataInputStream(new ByteArrayInputStream(p.body));
     }
