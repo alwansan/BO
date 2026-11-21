@@ -1,3 +1,8 @@
+## Latest confirmed after Session38 addendum
+JVM story + rapid rehost run44953176046 SUCCESS, including ROOM_REHOST_PASS 4 restarts. Android29 opaque EC KeyStore TLS story + same-port rehost run44953176054 SUCCESS, literal TLS_PLATFORM_PASS. No real BLACK scene loader/actor or two physical phone rehost acceptance. Original owner-tested APK44946597973 (v2) is NOT protocol3 compatible. All new game work is source-only or synthetic emulator test. Read docs/ROOM_STORY_TLS_PROTOCOL_AR.md before continuing. Preserve owner original POV/remote human ally visual distinction and shared single host world objective.
+
+---
+
 # NEWEST Session38 work — real story TLS v3 transport, 2026-11-22
 Read memory/STATE.json, memory/sessions/2026-11-22_bo-coop-38-firstperson-remote-ally-shared-mission.md, docs/ROOM_STORY_TLS_PROTOCOL_AR.md and docs/BLACK_STORY_ENTRY_AUDIT_AR.md, then earlier Session37/36. Branch ONLY experiment/black-coop; verify live HEAD and Actions first. Latest owner original-player primary-model probe ARRIVED already (8 complete arms-only models) in CL. Original local first-person remains on each phone, OTHER real humans use independent full-body ALLY LOOK, not NPC AI. Host selects ONE authoritative world, not two solo games.
 
