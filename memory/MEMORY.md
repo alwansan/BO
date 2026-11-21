@@ -1,3 +1,8 @@
+## OWNER TEST POLICY — 2026-11-22 (binding)
+Owner requests **GitHub Actions first** and no device requests for minor checks. Reserve any phone test for a meaningful, end-to-end milestone that CI/emulation cannot verify; bundle room/network/scene/remote-actor/world/error evidence into one bounded automatic diagnostic package, so a single owner trial answers large and small questions. Do not request repeated screenshots/logs for small detail. Until shared-world gameplay is actually ready and preflighted, work from GitHub only. Never mark a CI success as real-phone proof. See AGENTS.md and docs/MAJOR_DEVICE_TEST_GATE_AR.md.
+
+---
+
 ## Session39 — 2026-11-22 — source story bridge (latest)
 Owner photos and latest CL room event files show genuine two-phone room discovery/JOINED and 2/4 old lobby, not shared BLACK campaign; host fast rehost old device captures include ERROR_BINDEXCEPTION. Branch prior HEAD 68bab3e1. Source commits 86faa014 and 5370dcae connect RoomSession to authenticated TLS story methods through a strict bound game-thread identity, resetting binding on new/stop generation; no automatic READY at JOIN or network-thread guest game calls. SessionTest exercises pinned localhost TLS and synthetic loaded callbacks. JVM CI44954581676 SUCCESS with SESSION_STORY_BRIDGE_PASS/STORY_TLS_PASS/ROOM_REHOST_PASS; source preflight44954581651 SUCCESS. Android29 44954581718 and Android lobby-only APK 44954581624 statuses to recheck. Game engine callback, actual same-scene loader, guest remote AllyBody render, movement/world/quest/combat remain OPEN. Original owner-tested v2 APK44946597973 incompatible with v3. Read memory/sessions/2026-11-22_bo-coop-39-roomsession-story-thread-bridge.md and RESTORE, preserve ONLY experiment/black-coop.
 
