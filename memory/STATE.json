@@ -987,8 +987,8 @@
       "status": "PASS_CXX_SANITIZER_AND_SOURCE_STAGING_NOT_PHONE_RENDER",
       "nativeContractRun": 44962215874,
       "sourcePreflightRun": 44962275672,
-      "apkWithSourceObserverRun": 44962275637,
-      "apkWithSourceObserverStatus": "CHECK_LIVE",
+      "apkWithSourceObserverRun": 44962611024,
+      "apkWithSourceObserverStatus": "CHECK_LIVE_AFTER_ALLOWLIST_FIX",
       "sourceFiles": [
         "coop/room_network/world_tick_contract.hpp",
         "coop/room_network/room_world_tick.hpp",
@@ -1006,7 +1006,10 @@
       "sourceOnlyStaging": true,
       "guestWorldLoadedFromTheseSignals": false,
       "roomSessionReadySentFromTheseSignals": false,
-      "blackWorldPlayableOnline": false
+      "blackWorldPlayableOnline": false,
+      "previousApkRun": 44962275637,
+      "previousApkFailure": "EXPECTED_STRICT_SOURCE_ALLOWLIST_UPDATED",
+      "allowlistRepairCommit": "561eacc0362ec2a1a730e7d85f68511e0c8d5b82"
     }
   },
   "pending": {
@@ -1180,7 +1183,7 @@
     "deviceTested": true,
     "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "Session43: verify newest TLS title Android APK44962275637 after staging read-only original player tick & mission launch attempt observer. Private world writer CI44961768279 SUCCESS (0x20BF48 EAX, 0x20BF51 EBX; branch into second, no scene proof); native guard44962215874 and source preflight44962275672 PASS. Next rigorously verify actual mission/stage ID, XBE world-load completion and game-thread ABI; ONLY then gate RoomSession READY; then independent remote human fullbody AllyBody + authoritative world replication. No phone test until substantial gameplay.",
+  "next": "Verify BO room-only native-witness Android APK build44962611024; previous44962275637 failed only Windows staging allowlist missing difficulty.cpp and two new source-only headers; corrected commit561eacc0. The actual owner pinned XBE world-writer flow44961768279 PASS and C++ native event guard44962215874 and source preflight44962275672 PASS. NO owner phone test until genuine BLACK co-op single shared stage and human remote ally body.",
   "latestHandoff": {
     "date": "2026-11-22",
     "session": 43,
@@ -1240,11 +1243,14 @@
     "engineActualSharedStory": false,
     "ownerWriterFlowRun": 44961768279,
     "nativeWorldWitnessRun": 44962215874,
-    "latestRoomApkRun": 44962275637,
+    "latestRoomApkRun": 44962611024,
     "realSceneLoadedHook": false,
-    "ownerPhoneTestRequested": false
+    "ownerPhoneTestRequested": false,
+    "latestRoomApkStatus": "CHECK_LIVE",
+    "previousRoomApkFailure": 44962275637,
+    "ciAllowlistRepaired": true
   },
-  "executionStatus": "Session43: owner c5 private XBE static flow44961768279 SUCCESS, 2 world writes 9B apart EAX/EBX, nearby branch-to-second suggests alternatives but no proven clear/loaded scene. Added staging-only native local-world update and mission-launch attempt fixed codes without emitting STORY_READY. Contract ASan+UBSan44962215874 SUCCESS, source preflight44962275672 SUCCESS; Android full room-only APK44962275637 pending. User phone test not requested; real host story/remote human ally remains undone.",
+  "executionStatus": "Session43 private pinned c5 XBE world-writer flow PASS44961768279; C++ observer ASan/UBSan PASS44962215874; staging PASS44962275672. Android full packaging44962275637 failed from old strict allowlist only; updated exactly approved difficulty.cpp + two world witness headers at commit561eacc0, new44962611024 in progress. Existing older lobby-only APK44961110208 SUCCESS. Real BLACK scene-loaded/remote ally gameplay unproven; no physical phone test.",
   "ownerClarifications": {
     "session": 28,
     "previousPhoneTests": "Solo gameplay and two-phone real LAN lobby now confirmed, but no two-phone SAME WORLD gameplay",
@@ -1333,13 +1339,16 @@
     "nativeLocalWorldTickTestStatus": "SUCCESS",
     "nativeRoomStagingTestRun": 44962275672,
     "nativeRoomStagingStatus": "SUCCESS",
-    "androidCandidateWithWitnessRun": 44962275637,
-    "androidCandidateWithWitnessStatus": "CHECK_LIVE",
+    "androidCandidateWithWitnessRun": 44962611024,
+    "androidCandidateWithWitnessStatus": "IN_PROGRESS_AFTER_STRICT_ALLOWLIST_FIX",
     "realMissionStageIdentityProven": false,
     "realSceneLoadedGameThreadHookProven": false,
     "storyReadyFromActualBlackScene": false,
     "remoteFullBodyHumanRendered": false,
-    "ownerPhoneTestRequiredNow": false
+    "ownerPhoneTestRequiredNow": false,
+    "previousAndroidRun": 44962275637,
+    "previousAndroidFailure": "WINDOWS_CI_ALLOWED_NATIVE_DIFF_MISSING_DIFFICULTY_CPP_AND_TWO_HEADERS",
+    "nativeStagingPassRun": 44962275672
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
