@@ -247,3 +247,7 @@ HOOK001 fairness source e9ad056: host sanitizer + pinned-source [44856368591](ht
 
 ## أولوية جلسة19
 افحص pool funcs وserial/scene reset وفق memory/sessions/2026-11-21_bo-coop-19-cloud-handoff.md ثم Probe3 منفصل read-only واختبارات/مراجعة/Actions ثم اختبار هاتف محدد. ACTOR قبل مزيد mock net.
+
+
+### تصحيح عقود pool — جلسة19
+اقرأ docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md: +4 capacity/+8 occupied؛ sparse lists32/16/8/8،actor+250 membership،acquisition1DF440→init1DA4F0. إثبات ثابت فقط؛reset/overflow/runtime/model ما زالت مفتوحة.

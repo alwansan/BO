@@ -202,3 +202,7 @@ HOOK001 starvation under LOD: reserved per-second/lifetime player opportunity wi
 
 ## ACTOR-001A — تحديث جلسة19
 pool32 ثابت وserial مرشح لا يثبتان active lifetime أو remote body؛ دوال acquisition/retire/list ما زالت فرضيات. تفصيل العناوين في memory/sessions/2026-11-21_bo-coop-19-cloud-handoff.md.
+
+
+### تصحيح عقود pool — جلسة19
+اقرأ docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md: +4 capacity/+8 occupied؛ sparse lists32/16/8/8،actor+250 membership،acquisition1DF440→init1DA4F0. إثبات ثابت فقط؛reset/overflow/runtime/model ما زالت مفتوحة.

@@ -1,3 +1,5 @@
+**تصحيح أحدث:** اقرأ docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md: container+4=capacity و+8=occupied، مصفوفات sparse؛ 1DF440 acquisition path إلىinit1DA4F0، و1B6770 نقل عضوية. لا تعتمد تسميات count القديمة.
+
 **تنبيه متابعة جلسة19:** 0x1E6860 لها آثار جانبية وليست capacity predicate نقية؛ لا تستدعها من probe. +79C0/+79D0 قوائم حالات متعددة وactor+384 يكتب1/2. اقرأ ملحق جلسة19 قبل التنفيذ.
 
 # استعادة عاجلة — جلسة19، 2026-11-21

@@ -221,3 +221,7 @@ AOSP Android15 SYSCALLS.TXT يحتوي process_vm_readv all، app/common blockli
 
 ## جلسة19 — تسليم سحابي
 اكتشاف pool32/serial مرشح موثق بالتفصيل في memory/sessions/2026-11-21_bo-coop-19-cloud-handoff.md؛ ليس إثبات lifecycle runtime. لا APK/CI جديد، والمصادر موجودة دون رفع جديد.
+
+
+### تصحيح عقود pool — جلسة19
+اقرأ docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md: +4 capacity/+8 occupied؛ sparse lists32/16/8/8،actor+250 membership،acquisition1DF440→init1DA4F0. إثبات ثابت فقط؛reset/overflow/runtime/model ما زالت مفتوحة.

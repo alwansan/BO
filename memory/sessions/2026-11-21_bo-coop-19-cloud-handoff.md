@@ -41,3 +41,7 @@ Baseline يعمل على هاتف المالك بلا تعطل؛ لا تعيد �
 - 0x1E68B0 تستخدم container+79D0، وقد تستدعي1DA1A0 عند الامتلاء، تفك موارد+324/+B4، تضبط+384 إلى2، وتصفّر+8/+C. هذا يدعم وجود قوائم حالات متعددة، وليس قائمة active وحيدة.
 - 0x1DA1A0 تأخذ manager ثمactor كوسيطين stack وتنتهي ret8؛ تنظف موارد+324/+B4، تستدعي1B6770 على manager+79A0 ثم actor virtual slot+0xC. هذا عقد cleanup قوي، لا free heap مثبت.
 هذه أدلة ثابتة فقط. يجب فحص1B6770 و1C4A90 و1DF440 ودالة init/serial لفهم الحاويات قبل أي إضافة hooks أو قراءة count كأنه عدد الأحياء.
+
+
+## آخر متابعة — عقود الحاويات
+اقرأ docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md؛ صححت capacity/occupied،وأثبتت نقل العضوية ومسارacquisition1DF440 إلىinit1DA4F0. لا تجربة هاتف/CI/APK جديدة.
