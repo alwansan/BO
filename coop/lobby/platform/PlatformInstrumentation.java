@@ -11,10 +11,37 @@ import java.security.MessageDigest;
 /** Standalone emulator test; no game, XBE, assets, JNI, or native library. */
 public final class PlatformInstrumentation extends Instrumentation {
     private static void check(boolean value){if(!value)throw new AssertionError("Platform invariant failed");}
+    private void verifySafeRotatedRoomLogs()throws Exception{
+        android.content.Context context=getTargetContext().getApplicationContext();
+        RoomDiagnostics.init(context);
+        java.io.File base=context.getExternalFilesDir(null);
+        if(base==null)base=context.getFilesDir();
+        java.io.File dir=new java.io.File(base,"logs");
+        check(dir.isDirectory()||dir.mkdirs());
+        java.io.File recent=new java.io.File(dir,"coop_room_events.log");
+        java.io.File older=new java.io.File(dir,"coop_room_events.old.log");
+        check(!recent.exists()||recent.delete());
+        check(!older.exists()||older.delete());
+        RoomDiagnostics.event("STORY_DIAGNOSTICS_BEGIN");
+        for(int i=0;i<900;i++)
+            RoomDiagnostics.event("STORY_SAFE_ROTATION_SAMPLE_ABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789");
+        RoomDiagnostics.event("STORY_DIAGNOSTICS_END");
+        check(recent.isFile()&&older.isFile());
+        String safe=RoomDiagnostics.read();
+        check(safe.contains("STORY_DIAGNOSTICS_BEGIN")&&safe.contains("STORY_DIAGNOSTICS_END"));
+        check(RoomDiagnostics.exportToDownloads(context));
+        try(java.io.FileOutputStream write=new java.io.FileOutputStream(older,true)){
+            write.write("UNTRUSTED_RAW_ADDRESS_OR_SECRET\n".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        }
+        check(RoomDiagnostics.read().startsWith("Unable to read"));
+        check(recent.delete()&&older.delete());
+        RoomDiagnostics.event("ROOM_SAFE_LOG_EXPORT_VERIFIED");
+    }
     @Override public void onCreate(Bundle arguments){super.onCreate(arguments);start();}
     @Override public void onStart(){
         Bundle result=new Bundle();
         try{
+            verifySafeRotatedRoomLogs();
             RoomIdentity first=RoomIdentity.load(),second=RoomIdentity.load();
             check(first.fingerprint().length==32&&first.fingerprintHex().length()==64);
             check(MessageDigest.isEqual(first.fingerprint(),second.fingerprint()));
@@ -111,7 +138,7 @@ public final class PlatformInstrumentation extends Instrumentation {
             while(Thread.getAllStackTraces().keySet().stream().anyMatch(t->t.isAlive()&&t.getName().startsWith("bo-room-"))){
                 if(System.nanoTime()>deadline)throw new AssertionError("Room threads survived close");Thread.sleep(10);
             }
-            result.putString("stream","TLS_PLATFORM_PASS: AndroidKeyStore TLS room, host-story PREPARE / guest explicit READY / host COMMIT and same-port rapid rehost succeeded over Android29 sockets; names-only Host, automatic Join and Back regression passed (NO BLACK game loader/actor)\n");
+            result.putString("stream","TLS_PLATFORM_PASS: AndroidKeyStore TLS room, host-story PREPARE / guest explicit READY / host COMMIT and same-port rapid rehost succeeded over Android29 sockets; names-only Host, automatic Join and Back regression passed; ROOM_LOG_ROTATION_PASS verified safe rotated MediaStore export and tamper refusal (NO BLACK game loader/actor)\n");
             finish(Activity.RESULT_OK,result);
         }catch(Throwable failure){
             android.util.Log.e("BlackTlsPlatform","Platform test failed",failure);
