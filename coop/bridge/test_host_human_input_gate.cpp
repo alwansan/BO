@@ -104,6 +104,30 @@ int main(){
         })<=gate.MaxDrain());
     }
     assert(total==gate.Capacity()&&last==48);
+    // A callback is allowed to advance the actual game scene. The second
+    // already-drained command MUST NOT run against the new scene.
+    assert(gate.Bind({19,11,24})&&gate.SetPeer(2,97));
+    assert(gate.OfferTrusted(Frame(19,11,24,2,97,1,2000),true));
+    assert(gate.OfferTrusted(Frame(19,11,24,2,97,2,2000),true));
+    uint32_t reentrant_scene_calls=0;
+    assert(gate.Drain(2001,[&](const HumanInput& input){
+        ++reentrant_scene_calls;
+        assert(input.sequence==1);
+        assert(gate.Bind({19,12,25}));
+    })==1);
+    assert(reentrant_scene_calls==1);
+    // The same guard must stop callbacks when the first event removes a
+    // player (leave/disconnect/rejoin) from its authenticated roster.
+    assert(gate.SetPeer(2,98));
+    assert(gate.OfferTrusted(Frame(19,12,25,2,98,1,2100),true));
+    assert(gate.OfferTrusted(Frame(19,12,25,2,98,2,2100),true));
+    uint32_t reentrant_leave_calls=0;
+    assert(gate.Drain(2101,[&](const HumanInput& input){
+        ++reentrant_leave_calls;
+        assert(input.sequence==1);
+        assert(gate.SetPeer(2,0));
+    })==1);
+    assert(reentrant_leave_calls==1);
     std::cout<<"HOST_HUMAN_INPUT_GATE_PASS: authenticated source required, host scene/roster and reconnect identity fenced, replay/overflow/stale/thread guarded\n";
     std::cout<<"NO BLACK gameplay, remote body, actual authenticated transport integration, or original world mutation\n";
 }
