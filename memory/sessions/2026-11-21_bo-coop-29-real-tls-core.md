@@ -17,3 +17,7 @@ black_log يؤكد الصورةc5،وفيه خطأFEAudioواحد عندConfirmW
 
 ## المتبقي الفعلي
 Actions real-lobby-core الجديد سيعيد الاختبارات علىLinux/JDK17. التالي AndroidKeyStore لهوية لكلتثبيت وfingerprintverification صريحة،اكتشافLANغيرموثوق/DirectIPv4،forms/JNI/immutable-state إلىصفحةFlash،ثمAPKمستقللاتصالغرفةحقيقي. لاطلبهاتفحتىتجربةهاتفين LAN/VPN مفيدة. إنشاءالأجساموالتحكمومزامنةالقصة/القتالمازالواهدفاًإلزامياًغيرمكتملين؛لايعتبرنجاحTLSقبولco-op.
+
+## CI مُثبت والمرحلة التالية
+run44917272041/job136885459965 **SUCCESS** على591372ba4819fd001ebb354dced27179e97ac548؛قُرئالسجلوجميعwire/actualTLS/heartbeatاختباراتPASS،coreAPIJava8وtestsJava17بـ-Werror. لاAndroidruntimeأوgameplayيثبتهذاالـCI.
+أُضيفRoomIdentityAndroidKeyStoreوtestAPKsyntheticبلاGame/XBE/native،لفحصهويةopaqueتستقربينloadين واتصالTLSفعليبها. workflowblack-coop-lobby-android-platform سيجربAndroid29emulator؛الـmanifestوالـbashsyntaxمحلياًصالحان،والترجمةوالتشغيلعلىAndroidلميثبتابعد. لاتطلبمنالمالكهذاالفحصالصغيربدلاًمنالمحاكي.

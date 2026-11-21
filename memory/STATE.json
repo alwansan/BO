@@ -576,6 +576,15 @@
       "androidRuntime": false,
       "discoveryIntegrated": false,
       "gameplayIntegrated": false
+    },
+    "REAL_TLS_ROOM_CI": {
+      "status": "PASS_JAVA8_API_CORE_AND_ACTUAL_JVM17_TLS_INTEGRATION",
+      "run": 44917272041,
+      "job": 136885459965,
+      "sourceCommit": "591372ba4819fd001ebb354dced27179e97ac548",
+      "logsRead": true,
+      "androidRuntime": false,
+      "playableCoop": false
     }
   },
   "pending": {
@@ -707,7 +716,7 @@
     "deviceAccepted": true,
     "gameplayCoop": false
   },
-  "next": "Verify real TLS room core in Actions; implement AndroidKeyStore identity/pin verification, discovery/direct join and real Flash/JNI room integration; continue independent native actor/body acquisition. No repeated accepted UI or passive capture test.",
+  "next": "Run synthetic Android emulator instrumentation for per-install opaque AndroidKeyStore identity and real pinned TLS; then implement discovery/direct join, Android forms and Flash/JNI live room state. Native actor/body and story sync remain required.",
   "latestHandoff": {
     "date": "2026-11-21",
     "session": 29,
@@ -715,7 +724,7 @@
     "newApk": false,
     "newCI": true,
     "actorPoolEvidence": "memory/sessions/2026-11-21_bo-coop-19-cloud-handoff.md",
-    "next": "Verify real TLS room core in Actions; implement AndroidKeyStore identity/pin verification, discovery/direct join and real Flash/JNI room integration; continue independent native actor/body acquisition. No repeated accepted UI or passive capture test.",
+    "next": "Run synthetic Android emulator instrumentation for per-install opaque AndroidKeyStore identity and real pinned TLS; then implement discovery/direct join, Android forms and Flash/JNI live room state. Native actor/body and story sync remain required.",
     "cloudFilesRequiredFromOwner": false,
     "actorPoolContracts": "docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md",
     "fullOwnerObjective": "docs/OWNER_PROJECT_OBJECTIVE_AR.md",
@@ -723,7 +732,7 @@
     "poolReader": "coop/probe3/pool_snapshot.hpp",
     "poolReaderStatus": "OWNER_PROBE3_AND_PROBE4_CAPTURE_ACCEPTED"
   },
-  "executionStatus": "real_tls_lobby_core_local_verified_ci_pending_android_integration_remaining",
+  "executionStatus": "real_tls_jvm_ci_pass_android_keystore_emulator_test_pending",
   "ownerClarifications": {
     "session": 28,
     "previousPhoneTests": "solo local human plus enemy/friendly NPCs only; never two phones",

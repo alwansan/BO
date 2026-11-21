@@ -25,9 +25,9 @@
 - Discovery duplicates, forged replies and VPN broadcast absence cannot turn into authenticated joins.
 
 ## Tasks
-- [ ] Record accepted owner room screenshots and fresh capture aggregates; preserve existing FEAudio observation without guessing a fix.
-- [ ] TDD strict binary room frames: UTF-8, bounded lengths, image/profile compatibility, roster IDs, malformed/trailing data.
-- [ ] TDD actual loopback TLS host with three clients, verified pins, incorrect PIN/image, full room, disconnect and shutdown; no game simulation.
+- [x] Record accepted owner room screenshots and fresh capture aggregates; preserve existing FEAudio observation without guessing a fix.
+- [x] TDD strict binary room frames: UTF-8, bounded lengths, image/profile compatibility, roster IDs, malformed/trailing data.
+- [x] TDD actual loopback TLS host with three clients, verified pins, incorrect PIN/image, full room, disconnect and shutdown; no game simulation.
 - [ ] Add AndroidKeyStore identity and explicit peer fingerprint verification; platform compile and JVM integration in Actions.
 - [ ] Add bounded LAN discovery and direct IPv4 join; real socket tests and compatibility with BCLN-v1.
 - [ ] Connect Flash Host/Join/Leave to Android forms and immutable live roster; isolated APK build, review and artifact verification.
@@ -38,3 +38,5 @@
 Android Keystore: https://developer.android.com/privacy-and-security/keystore
 SSLSocket: https://developer.android.com/reference/javax/net/ssl/SSLSocket
 These document key isolation and TLS APIs; they do not prove our integration works on a phone.
+
+Ledger: JVM core CI44917272041 PASS on591372ba; logs read. Android identity adapter and standalone emulator instrumentation added next, not yet platform verified. No request for another minor owner test.

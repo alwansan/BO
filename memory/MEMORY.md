@@ -287,3 +287,5 @@ APK44876183662SUCCESS؛artifact14696342069 نُزلوفُحصhash. راجع memo
 
 ## جلسة29 — قبول UI وTLS فعلي
 المالك قبل القوائم وعمل اللعبة؛قُرئت5صوروجميع140pool/692linksمنسجل173522-325صالحة. لا إعادةUI/Probe4. خطأFEAudioواحدبلاcrashمبلغ،السببغيرمثبت. RoomWire/RoomTlsالجديدانينفذانغرفةTLSفعليةعلىJVMمضيف+3عملاءمعpin/PINوheartbeatورفضنسخة/امتلاءوإغلاق. مراجعةمستقلةوجدتpublication-after-closeوmissingPONG؛reproducersREDثمfixesGREENوsuitePASS. Android/discovery/JNIوالأجسام/القصةغيرمكتملة. التفاصيل`memory/sessions/2026-11-21_bo-coop-29-real-tls-core.md`؛الخطةreal-lobby.md.
+
+جلسة29/CI:run44917272041/job136885459965 SUCCESS على591372ba؛logsreadوالـTLSsockettestsPASS. التاليRoomIdentityAndroidKeyStoreواختبارAndroid29emulatorبـAPKsyntheticبلاgameassets؛لميثبتAndroidبعد. لاheavyphonetestقبلحزمةاتصالغرفةفعلية.
