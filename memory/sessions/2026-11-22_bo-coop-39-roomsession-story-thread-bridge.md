@@ -1,3 +1,11 @@
+## Final verified Session39 test addendum
+- **JVM TLS** 44954581676 SUCCESS, read job136999800408 literal `SESSION_STORY_BRIDGE_PASS`, `ROOM_SESSION_PASS`, `STORY_TLS_PASS`, `ROOM_REHOST_PASS`.
+- **Android29 emulator** 44954581718 SUCCESS, read job136999812583 literal `TLS_PLATFORM_PASS` for Keystore, host story PREPARE, guest explicit READY, host COMMIT, rapid same-port rehost, Host/Join/Back.
+- **Room source preflight** 44954581651 SUCCESS; **UDP isolated** 44954581696 SUCCESS.
+- **Candidate Android room-only APK** 44954581624 still in progress at last poll (source SHA 5370dcae); no verified new APK yet. No actual physical device run or co-op stage.
+
+---
+
 # BO-COOP Session39 — RoomSession story handoff (2026-11-22)
 
 Branch: **alwansan/BO:experiment/black-coop** ONLY. Never change main, ISO, saves, licensed assets, original player-camera/hands. Owner goal: one host-owned BLACK campaign world; each phone keeps ORIGINAL first-person locally, sees OTHER real humans as independent full-body ALLY visuals without AI brains.
