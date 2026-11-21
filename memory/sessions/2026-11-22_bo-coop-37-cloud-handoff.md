@@ -1,0 +1,22 @@
+# تسليم جلسة37 — 2026-11-22، استمرار من بيئة سحابية
+
+المالك طلب حفظ جميع الأدوات والمعلومات والخطة علىGitHub ليواصل فيجلسةأخرى ثم يعودبعدساعات. نقطة الكود المفحوص8bc7f92e17c1d35c6c125013bc4057afe320527f،ونقطةتوثيقالتحققfe46ea07464a2ef7c0057eefdcab20fc13c2d075. لا تدّعوجودتجربةهاتفجديدةوصلتبعدذلك؛آخرطلبكانالتسليمفقط.
+
+## استعادة بلا اعتماد على هذا الجهاز
+استنسخalwansan/BO فرعexperiment/black-coop واقرأAGENTS وprompt/RESTORE_SESSION_AR.md وmemory/STATE.json وجلسة36 والخطةdefault-player-link. لا تعتمد علىBO-activeأوBO-coopالمحليتينأو/tmp. كل أدوات المصدر المطلوبة مرفوعة؛راجعdocs/CLOUD_HANDOFF_AR.md. افحصHEADوActionsوسجلاتCLالجديدة قبل العمل. لا force-push ولا تغييرmain.
+
+## قرار المالك الذي يجب الحفاظ عليه
+شخصيةاللعبةالأصلية علىكل هاتف،دوناستبدالهابموديلاتNPCأوحلفاء. لا تطلبfactoryroomكالتجربةالتالية. وجودlocalplayerمثبت،لكنظهورجسمبعيدأومهمةمشتركةلمُينفذبعد. لا تضفStartوهمياًيبدألعبتينمنفصلتين. الهدفالكامل:4بشر،hostauthority،latejoin،AI/combat/story،أسماء،friendlyfire،60sdown/5srevive،وانتقالاتالمراحل.
+
+## نقطة الاختبار الحالية
+حزمةorg.bocoop.black.defaultplayer باسمBLACK ORIGINAL PLAYER TEST:run44946597973SUCCESS وartifact14724535514،APKsha25694400c2d650d772293ab5f3a1d0c72e91d1974dea64a3004d18404e90ccb02d0،21860751B. نُزلتوفُحصتCRCوالـSHAوالحزمةوالصورةc5والتوقيع. لا اختبار هاتف لهابعد. تجمعحتى8سجلاتdefault_player_modelللـprimarydrawmodelمنactor320→wrapper[0]،بقراءةآمنةفقط،دونactorcreationأوguestwritesأونموذجبديل. completeوbody_candidateقرائنmetadataلهذاالنموذجفقط؛لاتعممfalseعلىغيابfullbodyفيكلاللعبة.
+
+التجربةالمطلوبةوفقdocs/DEFAULT_PLAYER_DEVICE_TEST_AR.md:هاتفواحد،Startcapture،تحميلمهمةواللعب20–30ثانية،ثمcoop_probe.txtوblack_log.txtالجديدان. افحصCLأولاًربمارفعهماالمالك؛لا تسألرفعISOأوbaselineأوProbe4مجدداً. إنلمتصلايمكناستكمالتحقيقالمصدرومخططربطالمهمة/playercontext،لكنلاتكررإنشاءنفسالحزمةأوتزعمقبولالهاتف.
+
+## الاتصال المقبول وحدوده
+الـAPKالقديمةذاتPINنجحتLANعلىهاتفين:HOSTING/JOINEDو2/4فيصورCL22:47وسجلJOIN_AUTHENTICATED. النسخالجديدةتلغيPINوالبصمةوالمنفذاليدوي:أسماءفقط،TCP24872،اكتشافالأجهزةالخاملةوالغرفUDP1511،manualIPاحتياطي،TLSداخليتلقائي،Wire2/Profile2ويجبتحديثالطرفين. JVM8suitesوAndroid29Host/automaticJOIN/BackPASS. ظهوركلحسابZeroTierأوVPNغيرمضمون؛broadcastو/24محدود. لاgameplayمن2/4.
+
+## المراجع
+CL/black log معimgومجلد«من الهاتف الثاني» مصدرالصوروالسجلاتالجديدة. portingpete/Black-2006-Recomp@b2512fafd3e181e4febfb298f297245b845ef628 مصدرMITقرأناه:PCplayer-contextوسلاح/كاميرا/HUDمستقلة،لكنAIلايستهدفP2بعدوليسAndroid/networkجاهزاً. docs/REFERENCE_BLACK_PC_COOP_AR.md يشرححدودالنقلومخاطرpool+250. لمينسخBOكودruntimeمنه؛إذااستعملتهألحقMITوالنسبة. Peterson047/BLACK-XBEMultiplayerbinary-onlyولاsourceمرخصمتاحللنسخ؛body.bcaمقيد.
+
+bisoيحتويالمحتوىالمفكوكpin9ceb6a65؛BOيحتويISOالأجزاءوملفmanifestوتركيبهافيActions. مصدرbaselinef3754d6 وSDK99078b1 وXBEc5bfed25449c8212d7a976f15246e87ead57713f. لا حاجةISOجديدللدفعاتالحالية. لا تنشرISO/XBE/أصولاًأومفاتيحأوحفظاًفيArtifacts. تحديثالذاكرةوالاستعادةإلزاميبعدالدفعاتوالـCI.

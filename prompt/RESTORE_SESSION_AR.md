@@ -1,3 +1,6 @@
+## تسليم جلسة37 — 2026-11-22
+المالك سينتقل مؤقتاً لجلسة أخرى. اقرأ memory/sessions/2026-11-22_bo-coop-37-cloud-handoff.md وdocs/CLOUD_HANDOFF_AR.md. جميع أدوات المصدر والخطط والمراجع مرفوعة؛لا تعتمد علىالجهازالمحلي. آخرAPK44946597973/artifact14724535514مفحوصة،ولا سجلاتهاتفجديدةبعدطلبها. الشخصيةالأصليةفقط،لاNPCبديل،ولاsharedStartأوgameplayبعد. افحصCLالحيةأولاًلأيcaptureجديد.
+
 # استعادة BO-COOP — جلسة36، الشخصية الأصلية فقط
 
 اقرأ AGENTS.md ثم memory/STATE.json وmemory/sessions/2026-11-21_bo-coop-36-original-player-steering.md والخطة docs/superpowers/plans/2026-11-21-default-player-link.md. راجع MEMORY وPLAN وISSUES وdocs/SOURCE_MAP_AR.md وdocs/REFERENCE_BLACK_PC_COOP_AR.md. افحص HEAD وActions الحيين قبل أي تعديل. الكتابة في alwansan/BO فرعexperiment/black-coop، دونforce-push أوتغييرmain. عمل هذه الجلسة فيBO-network-fix؛BO-active وBO-coop نسخ محلية قديمة لا تنقلها فوقremote.

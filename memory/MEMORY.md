@@ -1,3 +1,6 @@
+## تسليم جلسة37 — 2026-11-22
+المالك سينتقل مؤقتاً لجلسة أخرى. اقرأ memory/sessions/2026-11-22_bo-coop-37-cloud-handoff.md وdocs/CLOUD_HANDOFF_AR.md. جميع أدوات المصدر والخطط والمراجع مرفوعة؛لا تعتمد علىالجهازالمحلي. آخرAPK44946597973/artifact14724535514مفحوصة،ولا سجلاتهاتفجديدةبعدطلبها. الشخصيةالأصليةفقط،لاNPCبديل،ولاsharedStartأوgameplayبعد. افحصCLالحيةأولاًلأيcaptureجديد.
+
 
 ## نتيجة جلسة36 — حزمة جاهزة والتحقق مكتمل
 run44946597973 على8bc7f92 SUCCESS؛قرئتjob136975283608:BUILD SUCCESSFUL وoriginalLOD/resetguardsPASS وصورةc5مطابقة. artifact14724535514 نُزل،CRCوالـAPKsha25694400c2d650d772293ab5f3a1d0c72e91d1974dea64a3004d18404e90ccb02d0 تحققااستقلالاً،الحجم21860751B. الحزمةorg.bocoop.black.defaultplayer،originalprotagonist-onlymetadata،alternate_actor_models=false،لاguestwrites/newactor/sharedStart. التقريرالآمنmemory/evidence/DEFAULT-PLAYER-APK-44946597973.json. مطلوبالآنفقطcaptureحيجديدللشخصيةالأصليةوفقdocs/DEFAULT_PLAYER_DEVICE_TEST_AR.md،لاNPCfactoryولاإعادةbaseline. لاphoneproofلهذهالحزمةبعد.

@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-36-original-player-steering.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-37-cloud-handoff.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -948,5 +948,14 @@
     "apkBytes": 21860751,
     "evidence": "memory/evidence/DEFAULT-PLAYER-APK-44946597973.json",
     "deviceTested": false
+  },
+  "handoff": {
+    "date": "2026-11-22",
+    "reason": "owner temporarily continues in another cloud session",
+    "guide": "docs/CLOUD_HANDOFF_AR.md",
+    "allRequiredSourceToolsCommitted": true,
+    "latestCode": "8bc7f92e17c1d35c6c125013bc4057afe320527f",
+    "phoneCaptureReceivedAfterLatestRequest": false,
+    "next": "inspect live CL for new original-player capture, then continue original protagonist/shared story work; no NPC substitution"
   }
 }
