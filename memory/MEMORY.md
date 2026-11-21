@@ -1,3 +1,6 @@
+## جلسة35 — الحالة الحية
+المالك أثبتLANعلىهاتفينبالـAPKالقديمةمعPIN:HOSTING/JOINEDو2/4فيصوروسجلاتCL22:47. النسخةالتلقائيةالجديدةبُنيتوفُحصت:44942892701/artifact14722613067/SHA256b149bc2c...،ولمتُختبرعلىالهاتفبعد. لاgameplayبعد. نتابعإلىfactoryroomرصدإنشاءالأجسامالأصليopt-inمحددبـ32scalarrecord،لاspawnولاStartوهمي. اقرأmemory/sessions/2026-11-21_bo-coop-35-owner-lan-pass-factory-contract.mdوالخطةactor-factory-observation. المحليJVM/Android29/18preparer/2guardوnativeASAN/UBSANPASS؛بناءfactoryroomالتاليقيدالإطلاق.
+
 
 تحقق Actions على4c9f8bb: source preflight44942174338 وJVM44942174361 وAndroid29 instrumentation44942174364 كلهاSUCCESS. سجلjob136961573450 قرئ ويؤكدTLS_PLATFORM_PASS: زرHost الفعلي بالأسماء الافتراضية فتحTCP24872، joinAutomaticنجح، وBackلميغلقActivity. APK44942174355مازالقيدالبناء؛لااختبارهاتفينبعد.
 ## الحالة الحالية — جلسة34

@@ -1,0 +1,64 @@
+{
+  "repository": "alwansan/CL",
+  "branch": "main",
+  "root": "black log",
+  "purpose": "Session34 owner two-phone feedback; safe source metadata only, no raw captures or device addresses",
+  "hostEventBlobs": [
+    {
+      "file": "logs/BLACK-Room-1795285048087-events.txt",
+      "sha": "9ba88921bba36e8ab71964abadd11ea71b169b09"
+    },
+    {
+      "file": "logs/BLACK-Room-1795285082415-events.txt",
+      "sha": "ee07fa41c00b911f6732560e538505753be9e6b8"
+    },
+    {
+      "file": "logs/BLACK-Room-1795285181035-events.txt",
+      "sha": "435564799e6334c2f53ac25156464962adddf0b4"
+    },
+    {
+      "file": "logs/BLACK-Room-1795285183795-events.txt",
+      "sha": "07fb5ac2786504b979672fed49563dd768db4ac3"
+    }
+  ],
+  "guestEventBlob": {
+    "file": "من الهاتف الثاني/BLACK-Room-1795285186518-events.txt",
+    "sha": "dc5ce18f2a899323df11f30d7c9c032daf2a0e2b"
+  },
+  "pixelViewedImages": [
+    {
+      "sha": "4dbcc90d2c7b452595aa3a3bbfcb2e0de12a1c14",
+      "time": "21:09:07",
+      "folder": "img"
+    },
+    {
+      "sha": "90802c7b7a63f7b8102965f43b66533c8365d217",
+      "time": "21:17:46",
+      "folder": "img"
+    },
+    {
+      "sha": "55b3edc46524f5b1a94957b0955341a768328096",
+      "time": "21:19:04",
+      "folder": "من الهاتف الثاني"
+    }
+  ],
+  "observed": [
+    "Mandatory PIN fields empty on screenshots",
+    "Repeated HOST_INPUT_ERROR before HOST_REQUEST/HOSTING in sampled host logs",
+    "Guest JOIN_INPUT_ERROR and SCAN_RESULTS_0",
+    "No successful real two-phone JOIN proved",
+    "Both game Probe logs retain candidate image c5bfed25449c8212d7a976f15246e87ead57713f"
+  ],
+  "inference": "The sampled attempts failed local form validation before network setup; absence of discoverable host follows. This is not proof that all device routing problems are resolved.",
+  "sharedChatUrl": "https://chatgpt.com/share/6b01eeb8-ca68-83eb-8021-609962f690ca",
+  "sharedChatContentRead": false,
+  "followupOldApkLanPass": {
+    "hostImage": "5218e1ef3bd65365c963333ac93c6bede5cb3a80",
+    "guestImage": "b9c08ed07cb4e0dcca32ffbad11ba856c8ccb6b4",
+    "hostEvents": "c5c325d16dc1734a65eafd36197c741fc8b94374",
+    "guestEvents": "f24edb33c69435ad26146212e2861daeede90fe6",
+    "pixelAndLogsRead": true,
+    "bothRosters": 2,
+    "limit": "old PIN APK on LAN only; no gameplay or automatic APK/VPN evidence"
+  }
+}
