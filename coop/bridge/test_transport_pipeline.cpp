@@ -2,6 +2,7 @@
 // authentication, actor models or memory writes are involved in this test.
 // Network UDP socket tests exist separately under coop/native/test_net.cpp.
 #include "scene_inbox.hpp"
+#include "remote_proxy_roster.hpp"
 #include "../native/net_core.hpp"
 #include <cassert>
 #include <cstdint>
@@ -27,6 +28,7 @@ int main() {
     FakeScene fake;
     assert(inbox.BindScene(41));
     std::size_t accepted=0;
+    std::vector<bo::Packet> staged_snapshots;
     std::thread transport([&] {
         // The host owns the toy authoritative positions and validates endpoints.
         bo::Host host(0x9911);
@@ -50,6 +52,7 @@ int main() {
             assert(snapshots.size()==2);
             const auto snap=Parsed(snapshots[0].bytes);
             assert(snap.type==bo::Type::Snapshot && snap.count==3);
+            staged_snapshots.push_back(snap); // value-only transport staging
             const bo_bridge::Command c={
                 bo_bridge::Kind::RemoteInput,id,41,p.sequence,
                 static_cast<int16_t>(p.dx*1000),
@@ -69,6 +72,19 @@ int main() {
     });
     transport.join();
 
+    // Snapshot state can be applied only by the owner/main test thread.
+    // This lab treats the toy host as trusted by construction; that is
+    // NOT production session authentication or player2 game integration.
+    bo_bridge::RemoteProxyRoster proxies;
+    assert(proxies.BindScene(41));
+    uint64_t now=100;
+    for(const auto& packet: staged_snapshots)
+        assert(proxies.ApplyTrustedSnapshot(packet,41,now++));
+    bo_bridge::ProxyView proxy{};
+    assert(proxies.Read(2,103,proxy) && proxy.x==2 && proxy.y==0);
+    assert(proxies.Read(3,103,proxy) && proxy.x==-1 && proxy.y==1);
+    assert(!proxies.Read(4,103,proxy));
+    assert(!proxies.ApplyTrustedSnapshot(staged_snapshots.front(),41,104));
     // No fake gameplay mutation occurred on the transport thread.
     assert(accepted==3 && inbox.Pending()==3);
     assert(fake.x2==0 && fake.x3==0);
@@ -84,11 +100,13 @@ int main() {
     // Switching a mission epoch drops old-scene transport commands atomically.
     assert(inbox.Offer({bo_bridge::Kind::RemoteInput,2,41,3,1000,0}));
     assert(inbox.BindScene(42));
+    assert(proxies.BindScene(42));
+    assert(!proxies.Read(2,104,proxy));
     assert(inbox.Pending()==0);
     assert(!inbox.Offer({bo_bridge::Kind::RemoteInput,2,41,4,1000,0}));
     assert(inbox.Offer({bo_bridge::Kind::RemoteInput,2,42,1,-1000,0}));
     assert(inbox.Drain([&](const bo_bridge::Command& c) {fake.Apply(c);})==1);
     assert(fake.x2==1 && fake.x3==-1);
-    std::cout<<"PASS isolated UDP host validation -> thread inbox -> mock scene\n";
+    std::cout<<"PASS toy UDP host -> proxy roster + thread inbox -> mock scene\n";
     std::cout<<"No actual networked BLACK gameplay or authenticated transport\n";
 }
