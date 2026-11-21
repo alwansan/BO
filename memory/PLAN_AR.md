@@ -102,3 +102,7 @@ AOSP Android15 SYSCALLS.TXT يحتوي process_vm_readv all، app/common blockli
 | device mission capture | NOT REQUESTED, only after verified probe APK |
 | full-body actor creation / co-op | not started |
 Owner ISO uploaded 5 parts and fully SHA-verified. See docs/OWNER_ISO_UPLOAD_AR.md; GitHub copy equivalent.
+
+## تحديث جلسة09 — تجميع Windows ومتغير namespace
+- Hook C++ sources الأصلية المستعملة في الإصدار v1.5.0 تستخدم `using namespace kernel;` أمام X86_EXTERN_FUNC/X86_FUNC. أضيفت المطابقة إلى `coop/probe/probe.cpp` commit5c5be3972e2131d4b34bad273f41b89e54de5c74؛ إجراء وقائي وليس دليلاً أن البناء القديم فشل.
+- Windows الأول [44852419929](https://github.com/alwansan/BO/actions/runs/44852419929) ما زال قيد التجميع عند هذا التوثيق، والثاني بالشفرة الأحدث [44852913117](https://github.com/alwansan/BO/actions/runs/44852913117) pending/queued (concurrency). لا تعتبر الأول build نهائياً بعد تغيير source؛ اختبر الثاني وأصلح سجلات الفشل الحقيقية. تحديث preflight [44852913135](https://github.com/alwansan/BO/actions/runs/44852913135) يحتاج تحقق نهاية.

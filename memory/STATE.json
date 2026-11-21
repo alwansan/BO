@@ -136,15 +136,16 @@
     },
     "DEVICE_BASELINE": "Baseline test answered successfully; no repeat needed. Probe Android build/device capture not started.",
     "HOOK_001": {
-      "status": "Android_probe_candidate_CI_pending",
-      "workflowRun": 44852419929,
+      "status": "Latest namespace-aligned CI queued; prior Windows build still in progress",
+      "workflowRun": 44852913117,
       "package": "org.bocoop.black.probe1",
       "baselineAccepted": true,
       "appBuildConfirmed": false,
       "deviceTest": false,
-      "plan": "docs/superpowers/plans/2026-11-21-readonly-probe.md"
+      "plan": "docs/superpowers/plans/2026-11-21-readonly-probe.md",
+      "previousCandidateRun": 44852419929
     }
   },
   "apk": null,
-  "next": "Verify probe preflight and Android run 44852419929; fix failures; report successful verified APK only; do not touch tested baseline or request missing XBE"
+  "next": "Read both Windows CI runs, accept only run built from latest namespace-aligned source, fix actual errors; do not retest baseline"
 }
