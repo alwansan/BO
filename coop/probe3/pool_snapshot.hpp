@@ -6,7 +6,7 @@
 namespace bo_probe3 {
 struct Container {uint32_t flags=0,capacity=0,occupied=0,data=0;bool operator==(const Container&) const=default;};
 static_assert(sizeof(Container)==16);
-struct Actor {uint32_t serial=0,state=0,container=0;bool operator==(const Actor&) const=default;};
+struct Actor {uint32_t serial=0,state=0,container=0,resource320=0,render35c=0;bool operator==(const Actor&) const=default;};
 struct PoolSnapshot {uint32_t counter=0;std::array<Container,4> containers{};std::array<Actor,32> actors{};std::array<std::array<uint32_t,32>,4> entries{};bool operator==(const PoolSnapshot&) const=default;};
 namespace detail {
 // No guest-derived pointer is dereferenced here. Reader owns safe copying.
@@ -26,8 +26,17 @@ template<class Reader> bool ReadOnce(const Reader& read,uint32_t manager,PoolSna
            uint64_t(header.data)+uint64_t(header.capacity)*4>(UINT64_C(1)<<32)) return false;
         // Read the WHOLE sparse array, including holes. Fixed upper bound32.
         auto& pointers=out.entries[c];
-        for(uint32_t i=0;i<header.capacity;++i)
-            if(!read.Field(header.data,i*4,pointers[i])) return false;
+        if(c==0) {
+            if(!read.Read(header.data,pointers)) return false;
+        } else if(c==1) {
+            std::array<uint32_t,16> part{};
+            if(!read.Read(header.data,part)) return false;
+            for(std::size_t i=0;i<part.size();++i)pointers[i]=part[i];
+        } else {
+            std::array<uint32_t,8> part{};
+            if(!read.Read(header.data,part)) return false;
+            for(std::size_t i=0;i<part.size();++i)pointers[i]=part[i];
+        }
         uint32_t occupied=0;
         for(uint32_t i=0;i<header.capacity;++i) {
             const uint32_t address=pointers[i];
@@ -40,9 +49,12 @@ template<class Reader> bool ReadOnce(const Reader& read,uint32_t manager,PoolSna
             seen[slot]=true;
             uint32_t owner=0,table=0;
             auto& actor=out.actors[slot];
+            std::array<uint32_t,26> meta{}; // +320..+387, 104 bounded bytes
             if(!read.Read(address,table) || table!=0x28C1E8 ||
                !read.Field(address,0x250,owner) || owner!=manager+offsets[c] ||
-               !read.Field(address,0x374,actor.serial) || !read.Field(address,0x384,actor.state)) return false;
+               !read.Field(address,0x320,meta)) return false;
+            actor.resource320=meta[0];actor.render35c=meta[15];
+            actor.serial=meta[21];actor.state=meta[25];
             actor.container=static_cast<uint32_t>(c);
         }
         if(occupied!=header.occupied) return false;

@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-20-pool-reader.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-21-probe3-device-build.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -421,6 +421,13 @@
       "actualGameOrMenuIntegrated": false,
       "authOrEncryption": false,
       "docs": "docs/NET_LAN_DISCOVERY_AR.md"
+    },
+    "PROBE3_POOL_CORE": {
+      "status": "PASS_HOST_SANITIZERS_AND_NDK_ARM64_CROSSCOMPILE_ONLY",
+      "run": 44871689814,
+      "code": "e5b7999db4de3680b48065243895308e622258a2",
+      "gameIntegrated": false,
+      "deviceTested": false
     }
   },
   "pending": {
@@ -493,6 +500,12 @@
       "status": "HOST_LOOPBACK_UDP_PASS_REAL_LAN_BROADCAST_AND_ANDROID_JNI_NOT_IMPLEMENTED",
       "run": 44869388876,
       "next": "Android opt-in room browser & LAN interface binding, 2-device discovery; authenticated session before gameplay; no game actor use yet"
+    },
+    "PROBE3_DEVICE_BUILD": {
+      "status": "IMPLEMENTED_LOCAL_TESTS_PASS_CI_NOT_LAUNCHED_YET",
+      "workflow": ".github/workflows/black-coop-probe3-apk.yml",
+      "package": "org.bocoop.black.probe3",
+      "session": "memory/sessions/2026-11-21_bo-coop-21-probe3-device-build.md"
     }
   },
   "apk": {
@@ -506,10 +519,10 @@
     "gameplayCoop": false,
     "sourceCommit": "d8dba8d8da2da69c62718a87f3e6f03f16be0d2f"
   },
-  "next": "Finish Probe3 pool core CI then Task2 isolated Android capture integration; preserve baseline/Probe2",
+  "next": "Follow Probe3 APK/core Actions to completion, resolve failures, then request focused actor lifecycle owner test only once APK verified",
   "latestHandoff": {
     "date": "2026-11-21",
-    "session": 20,
+    "session": 21,
     "kind": "documentation_and_static_analysis_only",
     "newApk": false,
     "newCI": false,
@@ -520,6 +533,6 @@
     "fullOwnerObjective": "docs/OWNER_PROJECT_OBJECTIVE_AR.md",
     "serialReset": "1D5E00 successful AL1 path restores pool and sets counter8524=1; instrument return without changing context",
     "poolReader": "coop/probe3/pool_snapshot.hpp",
-    "poolReaderStatus": "LOCAL_STRICT_TESTS_PASS_REVIEW_FIX_APPLIED_CI_PENDING_NOT_GAME_INTEGRATED"
+    "poolReaderStatus": "CORE_CI_SUCCESS_AT_E5B7999_NEW_DEVICE_INTEGRATION_LOCAL_PASS_BUILD_PENDING"
   }
 }

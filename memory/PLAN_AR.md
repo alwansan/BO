@@ -259,3 +259,7 @@ HOOK001 fairness source e9ad056: host sanitizer + pinned-source [44856368591](ht
 
 ## جلسة20 — pool reader
 راجع memory/sessions/2026-11-21_bo-coop-20-pool-reader.md والخطةProbe3. core مستقلbounded sparse snapshot محليPASS،review fix rawarrayreorder مطبق،CIpending؛لاgameintegration/APK بعد. أداءsyscalls وepoch/reset وpackage/export ضمنTask2.
+
+
+## جلسة21 — Probe3 Android integration
+راجع memory/sessions/2026-11-21_bo-coop-21-probe3-device-build.md؛coreCI44871689814SUCCESS،دمجProbe3واختباراتمحليةومراجعةPASS،APKworkflowجديدقيدالإطلاق. لاdeviceproofولاcoop. تابعبناءProbe3حتىالنهايةثمطلباختبارNPCdeath/reload/logمحدد.

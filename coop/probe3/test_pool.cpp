@@ -25,6 +25,7 @@ struct Fixture {
         for(unsigned i=0;i<32;++i) {
             uint32_t actor=manager+0xA0+i*0x3C0;
             put(actor,0x28C1E8);put(actor+0x250,manager+(i==31?0x79B0:0x79A0));
+            put(actor+0x320,0x50000+i*0x100);put(actor+0x35C,0x60000);
             put(actor+0x374,100+i);put(actor+0x384,0);
             if(i!=31)put(manager+0x9000+i*4,actor);
         }
@@ -45,10 +46,19 @@ struct ChangingReader {
         return fixture.reader().Field(object,offset,value);
     }
 };
+struct CountingReader {
+    bo_probe::GuestReader reader; mutable unsigned calls=0;
+    template<class T> bool Read(uint32_t va,T& value) const noexcept {++calls;return reader.Read(va,value);}
+    template<class T> bool Field(uint32_t va,uint32_t offset,T& value) const noexcept {
+        if(uint64_t(va)+offset>UINT32_MAX)return false;
+        return Read(va+offset,value);
+    }
+};
 int main() {
     Fixture f;bo_probe3::PoolSnapshot out;
     assert(bo_probe3::ReadPool(f.reader(),Fixture::manager,out));
     assert(out.counter==123 && out.actors[31].serial==131);
+    assert(out.actors[31].resource320==0x51F00 && out.actors[31].render35c==0x60000);
     assert(out.actors[31].container==1 && out.actors[31].state==0);
     assert(out.containers[1].occupied==1 && out.containers[1].capacity==16);
     // Mutation catches scanning only [0,occupied), or treating +4 as count.
@@ -93,5 +103,8 @@ int main() {
     const auto late_reader=bo_probe::GuestReader(reinterpret_cast<uintptr_t>(region)-0x10000);
     assert(!bo_probe3::ReadPool(late_reader,0x10000,out) && out==before);
     assert(munmap(region,0x12000)==0);
+    CountingReader counted{f.reader()};
+    assert(bo_probe3::ReadPool(counted,0x10000,out));
+    assert(counted.calls<=220); // Device sampler must not exceed220 kernel copies/snapshot.
     std::cout<<"PASS sparse pool, membership, bounds and fail-closed output (synthetic memory only)\n";
 }
