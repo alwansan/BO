@@ -565,6 +565,9 @@
     "fullOwnerObjective": "docs/OWNER_PROJECT_OBJECTIVE_AR.md",
     "serialReset": "1D5E00 successful AL1 path restores pool and sets counter8524=1; instrument return without changing context",
     "poolReader": "coop/probe3/pool_snapshot.hpp",
-    "poolReaderStatus": "PROBE3_APK_READY_WAITING_OWNER_PHONE_CAPTURE"
-  }
+    "poolReaderStatus": "PROBE3_APK_READY_WAITING_OWNER_PHONE_CAPTURE",
+    "blockedReason": "No owner Probe3 runtime capture; only prior Probe2 capture in CL and no new probe attachment. Build verified, but real pool lifetime/model evidence requires phone NPC death and checkpoint test.",
+    "blockedAuditConsecutiveGoalTurns": 3
+  },
+  "executionStatus": "blocked_waiting_owner_probe3_phone_capture"
 }

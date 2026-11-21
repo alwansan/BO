@@ -15,3 +15,7 @@
 
 ## للاستعادة
 اقرأAGENTS ثمSTATE وهذهالجلسة وdocs/ACTOR_POOL_STATIC_CONTRACTS_AR.md وdocs/REFERENCE_BLACK_XBEMULTIPLAYER_AR.md. حافظعلىالمراجع للقراءةفقطوالكتابةexperiment/black-coopحصراً. تحديثذاكرةالتسليمتمبعدنتيجةCIوالartifact؛لايعنيعملاًمستقلاًفيالخلفيةبعدانتهاءالجلسة.
+
+
+## نقطة توقف فعلية — انتظار اختبار المالك
+تكررتالحاجةإلىProbe3phonecaptureثلاثةgoalturns:عندتسليمAPK،ثمفحصCL،ثمإعادةفحصCLبالموصلوالـattachments. CLtree811b9b36d2899676f1afd3f1dd89a481c7340447غيرمقتطعويحويcoop_probe.txtالقديمفقطمنBLACK-Probe-20261121-064812-388(Probe2). لاattachmentprobeجديد. لاCIجارٍيلزمإعادةبناءولايمكنتعويضruntimeNPCdeath/reloadبدليلsynthetic. يُسجلgoalblockedانتظاراًلنتيجةالهاتف؛الهدفالكاملغيرمكتمل. استأنفبعدوصولسجلProbe3أوفيديو/وصففشلللتشخيص،ولاrepeatbaseline/Probe2.
