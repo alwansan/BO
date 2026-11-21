@@ -110,6 +110,16 @@
       "status": "pass_host_sanitizers_pinned_source_preparer",
       "run": 44852312025,
       "scope": "no Android APK or runtime"
+    },
+    "HOOK001_FIRST_APK_CI": {
+      "status": "pass_windows_compile_and_artifact_verification_only",
+      "run": 44852419929,
+      "code": "f911ef9e5b6b83ff19aac39406af8c70d3814f74",
+      "artifact": 14686665295,
+      "apkSha256": "531f6cf29fdcc29db1cb5ab39971fab2670672a389e33b0b2e50597ecfaae0fb",
+      "evidence": "memory/evidence/HOOK001-probe-candidate-44852419929.json",
+      "deviceTested": false,
+      "latestBranchCode": false
     }
   },
   "pending": {
@@ -143,9 +153,10 @@
       "appBuildConfirmed": false,
       "deviceTest": false,
       "plan": "docs/superpowers/plans/2026-11-21-readonly-probe.md",
-      "previousCandidateRun": 44852419929
+      "previousCandidateRun": 44852419929,
+      "previousCandidateStatus": "pass"
     }
   },
   "apk": null,
-  "next": "Read both Windows CI runs, accept only run built from latest namespace-aligned source, fix actual errors; do not retest baseline"
+  "next": "Verify latest namespace-aligned run 44852913117, then publish latest artifact and optional probe-only device capture; baseline already accepted"
 }

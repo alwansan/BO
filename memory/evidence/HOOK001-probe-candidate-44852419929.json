@@ -1,0 +1,38 @@
+{
+  "stage": "first_probe_candidate_build",
+  "run": 44852419929,
+  "job": 136686638837,
+  "code": "f911ef9e5b6b83ff19aac39406af8c70d3814f74",
+  "source_reference": "f3754d6985a8c35204e7df071546e586b10f1806",
+  "sdk": "99078b119b5d5e0d1d6afb1390e29437c0c984c0",
+  "status": "pass_build_and_strict_apk_verification_only",
+  "package": "org.bocoop.black.probe1",
+  "label": "BLACK Probe 1 - READ ONLY",
+  "apk": {
+    "bytes": 21738227,
+    "sha256": "531f6cf29fdcc29db1cb5ab39971fab2670672a389e33b0b2e50597ecfaae0fb",
+    "artifactId": 14686665295,
+    "artifactName": "black-probe1-android-arm64-READ-ONLY-NO-COOP"
+  },
+  "native": {
+    "architecture": "AArch64",
+    "compileImageSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+    "symbolMatchesDisc": true
+  },
+  "gates": {
+    "originalLODSymbolPrecheck": true,
+    "JNIexport": true,
+    "debugSignature": true,
+    "isolatedPackageActivity": true,
+    "noNetworkPermissions": true,
+    "noBroadStorage": true,
+    "noOriginalGameAssets": true,
+    "sourceChangesAllowlisted": true,
+    "androidCrossBuild": true,
+    "androidDeviceTest": false,
+    "coop": false
+  },
+  "metadataArtifact": 14685973542,
+  "latestNamespaceFollowupRun": 44852913117,
+  "disclaimer": "Artifact 14686665295 built before namespace align change at 5c5be397; await latest run before calling branch latest APK verified"
+}
