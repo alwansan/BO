@@ -23,6 +23,9 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+      - name: Reject shell syntax errors before downloading Android SDK or booting emulator
+        shell: bash
+        run: bash -n coop/lobby/run_android_platform_test.sh
       - name: Build synthetic test APK and run Android 29 emulator instrumentation
         shell: bash
         run: bash coop/lobby/run_android_platform_test.sh
