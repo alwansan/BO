@@ -1,3 +1,12 @@
+## Session39 — new bridge verification and residual issues (2026-11-22)
+- **PARTIAL RESOLUTION**: prior TLS v3 story transport was accessible only through RoomTls. Source commits 86faa014/5370dcae now expose a bound-thread RoomSession facade with generation reset and cover it by actual pinned-TLS JVM SessionTest. CI44954581676 SUCCESS. A caller can *claim* its thread with `bindStoryGameThread`, so actual BLACK hook/scene-loaded evidence is still essential before wiring production gameplay; this is a guard, not attestation.
+- **OPEN**: exact mission start and scene-ready authoritative events inside c5 BLACK, JNI game thread contract, guest scene load. Current Android app never calls the facade. No fake READY or shared Start claims.
+- **OPEN**: original owner CL shows rapid rehost BindException; source fixed-port 1.5s retry had synthetic tests, not tested again on two actual owner phones. 2/4 proves lobby only.
+- **OPEN**: fullbody human-controlled remote AllyBody renderer independent from NPC AI, synchronization of input/animation/weapon/world/AI/combat/quest/saves. No player actor visible from session's owner-provided lobby screenshots.
+- **CHECK**: newest Android29 44954581718 and Android lobby APK 44954581624 outcome, then prove v3 phone compatibility only with matching APKs.
+
+---
+
 ## Session38 current residuals after real story TLS tests
 - FIXED in source/CI: strict STORY PREPARE/READY/COMMIT/ABORT control carried by actual TLS; JVM44952822531 and Android29 KeyStore44952822499 PASS. NOT coupled to BLACK mission selection/loaded scene, so no playable co-op Start.
 - MITIGATED in source and isolated test: CL ERROR_BINDEXCEPTION after quick Host/Leave/Host; bound 1.5s TCP retry + SO_REUSEADDR while disallowing simultaneous host, JVM44953176046/Android29_44953176054 PASS. Not yet proven on owner Xiaomi/Huawei; original event code cannot determine all contributing router/OS causes.
