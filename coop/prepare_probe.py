@@ -226,7 +226,13 @@ bool IsRoomRow(const Row* row) {
         '''    const Row* row = g_page.rows[g_page.top + slot];
     if (clear) Clear(ctx, row);''',
         '''    const Row* row = g_page.rows[g_page.top + slot];
-    if (IsRoomRow(row)) return; // no action until a real tested room exists
+    if (IsRoomRow(row)) {
+        // Still allow moving through all the read-only rows with the D-pad.
+        // This handler must never forward these placeholder IDs to options.
+        if (!g_page.extra && UpdateScroll(ctx, slot, id))
+            W32(ui + kMenuInput, 0);
+        return;
+    }
     if (clear) Clear(ctx, row);''',
         menu)
     pending[menu]=text

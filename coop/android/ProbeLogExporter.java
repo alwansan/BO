@@ -134,7 +134,7 @@ final class ProbeLogExporter {
                 resolver.update(uri, ready, null, null);
                 ownFiles.put(outputName, uri);
             }
-        } catch (IOException | SecurityException | IllegalArgumentException e) {
+        } catch (IOException | RuntimeException e) {
             // The next snapshot can try again. Only our newly inserted item is
             // discarded; no user-created files are deleted.
             if (created && uri != null) {
