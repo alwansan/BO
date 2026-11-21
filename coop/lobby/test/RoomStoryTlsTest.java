@@ -23,6 +23,20 @@ public final class RoomStoryTlsTest {
         try(RoomTls.Server host=RoomTls.Server.start(hostContext,loop,0,"Host","Campaign");
             RoomTls.Client guest=RoomTls.Client.connect(guestContext,loop,host.port(),"Remote human")){
             until(()->guest.snapshot()!=null&&guest.snapshot().players.size()==2);
+            final long gameThread=Thread.currentThread().getId();
+            final java.util.concurrent.atomic.AtomicLong writerThread=
+                new java.util.concurrent.atomic.AtomicLong();
+            final java.util.concurrent.atomic.AtomicInteger queued=
+                new java.util.concurrent.atomic.AtomicInteger();
+            final java.util.concurrent.atomic.AtomicInteger sent=
+                new java.util.concurrent.atomic.AtomicInteger();
+            guest.setSafeEventSink(code->{
+                if("STORY_GUEST_READY_QUEUED".equals(code))queued.incrementAndGet();
+                if("STORY_GUEST_READY_SENT".equals(code)){
+                    writerThread.set(Thread.currentThread().getId());
+                    sent.incrementAndGet();
+                }
+            });
             RoomStoryWire.Ticket ticket=host.prepareStory(0,0,1);
             ok(ticket.mission==0&&ticket.stage==0&&ticket.sceneEpoch==1&&ticket.participants==3);
             ok(!host.storyCommitted()&&!guest.storyCommitted());
@@ -33,9 +47,11 @@ public final class RoomStoryTlsTest {
             ok(!guest.acknowledgeSceneLoaded(0,0,2));
             ok(!host.hostSceneLoaded(0,0,1)); // locally loaded but guest not yet READY
             ok(!host.storyCommitted());
-            ok(guest.acknowledgeSceneLoaded(0,0,1)); // EXTERNAL hypothetical loader proof
+            ok(guest.acknowledgeSceneLoaded(0,0,1)); // only enqueues
             ok(!guest.acknowledgeSceneLoaded(0,0,1)); // duplicate
             until(()->host.storyCommitted()&&guest.storyCommitted());
+            until(()->sent.get()==1);
+            ok(queued.get()==1&&writerThread.get()!=0&&writerThread.get()!=gameThread);
             ok(ticket.same(guest.storyTicket()));
             // Story host barrier cannot silently start a second mission.
             try{host.prepareStory(1,0,2);throw new AssertionError("Duplicate story accepted");}
@@ -48,6 +64,8 @@ public final class RoomStoryTlsTest {
             ok(!host.hostSceneLoaded(1,0,2)); // waits for guest's actual second stage
             ok(guest.acknowledgeSceneLoaded(1,0,2));
             until(()->host.storyCommitted()&&guest.storyCommitted());
+            until(()->sent.get()==2);
+            ok(queued.get()==2&&writerThread.get()!=gameThread);
             ok(second.same(guest.storyTicket()));
         }
         // A peer exit during PREPARE must revoke the barrier and refuse COMMIT.
@@ -100,6 +118,7 @@ public final class RoomStoryTlsTest {
             }
         }
         System.out.println("ROOM_REHOST_PASS: concurrent listener refused; 4 rapid same-port host restarts with real TLS clients");
+        System.out.println("STORY_READY_ASYNC_PASS: READY queued on game callback thread; TLS socket write on separate bounded network worker; no duplicate");
         System.out.println("STORY_TLS_PASS: real authenticated host PREPARE, guest scene READY, host COMMIT, abort on leave, compact slots after rejoin");
         System.out.println("NO BLACK engine scene loading, gameplay actor or phone co-op executed");
     }
