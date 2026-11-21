@@ -120,6 +120,13 @@
       "evidence": "memory/evidence/HOOK001-probe-candidate-44852419929.json",
       "deviceTested": false,
       "latestBranchCode": false
+    },
+    "HOOK001_SAFE_ANALYZER": {
+      "status": "pass_synthetic_privacy_tests",
+      "run": 44853421222,
+      "sourceCommit": "ff3143ec7a30445f62e340ebcb9815e0b6135c3d",
+      "script": "coop/analysis/summarize_probe.py",
+      "scope": "aggregate only; no user logs processed"
     }
   },
   "pending": {

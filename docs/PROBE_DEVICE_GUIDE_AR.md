@@ -25,3 +25,10 @@
 - تصنيف البنى المرصودة ومقارنتها بمصدر v1.5.0؛ لا تفترض أن animation owner = character أو أن resource root هو model/factory.
 - ACTOR-001 بعد إثبات نوع الشخصية وعمرها وthread context؛ لا network thread guest writes، لا تعديل AI/health/saves قبل البرهان.
 - الهدف النهائي وفق docs/COOP_REQUIREMENTS_AR.md هو لاعبان ثم أربعة في المهمة نفسها، لا UI وهمية أو صوت/فيديو متزامن فقط.
+
+## تحليل خصوصي اختياري للسجل بعد تجربة Probe
+أُضيف `coop/analysis/summarize_probe.py`، ويعمل محلياً على الملف الخاص، ولا يخرج أسماء أو إحداثيات أو مؤشرات أو IDs حقيقية، فقط عدد الملاحظات والخيوط/epoch والأسباب. اجتاز اختبارات بيانات مصطنعة [44853421222](https://github.com/alwansan/BO/actions/runs/44853421222). مثال بعد الحصول على ملف JSONL *الخاص*:
+```sh
+python3 coop/analysis/summarize_probe.py /private/path/coop_probe.jsonl --output /private/path/bo_probe_safe_summary.json
+```
+يمكن مشاركة `bo_probe_safe_summary.json` الملخص فقط عند الاكتفاء بالإحصاءات؛ إذا احتجنا تشخيص دلالات LOD/animation الأكثر عمقاً فقد يلزم raw log **مرفقاً خاصاً فقط** في المحادثة، ولا يرفع إلى فرع GitHub العام. هذا الملخص لا يثبت نوع actor أو factory أو gameplay.
