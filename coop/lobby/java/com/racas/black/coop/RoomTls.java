@@ -285,6 +285,8 @@ public final class RoomTls {
         private final AtomicBoolean closed=new AtomicBoolean();
         private final Object lifecycle=new Object();
         private volatile RoomWire.State view;
+        private volatile RoomStoryWire.Ticket story;
+        private volatile boolean storyReadySent,storyCommitted;
         private volatile String failure="";
         private volatile long sequence;
         private volatile long lastPong=now();
@@ -319,6 +321,33 @@ public final class RoomTls {
             heartbeat.scheduleAtFixedRate(this::ping,0,1000,TimeUnit.MILLISECONDS);reader.start();
         }
         public RoomWire.State snapshot(){RoomWire.State value=view;return value==null?null:RoomWire.copy(value);}
+        public RoomStoryWire.Ticket storyTicket(){return story;}
+        public boolean storyCommitted(){return story!=null&&storyCommitted;}
+        /**
+         * Must be called ONLY after this phone's actual BLACK game scene
+         * loader confirms the host-selected mission/stage/epoch. Merely
+         * joining a lobby never calls this and cannot start a solo mission.
+         */
+        public boolean acknowledgeSceneLoaded(int mission,int stage,int epoch)throws IOException{
+            RoomStoryWire.Ticket ticket;
+            synchronized(lifecycle){
+                RoomWire.State state=view;
+                ticket=story;
+                if(closed.get()||ticket==null||storyReadySent||storyCommitted||
+                   mission!=ticket.mission||stage!=ticket.stage||epoch!=ticket.sceneEpoch||
+                   state==null||state.revision!=ticket.rosterRevision||
+                   !MessageDigest.isEqual(state.session,ticket.session()))return false;
+                int slot=0;
+                for(int i=0;i<state.players.size();i++)
+                    if(state.players.get(i).id==state.self){slot=i+1;break;}
+                if(slot==0||!ticket.includes(slot)||slot==1)return false;
+                storyReadySent=true;
+            }
+            try{
+                synchronized(out){RoomWire.write(out,RoomStoryWire.encode(RoomWire.STORY_READY,ticket));}
+                return true;
+            }catch(IOException e){close();throw e;}
+        }
         public String failure(){return failure;}
         public boolean isRunning(){return !closed.get();}
         private void ping(){
@@ -326,7 +355,7 @@ public final class RoomTls {
             try{
                 if(now()-lastPong>5000)throw new IOException("Host heartbeat expired");
                 if(sequence==Long.MAX_VALUE)throw new IOException("Sequence exhausted");
-                RoomWire.write(out,RoomWire.pulse(RoomWire.PING,++sequence));
+                synchronized(out){RoomWire.write(out,RoomWire.pulse(RoomWire.PING,++sequence));}
             }
             catch(IOException e){failure="Connection lost";close();}
         }
@@ -338,17 +367,63 @@ public final class RoomTls {
                 while(!closed.get()){
                     RoomWire.Packet packet=RoomWire.decode(RoomWire.read(in));
                     if(packet.type==RoomWire.PONG){long value=RoomWire.parsePulse(packet);if(value<=pong||value>sequence)throw new IOException("Invalid heartbeat");pong=value;lastPong=now();continue;}
+                    if(packet.type==RoomWire.STORY_PREPARE){
+                        RoomStoryWire.Ticket incoming=RoomStoryWire.parse(packet);
+                        RoomWire.State state=view;
+                        if(state==null||story!=null||
+                           incoming.rosterRevision!=state.revision||
+                           !MessageDigest.isEqual(incoming.session(),state.session)||
+                           incoming.participants!=(1<<state.players.size())-1)
+                            throw new IOException("Story PREPARE for wrong room or roster");
+                        int slot=0;
+                        for(int i=0;i<state.players.size();i++)
+                            if(state.players.get(i).id==state.self){slot=i+1;break;}
+                        if(slot<=1||!incoming.includes(slot))
+                            throw new IOException("Story PREPARE omits this guest");
+                        synchronized(lifecycle){
+                            if(!closed.get()){
+                                story=incoming;storyReadySent=false;storyCommitted=false;
+                            }
+                        }
+                        continue;
+                    }
+                    if(packet.type==RoomWire.STORY_COMMIT){
+                        RoomStoryWire.Ticket incoming=RoomStoryWire.parse(packet);
+                        synchronized(lifecycle){
+                            if(story==null||!storyReadySent||storyCommitted||
+                               !story.same(incoming))throw new IOException("Untrusted story COMMIT");
+                            storyCommitted=true;
+                        }
+                        continue;
+                    }
+                    if(packet.type==RoomWire.STORY_ABORT){
+                        RoomStoryWire.Ticket incoming=RoomStoryWire.parse(packet);
+                        synchronized(lifecycle){
+                            if(story!=null&&story.same(incoming)){
+                                story=null;storyReadySent=false;storyCommitted=false;
+                            }
+                        }
+                        continue;
+                    }
                     if(packet.type!=RoomWire.ROSTER)throw new IOException("Unexpected host message");
                     RoomWire.State next=RoomWire.parseState(packet),old=view;
                     if(old==null||next.self!=old.self||!MessageDigest.isEqual(next.session,old.session)||
                        !MessageDigest.isEqual(next.nonce,old.nonce)||next.revision<old.revision||!next.room.equals(old.room))throw new IOException("Room identity changed");
                     publish(next);
+                    synchronized(lifecycle){
+                        if(story!=null&&story.rosterRevision!=next.revision){
+                            story=null;storyReadySent=false;storyCommitted=false;
+                        }
+                    }
                 }
             }catch(IOException|RuntimeException e){if(!closed.get())failure="Disconnected";}
             finally{close();}
         }
         public void close(){
-            synchronized(lifecycle){if(!closed.compareAndSet(false,true))return;view=null;}
+            synchronized(lifecycle){
+                if(!closed.compareAndSet(false,true))return;
+                view=null;story=null;storyReadySent=false;storyCommitted=false;
+            }
             closeSocket(socket);heartbeat.shutdownNow();reader.interrupt();
         }
     }
