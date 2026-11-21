@@ -1,3 +1,11 @@
+## Session40 Android29 test infrastructure restored; real game remains open
+- RESOLVED for synthetic instrumentation: PackageManager cold-boot stall and accidental Bash replacement corruption; guarded by `bash -n` and bounded retries. Android29 `44956919973 SUCCESS`, then `44957104337 SUCCESS` with `TLS_PLATFORM_PASS` and `ROOM_LOG_ROTATION_PASS`.
+- Verified current/rotated safe room log export and injected tampered-line rejection on Android29 without owner tests. Caveat: no real BLACK game/scene/remote body data or combined game telemetry yet.
+- OPEN: actual host mission scene loaded event/epoch and game-thread bridge, independent fullbody real-human ally renderer, input/world/AI/combat/story. 2/4 LAN lobby and safe event transport are not playable co-op.
+- User prefers CI testing; do NOT ask for phone trials until meaningful shared story/remote player milestone.
+
+---
+
 ## CI Android29 script corruption diagnosed and guarded — Session40
 Old Android29 run44956473707 failed during cold synthetic emulator PackageManager install timeout, before instrumentation. First retry44956739205 failed early because an automated JS replacement accidentally expanded a shell `$'` replacement sequence, corrupting Bash around `grep '^package:android$'`; this was a SCRIPT syntax failure, NOT Android app/TLS or game failure. Clean script commit5dd84a4a reconstructs tail explicitly; workflow commitc8c734bc runs `bash -n` BEFORE downloading SDK or emulator boot. New CI44956919973 check live. No owner phone test for CI errors.
 
