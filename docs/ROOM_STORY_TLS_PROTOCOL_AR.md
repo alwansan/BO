@@ -1,0 +1,23 @@
+# BO-COOP — TLS story-control handoff, Session38 (2026-11-22)
+
+Scope: real sockets carrying control signals ONLY. NO BLACK engine scene load, bodies, gameplay, shared world, combat or new accepted Android APK.
+
+## Compatibility and fields
+- Existing names-only TLS lobby gains four frames: STORY_PREPARE=8, STORY_READY=9, STORY_COMMIT=10, STORY_ABORT=11. RoomWire VERSION/PROFILE raised from 2 to 3. Mixing old v2 app and new v3 app must fail closed; old owner-tested 2/4 proves prior lobby only.
+- RoomStoryWire.Ticket fixed 36-byte body bound to the current TLS session (16 bytes), random positive 64-bit token, current roster revision, mission ID 0..7, stage index 0..65535 (format maximum; actual stage mapping unproven), positive scene epoch and compact 4-bit human participant mask (host+one or more guests). No source assets or keys ever sent.
+- Player IDs in RoomWire are monotonic and may exceed 4 after repeated disconnects. The STORY participant mask uses CURRENT roster order: host is slot1, guests slots2..4, not raw permanent player IDs. Exact session/roster revision and a new token fence stale/mismatched tickets.
+- Host sends PREPARE ONLY when a future game-thread stage-choice hook proves actual mission selection. Host confirms the actual local loaded scene through hostSceneLoaded. Guest can call acknowledgeSceneLoaded ONLY after its real scene loader reports the same mission/stage/epoch. Guest TCP socket does NOT get to choose mission, send a fake COMMIT, or cause game code to run from the network worker.
+- COMMIT is emitted ONLY when host + every expected guest sends READY for the exact same ticket. Host cancel/peer departure or roster revision resets/ABORTs. New stage requires new token. No game Start has been wired.
+- Current auto-discovery uses TCP24872 and presence UDP1511, no manual PIN/fingerprint/port. TLS certificate is taken from discovered host automatically. This is NOT proven protection from impersonation on untrusted LAN: first-use spoof/MITM risk exists.
+
+## Verification state
+- Source-only viewpoint-aware remote ally roster and host mission barrier C++ strict ASAN/UBSAN: CI44951984399 SUCCESS. FIRST mission ID0 and stage0 fixed and tested.
+- New RoomStoryWire.java strict malformed/version/session-bound codec and RoomTls.java real TLS host PREPARE/guest READY/host COMMIT integration: CI44952690463 SUCCESS. Job log contained literal STORY_WIRE_PASS and STORY_TLS_PASS. It exercised an actual JVM loopback TLS socket, not Android campaign gameplay.
+- Follow-on second mission transition test, Android29 Conscrypt/opaque KeyStore mission handshake test and full Android source/build were added after the preceding successful run; check their NEWEST CI run statuses, do not extrapolate old PASS.
+- Exact project adapter for Android packaging includes RoomStoryWire.java via coop/prepare_room_network.py. No new playable APK. Future socket-to-game bridge must run on game thread and never write guest actor memory from socket workers.
+- Real remote ally body rendering (host visible to guest), NPC/AI brain independence, actual BLACK engine mission load, movement/combat/quest and one shared world remain OPEN.
+
+## Next engine research
+Pinned upstream RanggaCasper/Black-Android v1.5.0 src/game/difficulty.cpp documents eight ZERO-BASED missions (0..7). The previous first mission rejection was a bug fixed in code and tests. The wrapper sub_00124CF0 is an observation candidate for mission entry on selected difficulty. sub_0011B890 and sub_00124F30 are level/difficulty menu bindings. They are NOT a proved callable explicit Start mission API on owner's c5 XBE. kMissionOpen 0x2D0D9E is progression/save data, not a Start switch; do not modify to bypass story flow. Read docs/BLACK_STORY_ENTRY_AUDIT_AR.md and docs/superpowers/plans/2026-11-22-host-story-remote-ally.md.
+
+Owner's current appearance requirement: original local first-person on each phone, independent fullbody ALLY LOOK for every OTHER connected human. This is NOT NPC AI; must prove separate renderer/rig/cleanup before wiring to world. portingpete/Black-2006-Recomp is MIT PC split-screen research, not Android story multiplayer. Protect main, original ISO and user saves; no ISO reupload request.
