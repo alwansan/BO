@@ -94,7 +94,8 @@ void Observe(Kind kind,uint32_t argument,const uint8_t* base) noexcept {
         // Exact image .rdata vicinity; this rejects non-object/scalar guesses.
         // It is a conservative observation filter, not a class/lifetime proof.
         if(vtable<0x282FE0 || vtable>=0x2964E0) return;
-        uint32_t id=registry.Id(object,vtable);
+        const bool is_local=object==world+0x30;
+        uint32_t id=registry.Id(object,vtable,is_local);
         if(!id) return;
         auto index=static_cast<size_t>(kind);
         // Rotate eligible IDs rather than sampling only the first rendered NPC.
@@ -104,7 +105,7 @@ void Observe(Kind kind,uint32_t argument,const uint8_t* base) noexcept {
         sample.kind=kind;sample.ms=now-budget.start;
         sample.thread=static_cast<uint32_t>(::syscall(SYS_gettid));
         sample.epoch=registry.epoch;sample.id=id;sample.vtable=vtable;
-        sample.local=object==world+0x30;
+        sample.local=is_local;
         if(kind==Kind::Animation) {
             std::array<char,13> name{};
             if(read.Field(controller,0x5C,name)) std::copy(name.begin(),name.end(),sample.name.begin());

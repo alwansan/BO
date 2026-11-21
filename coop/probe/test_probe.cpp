@@ -40,12 +40,26 @@ int main() {
     Registry ids;
     ids.World(100);
     assert(ids.epoch==1);
-    for(uint32_t i=0;i<64;++i) assert(ids.Id(1000+i,2000)==i+1);
-    assert(ids.Id(1000,2000)==1);
+    for(uint32_t i=0;i<63;++i) assert(ids.Id(1000+i,2000)==i+2);
+    assert(ids.Id(1000,2000)==2);
     assert(ids.Id(9000,2000)==0);
-    ids.World(100); assert(ids.Id(1000,2000)==1);
+    ids.World(100); assert(ids.Id(1000,2000)==2);
     ids.World(0); ids.World(200);
-    assert(ids.epoch==3 && ids.Id(9000,2000)==1);
+    assert(ids.epoch==3 && ids.Id(9000,2000)==2);
+    // A flood of LOD/animation objects must not starve the player hook.
+    Registry prioritised;
+    prioritised.World(700);
+    for(uint32_t i=0;i<63;++i)
+        assert(prioritised.Id(3000+i,4000)==i+2);
+    assert(prioritised.Id(5000,4000)==0); // all nonlocal slots occupied
+    assert(prioritised.Id(6000,5000,true)==1);
+    assert(prioritised.Id(6000,5000)==1);
+    assert(prioritised.Id(6000,5000,true)==1);
+    assert(prioritised.Id(6001,5000,true)==1); // respawn, ID is correlation only
+    assert(prioritised.Id(6000,5000)==0);
+    prioritised.World(701);
+    assert(prioritised.Id(7777,8888,true)==1);
+    assert(prioritised.Id(9000,8888)==2);
 
     Budget warm;
     assert(warm.Attempt(1000));
