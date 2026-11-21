@@ -2,6 +2,8 @@
 package com.racas.black.coop;
 import android.app.Activity;
 import android.app.Instrumentation;
+import android.content.Intent;
+import android.view.KeyEvent;
 import android.os.Bundle;
 import java.net.InetAddress;
 import java.security.MessageDigest;
@@ -48,11 +50,25 @@ public final class PlatformInstrumentation extends Instrumentation {
                 joining.stop();hosting.stop();
                 check(joining.snapshot().phase==RoomSession.Phase.IDLE);
             }
+            // Verify the actual Android Back key dismisses a same-Activity room dialog
+            // without calling finish() on the underlying game-activity surrogate.
+            Intent intent=new Intent(Intent.ACTION_MAIN);
+            intent.setClassName(getTargetContext().getPackageName(),
+                "com.racas.black.coop.RoomHarnessActivity");
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            Activity harness=startActivitySync(intent);
+            check(harness!=null&&!harness.isFinishing());
+            runOnMainSync(()->RoomOverlay.show(harness,-102));
+            waitForIdleSync();
+            sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
+            waitForIdleSync();
+            check(!harness.isFinishing()&&!harness.isDestroyed());
+            runOnMainSync(()->{RoomAppRooms.shutdown();harness.finish();});
             long deadline=System.nanoTime()+8_000_000_000L;
             while(Thread.getAllStackTraces().keySet().stream().anyMatch(t->t.isAlive()&&t.getName().startsWith("bo-room-"))){
                 if(System.nanoTime()>deadline)throw new AssertionError("Room threads survived close");Thread.sleep(10);
             }
-            result.putString("stream","TLS_PLATFORM_PASS: opaque AndroidKeyStore identity persisted; pinned TLS host/client, roster, heartbeat and shutdown succeeded\n");
+            result.putString("stream","TLS_PLATFORM_PASS: opaque AndroidKeyStore identity persisted; pinned TLS host/client, roster, heartbeat and shutdown succeeded; Android room dialog Back did not finish host Activity\n");
             finish(Activity.RESULT_OK,result);
         }catch(Throwable failure){
             android.util.Log.e("BlackTlsPlatform","Platform test failed",failure);
