@@ -257,3 +257,7 @@ Probe3جاهز؛بعد3goalturnsلايزالcoop_probe.txtالجديدغيرمت
 
 ## جلسة24 — حل انتظار Probe3
 وصلcapture090753،56/56poolvalid و2serialreplacements؛الملخصالآمنوالخطةفيmemory/sessions/2026-11-21_bo-coop-24-probe3-owner-analysis.md. actor328controllerbacklinkودخولهdrawمثبتانثابتاً؛التاليinstancegraph. لاتكررطلبProbe3أوbaseline؛لاspawn/render/coopمقبولبعد.
+
+
+## جلسة25 — رصد instance graph
+محلل Probe3 CI44875336266SUCCESS. إضافة Probe4 منفصلة لروابط controller328/owner/runtime/scratch؛محلياً native/JSON/preparer9tests ومراجعة PASS،CI/APK pending. راجع memory/sessions/2026-11-21_bo-coop-25-instance-graph-build.md؛لا duplicateProbe3 ولا co-op claim.

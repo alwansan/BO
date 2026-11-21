@@ -1,3 +1,9 @@
+# أحدث جلسة25 — Probe4 instance graph قيد البناء
+سجل Probe3 الجديد قُرئ:56/56 pool صالحة،2 serial replacements،المصادر المشتركة ليست instance. لا تطلبه مجدداً. analyzerCI44875336266SUCCESS.
+أضيف رصد actor328↔controller.owner مع runtime54/binding50/scratch34C/350 في حزمة Probe4 منفصلة. اقرأ memory/sessions/2026-11-21_bo-coop-25-instance-graph-build.md. الاختبارات المحلية والمراجعة نجحت؛**تابع Actions الجديد حتى نجاح APK قبل طلب اختبار الهاتف**. docs/PROBE4_DEVICE_TEST_AR.md يشرح الهدف وحدود valid. لا لاعب ثانٍ أو co-op مثبت بعد.
+
+---
+
 # أحدث جلسة24 — سجل Probe3 وصل، لا تنتظر الاختبار القديم
 اقرأmemory/sessions/2026-11-21_bo-coop-24-probe3-owner-analysis.md والملخصmemory/evidence/PROBE3-owner-090753-safe-summary.json. 56/56لقطةpoolصالحة،2تبدلserialفيالخانةنفسها،17ملاحظةslot/generation؛الموارد320/35Cمشتركة. لاendأوreloadمرصودفياللقطةالجزئية. **توقفالانتظارالسابقحُلّبوصولالسجل؛لاتطلبProbe3نفسهمجدداً**.
 التاليdocs/ACTOR_INSTANCE_OWNERSHIP_AR.md:staticbacklinkactor328↔controller.owner+0مثبتبـ17E420،draw1C6150يستخدمه. أكملخطةinstancegraphثمrealremoteactor. مرجعPetersonhead0ee3ae6لميَتغير؛محفوظومقروء،ولاcopyللأصولالمقيدة. لاco-opجاهزبعد. ما أدناهتاريخفقطولايتغلبعلىجلسة24.

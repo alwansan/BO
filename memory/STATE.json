@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-24-probe3-owner-analysis.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-25-instance-graph-build.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -457,6 +457,12 @@
       "evidence": "memory/evidence/PROBE3-owner-090753-safe-summary.json",
       "occupiedSerialReplacements": 2,
       "playableCoop": false
+    },
+    "PROBE3_OWNER_POOL_ANALYZER": {
+      "status": "PASS_SYNTHETIC_PRIVACY_CI_REAL_CAPTURE_ANALYZED_LOCALLY",
+      "run": 44875336266,
+      "code": "f0a66a8dd74f2e610be7dc914f7a301d84364c8f",
+      "safeSummary": "memory/evidence/PROBE3-owner-090753-safe-summary.json"
     }
   },
   "pending": {
@@ -544,6 +550,12 @@
       "failureReason": "Generated MOV uses ea temporary; handwritten shape fixture wrongly expected inline memory address",
       "fixSession": "memory/sessions/2026-11-21_bo-coop-22-reset-guard-format.md",
       "artifact": 14695275729
+    },
+    "PROBE4_DEVICE_BUILD": {
+      "status": "LOCAL_TESTS_REVIEW_PASS_CI_NOT_LAUNCHED",
+      "package": "org.bocoop.black.probe4",
+      "workflow": ".github/workflows/black-coop-probe4-apk.yml",
+      "protocol": "docs/PROBE4_DEVICE_TEST_AR.md"
     }
   },
   "apk": {
@@ -557,15 +569,15 @@
     "gameplayCoop": false,
     "sourceCommit": "678536b205506be6cfcc4ca86a18afe3391e0aa9"
   },
-  "next": "Validate actor328 animation controller backlink and private runtime resources before real remote actor/render work",
+  "next": "Complete Probe4 Linux/Android APK CI and verify artifact; then targeted instance graph phone test, no duplicate Probe3 test",
   "latestHandoff": {
     "date": "2026-11-21",
-    "session": 24,
+    "session": 25,
     "kind": "documentation_and_static_analysis_only",
     "newApk": false,
     "newCI": false,
     "actorPoolEvidence": "memory/sessions/2026-11-21_bo-coop-19-cloud-handoff.md",
-    "next": "Verified per-actor animation instance graph from actor328 owner backlink; do not repeat Probe3 test",
+    "next": "Follow isolated Probe4 instance graph APK build, then owner phone test only after verification",
     "cloudFilesRequiredFromOwner": false,
     "actorPoolContracts": "docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md",
     "fullOwnerObjective": "docs/OWNER_PROJECT_OBJECTIVE_AR.md",
@@ -573,5 +585,5 @@
     "poolReader": "coop/probe3/pool_snapshot.hpp",
     "poolReaderStatus": "PROBE3_APK_READY_WAITING_OWNER_PHONE_CAPTURE"
   },
-  "executionStatus": "research_resumed_owner_probe3_capture_received"
+  "executionStatus": "instance_graph_implementation_ci_pending"
 }
