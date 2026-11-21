@@ -1,0 +1,36 @@
+name: BO-COOP original player world tick read-only contract
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/room_network/world_tick_contract.hpp'
+      - 'coop/room_network/test_world_tick_contract.cpp'
+      - 'coop/room_network/room_world_tick.hpp'
+      - '.github/workflows/black-coop-world-tick-contract.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: bo-coop-world-tick-contract
+  cancel-in-progress: true
+jobs:
+  native-safety:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop/room_network
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Compile and execute source-only read-only world witness under ASan and UBSan
+        env:
+          ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+          UBSAN_OPTIONS: halt_on_error=1
+        run: |
+          set -euo pipefail
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread \
+            -fsanitize=address,undefined -fno-omit-frame-pointer \
+            coop/room_network/test_world_tick_contract.cpp -o "$RUNNER_TEMP/bo-world-tick-tests"
+          "$RUNNER_TEMP/bo-world-tick-tests"
+          echo "BO_WORLD_PLAYER_TICK_GUARD_PASS: read-only original player update marker and no mission-ready claim"
