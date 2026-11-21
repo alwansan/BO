@@ -1,3 +1,10 @@
+# ACTIVE Session38 — new CL original-player device sample and owner visual-ally design
+New defaultplayer phone evidence arrived in CL: black log/logs/BLACK-Probe-20261121-235407-267/coop_probe.txt; 675 records including 8/8 valid, complete primary default_player_model: 44 bones, 2 buffers, draw-list mask32 (list5), arms=true, head/torso/legs=false. This is only primary model, not proof no fullbody resources. Xiaomi23013PC75G Android15 and Huawei JSN-L22 Android10 game logs on same c5 owner image; Huawei's corresponding model-probe absent. Old 2/4 LAN lobby proven; new room discovery/JOINED codes are not story co-op. Error BINDEXCEPTION appears on quick rehost. Image JPG files indexed but pixels inaccessible to GitHub text-only connector. Safe evidence memory/evidence/DEFAULT-PLAYER-owner-20261122-235407-safe-summary.json.
+
+Owner supersedes Session36 "no ally" restriction: on EACH phone LOCAL original first-person player remains; OTHER network humans use distinct visible ALLY body look, human-controlled, not NPC AI or live actor stolen. Host controls ONE shared story world. New source-only C++ contract coop/bridge/remote_ally_roster.hpp and coop/story/mission_barrier.hpp with tests and CI44951425780 PASS; host/guest first-person viewpoint, authenticated snapshot prerequisite, scene generation/timeout and host-only PREPARE/READY/COMMIT before all clients actually loaded same scene. No real game actor render, TLS story wire or Android APK in this batch; latest verified owner-tested APK44946597973/artifact14724535514. Plan docs/superpowers/plans/2026-11-22-host-story-remote-ally.md; historical sessions below remain archival.
+
+---
+
 ## تسليم جلسة37 — 2026-11-22
 المالك سينتقل مؤقتاً لجلسة أخرى. اقرأ memory/sessions/2026-11-22_bo-coop-37-cloud-handoff.md وdocs/CLOUD_HANDOFF_AR.md. جميع أدوات المصدر والخطط والمراجع مرفوعة؛لا تعتمد علىالجهازالمحلي. آخرAPK44946597973/artifact14724535514مفحوصة،ولا سجلاتهاتفجديدةبعدطلبها. الشخصيةالأصليةفقط،لاNPCبديل،ولاsharedStartأوgameplayبعد. افحصCLالحيةأولاًلأيcaptureجديد.
 
