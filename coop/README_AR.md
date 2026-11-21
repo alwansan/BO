@@ -1,3 +1,8 @@
+# CURRENT NOTICE Session38 — Previous feasibility roadmap below is archival
+The current trusted LAN room uses names-only joining (Wire2/Profile2, TCP24872, UDP1511 presence); previous PIN/password/UDP1510/direct fingerprint assumptions in historical steps are superseded. Owner proved 2/4 real room on two phones, NOT co-op story. New original player primary MODEL capture 8/8 shows first-person arms-only, and owner explicitly directs remote full-body ALLY LOOK for other human players, while each phone retains original first-person. New source-only C++ ally-view and host mission barrier CI44951425780 PASS; no real remote bodies or synchronized story Start. Latest verified device-tested APK is run44946597973. See Session38 and updated plan.
+
+---
+
 # BLACK Co-op: مرحلة الجدوى
 الفرع التجريبي فقط؛ main محفوظ. الهدف: شخصيتان مستقلتان في مهمة القصة، ثم 4 لاعبين؛ المضيف هاتف اللاعب. لا وجود لطور جماعي مثبت حالياً.
 ## الأدلة
