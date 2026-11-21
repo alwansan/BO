@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-12-fairness-acceptance-actor-correlation.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-13-device-result-public-logs-room-ui.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -216,6 +216,23 @@
       "sourceCommit": "580247d74ff27b78a57d115f1900477c614f75db",
       "output": "correlation_overlap_counts",
       "actorFactoryProven": false
+    },
+    "HOOK001_PROBE1_OWNER_RUNTIME": {
+      "status": "owner_reports_game_success_black_log_confirms_capture_start_but_no_jsonl_content",
+      "evidence": "memory/evidence/DEVICE-probe1-owner-20261121.json",
+      "package": "org.bocoop.black.probe1",
+      "codeImageSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+      "appOperational": true,
+      "captureStarted": true,
+      "privateJsonlAccessible": false,
+      "actorSamplesProven": false,
+      "coopProven": false
+    },
+    "PROBE2_HOST_PREFLIGHT": {
+      "status": "PASS_HOST_AND_PINNED_SOURCE_ONLY",
+      "run": 44860875040,
+      "sourceCommit": "d8dba8d8da2da69c62718a87f3e6f03f16be0d2f",
+      "noDeviceTest": true
     }
   },
   "pending": {
@@ -224,7 +241,7 @@
       "discSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
       "compiledSha1": "82d0588124e70102ee650f8969c0a56374476234"
     },
-    "ACTOR_001": "Probe1 Android runtime not yet tested; full-body actor/factory/lifetime unproven. Read-only correlation overlap analyzer passes only synthetic privacy CI.",
+    "ACTOR_001": "Owner Probe1 capture started in mission, but private JSONL unreadable and CL copy 0B. Need actual samples before proof of full-body actor lifetime/factory.",
     "COMBAT_001": "not_started",
     "DEVICE": "Owner-tested rebuilt baseline ACCEPTED; HOOK001 probe device test NOT STARTED; co-op device-pair test NOT STARTED.",
     "SRC_002": "Separate candidate build and owner baseline runtime accepted for this limited device test; not original Arabic source equivalence/full campaign proof.",
@@ -242,15 +259,31 @@
     },
     "DEVICE_BASELINE": "Already accepted by owner; do not ask to repeat.",
     "HOOK_001": {
-      "status": "Android Probe1 fairness final CI SUCCESS; awaiting first optional Probe1 runtime capture",
+      "status": "Probe1 game runtime accepted limited scope; private capture inaccessible; Probe2 shared-logs Android build pending",
       "workflowRun": 44856368592,
       "sourceCommit": "e9ad056805cabacadcf3882d5ff7aeb5f45df914",
       "apkSha256": "371de65dd7972d1505713d31d2a41080aa99877f848ac35a24fefe8b825ca2d7",
       "package": "org.bocoop.black.probe1",
       "baselineAccepted": true,
       "appBuildConfirmed": true,
-      "deviceTest": false,
-      "plan": "docs/superpowers/plans/2026-11-21-readonly-probe.md"
+      "deviceTest": "Probe1 startup/capture start true; Probe2 untested",
+      "plan": "docs/superpowers/plans/2026-11-21-readonly-probe.md",
+      "probe2Run": 44860874976,
+      "probe2Code": "d8dba8d8da2da69c62718a87f3e6f03f16be0d2f",
+      "probe2BuildConfirmed": false,
+      "probe2Package": "org.bocoop.black.probe2",
+      "waitingFor": "Public copied log from new Probe2 / optional run-as old private file"
+    },
+    "PROBE2_LOG_EXPORT": {
+      "status": "Android candidate unverified yet; MediaStore Downloads auto snapshots opt-in",
+      "target": "Download/Games/cl/black log/logs/BLACK-Probe-<timestamp>/",
+      "run": 44860874976,
+      "permission": "No broad storage needed",
+      "source": "coop/android/ProbeLogExporter.java"
+    },
+    "COOP_ROOM_MENU": {
+      "status": "In-game OPTIONS native Flash page patched; CI host-preflight success, Android/device unverified; host/join intentionally disabled",
+      "run": 44860874976
     }
   },
   "apk": {
@@ -263,5 +296,5 @@
     "gameplay": false,
     "independentSha256Verified": true
   },
-  "next": "First independent HOOK001 Probe1 phone mission capture privately; analyze aggregate overlap counts and LOD observations. No baseline retest, no missing XBE request; then gate actor lifecycle research."
+  "next": "Verify Probe2 Android run 44860874976, record APK metadata; test native in-game CO-OP page and MediaStore public export on phone without touching accepted baseline; analyze raw private capture safely."
 }

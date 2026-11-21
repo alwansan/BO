@@ -1,0 +1,33 @@
+{
+  "source": "Owner-supplied Android shell black.log and screenshots; CL repository black log/من المسار/1/org.bocoop.black.probe1/files/logs",
+  "package": "org.bocoop.black.probe1",
+  "date_local": "2026-11-21",
+  "device": "Xiaomi 23013PC75G Android 15 API35 Adreno730",
+  "owner_reports_game_operational": true,
+  "screenshots_show": [
+    "game.iso imported dialog",
+    "Probe 1 read-only opt-in Start capture dialog",
+    "BLACK paused inside Arabic OPTIONS menu"
+  ],
+  "black_log": {
+    "size_in_CL_bytes": 2330,
+    "image_loaded_sha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+    "image_load_at_seconds": 51.266,
+    "capture_start_at_seconds": 127.947,
+    "exit_at_seconds": 334.305,
+    "exit_code": 0,
+    "feaudio_warning_at_seconds": 331.05,
+    "startup_no_game_warning_before_import": true
+  },
+  "probe_log": {
+    "file_exists_in_owner_app": true,
+    "read_as_shizuku_shell": "Permission denied",
+    "copied_file_in_CL_bytes": 0,
+    "private_capture_contents_observed": false,
+    "actor_samples_verified": false,
+    "fullbody_or_factory_verified": false
+  },
+  "interpretation": "Probe APK starts and entered game, Start capture logged; cannot claim actual JSONL event/record content until private file extracted. Startup missing game error precedes finished import, FEAudio warning during exit remains known.",
+  "accepted_scope": "Android startup, import and owner-reported game success, optional capture activation only; no raw Probe content, no multiplayer.",
+  "no_raw_game_or_save_files_published": true
+}
