@@ -1,0 +1,44 @@
+name: BO-COOP original first-person and remote ally/host mission contracts
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/bridge/**'
+      - 'coop/story/**'
+      - '.github/workflows/black-coop-story-contracts.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: bo-story-contracts
+  cancel-in-progress: true
+jobs:
+  story-and-ally-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Compile and execute strict host/guest scene and camera contracts
+        shell: bash
+        env:
+          ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
+          UBSAN_OPTIONS: halt_on_error=1
+        run: |
+          set -euo pipefail
+          for file in \
+              coop/bridge/test_remote_ally_roster.cpp \
+              coop/story/test_mission_barrier.cpp \
+              coop/bridge/test_remote_proxy_roster.cpp \
+              coop/bridge/test_scene_inbox.cpp; do
+            binary="$RUNNER_TEMP/$(basename "$file" .cpp)"
+            g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic \
+              -fno-omit-frame-pointer -pthread \
+              -fsanitize=address,undefined "$file" -o "$binary"
+            "$binary"
+          done
+          echo 'PASS story and ally value-only safety contracts'
+          echo 'NOT a story Start, remote actor, network connection or Android APK'
