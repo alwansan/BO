@@ -106,7 +106,9 @@ public final class RoomSession implements AutoCloseable {
     /**
      * The caller MUST independently prove the actual BLACK scene is loaded.
      * Host return means all participants committed; guest return means READY
-     * was sent. These are intentionally distinct, existing TLS core results.
+     * was QUEUED for its separate TLS network writer (NOT received by host).
+     * Neither result, alone, proves real BLACK scene load; only an independently
+     * verified game-thread loader callback may call this adapter.
      */
     public boolean reportSceneLoadedFromGameThread(int mission,int stage,int epoch)
         throws IOException {
