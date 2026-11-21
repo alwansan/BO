@@ -28,6 +28,9 @@ jobs:
           g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread \
             -fsanitize=address,undefined -fno-omit-frame-pointer \
             coop/bridge/test_transport_pipeline.cpp -o /tmp/bo-coop-transport-pipeline
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread \
+            -fsanitize=address,undefined -fno-omit-frame-pointer \
+            coop/bridge/test_remote_proxy_roster.cpp -o /tmp/bo-coop-actor-proxy-roster
       - name: Verify validation, capacity, scene barriers and thread ownership
         env:
           ASAN_OPTIONS: detect_leaks=1:halt_on_error=1
@@ -35,3 +38,4 @@ jobs:
         run: |
           /tmp/bo-coop-inbox-tests
           /tmp/bo-coop-transport-pipeline
+          /tmp/bo-coop-actor-proxy-roster
