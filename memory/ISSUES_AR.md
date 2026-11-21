@@ -1,3 +1,12 @@
+## Session41 CL-derived issues and current verification
+- Historical CL roomnet logs: first-device `ERROR_BINDEXCEPTION=4` across 9 files; second 103 `SCAN_STARTED` after joining within 6 event files. New code prevents background discovery while active and duplicate HOST/JOIN, staged into APK. JVM+Android29 and source passed; NOT physically confirmed on current phones. Existing TLS Server also has setReuseAddress/1.5s bounded bind retries; don't mark all real device port behavior proven.
+- Historical original player model `8/8 valid` **44 bones with arms only**, NOT an entire character; must render separate human-controlled ally body for remote players, with no NPC AI ownership. Remaining game scene loader and actor lifetime unknown. CL 22 Nov HOOK001 captured single world epoch per file and no nonlocal player samples; not evidence of remote absence from every engine path.
+- Remaining actual gameplay blocker: c5 mission/stage selection and verified game-thread world-load callback, host world synchronization, remote human actor renderer/input, weapons/combat/AI/quest. Lobby-only tests cannot close.
+- CI safe CL evidence44959212836 PASS; Android29 active-state scan gate44959047461 PASS; source44959047532 PASS; JVM44959047515 PASS; lobby-only APK44959047454 check live.
+- Owner explicitly wants CI-first and NO small phone testing; a single substantial test later, safe automatic logs. See docs/CL_20261122_TWO_DEVICE_LOG_EVIDENCE_AR.md and docs/MAJOR_DEVICE_TEST_GATE_AR.md.
+
+---
+
 ## Session40 Android29 test infrastructure restored; real game remains open
 - RESOLVED for synthetic instrumentation: PackageManager cold-boot stall and accidental Bash replacement corruption; guarded by `bash -n` and bounded retries. Android29 `44956919973 SUCCESS`, then `44957104337 SUCCESS` with `TLS_PLATFORM_PASS` and `ROOM_LOG_ROTATION_PASS`.
 - Verified current/rotated safe room log export and injected tampered-line rejection on Android29 without owner tests. Caveat: no real BLACK game/scene/remote body data or combined game telemetry yet.
