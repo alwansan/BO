@@ -1,0 +1,24 @@
+name: BO-COOP read-only capture privacy analyzer
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/analysis/**'
+      - '.github/workflows/black-coop-probe-analysis.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  safe-analyzer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Python syntax and synthetic privacy tests (no user logs)
+        run: |
+          python3 -m py_compile coop/analysis/summarize_probe.py coop/analysis/capture_analysis_checks.py
+          python3 -m unittest discover -s coop/analysis -p capture_analysis_checks.py -v
