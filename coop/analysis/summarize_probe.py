@@ -7,6 +7,7 @@ phone-specific paths, game files, or save data.
 import argparse
 import collections
 import json
+import math
 import pathlib
 import sys
 
@@ -31,6 +32,12 @@ def summarize(path):
     # associated kinds are exported as raw values or treated as actor lifetimes.
     kinds_by_correlation={}
     local_player_correlations=set()
+    # Only temporary in-memory groupings; no raw coordinates or clip hashes
+    # in the serialized summary, including in CI or error messages.
+    positions_first={}
+    position_variation_keys=set()
+    clip_first={}
+    multiple_clip_keys=set()
     valid_position=collections.Counter()
     valid_health=collections.Counter()
     valid_resource=collections.Counter()
@@ -97,6 +104,18 @@ def summarize(path):
             clip=rec.get("clip_hash")
             if type(clip) is int and 0<clip<=0xffffffff:
                 nonzero_clip_hash[event]+=1
+            if rec["position_valid"] and event in ("player","lod"):
+                position=rec.get("position")
+                if (isinstance(position,list) and len(position)==3 and
+                    all(type(v) in (int,float) and math.isfinite(v) and
+                        abs(v)<=10000000 for v in position)):
+                    first=positions_first.setdefault(key,tuple(position))
+                    if any(abs(a-b)>0.1 for a,b in zip(position,first)):
+                        position_variation_keys.add(key)
+            if event=="animation" and type(clip) is int and 0<clip<=0xffffffff:
+                prior=clip_first.setdefault(key,clip)
+                if prior!=clip:
+                    multiple_clip_keys.add(key)
             ms=rec.get("ms")
             if type(ms) is int and 0<=ms<=1800000:
                 sample_ms_min=ms if sample_ms_min is None else min(ms,sample_ms_min)
@@ -147,6 +166,19 @@ def summarize(path):
     # duration or a game state/lifetime. No raw ms values leave this process.
     sampled_span_seconds=(sample_ms_max-sample_ms_min)//1000 if (
         sample_ms_min is not None and sample_ms_max is not None) else None
+    motion={
+        "local_player_correlation_position_variation":sum(
+            k in position_variation_keys for k in local_player_correlations),
+        "lod_correlation_position_variation":sum(
+            k in position_variation_keys and "lod" in kinds_seen
+            for k,kinds_seen in kinds_by_correlation.items()),
+        "lod_animation_multi_clip_correlation":sum(
+            k in multiple_clip_keys and "lod" in kinds_seen and
+            "animation" in kinds_seen
+            for k,kinds_seen in kinds_by_correlation.items()),
+    }
+    # All motion thresholds are arbitrary >0.1 in unknown source units,
+    # not meters; overlap is not ownership or an actor lifetime.
     # No epoch numbers, pointer IDs or thread IDs in the report.
     return {
         "diagnostic_flags": flags,
@@ -166,6 +198,8 @@ def summarize(path):
         "capture_is_partial_snapshot":end==0,
         "local_player_sample_count":local["player"],
         "correlation_overlap_counts":overlap,
+        "correlation_motion_heuristics":motion,
+        "motion_is_actor_lifecycle_proof":False,
         "correlation_overlap_is_actor_proof":False,
         "unknown_or_malformed_line_count":rejected,
         "end_event_count":end,

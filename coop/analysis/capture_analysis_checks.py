@@ -173,6 +173,39 @@ class SummaryChecks(unittest.TestCase):
                        "881122","999008","101011","303333","139502"):
             self.assertNotIn(secret,output)
 
+    def test_position_variation_clip_changes_never_export_raw_values(self):
+        def rec(kind,id_,point=None,clip=0):
+            r={"event":kind,"epoch":2,"id":id_,"thread":440044,
+               "local":kind=="player","position_valid":point is not None,
+               "health_valid":False,"ms":9000,
+               "clip_hash":clip,"render_valid":kind=="lod",
+               "resource_valid":kind=="lod"}
+            if point is not None:r["position"]=point
+            return r
+        data=[HEADER,
+              rec("player",1,[99900.7,10,20]),
+              rec("player",1,[99900.9,10,20]),
+              rec("animation",1,clip=101010),
+              rec("animation",1,clip=101011),
+              rec("lod",2,[0,10,20]),rec("lod",2,[0.11,10,20]),
+              rec("animation",2,clip=888888),
+              rec("animation",2,clip=888889),
+              rec("lod",3,[2,3,4]),rec("lod",3,[2.05,3,4]),
+              rec("animation",3,clip=888888),
+              rec("animation",3,clip=888888),
+              {"event":"end","reason":"time_or_record_limit",
+               "records":12,"attempts":24,"read_failures":0}]
+        report=summarize(self.fixture(data))
+        self.assertEqual(report["correlation_motion_heuristics"],{
+            "local_player_correlation_position_variation":1,
+            "lod_correlation_position_variation":1,
+            "lod_animation_multi_clip_correlation":1
+        })
+        self.assertFalse(report["motion_is_actor_lifecycle_proof"])
+        output=json.dumps(report)
+        for sentinel in ("99900.7","99900.9","440044","101010","888888"):
+            self.assertNotIn(sentinel,output)
+
     def test_integer_and_bool_guards(self):
         p=self.fixture([HEADER,
           {"event":"player","epoch":1,"id":1,"thread":5,"position_valid":1,"health_valid":True,"local":True},
