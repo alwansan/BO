@@ -870,7 +870,7 @@
     "session": 34,
     "base": "3608ac51b43a9cfd99eb91a47d9de4148293f285",
     "task": "names-only hosting, automatic room and idle device discovery, manual IP fallback",
-    "status": "JVM core and source preflight and Android29 actual UI Host/automatic JOIN/Back tests passed in Actions; full game APK building",
+    "status": "Core/preflight/Android29 passed; first Windows APK run failed on cp1252 reading Arabic test source, fixed explicit UTF-8; rebuilding",
     "tcpPort": 24872,
     "presenceUdpPort": 1511,
     "wireVersion": 2,

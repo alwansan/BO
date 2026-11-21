@@ -304,3 +304,5 @@ APK44876183662SUCCESS؛artifact14696342069 نُزلوفُحصhash. راجع memo
 - Network room remains session-only (real authenticated humans, not playable gameplay actors), with physical LAN/firewall and Android lifecycle yet to verify. Flash room UI text is read-only roster, not an actor roster. PIN transmitted inside TLS after full fingerprint verification; it is not public WAN-ready hosting.
 - The process-owned `RoomAppRooms` persists when form closes and shuts down with game Activity destroy; lifecycle, pause/resume and player disconnect need device testing. Original `RoomLobbyActivity` test-only stops onStop; the game variant intentionally changes this in staged source.
 - Original `roomui` remains signed separately with no network permissions; game branch isolated as `roomnet`. Do not overwrite game saves/ISO.
+
+APK44942174355فشلفيWindowsقبلالبناء: اختبارroom_network_prepare_checksقرأRoomOverlayالعربيباستخدامcp1252الافتراضي. أُصلحread_textبـUTF-8صريح؛ليسفشلاًفيAndroidأوالشبكة. مراجعةالإلغاءالمستقلةأُعيدتولمتجدمانعاًمتبقياً.

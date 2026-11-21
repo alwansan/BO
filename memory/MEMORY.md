@@ -320,3 +320,5 @@ APK44876183662SUCCESS؛artifact14696342069 نُزلوفُحصhash. راجع memo
 - Initial preflight run44924134306 RED because read-only `UpdateRow` intercepted all room rows. Corrected by routing only -102/-103 confirmed actions within that existing guard; [44924220185](https://github.com/alwansan/BO/actions/runs/44924220185) **SUCCESS**, job136906644390, `ROOM_NET_STAGE_PASS`, `ROOM_NET_JAVA_PASS`. Source commit47c3f957.
 - Separate Windows/NDK game APK [44924346601](https://github.com/alwansan/BO/actions/runs/44924346601) **RUNNING** at this snapshot on code ead146ff; exact game image gate retained, no originals/private keys in artifacts. Check logs before claiming APK. Workflow `.github/workflows/black-coop-room-network-apk.yml`.
 - Actor+324 ownership, one full body per real player, combat/mission synchronization, physical two-device proof **not yet**. Do not call this a playable co-op build.
+
+APK44942174355فشلفيWindowsقبلالبناء: اختبارroom_network_prepare_checksقرأRoomOverlayالعربيباستخدامcp1252الافتراضي. أُصلحread_textبـUTF-8صريح؛ليسفشلاًفيAndroidأوالشبكة. مراجعةالإلغاءالمستقلةأُعيدتولمتجدمانعاًمتبقياً.
