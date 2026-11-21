@@ -55,6 +55,55 @@ public final class SessionTest {
                 check(next.snapshot().self==2); // no ID consumed by the cancelled queued join
             }
         }finally{release.countDown();}
+        // Session-level GAME-THREAD handoff across real, pinned TLS sockets.
+        // These calls simulate a future verified engine callback; no BLACK
+        // level, game-thread hook or remote actor runs in this JVM test.
+        try(RoomSession owner=RoomSession.create();RoomSession remote=RoomSession.create()){
+            owner.startHost(source,loop,0,"Story host","Story room");
+            until(()->owner.snapshot().phase==RoomSession.Phase.HOSTING);
+            RoomSession.Status endpoint=owner.snapshot();
+            remote.join("127.0.0.1:"+endpoint.port,endpoint.fingerprint,"Story guest");
+            until(()->remote.snapshot().phase==RoomSession.Phase.JOINED);
+            until(()->owner.snapshot().roster.players.size()==2);
+            check(owner.storyStatus().ticket==null&&!owner.storyStatus().committed);
+            check(remote.storyStatus().ticket==null&&!remote.storyStatus().committed);
+            // Merely joining cannot acquire game-thread proof or start a mission.
+            try{owner.prepareStoryFromGameThread(0,0,17);throw new AssertionError("Unbound host was accepted");}
+            catch(java.io.IOException expected){}
+            check(!remote.reportSceneLoadedFromGameThread(0,0,17));
+            check(owner.bindStoryGameThread()&&remote.bindStoryGameThread());
+            java.util.concurrent.atomic.AtomicBoolean crossThreadAccepted=new java.util.concurrent.atomic.AtomicBoolean(false);
+            Thread networkWorker=new Thread(()->{
+                try{
+                    if(owner.bindStoryGameThread()||remote.reportSceneLoadedFromGameThread(0,0,17))
+                        crossThreadAccepted.set(true);
+                }catch(java.io.IOException e){throw new AssertionError(e);}
+            },"synthetic-not-game-thread");
+            networkWorker.start();networkWorker.join();
+            check(!crossThreadAccepted.get());
+            RoomStoryWire.Ticket first=owner.prepareStoryFromGameThread(0,0,17);
+            until(()->remote.storyStatus().ticket!=null);
+            check(first.same(remote.storyStatus().ticket));
+            check(!remote.reportSceneLoadedFromGameThread(0,0,18)); // wrong scene
+            check(!owner.reportSceneLoadedFromGameThread(0,1,17)); // wrong stage
+            check(!owner.reportSceneLoadedFromGameThread(0,0,17)); // waits for guest
+            check(!owner.storyStatus().committed);
+            check(remote.reportSceneLoadedFromGameThread(0,0,17)); // hypothetical real load
+            until(()->owner.storyStatus().committed&&remote.storyStatus().committed);
+            check(!remote.reportSceneLoadedFromGameThread(0,0,17)); // no duplicate READY
+            check(owner.cancelStoryFromGameThread());
+            until(()->remote.storyStatus().ticket==null);
+            check(!remote.storyStatus().committed);
+            RoomStoryWire.Ticket second=owner.prepareStoryFromGameThread(1,0,18);
+            check(second.token!=first.token);
+            until(()->remote.storyStatus().ticket!=null);
+            check(owner.cancelStoryFromGameThread());
+            until(()->remote.storyStatus().ticket==null);
+            remote.stop();
+            check(!remote.bindStoryGameThread());
+            check(!remote.reportSceneLoadedFromGameThread(1,0,18));
+        }
+        System.out.println("SESSION_STORY_BRIDGE_PASS: authenticated TLS ticket via pinned game-thread facade, no implicit READY, host-only prepare, replay and cancel fences");
         System.out.println("ROOM_SESSION_PASS: real host/join, immutable roster, reject, cancellation, lifecycle");
     }
 }
