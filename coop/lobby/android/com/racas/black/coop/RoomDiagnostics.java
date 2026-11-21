@@ -32,7 +32,7 @@ public final class RoomDiagnostics {
     private static final AtomicInteger dropped=new AtomicInteger();
     private static final ThreadPoolExecutor writer=new ThreadPoolExecutor(
         1,1,0,TimeUnit.MILLISECONDS,new ArrayBlockingQueue<>(2048),
-        job->{Thread t=new Thread(job,"bo-room-safe-log-io");t.setDaemon(true);return t;},
+        job->{Thread t=new Thread(job,"bo-diagnostic-io");t.setDaemon(true);return t;},
         new ThreadPoolExecutor.AbortPolicy());
     public static void init(Context context){
         synchronized(lock){app=context.getApplicationContext();}
@@ -86,7 +86,7 @@ public final class RoomDiagnostics {
     }
     /** Explicit export/read barrier. Never used by ordinary event producer. */
     private static boolean waitForWriter(){
-        if(Thread.currentThread().getName().equals("bo-room-safe-log-io"))return true;
+        if(Thread.currentThread().getName().equals("bo-diagnostic-io"))return true;
         CountDownLatch done=new CountDownLatch(1);
         try{
             if(!writer.getQueue().offer(done::countDown,2,TimeUnit.SECONDS))return false;
