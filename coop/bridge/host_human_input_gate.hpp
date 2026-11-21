@@ -123,10 +123,24 @@ public:
                 batch[n++]=f;
             }
         }
-        // No guest memory, JNI, or game callback under transport queue lock.
+        // No guest memory, JNI, or game callback under the transport lock.
+        // Re-check before EACH callback because a consumer can synchronously
+        // change the scene or remove a peer. Never dispatch later stale batch
+        // entries after a reentrant Bind/SetPeer from the owning game thread.
+        std::size_t delivered=0;
+        for(std::size_t i=0;i<n;++i) {
+            const HumanInput& f=batch[i];
+            {
+                std::unique_lock<std::mutex> lock(mutex_,std::try_to_lock);
+                if(!lock.owns_lock()||!gameThread()||
+                   !(f.scope==scope_)||peer_[f.player].generation!=f.peer_generation)
+                    continue;
+            }
+            consumer(f);
+            ++delivered;
+        }
         // Future actor mutation also needs independently verified actor lifetime.
-        for(std::size_t i=0;i<n;++i) consumer(batch[i]);
-        return n;
+        return delivered;
     }
     std::size_t Pending() const noexcept {
         std::unique_lock<std::mutex> lock(mutex_,std::try_to_lock);
