@@ -1,3 +1,8 @@
+## Latest final verification from Session38
+Real TLS v3 story control and rapid Host/Leave/Host regression confirmed in JVM run44953176046 (STORY_TLS_PASS + ROOM_REHOST_PASS four iterations) and Android29 KeyStore run44953176054 (TLS_PLATFORM_PASS including stage messages and rebind). BOTH PASS in source-only/synthetic testing, not on actual owner game phones. Real mission Start, remote fullbody AllyBody renderer and world sync not implemented; latest owner tested Android game remains run44946597973/artifact14724535514 protocol-v2 incompatible. Read docs/ROOM_STORY_TLS_PROTOCOL_AR.md, docs/BLACK_STORY_ENTRY_AUDIT_AR.md, Session38. No ISO request.
+
+---
+
 ## LATEST Session38 cloud handoff — transport verified, gameplay still absent
 Prior summary already covers new owner phones, original local first-person primary-model arms-only 8/8 and fullbody ally LOOK for OTHER humans. Further source work: RoomWire protocol3 (v2 peers incompatible), RoomStoryWire strict fixed story tickets and RoomTls real encrypted PREPARE/READY/COMMIT/ABORT with current roster revision and separate participant slots from monotonic room IDs. JVM real TCP/TLS run44952822531 PASS; Android29 Conscrypt KeyStore run44952822499 PASS. A rehost regression for CL ERROR_BINDEXCEPTION: same TCP port with reuseaddr and <=1.5sec bounded retries, JVM run44953176046 PASS 4 restarts; Android run44953176054 check live before acceptance. Source only: NO actual BLACK mission choice/load, stage epoch callback, ALLY render, remote actors, combat/world sync, phone v3 run or new playable APK. Last owner-tested defaultplayer APK44946597973, artifact14724535514. See docs/ROOM_STORY_TLS_PROTOCOL_AR.md and docs/BLACK_STORY_ENTRY_AUDIT_AR.md; no ISO re-upload, only experiment/black-coop writable.
 
