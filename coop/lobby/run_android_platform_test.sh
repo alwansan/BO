@@ -17,7 +17,13 @@ javac --release 8 -Xlint:all,-options -Werror -cp "$jar" -d "$out/classes" \
     coop/lobby/java/com/racas/black/coop/*.java \
     coop/lobby/android/com/racas/black/coop/RoomIdentity.java \
     coop/lobby/platform/PlatformInstrumentation.java
-mapfile -t classes < <(rg --files "$out/classes" -g '*.class')
+if command -v rg >/dev/null 2>&1; then
+    rg --files "$out/classes" -g '*.class' > "$out/class-list.txt"
+else
+    find "$out/classes" -type f -name '*.class' > "$out/class-list.txt"
+fi
+mapfile -t classes < "$out/class-list.txt"
+(( ${#classes[@]} > 0 ))
 "$bt/d8" --lib "$jar" --min-api 29 --output "$out/dex" "${classes[@]}"
 "$bt/aapt2" link -I "$jar" --manifest coop/lobby/platform/AndroidManifest.xml -o "$out/unsigned.apk"
 zip -q -j "$out/unsigned.apk" "$out/dex/classes.dex"
@@ -40,7 +46,12 @@ done
 [[ "$booted" == true ]]
 "$adb" -s emulator-5554 install -t "$out/test.apk"
 timeout 60s "$adb" -s emulator-5554 shell am instrument -w -r org.bocoop.black.tlsplatform/com.racas.black.coop.PlatformInstrumentation | tee "$out/result.txt"
-if ! rg -q 'TLS_PLATFORM_PASS' "$out/result.txt"; then
+if command -v rg >/dev/null 2>&1; then
+    passed=$(rg -c 'TLS_PLATFORM_PASS' "$out/result.txt" || true)
+else
+    passed=$(grep -c 'TLS_PLATFORM_PASS' "$out/result.txt" || true)
+fi
+if [[ "$passed" != 1 ]]; then
     "$adb" -s emulator-5554 logcat -d -s BlackTlsPlatform:E AndroidRuntime:E
     exit 1
 fi

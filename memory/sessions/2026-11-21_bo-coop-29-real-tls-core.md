@@ -21,3 +21,6 @@ Actions real-lobby-core الجديد سيعيد الاختبارات علىLinux
 ## CI مُثبت والمرحلة التالية
 run44917272041/job136885459965 **SUCCESS** على591372ba4819fd001ebb354dced27179e97ac548؛قُرئالسجلوجميعwire/actualTLS/heartbeatاختباراتPASS،coreAPIJava8وtestsJava17بـ-Werror. لاAndroidruntimeأوgameplayيثبتهذاالـCI.
 أُضيفRoomIdentityAndroidKeyStoreوtestAPKsyntheticبلاGame/XBE/native،لفحصهويةopaqueتستقربينloadين واتصالTLSفعليبها. workflowblack-coop-lobby-android-platform سيجربAndroid29emulator؛الـmanifestوالـbashsyntaxمحلياًصالحان،والترجمةوالتشغيلعلىAndroidلميثبتابعد. لاتطلبمنالمالكهذاالفحصالصغيربدلاًمنالمحاكي.
+
+## أول فشل لاختبار Android
+run44917717978/job136886809488 على3ffa4496 فشل في packaging:ترجمةJava/Androidنجحت،لكنrgغيرمثبتفيrunner،فأصبحتقائمةclassesفارغةولمينتجDEX. قرئالسجل؛أضيفfallbackfind/grepوفحصnonemptyقبلD8. هذافشلبنيةCIولميصلإلىKeystore runtime. يلزمretry،ولايدعيAndroidPASSبعد.

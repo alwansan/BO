@@ -703,6 +703,14 @@
       "status": "ONE_OWNER_LOG_EVENT_ROOT_CAUSE_UNPROVEN",
       "sourceLogBlob": "18a961045099701d651b2a49517fe2b55c3c853d",
       "ownerReportedCrash": false
+    },
+    "ANDROID_KEYSTORE_PLATFORM": {
+      "status": "JAVA_PLATFORM_COMPILE_PASSED_PACKAGING_FAILED_MISSING_RUNNER_RG_FALLBACK_FIXED_RETRY_PENDING",
+      "run": 44917717978,
+      "job": 136886809488,
+      "sourceCommit": "3ffa44969bd491b7b70dc287167b30635b999f2a",
+      "runtimeVerified": false,
+      "failure": "rg absent; empty class list yielded no DEX; find/grep fallback and nonempty inventory check added"
     }
   },
   "apk": {
@@ -732,7 +740,7 @@
     "poolReader": "coop/probe3/pool_snapshot.hpp",
     "poolReaderStatus": "OWNER_PROBE3_AND_PROBE4_CAPTURE_ACCEPTED"
   },
-  "executionStatus": "real_tls_jvm_ci_pass_android_keystore_emulator_test_pending",
+  "executionStatus": "android_keystore_platform_runner_inventory_fix_retry_pending",
   "ownerClarifications": {
     "session": 28,
     "previousPhoneTests": "solo local human plus enemy/friendly NPCs only; never two phones",
