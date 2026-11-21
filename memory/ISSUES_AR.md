@@ -1,3 +1,8 @@
+## CI Android29 script corruption diagnosed and guarded — Session40
+Old Android29 run44956473707 failed during cold synthetic emulator PackageManager install timeout, before instrumentation. First retry44956739205 failed early because an automated JS replacement accidentally expanded a shell `$'` replacement sequence, corrupting Bash around `grep '^package:android$'`; this was a SCRIPT syntax failure, NOT Android app/TLS or game failure. Clean script commit5dd84a4a reconstructs tail explicitly; workflow commitc8c734bc runs `bash -n` BEFORE downloading SDK or emulator boot. New CI44956919973 check live. No owner phone test for CI errors.
+
+---
+
 ## Session40 residual issues after offline owner static/XBE and diagnostics (2026-11-22)
 - XBE executable entry mapping verified on actual owner c5 in CI44956138064 but a 160B disassembly window is insufficient for scene loader semantics, ABI and epoch; do not invoke as game Start or mark game-thread hook solved. Mission index0 remains valid.
 - TLS v3 story diagnostic codes are automatically logged by Android room session even when overlay is dismissed; JVM test44956473684 PASS. Combined previous/current sanitized log segments are source-patched, Android29 44956473707 / lobby-only APK 44956473687 require live confirmation. No true mission scene callback means no real story event emitted yet.
