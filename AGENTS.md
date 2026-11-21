@@ -1,3 +1,6 @@
+## ACTIVE Session38 owner override — 2026-11-22
+This overrides Session36 no-ally-model restriction ONLY for other humans' VISUAL representation. Every device keeps original LOCAL first-person hands, weapon, camera and actual player. OTHER networked humans including host as seen on a guest device use full-body ALLY LOOK as human-controlled remote render avatars; never AI allies, never borrow live NPC actor/brain. Host starts ONE shared mission; 2/4 lobby or two independently started solo games are NOT co-op. New owner CL default player probe has 8 complete observations of primary first-person arms model (44 bones, 2 buffers, draw list5); new evidence has arrived and need not be re-requested. New plan docs/superpowers/plans/2026-11-22-host-story-remote-ally.md and memory/session38. New source-only CI44951425780 PASS; real body, story TLS, game loader and gameplay NOT completed. Preserve historic Session36 below as old context.
+
 # BO-COOP — تعليمات العميل
 الهوية BO-COOP ثابتة. الهدف BLACK Android story co-op، هاتف المضيف authoritative host، LAN وZeroTier ثم Tailscale وP2P. المستودع alwansan/BO، فرع الكتابة الوحيد experiment/black-coop؛ main وكل المستودعات المرجعية للقراءة فقط. المالك يأذن بالبحث والتجارب وCI دون انتظار إذن لكل دفعة.
 ## الاستعادة
