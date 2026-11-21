@@ -1,3 +1,8 @@
+## Owner test burden policy — 2026-11-22
+Owner does not want small/fragmented phone tests. CI and synthetic/emulator tests are preferred. A physical two-phone test remains BLOCKED until meaningful real shared-story engine/remote-human integration exists. Automatic consolidated privacy-safe diagnostics must capture minor uncertainties during that one major test. Do not ask owner to try the successful lobby-only APK; no gameplay exists. Follow docs/MAJOR_DEVICE_TEST_GATE_AR.md and AGENTS.md.
+
+---
+
 ## Session39 — new bridge verification and residual issues (2026-11-22)
 - **PARTIAL RESOLUTION**: prior TLS v3 story transport was accessible only through RoomTls. Source commits 86faa014/5370dcae now expose a bound-thread RoomSession facade with generation reset and cover it by actual pinned-TLS JVM SessionTest. CI44954581676 SUCCESS. A caller can *claim* its thread with `bindStoryGameThread`, so actual BLACK hook/scene-loaded evidence is still essential before wiring production gameplay; this is a guard, not attestation.
 - **OPEN**: exact mission start and scene-ready authoritative events inside c5 BLACK, JNI game thread contract, guest scene load. Current Android app never calls the facade. No fake READY or shared Start claims.
