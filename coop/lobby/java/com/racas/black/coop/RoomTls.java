@@ -130,6 +130,13 @@ public final class RoomTls {
                 return ticket;
             }
         }
+        /** Stage unload, peer departure or owner cancellation. NOT a game reset. */
+        public boolean cancelStory(){
+            synchronized(lock){
+                if(closed||story==null)return false;
+                abortStoryLocked();return true;
+            }
+        }
         /** Engine callback only, AFTER local host stage is actually loaded. */
         public boolean hostSceneLoaded(int mission,int stage,int epoch)throws IOException{
             synchronized(lock){
