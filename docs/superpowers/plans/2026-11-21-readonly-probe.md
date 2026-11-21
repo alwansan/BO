@@ -18,12 +18,17 @@
 - Android15 AOSP SYSCALLS contains process_vm_readv and app/common blocklists omit it; actual device availability remains a test gate. No permissions bypass or root.
 
 ## Tasks
-- [ ] Write failing C++ tests for guarded real self-reads, PROT_NONE/cross-page/overflow, finite values, bounded registry/rate/output formatter.
-- [ ] Implement core and pass local/CI sanitizer tests.
-- [ ] Implement Android sampler and optional UI/package preparer; test fail-closed source anchors and actual pinned-source preparation.
-- [ ] Build probe APK on CI, verifying original generated hook targets, exact native image, package/ABI/signature/assets, and allowlisted source deltas.
-- [ ] Independent review; fix Important findings with failing regression tests.
-- [ ] Download/recheck artifact; update recovery and ask for concrete mission/nearby-NPC/reload capture. No actor or co-op claim.
+- [x] Write C++ tests for guarded real self-reads, PROT_NONE/cross-page/overflow, finite values, bounded registry/rate/output formatter. Passed Linux ASAN/UBSAN run 44852312025; negative cases tested.
+- [x] Implement core and pass Linux CI sanitizers (44852312025); added one-shot enable and fail-closed file cleanup after exception.
+- [x] Implement Android sampler and optional Java opt-in/package preparer; pinned-source and rejection tests PASS (44852312025, 44852419894). Android compilation/runtime still separately gated.
+- [ ] Build probe APK on CI, verifying original generated hook targets, exact native image, package/ABI/signature/assets, and allowlisted source deltas. Windows run 44852419929 launched; results must be checked. No APK claim until success.
+- [ ] Independent review of final APK/runtime integration; fix Important findings with failing regression tests. Source anchor guards and no-network permissions added, but device gate open.
+- [ ] Download/recheck artifact; update recovery and invite a *new probe* device capture only after fully verified APK. Tested baseline must not be re-tested; no actor or co-op claim.
 
 ## Urgent handoff
 User interrupted implementation to move work to another session. Core tests passed locally; Android sampler is WIP, unintegrated, unreviewed as a whole, and unbuilt. See session08 for precise remaining tasks/known issues. Baseline phone test already succeeded.
+
+## Session09 progress note
+- New owner upload: five ZIP parts verified and assembled locally; extracted ISO SHA256 matches BO repository manifest. See docs/OWNER_ISO_UPLOAD_AR.md. Sandbox copies are temporary, GitHub manifest copy is durable; no raw assets published.
+- Linux ASAN/UBSAN and exact v1.5.0 preparer run 44852312025 completed SUCCESS. Follow-up 44852419894 completed SUCCESS. Pinned source preparer inherits accepted baseline private ISO import without touching original baseline, adds org.bocoop.black.probe1 and explicit Start capture UI; removes broad storage/network permissions. Source deltas confined to two observers plus new src/coop.
+- Windows build run 44852419929 remains a separate acceptance gate; avoid assuming success from early steps. Device guide docs/PROBE_DEVICE_GUIDE_AR.md is for a verified probe candidate only.
