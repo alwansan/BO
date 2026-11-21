@@ -1,0 +1,38 @@
+{
+  "gate": "HOOK001_Probe1_v4_Player_Fairness",
+  "status": "ci_build_pass_only",
+  "run": 44856368592,
+  "job": 136701348444,
+  "source_commit": "e9ad056805cabacadcf3882d5ff7aeb5f45df914",
+  "package": "org.bocoop.black.probe1",
+  "artifact_id": 14687833595,
+  "artifact_name": "black-probe1-android-arm64-READ-ONLY-NO-COOP",
+  "metadata_artifact_id": 14687359856,
+  "apk_bytes": 21738563,
+  "apk_sha256": "371de65dd7972d1505713d31d2a41080aa99877f848ac35a24fefe8b825ca2d7",
+  "exact_compile_image_sha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+  "checks_passed": [
+    "Windows Gradle Android ARM64 build",
+    "generated LOD original symbol check and link",
+    "JNI nativeCoopProbeEnable export",
+    "Debug APK signature",
+    "package/activity isolation",
+    "APK original game asset exclusion",
+    "No internet/network/broad-storage permissions",
+    "pinned source and source delta allowlist"
+  ],
+  "device_runtime_tested": false,
+  "actor_creation_proven": false,
+  "coop_proven": false,
+  "preceding_build": {
+    "run": 44855984997,
+    "source_commit": "f7abf7de9fbde64bca97597765e0dbdc61d1f20c",
+    "artifact": 14687877897,
+    "apk_sha256": "a2065b3bc1f88e400b3a31b74c01135b9e0156c83e2df3a6681228bbd4bba2e8",
+    "apk_bytes": 21738451,
+    "conclusion": "success",
+    "superseded_by_fairness_build": true
+  },
+  "original_baseline": "Owner-tested and accepted; do not request repeat or missing XBE",
+  "source": "GitHub Actions job reports read-only candidate, no device data"
+}

@@ -138,3 +138,10 @@ HOOK001 fairness source e9ad056: host sanitizer + pinned-source [44856368591](ht
 ## NET004-PREP composition test (2026-11-21)
 - Code commit a5d164ca6f5f19bb807851429c7ba294a5d572b4 wires two previously isolated *test components* under coop/bridge/test_transport_pipeline.cpp. A deterministic host validates Join/Accept and Input token/endpoint/sequence; a transport worker stages value-only commands into SceneInbox; the owning simulated game thread drains them into a mock scene. Negative tests cover forged endpoint/token, duplicate replay, wrong drain thread, and scene reload dropping stale input. No actual network socket is opened by this composition test (separate Linux UDP socket tests exist), no BLACK hooks/actor memory access/gameplay, no authentication or phone test.
 - [44856542339](https://github.com/alwansan/BO/actions/runs/44856542339) completed SUCCESS with ASAN/UBSAN and strict C++20; input path tested synthetically only. Keep wording «mock host→scene pipeline», not co-op, and do not treat a pseudorandom lab token as secure authentication.
+
+## جلسة12 — Verified Android build and ACTOR triage
+- [x] Close pending Windows [44855984997](https://github.com/alwansan/BO/actions/runs/44855984997) SUCCESS (intermediate promotion), verify APK SHA and artifact.
+- [x] Close final Windows [44856368592](https://github.com/alwansan/BO/actions/runs/44856368592) SUCCESS, APK SHA256 371de65dd7972d1505713d31d2a41080aa99877f848ac35a24fefe8b825ca2d7, artifact14687833595, source e9ad056805cabacadcf3882d5ff7aeb5f45df914; report memory/evidence/HOOK001-final-fairness-build-44856368592.json.
+- [x] Implement anonymous event-kind correlation analysis under `coop/analysis`; synthetic privacy CI [44857976254](https://github.com/alwansan/BO/actions/runs/44857976254) SUCCESS. No APK rebuild.
+- [ ] First private read-only **Probe1** device runtime capture; never repeat accepted baseline. Use docs/PROBE_DEVICE_GUIDE_AR.md.
+- [ ] Interpret LOD/animation/position & thread observations conservatively. Confirm actor identity/lifetime and safe factory before ACTOR-001 writes or networked gameplay.

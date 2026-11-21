@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-11-local-promotion-and-scene-inbox.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-12-fairness-acceptance-actor-correlation.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -185,6 +185,35 @@
       "run": 44856542339,
       "code": "a5d164ca6f5f19bb807851429c7ba294a5d572b4",
       "scope": "Host packet validation + scene inbox + mock world, no actual game, no actual UDP sockets in this specific test"
+    },
+    "HOOK001_LATEST_FAIRNESS_ANDROID_CI": {
+      "status": "PASS_CI_ONLY_PHONE_UNTESTED",
+      "run": 44856368592,
+      "job": 136701348444,
+      "sourceCommit": "e9ad056805cabacadcf3882d5ff7aeb5f45df914",
+      "artifact": 14687833595,
+      "metadataArtifact": 14687359856,
+      "apkSize": 21738563,
+      "apkSha256": "371de65dd7972d1505713d31d2a41080aa99877f848ac35a24fefe8b825ca2d7",
+      "evidence": "memory/evidence/HOOK001-final-fairness-build-44856368592.json",
+      "package": "org.bocoop.black.probe1",
+      "baselineStillAccepted": true,
+      "deviceTested": false,
+      "gameplayCoop": false
+    },
+    "HOOK001_INTERMEDIATE_PROMOTION_ANDROID_CI": {
+      "status": "PASS_CI_SUPERSEDED_BY_FAIRNESS",
+      "run": 44855984997,
+      "sourceCommit": "f7abf7de9fbde64bca97597765e0dbdc61d1f20c",
+      "artifact": 14687877897,
+      "apkSha256": "a2065b3bc1f88e400b3a31b74c01135b9e0156c83e2df3a6681228bbd4bba2e8"
+    },
+    "ACTOR001_ANONYMOUS_TRIAGE": {
+      "status": "PASS_SYNTHETIC_PRIVACY_TESTS_ONLY",
+      "run": 44857976254,
+      "sourceCommit": "580247d74ff27b78a57d115f1900477c614f75db",
+      "output": "correlation_overlap_counts",
+      "actorFactoryProven": false
     }
   },
   "pending": {
@@ -193,7 +222,7 @@
       "discSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
       "compiledSha1": "82d0588124e70102ee650f8969c0a56374476234"
     },
-    "ACTOR_001": "No actor factory or second playable model proven. Probe phone runtime not yet tested; no guest writes.",
+    "ACTOR_001": "Probe1 Android runtime not yet tested; full-body actor/factory/lifetime unproven. Read-only correlation overlap analyzer passes only synthetic privacy CI.",
     "COMBAT_001": "not_started",
     "DEVICE": "Owner-tested rebuilt baseline ACCEPTED; HOOK001 probe device test NOT STARTED; co-op device-pair test NOT STARTED.",
     "SRC_002": "Separate candidate build and owner baseline runtime accepted for this limited device test; not original Arabic source equivalence/full campaign proof.",
@@ -211,18 +240,25 @@
     },
     "DEVICE_BASELINE": "Already accepted by owner; do not ask to repeat.",
     "HOOK_001": {
-      "status": "Latest fairness source host PASS; Android queued behind f7 build",
+      "status": "Android Probe1 fairness final CI SUCCESS; awaiting first optional Probe1 runtime capture",
       "workflowRun": 44856368592,
+      "sourceCommit": "e9ad056805cabacadcf3882d5ff7aeb5f45df914",
+      "apkSha256": "371de65dd7972d1505713d31d2a41080aa99877f848ac35a24fefe8b825ca2d7",
       "package": "org.bocoop.black.probe1",
       "baselineAccepted": true,
-      "appBuildConfirmed": false,
+      "appBuildConfirmed": true,
       "deviceTest": false,
-      "previousCandidateRun": 44854667587,
-      "previousCandidateStatus": "CI_PASS",
-      "plan": "docs/superpowers/plans/2026-11-21-readonly-probe.md",
-      "intermediateRun": 44855984997
+      "plan": "docs/superpowers/plans/2026-11-21-readonly-probe.md"
     }
   },
-  "apk": null,
-  "next": "Check 44855984997 and 44856368592 final statuses independently. Prefer e9ad056 fairness APK only after verified Windows artifact. Then one optional Probe1-only phone capture; no baseline repeat."
+  "apk": {
+    "kind": "read_only_probe_candidate",
+    "package": "org.bocoop.black.probe1",
+    "run": 44856368592,
+    "artifact": 14687833595,
+    "sha256": "371de65dd7972d1505713d31d2a41080aa99877f848ac35a24fefe8b825ca2d7",
+    "deviceAccepted": false,
+    "gameplay": false
+  },
+  "next": "First independent HOOK001 Probe1 phone mission capture privately; analyze aggregate overlap counts and LOD observations. No baseline retest, no missing XBE request; then gate actor lifecycle research."
 }

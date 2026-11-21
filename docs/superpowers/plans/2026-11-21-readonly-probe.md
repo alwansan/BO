@@ -49,3 +49,9 @@ User interrupted implementation to move work to another session. Core tests pass
 
 - [x] Close LOD/animation budget starvation by reserving 64 attempts/s, 8 records/s and 256 total opportunities for player. Host CI44856368591 PASS, source e9ad056.
 - [ ] Check Android v4 run44856368592 and verify artifact before choosing latest Probe1 for phone.
+
+## Session12 final Build CI accepted
+- [x] Windows Read-Only Probe1 final fairness APK [44856368592](https://github.com/alwansan/BO/actions/runs/44856368592) SUCCESS, SHA256 371de65dd7972d1505713d31d2a41080aa99877f848ac35a24fefe8b825ca2d7, artifact 14687833595. Evidence memory/evidence/HOOK001-final-fairness-build-44856368592.json.
+- [x] Anonymous per-(world epoch,id) kind overlap only, synthetic tests [44857976254](https://github.com/alwansan/BO/actions/runs/44857976254) PASS. Not a model/factory proof.
+- [ ] First Probe1 phone capture, separate package, after tested baseline remains untouched; private logs only.
+- [ ] Evaluate if another static observation hook would be justified by actual trace data; don't introduce unsupported actor writes.

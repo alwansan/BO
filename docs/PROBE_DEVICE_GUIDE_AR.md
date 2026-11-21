@@ -1,3 +1,12 @@
+# حالة Probe1 الموثوقة — جلسة12 (21 نوفمبر 2026)
+**أحدث إصدار للـAPK الاختبارية للرصد فقط (لا multiplayer):**
+- Windows/Android ARM64 [run 44856368592](https://github.com/alwansan/BO/actions/runs/44856368592) completed SUCCESS on source e9ad056805cabacadcf3882d5ff7aeb5f45df914.
+- Artifact **`black-probe1-android-arm64-READ-ONLY-NO-COOP`** (id 14687833595), extract APK `black-probe1-candidate-READ-ONLY-NO-COOP.apk`.
+- APK size **21,738,563 bytes**؛ SHA256 **`371de65dd7972d1505713d31d2a41080aa99877f848ac35a24fefe8b825ca2d7`**؛ package `org.bocoop.black.probe1`. CI confirms JNI, compile-XBE identity, debug signature and no network/storage broad permissions/assets.
+- هذا **قبول بناء فقط**، لم تُجرَ عليه تجربة هاتف حتى الآن. لا تغيّر Baseline `org.bocoop.black.baseline` التي جربها المالك.
+- اختبار الهاتف الجديد عند الرغبة: ثبّت هذا التطبيق المستقل، استورد ISO باستعمال منتقي الملفات، اختر `Start capture`، ادخل المهمة وتحرّك قرب جندي 1–3 دقائق. السجل المحلي `Android/data/org.bocoop.black.probe1/files/logs/coop_probe.jsonl`. لا ترفع الملف الخام إلى GitHub العام، بل أرسله خاصاً عبر المحادثة أو حلله محلياً `coop/analysis/summarize_probe.py` ثم شارك ملخص JSON فقط. ليس مطلوباً إعادة اختبار baseline أو إرسال XBE.
+- تحليل correlation الجديد يخرج أرقام تطابق الأنواع ضمن نفس `(epoch,id)` المؤقتة، **لا يثبت** إنشاء actor ولا full body. [Privacy CI 44857976254](https://github.com/alwansan/BO/actions/runs/44857976254) SUCCESS.
+---
 # HOOK-001 — تجربة الرصد الاختياري للنسخة المنفصلة
 
 **ليس لعبة جماعية.** هذا اختبار قراءة ملاحظات محدودة فقط، ولا يثبت وجود full-body أو factory أو إنشاء لاعب ثانٍ. لا يُطلب اختبار جديد للـBaseline؛ ذلك الاختبار مقبول سابقاً.
