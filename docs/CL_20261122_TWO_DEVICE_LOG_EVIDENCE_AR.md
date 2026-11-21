@@ -1,3 +1,13 @@
+## Verified cross-directory automated CL analysis (GitHub Actions run 44959212836)
+- Branch CL main pinned `82b2c46f20aa2c911c6dfaec053be6d7d73962d4`; `.github/workflows/black-coop-cl-room-evidence.yml` checkout publicly readable CL subfolders without game binaries and uploads **safe-only aggregate counts** artifact `14728782486`. Both synthetic and owner-evidence jobs SUCCESS, markers `BO_CL_ROOM_TRIAGE_SYNTHETIC_PASS`, `BO_CL_ROOM_OWNER_AGGREGATE_PASS`, `DISCOVERY_AFTER_JOIN_DETECTED=true`, `HOST_BIND_ERRORS_DETECTED=true`.
+- Main first device: 9 safe exported room log files, `ROOM_HOSTING=18`, `ERROR_BINDEXCEPTION=4`, `SCAN_STARTED=45`, `ROOM_JOINED=1`, `scans_after_join_within_same_log=2`.
+- Second device: 6 safe exported room files, `ROOM_JOINED=19`, `JOIN_CONNECTED=18`, `SCAN_STARTED=187`, `scan_after_join_within_same_log=103`, `largest_single_log_scans_after_join=52`, `files_with_scans_after_join=4`.
+- These are aggregate event counts across captures (some overlap and retries); **never claim 19 independent sessions or synchronized campaigns**. Intra-file POST-JOIN counts are based on order until STOP/LEFT/ERROR, not timing/performance. Unknown event labels are omitted from the artifact (only counted).
+- CI JVM scan gate `44959047515 SUCCESS` marker `ROOM_SCAN_GATE_PASS`; Android29 emulator `44959047461 SUCCESS` marker `ROOM_ACTIVE_SCAN_GATE_PASS`; Android source staging `44959047532 SUCCESS`. No physical-device confirmation of current branch required or requested. The run `44959047454` produces room-only APK, verify final status separately.
+- The more important real gameplay requirement remains unproven: actual host campaign scene loader, full-body remote human and world/synchronized AI/combat/quest.
+
+---
+
 # BO-COOP — مراجعة أدلة CL من الهاتفين، 22 نوفمبر 2026
 
 ## المصدر والحدود
