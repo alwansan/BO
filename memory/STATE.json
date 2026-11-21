@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-08-probe-handoff.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-09-readonly-probe-and-owner-iso.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -95,6 +95,21 @@
       "anotherReleaseWarning": false,
       "exitCode": 0,
       "multiplayer": false
+    },
+    "OWNER_ISO_PARTS": {
+      "status": "five_parts_read_zip_reassembled_iso_extracted_sha256_matches_repo",
+      "isoBytes": 1793179648,
+      "isoSha256": "f6d15ff277eb19ef4fb9092e245599c7ae68f5a49c6ac7db60934a32ec246c62",
+      "archiveBytes": 1793179798,
+      "archiveSha256": "1c5f68a21117ef734cc093a272929d3b33671786e779f6f0b5c1e3c3ada65487",
+      "partCount": 5,
+      "availability": "current_session_temporary_only; same content restorable from BO GitHub manifest",
+      "documentation": "docs/OWNER_ISO_UPLOAD_AR.md"
+    },
+    "HOOK001_HOST_PREFLIGHT": {
+      "status": "pass_host_sanitizers_pinned_source_preparer",
+      "run": 44852312025,
+      "scope": "no Android APK or runtime"
     }
   },
   "pending": {
@@ -121,14 +136,15 @@
     },
     "DEVICE_BASELINE": "Baseline test answered successfully; no repeat needed. Probe Android build/device capture not started.",
     "HOOK_001": {
-      "status": "WIP_unintegrated_host_core_test_only",
-      "files": "coop/probe/",
-      "plan": "docs/superpowers/plans/2026-11-21-readonly-probe.md",
-      "androidBuild": false,
+      "status": "Android_probe_candidate_CI_pending",
+      "workflowRun": 44852419929,
+      "package": "org.bocoop.black.probe1",
+      "baselineAccepted": true,
+      "appBuildConfirmed": false,
       "deviceTest": false,
-      "requires": "review runtime, implement opt-in/preparer/source injection/workflow, sanitizer+NDK+APK verification"
+      "plan": "docs/superpowers/plans/2026-11-21-readonly-probe.md"
     }
   },
   "apk": null,
-  "next": "User requested urgent remote-session handoff. Read session08 and restore; finish/review/test unintegrated read-only probe. Do not claim probe APK, spawn or co-op exists."
+  "next": "Verify probe preflight and Android run 44852419929; fix failures; report successful verified APK only; do not touch tested baseline or request missing XBE"
 }

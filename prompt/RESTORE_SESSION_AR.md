@@ -1,42 +1,6 @@
-# استعادة BO-COOP — 2026-11-21 — جلسة08 / تسليم إلى جلسة غير محلية
-
-## ابدأ هنا — الحالة الأحدث تتقدم على التاريخ السابق
-المستودع https://github.com/alwansan/BO والفرع الوحيد للكتابة experiment/black-coop. اقرأ AGENTS.md ثم memory/STATE.json وMEMORY.md وPLAN_AR.md وISSUES_AR.md وprompt/SESSION_PROTOCOL_AR.md، ثم **memory/sessions/2026-11-21_bo-coop-08-probe-handoff.md** وخطة docs/superpowers/plans/2026-11-21-readonly-probe.md. تحقق من HEAD/Actions الحقيقيين قبل تعديل/تشغيل. لا تعتمد المسارات المحلية في الجلسة الجديدة؛ كل الكود والخطط اللازمة محفوظة بالفرع.
-
-**المستخدم اختبر APK الجديدة org.bocoop.black.baseline بنجاح، وليس الأصل فقط.** السجل يؤكد c5bfed... دون another release وExit0. دليل metadata DEVICE-rebuilt-baseline-owner-runtime.json. لا تطلب إعادة الاختبار أو XBE المفقود.
-
-**أحدث العمل غير مكتمل:** coop/probe/ يحتوي reader/core/tests وAndroid sampler WIP. core test host نجح محلياً فقط. **لا Java opt-in/preparer/source integration/CI/Android APK أو phone test للرصد حتى الآن.** اقرأ جلسة08: فيها التصميم، الأوامر، المخاطر المعروفة، المواقع التي جرى التحقق منها، والخطوات المتبقية. لا تخلط نجاح baseline مع نجاح probe.
-
-العمل التالي: راجع sampler، أضف includealgorithm ومسارات error/re-enable المناسبة، أكمل prepare_probe وopt-in/hook injection وworkflow، اختبر host sanitizers وAndroid build وفحوص APK ثم اطلب capture هاتف. newpackage المقترحة org.bocoop.black.probe1، استيراد خاص وصلاحيات ضيقة كما baseline، JNI class الأصلي محفوظ. لا writes إلى guest ولا network أو spawn. لا full-body أو factory مثبتة.
-
-الهدف الكامل لم يتغير: story co-op فعلي2 ثم4 مع هوست هاتف، LAN/ZeroTier، الغرف/late-join/AI/قتال/أهداف، نوك/إنعاش/friendly fire/أسماء، وحفظ الفردي. docs/COOP_REQUIREMENTS_AR.md. لا co-op أو APK جماعية جاهزة.
-
-الأصول اللازمة للاختبارات موجودة مقسمة في المستودع وmanifest مع SHA؛ استخدم GitHub Actions كما يفضل المالك. لا يحتاج رفع ISO أو ملفات حفظ أو مكتبات من جديد. **raw phone logs خاصة ولا تُنشر بالفرع العام**؛ metadata sanitized مرفوعة. إن احتجت raw log لاحقاً، يرفعه المالك مرفقاً خاصاً فقط. الأصل والنسخة الأساسية وحفظهما وتوقيعهما لا يمسّون، لا force push. حدّث STATE/MEMORY/PLAN/ISSUES والجلسة/RESTORE بعد كل دفعة.
-
-## تاريخ baseline والأدلة السابقة (للمرجع، لا لإعادة العمل)
-# استعادة BO-COOP — 2026-11-21، نهاية جلسة07
-
-الهدف الكامل: قصة BLACK Android تعاونية فعلية، هاتف هوست، لاعبان ثم4، LAN/ZeroTier ثم WAN، غرف واكتشاف واتصال يدوي وlate-join، AI/قتال/أهداف، نوك60s/إنعاش5s، friendly fire، أسماء ومجسمات وحفظ فردي مستقل. المتطلبات وبراهينها docs/COOP_REQUIREMENTS_AR.md. لا co-op منفذة أو APK جماعية بعد.
-
-## اقرأ أولاً
-AGENTS.md ثم memory/STATE.json وMEMORY.md وPLAN_AR.md وISSUES_AR.md وprompt/SESSION_PROTOCOL_AR.md وأحدث memory/sessions/2026-11-21_bo-coop-07-phone-baseline.md. راجع HEAD/Actions الحيين. الكتابة فقط alwansan/BO experiment/black-coop؛ لا force push ولا تعديل أصول/حفظ/توقيع الأصل أو مستودعات المرجع. حدّث الذاكرة/الجلسة/RESTORE بعد كل دفعة أو نتيجة. لا عمل خلفي خارج الجلسة.
-
-## العقبة السابقة حُسمت — لا تكرر طلب الأصل
-المالك أكد أن APK العربية تدخل المهمة وتعمل، ونسخ بيانات التطبيق محلياً. السجل buildf3754d6 يحمل XBEc5bfed25449c8212d7a976f15246e87ead57713f مع another release؛ SHA256 كامل ISO المنسوخ من الهاتف مطابق manifest f6d15ff277eb19ef4fb9092e245599c7ae68f5a49c6ac7db60934a32ec246c62. دليل sanitized metadata في memory/evidence/DEVICE-existing-owner-runtime.json؛ raw log/hdd خاص لا ينشر. log exit-menu FEAudio failed محفوظ كقيد، Exit0؛ لا نفترض عطل قتال.
-الأصل libmain compile-image82d0588124e70102ee650f8969c0a56374476234 ما زال مختلفاً، ومصدر التعريب/XBE الأصلي غير متوفرين عند المالك. لم يتحول c5bfed إلى82d058 ولم يعطل hash check. لا تدع إعادة إنتاج المصدر العربي.
-
-## الجديد المثبت: APK أساس منفصلة جاهزة لاختبار الهاتف
-- run44845637359/job136664530136 على code5212673e5bc92bbe30a7e001cc8e26924a14f0af completed SUCCESS، Gradle8m17s. أول محاولة44845056293 فشلت قبل native compile بسبب quoting PowerShell، وصُححت دون تغيير اللعبة. لا تعيد run الناجحة بلا تغيير/فشل ذي صلة.
-- reference Android tagv1.5.0 SHAf3754d6985a8c35204e7df071546e586b10f1806 وSDK99078b119b5d5e0d1d6afb1390e29437c0c984c0 مثبتان. esp.cpp/weapons.cpp غير موجودين في هذا tag. المترجم Windows هو Clang22 المرفق بـVS؛ global Clang20 سبب فشل سابقSTL1000. Android NDK28.2.13676358/CMake3.31.6/JDK17.
-- baseline candidate تعيد ترجمة XBE الحقيقيc5bfed...، وcompiled kImageSha1 داخل APK يطابقه فعلياً. native/src/config لم تُعدل؛ packaging/import/label/updater/resource limits فقط. هذا مسار candidate جديد، لا binary-equivalent Arabic.
-- packageorg.bocoop.black.baseline، activity/JNIcom.racas.black.BlackActivity، labelBLACK Baseline - NO CO-OP. الحفظ مستقل، الاستيراد إلى assets الخاصة فقط، لا MANAGE/READ/WRITE_EXTERNAL_STORAGE، updater محجوب. لا ISO/XBE/generated sources في APK/artifact.
-- فحوص real APK: ARM64، package/activity، debug signature، source unchanged، no original assets، وembedded native identity PASS؛ تنزيل ZIP/APK وإعادة SHA/ELF محلياً PASS.
-- APK21727055bytes، SHA2564ead325d67772a1c877b9f073aebc0e9eaaab45e9a0028d2380645c4bc2f69f7. artifact14682519899، metadataArtifact14683233366. الدليل memory/evidence/BASELINE-candidate-build-44845637359.json. رابط التحميل https://github.com/alwansan/BO/actions/runs/44845637359/artifacts/14682519899 . نسخة محلية /home/a/Desktop/black/outputs/baseline-44845637359/black-baseline-candidate-NO-COOP.apk إن بقي الجهاز نفسه.
-- suitePython4/4، actual source packaging preview PASS، مراجعة مستقلة أصلحت مخاطر shared import ورفع artifacts قبل verify. source audit44845056215 وUDP44845056127 SUCCESS.
-
-## المطلوب الآن من المالك
-اختبار **APK الجديدة** فقط وفق docs/CANDIDATE_BASELINE_DEVICE_AR.md: تثبيت مستقل، Choose ISO من Downloads، دخول مهمة والمشي/الرمي/ضرر/إعادة محاولة/خروج، ثم أحدث log من Android/data/org.bocoop.black.baseline/files/logs/. لا تطلب منه إعادة تجربة APK الأصلية أو XBE المفقود. نجاح CI لا يثبت runtime الجديدة.
-
-## بعد وصول نتيجة baseline
-قبول HOOK-001 يحتاج runtime ودليل قراءة bounds/lifecycle/thread ownership. مرشحات الجسم/animation وLOD في docs/ACTOR_FEASIBILITY_AR.md معلومات ساكنة لا factory مثبتة. لا full-body player أو spawn آمن مثبت. لا تعتمد network thread لكتابة ذاكرة، ولا تصدر pointers، ولا تدع لاعباً ثانياً قبل ACTOR/COMBAT على جهازين.
-NET003 مستقل فقط: Linux UDP وAndroid crosscompile44834027711 PASS؛ لا هاتفين أوZeroTier أومصادقة/تشفير. docs/NET_003_NATIVE_LAB_AR.md. لا تستبدل هدف co-op بمختبر أو baseline أو قائمة غرف.
+# استعادة BO-COOP — جلسة09 — 21 نوفمبر 2026
+**ابدأ من هنا:** أنت BO-COOP. المستودع alwansan/BO، فرع الكتابة الوحيد `experiment/black-coop`; لا main، لا الأصل، لا ملفات الحفظ. اقرأ AGENTS.md ثم memory/STATE.json وmemory/MEMORY.md وmemory/PLAN_AR.md وmemory/ISSUES_AR.md وprompt/SESSION_PROTOCOL_AR.md، ثم `memory/sessions/2026-11-21_bo-coop-09-readonly-probe-and-owner-iso.md`، `docs/superpowers/plans/2026-11-21-readonly-probe.md`، `docs/OWNER_ISO_UPLOAD_AR.md` و`docs/COOP_REQUIREMENTS_AR.md`. افحص HEAD وActions الحيين.
+**Baseline الجديد نجح على هاتف المالك** (org.bocoop.black.baseline، loaded c5bfed…، Exit0)؛ لا تطلب إعادة اختباره أو ملف XBE المفقود. لا تخلط baseline مع probe.
+**HOOK001:** sampler read-only WIP راجعناه وأصلحنا includealgorithm وone-shot enable وexception End. prepare_probe.py يعدل package `org.bocoop.black.probe1` في checkout مؤقت فقط، يستعمل استيراد ISO الخاص وقائمة صلاحيات أضيق (لا INTERNET/ACCESS_NETWORK_STATE ولا broad storage)، ويربط observe player/animation وLOD wrapper الذي يجب أن يثبت generated __imp__ قبل الربط. host sanitizer/source preflight [44852312025](https://github.com/alwansan/BO/actions/runs/44852312025) SUCCESS. Probe APK build [44852419929](https://github.com/alwansan/BO/actions/runs/44852419929) **pending عند آخر تدوين**. افتحه واقرأ خطوات jobs/logs، أصلح الفشل دون إضعاف gates ثم وثق artifact/signature/ABI/native exact image؛ لا تقل APK جاهزة قبل نجاح تحققها. لم تُختبر probe على هاتف.
+**ISO المالك الجديد:** 5 أجزاء `game.iso.zip.001`→`.005` رُفعت للمحادثة، تم تجميع ZIP ثم استخراج `game.iso` بنجاح. SHA256 ISO `f6d15ff277eb19ef4fb9092e245599c7ae68f5a49c6ac7db60934a32ec246c62`، الحجم 1793179648B، مطابق لنسخة BO المخزنة مسبقاً. الأجزاء والمسارات المؤقتة وSHA لكل جزء في docs/OWNER_ISO_UPLOAD_AR.md. **لا تفترض استمرار ملفات sandbox بين الجلسات**؛ إذا فقدت فابدأ بالنسخة المطابقة في BO + manifest وrestore_black.py، ثم اطلب إعادة رفعها إذا تعذر ذلك. لا تنشر raw assets.
+هدف المشروع ثابت: Co-op حقيقي 2 ثم4 داخل مهمة القصة، Host phone، LAN/ZeroTier/WAN، AI/قتال/حفظ معزول؛ حتى الآن لا actor spawn ولا multiplayer APK. تابع HOOK001، احترم قيود القراءة فقط وأمان guest/cpp threads. حدّث STATE/MEMORY/PLAN/ISSUES والجلسة وهذه الرسالة بعد كل دفعة ونتيجة CI ولا تفترض عمل خلفي دون مهمة مجدولة.

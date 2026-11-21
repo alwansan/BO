@@ -92,3 +92,13 @@ Run44845637359/job136664530136 على code5212673e5bc92bbe30a7e001cc8e26924a14f0
 
 ## مصادر reader
 AOSP Android15 SYSCALLS.TXT يحتوي process_vm_readv all، app/common blocklists لا تحتويه. قرئت المصادر الأساسية https://android.googlesource.com/platform/bionic/+/refs/tags/android-platform-15.0.0_r9/libc/SYSCALLS.TXT وSECCOMP_BLOCKLIST_APP.TXT وSECCOMP_BLOCKLIST_COMMON.TXT. ليس هذا إثبات runtime على هاتف المالك أو كل OEM؛ reader يجب أن يفشل مغلقاً إذا رجع EPERM/ENOSYS. لا root أو تجاوز صلاحيات أو معالجة SIGSEGV للحيلولة دون حماية الذاكرة.
+
+## جلسة09 — HOOK001 (read-only)
+| Gate | State |
+|---|---|
+| source preflight + C++ guarded reads ASAN/UBSAN | PASS [44852312025](https://github.com/alwansan/BO/actions/runs/44852312025) |
+| Android probe1 opt-in JNI + original generated hook verify | CI [44852419929](https://github.com/alwansan/BO/actions/runs/44852419929) pending |
+| probe APK verification / signature / isolated storage / no network permissions | pending Windows artifact |
+| device mission capture | NOT REQUESTED, only after verified probe APK |
+| full-body actor creation / co-op | not started |
+Owner ISO uploaded 5 parts and fully SHA-verified. See docs/OWNER_ISO_UPLOAD_AR.md; GitHub copy equivalent.
