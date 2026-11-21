@@ -1,0 +1,95 @@
+name: BO-COOP owner XBE read-only story entry audit (NO GAMEPLAY)
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/analysis/story_entry_static.py'
+      - 'coop/analysis/test_story_entry_static.py'
+      - '.github/workflows/black-coop-story-xbe-static.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: bo-coop-story-xbe-static
+  cancel-in-progress: false
+jobs:
+  synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Test bounded executable mapping and metadata privacy
+        run: |
+          set -euo pipefail
+          command -v objdump
+          python3 -m unittest discover -s coop/analysis -p test_story_entry_static.py -v
+          echo 'BO_STORY_XBE_SYNTHETIC_PASS: synthetic image only; no owner game bytes printed'
+  owner-static:
+    needs: synthetic
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            /coop/analysis/
+            /coop/source_audit.py
+            /BLACK_FILE_MANIFEST.json
+            /BLACK-Arabic_src/assets/bundle/game.iso/
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - uses: actions/checkout@v4
+        with:
+          repository: RanggaCasper/Black-Android
+          ref: f3754d6985a8c35204e7df071546e586b10f1806
+          path: reference
+          sparse-checkout: tools/xdvdfs.py
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+          lfs: false
+      - name: Verify owner manifest; privately inspect only three bounded XBE windows
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, pathlib, subprocess, sys, tempfile, hashlib
+          sys.path.insert(0, 'coop')
+          sys.path.insert(0, 'coop/analysis')
+          from source_audit import restore, xbe_from_iso, ISO
+          from story_entry_static import audit_bytes
+          root=pathlib.Path('.').resolve()
+          temp=pathlib.Path(os.environ['RUNNER_TEMP'])
+          report_file=temp/'bo-story-entry-safe-metadata.json'
+          records=json.loads((root/'BLACK_FILE_MANIFEST.json').read_text())['files']
+          record=next(x for x in records if x['path']==ISO)
+          with tempfile.TemporaryDirectory(prefix='bo-owner-private-',dir=temp) as d:
+              iso=pathlib.Path(d)/'owner.iso'
+              xbe=pathlib.Path(d)/'default.xbe'
+              restore(root,record,iso)
+              identity=xbe_from_iso(iso)
+              if identity['sha1']!='c5bfed25449c8212d7a976f15246e87ead57713f':
+                  raise SystemExit('Owner image mismatch')
+              subprocess.run(
+                  [sys.executable, 'reference/tools/xdvdfs.py',str(iso),'default.xbe',str(xbe)],
+                  check=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+              image=xbe.read_bytes()
+              if hashlib.sha1(image).hexdigest()!=identity['sha1']:
+                  raise SystemExit('Owner extractor mismatch')
+              report=audit_bytes(image)
+              # metadata only: no original code bytes/disassembly/files can leave runner
+              report_file.write_text(json.dumps(report,indent=2,sort_keys=True)+'\n',
+                                     encoding='utf8')
+          print('BO_STORY_XBE_STATIC_PASS: checked owner image identity and 3 mapped read-only windows')
+          print('NO verified mission ID/scene epoch/engine hook/gameplay yet')
+          PY
+      - name: Upload sanitized counts only (NEVER XBE/ISO/disassembly)
+        uses: actions/upload-artifact@v4
+        with:
+          name: bo-story-entry-safe-metadata
+          path: ${{ runner.temp }}/bo-story-entry-safe-metadata.json
+          if-no-files-found: error
+          retention-days: 7
