@@ -52,7 +52,7 @@ public final class PlatformInstrumentation extends Instrumentation {
             try(RoomTls.Server earlier=RoomTls.Server.start(first.serverContext(),loop,0,"Host","Rebind")){
                 restartPort=earlier.port();
                 try(RoomTls.Server duplicate=RoomTls.Server.start(first.serverContext(),loop,restartPort,"Other","Other")){
-                    throw new AssertionError("Concurrent listener unexpectedly accepted");
+                    throw new AssertionError("Concurrent listener unexpectedly accepted port "+duplicate.port());
                 }catch(java.net.BindException expected){}
                 try(RoomTls.Client connection=RoomTls.Client.connect(
                     RoomTls.pinnedContext(first.fingerprint()),loop,restartPort,"Before restart")){
