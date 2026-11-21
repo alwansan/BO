@@ -32,8 +32,15 @@ zip -q -j "$out/unsigned.apk" "$out/dex/classes.dex"
 "$bt/zipalign" -f 4 "$out/unsigned.apk" "$out/aligned.apk"
 keytool -genkeypair -alias test -keyalg RSA -keysize 2048 -validity 2 -dname CN=TestFixture -storetype PKCS12 -keystore "$out/signing.p12" -storepass test-only -keypass test-only -noprompt
 "$bt/apksigner" sign --ks "$out/signing.p12" --ks-pass pass:test-only --key-pass pass:test-only --out "$out/test.apk" "$out/aligned.apk"
+# Use one explicit AVD registry for Java avdmanager and the native emulator.
+export ANDROID_USER_HOME="$out/android-user"
+export ANDROID_EMULATOR_HOME="$ANDROID_USER_HOME"
+export ANDROID_AVD_HOME="$out/avds"
+mkdir -p "$ANDROID_USER_HOME" "$ANDROID_AVD_HOME"
 # All files are synthetic test code. No game data or production identities enter this job.
-printf 'no\n' | "$sdk/avdmanager" create avd --force -n black_tls -k 'system-images;android-29;default;x86_64'
+printf 'no\n' | "$sdk/avdmanager" create avd --force -n black_tls -p "$ANDROID_AVD_HOME/black_tls.avd" -k 'system-images;android-29;default;x86_64'
+"$ANDROID_HOME/emulator/emulator" -list-avds | tee "$out/avd-list.txt"
+grep -qx 'black_tls' "$out/avd-list.txt"
 if [[ -e /dev/kvm ]]; then sudo chmod 666 /dev/kvm; ls -l /dev/kvm; fi
 "$ANDROID_HOME/emulator/emulator" -accel-check || true
 "$ANDROID_HOME/emulator/emulator" -avd black_tls -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim -no-snapshot -memory 2048 -cores 2 -wipe-data > "$out/emulator.log" 2>&1 &

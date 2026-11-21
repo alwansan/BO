@@ -714,12 +714,12 @@
       "ownerReportedCrash": false
     },
     "ANDROID_KEYSTORE_PLATFORM": {
-      "status": "TEST_APK_COMPILE_AND_PACKAGING_PASSED_EMULATOR_DEVICE_WAIT_FAILED_DIAGNOSTICS_RETRY",
-      "run": 44917922246,
-      "job": 136887416486,
-      "sourceCommit": "8125aae7f1fa6c2798a793689d8c8325293bddc7",
+      "status": "EMULATOR_AVD_REGISTRY_MISMATCH_IDENTIFIED_EXPLICIT_SHARED_AVD_HOME_FIX_RETRY_PENDING",
+      "run": 44918736731,
+      "job": 136889884196,
+      "sourceCommit": "234afa093387d7b52746880bfeb37dc9dcacf999",
       "runtimeVerified": false,
-      "failure": "adb wait-for-device timed out after120s; emulator log was not printed before cleanup. Diagnostics and accel-check added, root cause not yet known."
+      "failure": "KVM usable, but emulator could not find black_tls.ini. Explicit Android user/emulator/AVD homes plus avdmanager -p and list-avds check added."
     }
   },
   "apk": {
@@ -749,7 +749,7 @@
     "poolReader": "coop/probe3/pool_snapshot.hpp",
     "poolReaderStatus": "OWNER_PROBE3_AND_PROBE4_CAPTURE_ACCEPTED"
   },
-  "executionStatus": "tls_core_ci_green_discovery_local_green_android_emulator_startup_audit",
+  "executionStatus": "android_avd_registry_fix_pending_real_tls_and_discovery_core_ci_green",
   "ownerClarifications": {
     "session": 28,
     "previousPhoneTests": "solo local human plus enemy/friendly NPCs only; never two phones",

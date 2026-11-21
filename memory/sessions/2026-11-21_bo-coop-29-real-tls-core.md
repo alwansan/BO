@@ -28,3 +28,6 @@ run44917717978/job136886809488 على3ffa4496 فشل في packaging:ترجمةJa
 ## UDP فعلي وفشل تشغيل المحاكي
 RoomDiscovery/DiscoveryTestالجديداننجحامحلياًبـUDPsocketفعلي،معportTCPوعددأعضاءمنغرفةTLSالحقيقية،أسماءUTF8وmetadataتوافقوإلغاءوحدودثابتة. BCLN-v2 لأنv1القديمASCII-onlyولايحملاسمUTF8أوبياناتالصورة/profile. الاكتشافغيرموثوقولاينشئعضويةدونTLS. لم يُختبرLANعلىAndroidبعد.
 run44917922246/job136887416486على8125aae7نجحفيالترجمةوتجهيزtestAPK،ثمadbwait-for-deviceفشل120s؛لمتُطبعemulator.logقبلcleanup. لا يُعرفسبببدءالمحاكيبعد. أضيفtailللسجلعندالفشلوaccel-checkللتشخيصالقادم؛لاإصلاحعشوائيلـKeystoreولاطلبهاتف.
+
+## سبب فشل بدء المحاكي أصبح مثبتاً
+run44918736731/job136889884196:KVMمتاحوقابلللاستعمال،لكنemulatorلايجدblack_tls.ini/AVDname. أضيفتSDKuser/emulator/AVDhomesموحدةداخلRUNNER_TEMP،وavdmanager-pصريحوفحصlist-avdsقبلadbwait. هذااستنادلتشخيصالسجلووثيقةAndroidالرسميةtools/variables؛لاKeystorefailureمثبتحتىالآن.
