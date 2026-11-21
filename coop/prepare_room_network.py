@@ -72,6 +72,17 @@ def prepare(root: pathlib.Path):
     text = once(text, '        super.onCreate(savedInstanceState);',
                 '        super.onCreate(savedInstanceState);\n        com.racas.black.coop.RoomAppRooms.attach(this);', java)
     pending[java] = text
+    # Only an original local BLACK player-update hook may signal these
+    # candidate transitions. This NEVER confirms a mission/scene or calls
+    # RoomSession.reportSceneLoadedFromGameThread.
+    text = pending[java]
+    text = once(text, '    public String coopRoomStatusLine(int row) {',
+        '''    public void coopRecordWorldTick(int code) {
+        if (code == 1) com.racas.black.coop.RoomDiagnostics.event("WORLD_LOCAL_PLAYER_UPDATE_SEEN");
+        else if (code == 2) com.racas.black.coop.RoomDiagnostics.event("WORLD_POINTER_CHANGED_UNVERIFIED");
+    }
+    public String coopRoomStatusLine(int row) {''', java)
+    pending[java] = text
 
     # Host/Join in the accepted Flash page dispatch to a same-Activity dialog, which
     # owns TLS; no guest actor is created and no network worker touches Flash.
@@ -134,6 +145,23 @@ def prepare(root: pathlib.Path):
         pending[destination] = content
 
     pending['src/coop/room_net_ui.hpp'] = (HERE / 'room_network/room_net_ui.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_world_tick.hpp'] = (HERE / 'room_network/room_world_tick.hpp').read_text(encoding='utf-8')
+    pending['src/coop/world_tick_contract.hpp'] = (HERE / 'room_network/world_tick_contract.hpp').read_text(encoding='utf-8')
+
+    # Staging-only extension of the EXISTING original local-player X86 wrapper.
+    # It samples R32(kWorld) only when the original character kind and identity
+    # already match the original first-person player. No writes to guest RAM.
+    cheat='src/game/cheats.cpp'
+    game=pending.get(cheat,originals[cheat].decode('utf-8'))
+    game=once(game,'#include "game/layout.h"',
+              '#include "game/layout.h"\n#include "coop/room_world_tick.hpp"',cheat)
+    game=once(game,'    __imp__sub_001E5FA0(ctx, base);',
+        '''    // Candidate only: first original-player update in this world is
+    // NOT proof that host-selected mission/stage loaded on both phones.
+    if (me && me == Player() && R32(me + kCharKind) == kPlayerKind)
+        blackcoop::ObserveLocalWorldTick(R32(kWorld));
+    __imp__sub_001E5FA0(ctx, base);''',cheat)
+    pending[cheat]=game
     for name in pending:
         if name not in originals and (root / name).exists():
             raise ValueError('Refusing preexisting addition: ' + name)
