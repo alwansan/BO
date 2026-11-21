@@ -16,6 +16,9 @@ public final class RoomAppRooms {
   try{String normalized=RoomWire.name(value);name=normalized;Context app=application;if(app!=null)app.getSharedPreferences("coop_room",Context.MODE_PRIVATE).edit().putString("name",normalized).apply();}catch(java.io.IOException ignored){}
  }
  public static void attach(Context context){
+  // Initialize safe event persistence at process attach, not only on opening
+  // the UI; room reconnection/errors must survive a dismissed dialog.
+  RoomDiagnostics.init(context.getApplicationContext());
   final long token;final RoomSession session;
   synchronized(RoomAppRooms.class){
    application=context.getApplicationContext();
