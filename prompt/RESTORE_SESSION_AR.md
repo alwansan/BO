@@ -1,3 +1,18 @@
+# BO-COOP — Latest restore Session32 (2026-11-21)
+
+**Only writable GitHub branch `alwansan/BO:experiment/black-coop`.** Read `AGENTS.md`, `memory/STATE.json`, `memory/sessions/2026-11-21_bo-coop-32-flash-room-network-bridge.md`, then Session31/MEMORY/PLAN/ISSUES and `docs/ROOM_DIRECT_JOIN_AR.md`. Verify LIVE HEAD and Actions before editing; CAS commits only, no force push.
+
+## Session32 latest
+- Android TLS/EC P-256 opaque AndroidKeyStore: [44922935535](https://github.com/alwansan/BO/actions/runs/44922935535) **SUCCESS `TLS_PLATFORM_PASS`**. Standalone Host/Join Android form and RoomSession runtime [44923426931](https://github.com/alwansan/BO/actions/runs/44923426931) **SUCCESS `TLS_PLATFORM_PASS`**. Real JWT? no; actual pinned TLS loopback Android29 only, not two phones.
+- Java RoomSession JVM test [44923264389](https://github.com/alwansan/BO/actions/runs/44923264389) SUCCESS `ROOM_SESSION_PASS`.
+- New separate game Flash -> Android TLS room bridge `coop/prepare_room_network.py`, `RoomAppRooms.java`, `room_net_ui.hpp`. `org.bocoop.black.roomnet` package independently staged; accepted `roomui` and Probe4 untouched. Flash HOST/JOIN confirmed buttons open Android form, status rows show authenticated roster count; process-owned session stays active when returning from form, connection workers do not touch game actors/Flash.
+- Source atomic staging plus Android javac gate [44924220185](https://github.com/alwansan/BO/actions/runs/44924220185) **SUCCESS** `ROOM_NET_STAGE_PASS`/`ROOM_NET_JAVA_PASS`. Code source `47c3f957a3b9fa4557f175e9e6011e4841076a1a`.
+- New full Windows/NDK game APK workflow [44924346601](https://github.com/alwansan/BO/actions/runs/44924346601) **IN PROGRESS when documented**, code `ead146ffc1f3f6fca1ee540330cbaaea02c9a3c0`. Do NOT claim APK exists before outcome/artifact/signed SHA checked. Original XBE image gate stays; no ISO, private keys, derived assets in GitHub.
+- **No playable co-op, no second player actor/body, combat, mission or quest sync, nor two-phone test.** Need actor+324 ownership/factory/rig research; owner accepted previous UI and Probe4, no retest.
+- Next inspect live APK workflow; fix and rerun build if it fails. Update RESTORE+STATE/MEMORY/PLAN/ISSUES after results. Preserve main, story saves, original ISO, accepted APK.
+
+---
+
 # BO-COOP — Latest restore Session31 (2026-11-21)
 
 **Only writable branch:** `alwansan/BO:experiment/black-coop`. Read `AGENTS.md`, `memory/STATE.json`, `memory/sessions/2026-11-21_bo-coop-31-android-tls-session-forms.md`, then MEMORY, PLAN, ISSUES, `docs/ROOM_DIRECT_JOIN_AR.md`, `docs/COOP_INTEGRATION_ROADMAP_AR.md` and earlier Session30. Check live HEAD and Actions before writing.

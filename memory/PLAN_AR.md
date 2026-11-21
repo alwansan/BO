@@ -339,3 +339,9 @@ APK44876183662SUCCESS؛artifact14696342069 نُزلوفُحصhash. راجع memo
 - [ ] Android opt-in RoomLobbyActivity compile/runtime gate (CI44923426931 pending); inspect emulator install flakiness and logs.
 - [ ] Wire accepted Flash room Host/Join to game Activity and immutable roster, separate isolated APK, then two-device test; no untrusted discovery as authenticated lobby.
 - [ ] Independently solve ACTOR+324 allocation/lifecycle/body rig, network-to-game-thread snapshot apply, combat/story missions. Never equate room participants with in-game actors.
+## Session32 — Flash HOST/JOIN Android TLS bridge
+- [x] Android29 form+real TLS loopback platform marker `TLS_PLATFORM_PASS` 44923426931; no human tapping UI/phone pair test.
+- [x] New separate game-network stage source/Java gate [44924220185](https://github.com/alwansan/BO/actions/runs/44924220185) SUCCESS. Flash confirmed HOST/JOIN row -> BlackActivity -> Android RoomLobbyActivity and immutable room count status via cached JNI, no app singleton actor writes; `roomui` accepted package unchanged.
+- [ ] Build complete isolated Windows ARM64 APK via [44924346601](https://github.com/alwansan/BO/actions/runs/44924346601), verify Gradle, symbol/image SHA, permission allowlist, APK SHA, artifact availability. Not a phone-tested build yet.
+- [ ] Test 2 real Android devices on trusted LAN/VPN with full verified SHA-256 host fingerprint, PIN, roster join/leave and return to Flash. No public forwarded ports. Capture sanitized logs only.
+- [ ] Separately ACTOR+324 full-body/ownership, game-thread state apply, AI/combat/quest/mission sync; only then real story co-op.

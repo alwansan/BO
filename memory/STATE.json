@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-31-android-tls-session-forms.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-32-flash-room-network-bridge.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -631,7 +631,7 @@
       ]
     },
     "ROOM_ANDROID_FORMS": {
-      "status": "ISOLATED_ANDROID_HOST_JOIN_FORM_PUSHED_PLATFORM_CI_PENDING",
+      "status": "ANDROID29_ISOLATED_FORM_CODE_AND_TLS_SESSION_RUNTIME_PASS_NOT_UI_CLICKED",
       "code": "9ab240262f5d327203053b6ca7d2c820360b72a8",
       "run": 44923426931,
       "paths": [
@@ -640,7 +640,27 @@
       ],
       "inGameFlashConnected": false,
       "phoneToPhoneTested": false,
-      "gameActors": false
+      "gameActors": false,
+      "job": 136904270536,
+      "androidRuntimeVerified": true,
+      "tlsPlatformMarker": "TLS_PLATFORM_PASS",
+      "lastPassedRun": 44923426931
+    },
+    "ROOM_GAME_NETWORK_BRIDGE": {
+      "status": "SOURCE_STAGE_AND_JAVA_COMPILE_PASS_WINDOWS_GAME_APK_BUILD_IN_PROGRESS",
+      "code": "ead146ffc1f3f6fca1ee540330cbaaea02c9a3c0",
+      "sourceTransformCommit": "47c3f957a3b9fa4557f175e9e6011e4841076a1a",
+      "preflightRun": 44924220185,
+      "preflightJob": 136906644390,
+      "windowsApkRun": 44924346601,
+      "targetPackage": "org.bocoop.black.roomnet",
+      "nativeUiSource": "coop/room_network/room_net_ui.hpp",
+      "androidOwnerSource": "coop/lobby/android/com/racas/black/coop/RoomAppRooms.java",
+      "gameImageUnchanged": true,
+      "realGameApkBuilt": false,
+      "actualTwoPhoneTest": false,
+      "gameplayCoop": false,
+      "design": "Separate candidate APK; Flash HOST/JOIN confirmed actions launch Android RoomLobbyActivity; JNI status rows bound to immutable RoomSession roster; no actor snapshots or guest actor writes."
     }
   },
   "pending": {
@@ -786,19 +806,21 @@
     "deviceAccepted": true,
     "gameplayCoop": false
   },
-  "next": "Check Android form build/emulator run44923426931; repair any compile/runtime/install flake with bounded retries, then stage a separate game APK that launches the authenticated room UI from accepted Flash CO-OP. Actual body+324 ownership and mission sync remain open; no guest writes or gameplay claim.",
+  "next": "Inspect Windows isolated game network APK workflow 44924346601; fix packaging or JNI build failures without bypassing owner image check; verify signed APK identity and artifact before phone test. Keep accepted room UI/Probe4 intact; real humans/body, guest actor+324 ownership, mission/combat sync remain open.",
   "latestHandoff": {
     "date": "2026-11-21",
-    "session": 31,
-    "kind": "real_android_tls_proven_and_standalone_host_join_forms",
+    "session": 32,
+    "kind": "flash_room_to_android_tls_lobby_separate_apk_source_preflight",
     "newApk": false,
     "newCI": true,
-    "sourceCodeCommit": "9ab240262f5d327203053b6ca7d2c820360b72a8",
-    "platformPassRun": 44922935535,
-    "sessionCorePassRun": 44923264389,
-    "next": "Check Android form build/emulator run44923426931; repair any compile/runtime/install flake with bounded retries, then stage a separate game APK that launches the authenticated room UI from accepted Flash CO-OP. Actual body+324 ownership and mission sync remain open; no guest writes or gameplay claim."
+    "sourceCommit": "ead146ffc1f3f6fca1ee540330cbaaea02c9a3c0",
+    "tlsPlatformPass": 44922935535,
+    "formPlatformPass": 44923426931,
+    "sourcePreflightPass": 44924220185,
+    "isolatedGameApkBuild": 44924346601,
+    "next": "Inspect Windows isolated game network APK workflow 44924346601; fix packaging or JNI build failures without bypassing owner image check; verify signed APK identity and artifact before phone test. Keep accepted room UI/Probe4 intact; real humans/body, guest actor+324 ownership, mission/combat sync remain open."
   },
-  "executionStatus": "android_keystore_tls_runtime_pass_jvm_session_pass_standalone_android_forms_platform_ci_pending",
+  "executionStatus": "android29_tls_and_room_form_pass_game_flash_android_bridge_source_verified_windows_apk_build_running",
   "ownerClarifications": {
     "session": 28,
     "previousPhoneTests": "solo local human plus enemy/friendly NPCs only; never two phones",

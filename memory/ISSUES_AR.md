@@ -288,3 +288,8 @@ APK44876183662SUCCESS؛artifact14696342069 نُزلوفُحصhash. راجع memo
 - Android TLS core passed emulator 44922935535. Separate run44923264409 failed at `adb shell pm install` (timeout 124 after staged APK push); runner/emulator install flake, not proven TLS defect. New UI/platform test run44923426931 pending.
 - Android Host/Join/Leave forms added as isolated synthetic Activity. No integration with BlackActivity/Flash menu yet; no two-phone LAN test; do not release this as co-op gameplay.
 - Real actor creation still blocked by independent +324 ownership, 16-element pool, unguarded damage access and full-body/animation resource verification. Preserve story saves, NPCs, ISO, and main.
+## Session32 unresolved gates
+- The game Flash/Android bridge is a **source-verified candidate**, [44924220185](https://github.com/alwansan/BO/actions/runs/44924220185) success; Windows/NDK APK [44924346601](https://github.com/alwansan/BO/actions/runs/44924346601) running. No claim that in-game HOST/JOIN has booted on device.
+- Network room remains session-only (real authenticated humans, not playable gameplay actors), with physical LAN/firewall and Android lifecycle yet to verify. Flash room UI text is read-only roster, not an actor roster. PIN transmitted inside TLS after full fingerprint verification; it is not public WAN-ready hosting.
+- The process-owned `RoomAppRooms` persists when form closes and shuts down with game Activity destroy; lifecycle, pause/resume and player disconnect need device testing. Original `RoomLobbyActivity` test-only stops onStop; the game variant intentionally changes this in staged source.
+- Original `roomui` remains signed separately with no network permissions; game branch isolated as `roomnet`. Do not overwrite game saves/ISO.
