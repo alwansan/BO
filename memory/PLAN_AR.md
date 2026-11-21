@@ -263,3 +263,7 @@ HOOK001 fairness source e9ad056: host sanitizer + pinned-source [44856368591](ht
 
 ## جلسة21 — Probe3 Android integration
 راجع memory/sessions/2026-11-21_bo-coop-21-probe3-device-build.md؛coreCI44871689814SUCCESS،دمجProbe3واختباراتمحليةومراجعةPASS،APKworkflowجديدقيدالإطلاق. لاdeviceproofولاcoop. تابعبناءProbe3حتىالنهايةثمطلباختبارNPCdeath/reload/logمحدد.
+
+
+### Probe3 core CI مغلق
+44872596855 SUCCESS لكلاjob،logs مقروءة؛الدليل memory/evidence/PROBE3-core-44872596855.json. APK44872596889 لايزالجارياً؛تابعهقبلأيطلبهاتف،ثم docs/PROBE3_DEVICE_TEST_AR.md.

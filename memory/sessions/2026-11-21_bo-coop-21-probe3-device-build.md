@@ -20,3 +20,7 @@ strictClang21 C++20 -Wall -Wextra -Werror -pedantic:pooltestPASS،observerالح
 
 ## تشغيل CI الفعلي
 الكود 96b9c8366a80dd321be47857dc67f1000213fe7f؛ APKrun44872596889 وcorerun44872596855 ظهراqueuedبـGitHubAPIبعدالدفع. تابعنفسrunhandlesولا تبدأبناءبديلبسبببطءالمراقبة. لاAPKsuccessحتىخروجالـworkflowمعفحوصartifact.
+
+
+## متابعة نتائج core
+run44872596855 SUCCESS،job136750222857LinuxASAN/UBSAN و136750223038NDK28AArch64 كلاهماcompleted/success. قرئتlogsالjobينبالفعلبالموصل. APK44872596889/job136750222861لايزالin_progressعندBuild pinned analysis tools only؛لاrestart. بروتوكولالاختبارالمحدد docs/PROBE3_DEVICE_TEST_AR.md جاهز للاستخدامفقطبعدنجاحAPK.

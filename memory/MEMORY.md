@@ -237,3 +237,7 @@ AOSP Android15 SYSCALLS.TXT يحتوي process_vm_readv all، app/common blockli
 
 ## جلسة21 — Probe3 Android integration
 راجع memory/sessions/2026-11-21_bo-coop-21-probe3-device-build.md؛coreCI44871689814SUCCESS،دمجProbe3واختباراتمحليةومراجعةPASS،APKworkflowجديدقيدالإطلاق. لاdeviceproofولاcoop. تابعبناءProbe3حتىالنهايةثمطلباختبارNPCdeath/reload/logمحدد.
+
+
+### Probe3 core CI مغلق
+44872596855 SUCCESS لكلاjob،logs مقروءة؛الدليل memory/evidence/PROBE3-core-44872596855.json. APK44872596889 لايزالجارياً؛تابعهقبلأيطلبهاتف،ثم docs/PROBE3_DEVICE_TEST_AR.md.

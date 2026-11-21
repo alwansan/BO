@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "scope": "synthetic guest memory through actual self-process kernel reads; no game runtime or phone",
+  "run": 44872596855,
+  "code": "96b9c8366a80dd321be47857dc67f1000213fe7f",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "id": 136750222857,
+      "name": "linux-sanitizers",
+      "conclusion": "success",
+      "logRead": true,
+      "checks": [
+        "ASAN/UBSAN sparse pool validation",
+        "actual observer include JSON/rate/budget guards",
+        "4 reset generated-shape tests",
+        "existing probe guarded reader regression"
+      ],
+      "sanitizerErrorsObserved": false
+    },
+    {
+      "id": 136750223038,
+      "name": "android-crosscompile",
+      "conclusion": "success",
+      "logRead": true,
+      "checks": [
+        "NDK28.2 pool and observer compile",
+        "AArch64 ELF check"
+      ],
+      "executedOnPhone": false
+    }
+  ],
+  "deviceProtocol": "docs/PROBE3_DEVICE_TEST_AR.md",
+  "apkRunStillPending": 44872596889
+}
