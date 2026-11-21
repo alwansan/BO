@@ -1,3 +1,12 @@
+## Session40 active next engine gate after CI-first progress — 2026-11-22
+1. Done: owner directive committed: minimize user phone tests; use CI emulator and one consolidated major two-phone acceptance only with safe logs (docs/MAJOR_DEVICE_TEST_GATE_AR.md).
+2. Done: read-only owned c5 XBE executable candidate audit with 3×160B windows: CI44956138064 SUCCESS; exact safe counts in memory/evidence/STORY-ENTRY-XBE-STATIC-44956138064.json. Mission-entry candidate 00124CF0 mapping alone does NOT identify mission ID or actual loaded scene.
+3. Done in source/JVM: TLS lifecycle restricted event codes from host and guest, persisted even with room dialog dismissed; previous+current rotated log combined sanitized. CI44956473684 SUCCESS literal STORY_DIAGNOSTICS_PASS, source preflight44956473685 PASS. Android29 44956473707, room-only Android candidate 44956473687 check live.
+4. NEXT: determine full owner c5 game function shape/authoritative mission-selection and loaded scene epoch callback on VERIFIED game thread, attach RoomSession facade via JNI without guest memory writes or fake solo launches. Then independent fullbody remote HUMAN ally render (no AI brain), human input/weapon/world/AI/quest.
+5. STILL OPEN: Android physical phone co-op; no owner test now. Later only one significant test on two phones with one combined sanitized diagnostics export.
+
+---
+
 ## OWNER TEST GATE — 2026-11-22
 - **CI-FIRST:** compile/sanitize Java/C++/Python, run JVM TLS, Android29 KeyStore emulator, staged Android APK integrity, private XBE static entry audit, synthetic disconnection/rehost/scene/proxy tests until robust.
 - **NO PHONE TEST NOW:** v3 lobby transport/Java story facade are NOT real BLACK shared story and cannot justify a physical owner trial. A new APK alone is not a reason to request testing.
