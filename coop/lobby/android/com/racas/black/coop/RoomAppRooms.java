@@ -28,10 +28,10 @@ public final class RoomAppRooms {
                     case ERROR:return "DISCONNECTED";
                     default:return "OFFLINE";
                 }
-            case -102:return "OPEN HOST FORM";
-            case -103:return "OPEN JOIN FORM";
+            case -102:return "HOST ROOM";
+            case -103:return "FIND LAN ROOM";
             case -104:return humans+"/4 HUMANS";
-            case -105:return "PINNED TLS LAN / VPN";
+            case -105:return "SECURE LAN / VPN";
             default:return "";
         }
     }
