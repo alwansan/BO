@@ -16,3 +16,7 @@
 2. افتح معمارية Flash main/pause menu لبحث إضافة زر مستقل CO-OP تحت «الإعدادات»، لكن تجنب تغيير الطور الفردي أو حقن مدخل غير مثبت. تحقق من صفحة SETTINGS الحالية إن قدم المالك صورة لها.
 3. احتفظ بخصوصية بيانات المالك وحدّث STATE/MEMORY/PLAN/ISSUES والجلسة وRESTORE بعد كل عمل أو CI في الفرع **experiment/black-coop** فقط.
 4. لا تقل إن co-op playable: لا ACTOR factory ولا COMBAT/mission sync ولا Android network game integration. NET lab ما زال معزولاً.
+
+## جلسة15 — تصحيح CI ومرشح القائمة العليا
+- After privacy analyzer field renamed to explicitly `nonzero_unverified_clip_field_0x18_count`, synthetic test used its old key, causing [44863951613](https://github.com/alwansan/BO/actions/runs/44863951613) FAILURE (KeyError only). Fixed test expectation in code `77e5c031ecc1d55cbefdc73a7a1139a714150b82`; [44864020398](https://github.com/alwansan/BO/actions/runs/44864020398) privacy analyzer SUCCESS and [44864020404](https://github.com/alwansan/BO/actions/runs/44864020404) isolated UDP SUCCESS. No Android build needed (only offline analysis/test).
+- Pinned v1.5.0 upstream `src/game/exit_menu.cpp` was inspected read-only: title menu already duplicates Options text clip into QuitButton below settings using Flash `CopyButton/Follow/JoinRing`. Strong candidate for independent CO-OP top-level button **between OPTIONS and QUIT**, with no claim implementation yet. Plan and hazards in `docs/ROOM_TOP_LEVEL_FEASIBILITY_AR.md`; keep current Probe2 APK intact until isolated Probe3 experiment and device UI proof.

@@ -172,3 +172,7 @@ HOOK001 fairness source e9ad056: host sanitizer + pinned-source [44856368591](ht
 - [ ] ACTOR-001A: prove appearance/disappearance/respawn and model ownership across scene/epoch before factory/clone.
 - [ ] In-game CO-OP/ROOM page still not pictured/confirmed; top-level option immediately below `الإعدادات` not yet built. Review safe UI hook points separately.
 - [ ] ACTOR-001/COMBAT-001/gameplay network remain unimplemented; no guesswork about remote render proxy.
+
+## جلسة15 — تصحيح CI ومرشح القائمة العليا
+- After privacy analyzer field renamed to explicitly `nonzero_unverified_clip_field_0x18_count`, synthetic test used its old key, causing [44863951613](https://github.com/alwansan/BO/actions/runs/44863951613) FAILURE (KeyError only). Fixed test expectation in code `77e5c031ecc1d55cbefdc73a7a1139a714150b82`; [44864020398](https://github.com/alwansan/BO/actions/runs/44864020398) privacy analyzer SUCCESS and [44864020404](https://github.com/alwansan/BO/actions/runs/44864020404) isolated UDP SUCCESS. No Android build needed (only offline analysis/test).
+- Pinned v1.5.0 upstream `src/game/exit_menu.cpp` was inspected read-only: title menu already duplicates Options text clip into QuitButton below settings using Flash `CopyButton/Follow/JoinRing`. Strong candidate for independent CO-OP top-level button **between OPTIONS and QUIT**, with no claim implementation yet. Plan and hazards in `docs/ROOM_TOP_LEVEL_FEASIBILITY_AR.md`; keep current Probe2 APK intact until isolated Probe3 experiment and device UI proof.

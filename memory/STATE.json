@@ -282,13 +282,16 @@
       "fullBodyLocalPlayerProven": false
     },
     "PROBE2_SAFE_ANALYZER_EXTENDED": {
-      "status": "PASS_SYNTHETIC_PRIVACY_CI_ONLY",
-      "run": 44863742397,
-      "sourceCommit": "063ce80df55b57b1dcfa1f8136ecd2c2e9797be0",
+      "status": "PASS_SYNTHETIC_PRIVACY_CI_FINAL_AFTER_TEST_KEY_CORRECTION",
+      "run": 44864020398,
+      "sourceCommit": "77e5c031ecc1d55cbefdc73a7a1139a714150b82",
       "snapshotCompleteness": true,
       "fieldCoverage": true,
       "anonymousMotion": true,
-      "unverifiedClipFieldClearlyLabeled": true
+      "unverifiedClipFieldClearlyLabeled": true,
+      "regressionRun": 44864020404,
+      "priorFailedRun": 44863951613,
+      "priorFailureRootCause": "Outdated test assertion for renamed unverified clip+0x18 field"
     }
   },
   "pending": {
@@ -346,7 +349,10 @@
       "status": "Native in-OPTIONS page compiled but NOT visually confirmed on owner Android; main menu screenshots only; original requested separate item below Settings remains open",
       "run": 44860874976,
       "package": "org.bocoop.black.probe2",
-      "hostJoinEnabled": false
+      "hostJoinEnabled": false,
+      "topLevelUnderSettings": "NOT_IMPLEMENTED_YET",
+      "topLevelFeasibility": "Pinned source exit_menu.cpp already clones a Quit button below Options",
+      "design": "docs/ROOM_TOP_LEVEL_FEASIBILITY_AR.md"
     }
   },
   "apk": {
@@ -360,5 +366,5 @@
     "gameplayCoop": false,
     "sourceCommit": "d8dba8d8da2da69c62718a87f3e6f03f16be0d2f"
   },
-  "next": "ACTOR-001A read-only ownership and lifetime research for NPC LOD+animation cohorts; verify actual in-game room page and eventual top-level placement below Settings; no baseline or Probe2 export retest needed."
+  "next": "ACTOR001A read-only NPC LOD+animation ownership/lifetime proof; isolated top-level room button design from exit_menu.cpp without altering tested Probe2; no new baseline or export retest."
 }
