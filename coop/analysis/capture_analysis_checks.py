@@ -37,6 +37,7 @@ class SummaryChecks(unittest.TestCase):
         self.assertEqual(result["local_player_sample_count"],1)
         self.assertTrue(result["capture_end_seen"])
         self.assertFalse(result["in_game_multiplayer_proven"])
+        self.assertEqual(result["diagnostic_flags"],[])
 
     def test_malformed_or_wrong_header(self):
         with tempfile.TemporaryDirectory() as d:
@@ -58,6 +59,26 @@ class SummaryChecks(unittest.TestCase):
         p=self.fixture([HEADER, {"event":"end","reason":["not","hashable"]}])
         r=summarize(p)
         self.assertEqual(r["end_reasons"],{"other":1})
+
+    def test_no_samples_and_reader_denial_are_safe_diagnostics_only(self):
+        p=self.fixture([HEADER, {"event":"end", "reason":"world_read_unavailable",
+                                 "records":0, "attempts":64, "read_failures":64}])
+        result=summarize(p)
+        self.assertEqual(result["diagnostic_flags"], [
+            "no_samples","no_player_samples","no_lod_samples",
+            "no_animation_samples","reader_unavailable"])
+        self.assertFalse(result["runtime_actor_factory_proven"])
+        self.assertFalse(result["in_game_multiplayer_proven"])
+
+    def test_truncated_capture_has_incomplete_flag_without_private_data(self):
+        p=self.fixture([HEADER, {"event":"player", "epoch":1,"id":1,"thread":99,
+                                 "position_valid":True,"health_valid":True,"local":True,
+                                 "position":[34,12,56],"vtable":9988123,"anim_name":"private"}])
+        result=summarize(p)
+        self.assertEqual(result["diagnostic_flags"], [
+            "capture_end_not_seen","no_lod_samples","no_animation_samples"])
+        self.assertNotIn("private",json.dumps(result))
+        self.assertNotIn("9988123",json.dumps(result))
 
     def test_integer_and_bool_guards(self):
         p=self.fixture([HEADER,

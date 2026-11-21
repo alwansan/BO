@@ -78,8 +78,19 @@ def summarize(path):
             valid_health[event]+=int(rec["health_valid"])
             local[event]+=int(rec["local"])
     if not start: raise ValueError("missing capture header")
+    # Only diagnostic reason codes are exposed; never propagate raw payloads.
+    # Absence of LOD/animation events NEVER proves missing models or factories.
+    flags=[]
+    if not end: flags.append("capture_end_not_seen")
+    if not sum(kinds.values()): flags.append("no_samples")
+    if not kinds["player"]: flags.append("no_player_samples")
+    if not kinds["lod"]: flags.append("no_lod_samples")
+    if not kinds["animation"]: flags.append("no_animation_samples")
+    if reasons["world_read_unavailable"]: flags.append("reader_unavailable")
+    if reasons["write_failed"] or reasons["open_failed"]: flags.append("local_output_error")
     # No epoch numbers, pointer IDs or thread IDs in the report.
     return {
+        "diagnostic_flags": flags,
         "schema":"BO-COOP-HOOK001-safe-summary-v1",
         "scope":"read_only_no_multiplayer",
         "header_valid":True,
