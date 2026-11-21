@@ -1,3 +1,8 @@
+# CURRENT OVERRIDE — Session38 (2026-11-22)
+Old Session36 no-ally visual ban below is superseded by owner. Local remains original first-person; OTHER real human players should be drawn with independent full-body ALLY look (not AI allies), including host visible to guests. Host alone starts one shared mission/world. Owner has already uploaded the primary MODEL test, no longer pending. This older plan remains an archival basis; active plan docs/superpowers/plans/2026-11-22-host-story-remote-ally.md. Source-only CI44951425780 PASS, game integration open.
+
+---
+
 # Default player linkage implementation plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans. Owner explicitly requests autonomous execution and a real phone experiment; no additional design approval is pending.
@@ -10,7 +15,7 @@
 - [x] Implement bounded read-only `default_player/model_contract.hpp` and actual observer include, <=8records, <=1Hz, safe reads, host-state preservation.
 - [x] Atomic `prepare_room_player.py` on prepare_room_network only; separate package, original protagonist hook only, no1DF440 hook. Stage and native sanitizer tests; independent review.
 - [x] Build/verify actual APK in Actions and update owner steering in STATE/RESTORE/AGENTS.
-- [ ] Necessary owner test: enable capture and load a mission with the original player; inspect `default_player_model` records before writing any replicated actor/context.
+- [x] **OWNER DEVICE TEST RECEIVED**: CL BLACK-Probe-20261121-235407-267/coop_probe.txt includes exactly 8/8 complete original PRIMARY-model observations: 44 bones, 2 buffers, draw-list mask32 (list5), arms=true, head/torso/legs=false, body_candidate=false. The primary model appears first-person-only; do not extrapolate to all game assets. No repeat test required.
 
 **Next implementation:** host-authoritative mission prepare/load/ready, real local-player state published into bounded room messages and game-thread remote-state inbox, then independent original player contexts/visible representation verified against this gate. No shared Start or rendered second human is claimed by lobby or metadata success. A default actor on each phone must still be connected to one authoritative world; do not ship two independent missions as co-op.
 
