@@ -14,7 +14,8 @@ from model_inventory import MAGICS, label, model, span, u32, u64
 
 MODEL_MAX_BUFFERS=16
 MODEL_MAX_DRAWS=128
-DRAW_MAX_INDICES=262144
+DRAW_MAX_INDICES=131072
+MODEL_MAX_TOTAL_INDICES=2*1024*1024
 MAX_MODELS_PER_FILE=256
 MAX_REPORT_CANDIDATES=48
 MAX_FILE=8*1024*1024
@@ -73,8 +74,8 @@ def bounded_geometry(data,base):
             if u32(data,d+0x20)!=6:
                 raise ValueError("Unsupported triangle primitive")
             count=u32(data,d+0x24)
-            if count>DRAW_MAX_INDICES:
-                raise ValueError("Excessive draw size")
+            if count>DRAW_MAX_INDICES or total_indices+count>MODEL_MAX_TOTAL_INDICES:
+                raise ValueError("Excessive model draw budget")
             indices=d+u32(data,d+0x28)
             raw=span(data,indices,2*count)
             # Use descriptor-relative indices, then V-relative vertices.
