@@ -149,3 +149,6 @@ HOOK001 starvation under LOD: reserved per-second/lifetime player opportunity wi
 - 574 names/byte sums and 5 independent file SHA256 match owner ISO, but a full 574/574 SHA256 comparison was not yet completed. `coop/biso_manifest_audit.py --iso` requires both owner ISO and manifest locally; public CI must remain metadata-only.
 - Repacked XISO from restored file tree may differ bytewise from original even when playable; don't bypass original-image identity gates or mutate default.xbe protection without explicit separate reason.
 - /mnt/data parts and extracted ISO are **currently** available only; not guaranteed durable across conversations. Check GitHub BO manifest and pinned biso before asking owner to re-upload anything.
+
+## Clarification of source identity gate
+- 574 file SHA256 values from the actual ISO match pinned biso **manifest** in an order-sensitive 256-bit digest. The posted `part-0000*` data blobs themselves have not been downloaded and hashed. Source consistency is strong; do not state repository blob corruption was excluded by independent hash verification.

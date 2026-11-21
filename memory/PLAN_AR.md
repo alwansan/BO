@@ -184,3 +184,8 @@ HOOK001 fairness source e9ad056: host sanitizer + pinned-source [44856368591](ht
 - [x] Save pinned sources to `memory/STATE.json`, `docs/OWNER_BISO_SOURCE_AR.md`, `docs/ACTOR_BISO_ASSET_INDEX_AR.md`, and restore. Do not rely on sandbox persistence.
 - [ ] If needed for ACTOR-001A, perform full per-file SHA comparison of owner ISO and restored biso locally; check format of selected model/animation candidate files without asserting unproven meaning.
 - [ ] Continue ACTOR ownership/lifetime and isolated CO-OP top-level UX without modifying successful Baseline/Probe2 or game saves. No playable multiplayer yet.
+
+## Full ISO manifest identity improvement
+- [x] SHA256 every one of 574 ISO files and confirm canonical ordered 256-bit digest `b3e56e650e8a2b91af1380204599e9faf8722e98ef9d5d22790b69e798302d6f` equals pinned biso manifest.
+- [x] Separate path/size canonical FNV64 digest `dad4e7e9643c8bfb` identical.
+- [ ] Independently validate **remote biso blob bytes**, rather than just its manifest entries and tree byte lengths, only when needed through a local checkout/restore to avoid copying 1.7GB publicly.

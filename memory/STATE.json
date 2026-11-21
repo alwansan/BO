@@ -308,7 +308,9 @@
       "restoreScript": "restore_github_upload.py",
       "evidence": "memory/evidence/BISO-extracted-metadata-20261121.json",
       "docs": "docs/OWNER_BISO_SOURCE_AR.md",
-      "fullFileSHA256Compared": false
+      "fullFileSHA256Compared": "All 574 owner ISO SHA256 entries verified against pinned manifest via ordered 256-bit digest, but stored biso blob contents not downloaded",
+      "isoAll574HashesAgreeWithManifest": true,
+      "actualBisoPartBlobsFullyHashed": false
     },
     "OWNER_ISO_CURRENT_SESSION_VERIFIED": {
       "status": "LOCAL_ISO_SHA256_PASS_AND_XDVDFS_FILESET_COUNT_SIZE_MATCH",
@@ -320,7 +322,10 @@
       "checkedSampleFileHashes": 5,
       "temporaryContainerPathsExistNow": true,
       "guaranteedFutureAvailability": false,
-      "evidence": "memory/evidence/BISO-extracted-metadata-20261121.json"
+      "evidence": "memory/evidence/BISO-extracted-metadata-20261121.json",
+      "fullPerFileSHA256RollVerified": true,
+      "isoFileSha256Roll256": "b3e56e650e8a2b91af1380204599e9faf8722e98ef9d5d22790b69e798302d6f",
+      "isoPathSizeFNV64": "dad4e7e9643c8bfb"
     },
     "BISO_METADATA_CI": {
       "status": "SUCCESS_METADATA_ONLY_SYNTHETIC_CONTENT_CHECKS",
@@ -389,7 +394,7 @@
       "topLevelFeasibility": "Pinned source exit_menu.cpp already clones a Quit button below Options",
       "design": "docs/ROOM_TOP_LEVEL_FEASIBILITY_AR.md"
     },
-    "OWNER_BISO_FULL_SHA": "Metadata, byte counts and 5 sampled file SHA-256 match owner ISO; full 574 file hashes not yet compared against biso on local checkout. New script offers --iso/--checkout verification; use only locally, never put assets in artifacts."
+    "OWNER_BISO_FULL_SHA": "COMPLETE: owner's actual ISO all 574 per-file SHA256 were streamed and hashed; their lexicographically ordered 256-bit rolling digest matches pinned biso manifest; all relative paths and sizes canonical digest matches. STILL OPEN: bytes of split part blobs in GitHub biso not independently downloaded/hashed. Use restore_github_upload.py locally if required."
   },
   "apk": {
     "kind": "Probe2 read-only export+room candidate",
@@ -402,5 +407,5 @@
     "gameplayCoop": false,
     "sourceCommit": "d8dba8d8da2da69c62718a87f3e6f03f16be0d2f"
   },
-  "next": "Use pinned extracted owner asset inventory in ACTOR-001A static resource investigation, correlate with sanitized Probe2 runtime observations and prove NPC actor lifetimes; top-level CO-OP menu isolated design remains open. No baseline retest or missing XBE request."
+  "next": "Use pinned biso actor-relevant resources; manifest to ISO full 574 SHA sequence matched. If needing actual restored data, verify fetched GitHub blob bytes via restore_github_upload.py; no ISO reupload needed. ACTOR-001A ownership/lifetime and room entry remain open."
 }

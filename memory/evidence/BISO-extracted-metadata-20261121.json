@@ -69,10 +69,25 @@
     "checkedOriginalCopyrightedAssetContentInActions": false
   },
   "cautions": {
-    "all574FileHashesCrossVerifiedAgainstBiso": false,
+    "all574FileHashesCrossVerifiedAgainstBiso": "Owner ISO file SHA256 ordered 256-bit rolling digest matched all 574 hashes listed in pinned biso manifest, but actual GitHub split blob bytes not checked",
     "rebuiltXisoByteIdenticalToOriginal": false,
     "actorFactoryProven": false,
     "neverUploadAssetsToActions": true,
     "avoidMutatingProtectedXbe": true
+  },
+  "fullOwnerISOvsBisoManifest": {
+    "scope": "All 574 original file contents SHA256 from owner actual ISO compared to the SHA256 sequence from pinned extracted biso manifest via deterministic 256-bit ordered fingerprint, not by downloading biso blobs",
+    "ownerIsoFilesStreamedAndHashed": 574,
+    "ownerIsoTotalBytes": 1701896359,
+    "sorting": "relative file path UTF-8 ASCII lexicographic ascending",
+    "sha256RollingMethod": "acc=(acc*0x1000000000000000000000000000013b + int(SHA256(original_file),16)) mod 2^256",
+    "originalIsoRolling256": "b3e56e650e8a2b91af1380204599e9faf8722e98ef9d5d22790b69e798302d6f",
+    "pinnedBisoManifestRolling256": "b3e56e650e8a2b91af1380204599e9faf8722e98ef9d5d22790b69e798302d6f",
+    "pathSizeFNV64Method": "FNV1a64 over ordered ASCII lines 'relative/path\\tbyte_count\\n'",
+    "ownerIsoPathSizeFNV64": "dad4e7e9643c8bfb",
+    "pinnedBisoManifestPathSizeFNV64": "dad4e7e9643c8bfb",
+    "matched": true,
+    "storedGitBlobContentsIndependentlyHashed": false,
+    "limitations": "This is an ordered 256-bit aggregate, not an item-by-item comparison output or a signature. The posted GitHub split blob bytes were not independently downloaded/hashed. Use restore_github_upload.py or --checkout on a local checkout to verify those bytes."
   }
 }
