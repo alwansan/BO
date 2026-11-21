@@ -48,9 +48,9 @@ class RoomNetPrepareTests(unittest.TestCase):
             root=pathlib.Path(directory)
             self.source(root)
             p=root/'src/game/options_menu.cpp'
-            p.write_text(p.read_text().replace('void ApplyRowInput(', 'void ApplyChangedInput('))
-            # This alone should not break an anchor; mutate targeted source.
-            p.write_text(p.read_text().replace('    if (IsHeading(row)) return;', '    if (IsHeading(row)) {return;}'))
+            p.write_text(p.read_text().replace('    const Row* row = g_page.rows[g_page.top + slot];',
+                                                    '    const Row* row = g_page.rows.at(g_page.top + slot);'))
+            # Base probe read-only transform must reject this upstream drift.
             before={str(p.relative_to(root)):p.read_bytes() for p in root.rglob('*') if p.is_file()}
             with self.assertRaises(ValueError):prepare(root)
             self.assertEqual(before,{str(p.relative_to(root)):p.read_bytes() for p in root.rglob('*') if p.is_file()})

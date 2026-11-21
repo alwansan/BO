@@ -92,14 +92,26 @@ def prepare(root: pathlib.Path):
     for ident,old in values.items():
         text = once(text, f'case {ident}: return "{old}";',
                     f'case {ident}: return blackcoop::AndroidRoomRow({ident});', menu)
-    needle = '    const Row* row = p.rows[p.top + slot];\n    if (IsHeading(row)) return;\n    bool value = row && row->kind == app::rows::Kind::Value;'
-    replacement = '''    const Row* row = p.rows[p.top + slot];
-    if (IsHeading(row)) return;
-    if (p.mode == kEntries && row && (row->id == -102 || row->id == -103)) {
-        if (id == kInputConfirm) blackcoop::OpenAndroidLobby(row->id);
+    # The accepted read-only UI deliberately intercepted all synthetic ROOM
+    # rows in UpdateRow. Upgrade only HOST and JOIN to explicit confirmed
+    # actions; preserve scrolling and never forward negative option IDs.
+    needle = '''    if (IsRoomRow(row)) {
+        // Still allow moving through all the read-only rows with the D-pad.
+        // This handler must never forward these placeholder IDs to options.
+        if (!g_page.extra && UpdateScroll(ctx, slot, id))
+            W32(ui + kMenuInput, 0);
         return;
-    }
-    bool value = row && row->kind == app::rows::Kind::Value;'''
+    }'''
+    replacement = '''    if (IsRoomRow(row)) {
+        if (!g_page.extra && g_page.mode == kEntries &&
+            (row->id == -102 || row->id == -103) && id == kInputConfirm) {
+            blackcoop::OpenAndroidLobby(row->id);
+            W32(ui + kMenuInput, 0);
+        } else if (!g_page.extra && UpdateScroll(ctx, slot, id)) {
+            W32(ui + kMenuInput, 0);
+        }
+        return;
+    }'''
     text = once(text, needle, replacement, menu)
     pending[menu] = text
 
