@@ -1,3 +1,12 @@
+# Session33 addendum 2026-11-21: owner two-phone feedback repair
+
+Start with memory/sessions/2026-11-21_bo-coop-33-owner-two-phone-lan-feedback.md, then AGENTS.md, STATE, MEMORY, PLAN, ISSUES, docs/ROOM_NETWORK_DEVICE_TEST_AR.md. Only writable branch alwansan/BO experiment/black-coop. Owner tested older APK run44924346601/artifact14715302629 on TWO Android phones; no 2/4 authenticated join proven, Back left game, form awkward and no LAN discovery. Both load matching c5bfed XBE. CL JPG filenames read but image pixels not accessible through GitHub text-only connector: don't claim visual inspection. Fixed source: RoomSession UDP1510 advertisement with complete fingerprint, discovery browser, Android Dialog inside game Activity with landscape two-column HOST/JOIN, separate leave/back buttons, no standalone Activity; first connection requires PIN plus host fingerprint verified out-of-band. Source also records safe independent event codes and one-shot Downloads export from both phones without Probe.
+
+Android29 emulator RoomOverlay KEYCODE_BACK regression https://github.com/alwansan/BO/actions/runs/44931363100 SUCCESS with TLS_PLATFORM_PASS and host Activity surviving Back; not owner-phone runtime. Source preflight run44931616369 SUCCESS, latest full Windows APK attempt run44931616418 IN PROGRESS at record time. Check LIVE newest workflow runs, then verify APK artifact/signature/image and get second-owner-phone HOSTING+JOINED+2/4 evidence. Story/player actor+324/combat/quest sync remains incomplete. Newest code through ad0be5af41382a95e4183e4fb0ffa8aa5d6ad44e. Auto build watcher created for OLD run44924346601 was found disabled; don't claim it's watching newer builds.
+
+---
+
+
 # BO-COOP — Latest restore Session33 (2026-11-21)
 
 **Writable branch ONLY: alwansan/BO experiment/black-coop.** Read AGENTS.md and memory/sessions/2026-11-21_bo-coop-33-owner-two-phone-lan-feedback.md, STATE/MEMORY/PLAN/ISSUES, docs/ROOM_NETWORK_DEVICE_TEST_AR.md, and earlier Session32 before editing. Check live HEAD and newest Actions; no force push.

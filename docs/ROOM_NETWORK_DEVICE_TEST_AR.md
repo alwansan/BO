@@ -1,3 +1,8 @@
+## Session33 UI and logging update
+The new HOST/JOIN is a same-Activity, landscape two-column dark dialog, not a replacement native Flash implementation. Android29 emulator Back success: run 44931363100, but two owner phones still need testing. Use SAVE ROOM LOG TO DOWNLOADS separately on both devices; exports only sanitized room event codes as BLACK-Room-<timestamp>-events.txt to Downloads/Games/cl/black log/logs. Alternatively COPY SAFE CONNECTION LOG. Status errors remain visible separately from periodically updated roster. Before re-installing a differently signed debug APK, back up existing private app assets; do not post ISO/game saves or private PIN.
+
+
+
 # BO-COOP — تحديث تجربة الهاتفين LAN (Session33, 2026-11-21)
 
 **هذه تجربة اتصالات TLS ورُوم فقط. لا يوجد Co-op gameplay أو لاعب ثانٍ داخل العالم أو مزامنة مهام بعد.**

@@ -684,6 +684,18 @@
       "hostPort": 24872,
       "discoveryPort": 1510,
       "docs": "docs/ROOM_NETWORK_DEVICE_TEST_AR.md"
+    },
+    "ROOMNET_EMULATOR_DIALOG_BACK": {
+      "status": "PASS_EMULATOR_ONLY",
+      "run": 44931363100,
+      "gamePhoneVerified": false,
+      "source": "f609e93a9db4165b4bc40e28f6ae1bab201ba19a"
+    },
+    "ROOMNET_SAFE_DOWNLOAD_EXPORT": {
+      "status": "SOURCE_ONLY_ANDROID_PHONE_UNTESTED",
+      "source": "ee381892404d6b883cd1b6478d8ad6709a845e10",
+      "output": "Downloads/Games/cl/black log/logs/BLACK-Room-timestamp-events.txt",
+      "contents": "Secret-free room-event codes"
     }
   },
   "pending": {

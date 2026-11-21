@@ -1,3 +1,11 @@
+
+## Follow-on verification and source fixes — same Session33
+- Responsive two-column landscape BLACK-styled in-process room overlay: commit f609e93a9db4165b4bc40e28f6ae1bab201ba19a; Android Dialog, NOT fully native game Flash.
+- Android29 platform run https://github.com/alwansan/BO/actions/runs/44931363100 SUCCESS, explicit TLS_PLATFORM_PASS / INSTRUMENTATION_CODE -1. Pressing KEYCODE_BACK on RoomOverlay did NOT finish the test Activity; this is emulator test, not owner game device acceptance.
+- a75e4def and ee381892: room event log now has user-initiated MediaStore export to Downloads/Games/cl/black log/logs/BLACK-Room-<timestamp>-events.txt. Only sanitized events; no PIN/IP/keys/assets, and export works without starting the character Probe. Android phone confirmation pending.
+- ad0be5af: notification TextView separate from periodic roster Status TextView. Prior errors/exports were overwritten each 400ms; this is now fixed in source, not yet accepted on physical phones.
+- New source and Java preflight https://github.com/alwansan/BO/actions/runs/44931616369 SUCCESS; current full Windows/NDK APK run https://github.com/alwansan/BO/actions/runs/44931616418 was IN PROGRESS at initial check. Check latest Actions before claiming ready APK.
+
 # Session 33 — owner two-phone LAN test and room UI/discovery repair (2026-11-21)
 
 ## Actual owner evidence
