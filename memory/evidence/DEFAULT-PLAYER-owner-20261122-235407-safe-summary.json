@@ -1,0 +1,91 @@
+{
+  "source_repository": "alwansan/CL",
+  "source_branch": "main",
+  "analysis_date": "2026-11-22",
+  "is_sanitized_summary": true,
+  "raw_device_logs_copied": false,
+  "primary_capture": {
+    "path": "black log/logs/BLACK-Probe-20261121-235407-267/coop_probe.txt",
+    "github_blob_sha": "a9ade07f8ffecb051969d3dc00a092c5459bf2ad",
+    "bytes": 369904,
+    "lines": 675,
+    "event_counts": {
+      "start": 1,
+      "player": 168,
+      "pool": 171,
+      "default_player_model": 8,
+      "animation": 136,
+      "lod": 191
+    },
+    "primary_model": {
+      "records": 8,
+      "valid": 8,
+      "has_model": 8,
+      "complete": 8,
+      "bone_count": 44,
+      "buffer_count": 2,
+      "draw_list_mask": 32,
+      "head": false,
+      "torso": false,
+      "legs": false,
+      "arms": true,
+      "body_candidate": false
+    },
+    "note": "Primary draw model actor+0x320 -> wrapper[0] only. Not an exhaustive inventory of every loaded mesh. Model draw-list 5 (mask 1<<5) is consistent with first-person arms."
+  },
+  "phone1_log": {
+    "path": "black log/logs/BLACK-Probe-20261121-235407-267/black_log.txt",
+    "blob_sha": "eaaaa544afb51ccb826ede9d36436bc61a62e177",
+    "device": "Xiaomi 23013PC75G Android15",
+    "package": "org.bocoop.black.defaultplayer",
+    "image_sha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+    "capture_started": true
+  },
+  "phone2_log": {
+    "path": "black log/من الهاتف الثاني/BLACK-Probe-20261121-235449-609/black_log.txt",
+    "blob_sha": "59a9891849d42c25554eb15289ade75152445c70",
+    "device": "HUAWEI JSN-L22 Android10",
+    "package": "org.bocoop.black.defaultplayer",
+    "image_sha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+    "matching_default_player_probe_uploaded": false
+  },
+  "current_lan_events": {
+    "host_path": "black log/logs/BLACK-Room-1795294900585-events.txt",
+    "guest_path": "black log/من الهاتف الثاني/BLACK-Room-1795294904769-events.txt",
+    "guest_observations": [
+      "SCAN_RESULTS_1",
+      "JOIN_CONNECTED",
+      "ROOM_JOINED",
+      "ROOM_ERROR",
+      "EXPORT_OK"
+    ],
+    "host_observations": [
+      "HOST_DISCOVERY_READY",
+      "ROOM_HOSTING",
+      "ERROR_BINDEXCEPTION"
+    ],
+    "caution": "These events show a lobby connection history only. They are not linked to shared mission or guest model rendering."
+  },
+  "images_seen_as_directory_metadata_only": [
+    {
+      "path": "black log/img/Screenshot_٢٠٢٦-١١-٢١-٢٣-٥٧-٤٢-٣٦٦_org.bocoop.black.defaultplayer.jpg",
+      "bytes": 294440
+    },
+    {
+      "path": "black log/img/Screenshot_٢٠٢٦-١١-٢١-٢٣-٥٨-٠٠-٥٥٣_org.bocoop.black.defaultplayer.jpg",
+      "bytes": 389093
+    },
+    {
+      "path": "black log/من الهاتف الثاني/Screenshot_20261121_235541_org.bocoop.black.defaultplayer.jpg",
+      "bytes": 339475
+    }
+  ],
+  "image_pixels_inspected": false,
+  "image_limitation": "The connected GitHub fetch APIs decode UTF-8 files and reject binary JPEG content. Direct raw downloads and alternative web image lookup were unsuccessful; filenames/hashes alone are not visual inspection.",
+  "architectural_decision": {
+    "local_view": "Original first-person camera, hands, weapon, HUD and locally owned player/controller",
+    "remote_view": "Ally full-body VISUAL avatar driven by authenticated human state, never NPC AI, no borrowed live NPC actor/brain or owner camera",
+    "actual_remote_render_pass": false,
+    "shared_story_start": false
+  }
+}
