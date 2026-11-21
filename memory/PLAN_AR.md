@@ -243,3 +243,7 @@ HOOK001 fairness source e9ad056: host sanitizer + pinned-source [44856368591](ht
 - [x] Real POSIX UDP `127.0.0.1` Query/Reply transport between separate sockets with bounded recv, no SO_REUSEADDR, peer rate caps, explicit source/challenge verification, timeout and collision test; host ASAN/UBSAN + Android ARM64 cross compile [44869388876](https://github.com/alwansan/BO/actions/runs/44869388876) SUCCESS.
 - [ ] Actual LAN broadcast discovery on Android and on two devices, in-game menu, authenticated JOIN. Do not use external binary/animation assets.
 - [ ] ACTOR-001A remains blocking the real co-op player/animation/AI mission sync.
+
+
+## أولوية جلسة19
+افحص pool funcs وserial/scene reset وفق memory/sessions/2026-11-21_bo-coop-19-cloud-handoff.md ثم Probe3 منفصل read-only واختبارات/مراجعة/Actions ثم اختبار هاتف محدد. ACTOR قبل مزيد mock net.

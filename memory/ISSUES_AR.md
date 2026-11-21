@@ -198,3 +198,7 @@ HOOK001 starvation under LOD: reserved per-second/lifetime player opportunity wi
 
 ### LAN socket implementation boundaries
 - Now real UDP **loopback-only** tests, but still no real subnet broadcast or Android runtime integration. Host NDK compile isn't device test. Fixed per-source table not spoof-resistant; challenge is not auth. Require authenticated session and visibility controls before enabling gameplay.
+
+
+## ACTOR-001A — تحديث جلسة19
+pool32 ثابت وserial مرشح لا يثبتان active lifetime أو remote body؛ دوال acquisition/retire/list ما زالت فرضيات. تفصيل العناوين في memory/sessions/2026-11-21_bo-coop-19-cloud-handoff.md.

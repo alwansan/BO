@@ -1,3 +1,11 @@
+# استعادة عاجلة — جلسة19، 2026-11-21
+اقرأ أولاً AGENTS.md ثم memory/STATE.json ثم **memory/sessions/2026-11-21_bo-coop-19-cloud-handoff.md**. هذه أحدث معرفة؛ ما أدناه تاريخ جلسة18 للمساندة.
+الهدف story co-op حقيقي Android؛ لم يكتمل. المالك يجيز متابعة البحث والتنفيذ وGitHub Actions حتى الحاجة لاختبار هاتف. الكتابة فقط experiment/black-coop.
+**الاكتشاف الجديد:** pool32 للشخصيات عند manager global0x2D1980، slots+0xA0 stride0x3C0، وserial مرشح actor+0x374 من manager+0x8524. مثبتة تعليمات التهيئة فقط؛ دوال lifecycle لم تثبت بعد. ابدأ بفحص دوال pool الموثقة في جلسة19 ثم Probe3 read-only، وليس تكرار baseline أو توسيع mock net. لا APK جديدة ولا CI جديد في جلسة19.
+المصادر الكبيرة موجودة في BO/biso؛ **لا تطلب إعادة رفعها**. سجل Probe2 موجود في CL، لا تنشر الخام في BO. حافظ على baseline/Probe2 والحفظ. تحقق من HEAD وActions قبل العمل، وحدّث هذه الذاكرة بانتظام.
+
+---
+
 # BO-COOP — استعادة جلسة18 بتاريخ 2026-11-21
 **الكتابة حصراً:** `alwansan/BO:experiment/black-coop`. اقرأ أولاً `AGENTS.md` ثم `memory/STATE.json`, `memory/MEMORY.md`, `memory/PLAN_AR.md`, `memory/ISSUES_AR.md`, `prompt/SESSION_PROTOCOL_AR.md`، وأحدث جلسة `memory/sessions/2026-11-21_bo-coop-18-thirdparty-black-multiplayer.md`، ثم `docs/REFERENCE_BLACK_XBEMULTIPLAYER_AR.md`, `docs/ACTOR001A_SOURCE_HOOK_DECISIONS_AR.md`, `docs/ACTOR_001A_NEXT_GATES_AR.md`, `docs/ROOM_TOP_LEVEL_FEASIBILITY_AR.md`, `docs/OWNER_BISO_SOURCE_AR.md`. تحقق من HEAD وActions الحيين.
 

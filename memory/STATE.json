@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-18-thirdparty-black-multiplayer.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-19-cloud-handoff.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -506,5 +506,15 @@
     "gameplayCoop": false,
     "sourceCommit": "d8dba8d8da2da69c62718a87f3e6f03f16be0d2f"
   },
-  "next": "Prioritize ACTOR001A actual NPC lifetime/model ownership and story coop actor spawn. NET-LAN independently has bounded real POSIX loopback discovery and ARM64 compile success, but needs Android LAN broadcast/UI/testing, auth & original game integration. Top-level CO-OP menu remains a separate safe experiment."
+  "next": "Prioritize ACTOR001A actual NPC lifetime/model ownership and story coop actor spawn. NET-LAN independently has bounded real POSIX loopback discovery and ARM64 compile success, but needs Android LAN broadcast/UI/testing, auth & original game integration. Top-level CO-OP menu remains a separate safe experiment.",
+  "latestHandoff": {
+    "date": "2026-11-21",
+    "session": 19,
+    "kind": "documentation_and_static_analysis_only",
+    "newApk": false,
+    "newCI": false,
+    "actorPoolEvidence": "memory/sessions/2026-11-21_bo-coop-19-cloud-handoff.md",
+    "next": "Verify pool lifetime/list/serial contracts before implementing isolated read-only Probe3",
+    "cloudFilesRequiredFromOwner": false
+  }
 }
