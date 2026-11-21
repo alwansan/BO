@@ -1,3 +1,17 @@
+## SESSION33 — إصلاح تجربة هاتفين وغرفة LAN
+| البند | الحالة |
+|---|---|
+| فتح UI على هاتفين وتحميل نفس XBE | جهازان CONFIRMED؛ لا JOIN مثبت |
+| شاشة Android المنفصلة وBack/Leave | Source fixed via same-Activity overlay؛ هاتفان يعيدان التحقق |
+| UDP discovery host announce وJOIN scan | Source/JVM PASS؛ Android LAN الحقيقي NOT YET VERIFIED |
+| full TLS fingerprint from untrusted discovery + first-trust confirmation + PIN | Source/JVM PASS؛ phone pending |
+| second-device diagnostics | New scrubbed coop_room_events.log + clipboard; phone pending |
+| room source preflight | PASS run44930785583 |
+| TLS JVM core | PASS run44930785371 |
+| latest full APK Windows/NDK | CHECK LIVE Actions for newest run; do not claim APK |
+| actual 2/4 phone roster, game START, independent players | OPEN |
+Remember: owner tested older room-net APK run44924346601 SUCCESS/artifact14715302629. Do not confuse build success with real connection.
+
 # خطة BO-COOP
 | Gate | القبول | الحالة |
 |---|---|---|

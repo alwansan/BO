@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-32-flash-room-network-bridge.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-33-owner-two-phone-lan-feedback.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -661,6 +661,29 @@
       "actualTwoPhoneTest": false,
       "gameplayCoop": false,
       "design": "Separate candidate APK; Flash HOST/JOIN confirmed actions launch Android RoomLobbyActivity; JNI status rows bound to immutable RoomSession roster; no actor snapshots or guest actor writes."
+    },
+    "ROOMNET_OWNER_TWO_DEVICE_TRIAL": {
+      "status": "two_phones_app_running_no_authenticated_join_confirmed",
+      "phone1": "Xiaomi 23013PC75G Android15 Adreno730",
+      "phone2": "Xiaomi 22081283G Android14 Mali-G57",
+      "source": "alwansan/CL main black log/logs & img",
+      "logsMissingOnSecond": true,
+      "build": 44924346601,
+      "artifact": 14715302629,
+      "gameplayCoop": false
+    },
+    "ROOMNET_LAN_DISCOVERY_UI_FIXES": {
+      "status": "source_and_JVM_PASS_no_new_phone_test",
+      "codeThrough": "af14d855c612747d77f555de5f7598ef64f30790",
+      "javaPreflightRun": 44930785583,
+      "tlsJvmRun": 44930785371,
+      "newApkPending": true,
+      "androidLanVerified": false,
+      "authRoster2DevicesVerified": false,
+      "observerLog": "coop_room_events.log",
+      "hostPort": 24872,
+      "discoveryPort": 1510,
+      "docs": "docs/ROOM_NETWORK_DEVICE_TEST_AR.md"
     }
   },
   "pending": {

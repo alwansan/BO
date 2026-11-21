@@ -1,3 +1,18 @@
+# BO-COOP — Latest restore Session33 (2026-11-21)
+
+**Writable branch ONLY: alwansan/BO experiment/black-coop.** Read AGENTS.md and memory/sessions/2026-11-21_bo-coop-33-owner-two-phone-lan-feedback.md, STATE/MEMORY/PLAN/ISSUES, docs/ROOM_NETWORK_DEVICE_TEST_AR.md, and earlier Session32 before editing. Check live HEAD and newest Actions; no force push.
+
+The owner DID test roomnet APK on TWO real Android phones on same Wi-Fi (CL img/logs), but COULD NOT join; no confirmed 2/4 roster. Both phones load the same c5bfed25449c8212d7a976f15246e87ead57713f XBE; first Android15 SM8475/Adreno730, second Android14 MT8781/Mali-G57. Second exported black_log.txt can be empty; a separate file contains FEAudio quit warning unrelated to proven TLS. JPG filenames were read but binary pixels not accessible through this GitHub text connector, so rely on owner's UI description.
+
+Old APK workflow 44924346601 SUCCESS, artifact14715302629, was the one tested. User disliked Android default form; Back quit entire app; LEAVE did not return; manual IP/port and room join failed. Source root causes: RoomLobbyActivity opened as separate Activity, LEAVE only stopped session, LAN discovery existed but never started by RoomSession. Fix committed: same-Activity BLACK-styled RoomOverlay Dialog instead of secondary Activity; back closes modal safely, LEAVE stops sockets; Flash rows HOST ROOM/FIND LAN ROOM; auto UDP 1510 host announce and JOIN scan showing full 32-byte TLS fingerprint with trust confirmation, PIN remains private; sanitized coop_room_events.log on both phones. First-time full SHA-256 fingerprint comparison is mandatory; no unsafe automatic trust or PIN bypass. Overlay still not pixel-perfect original Flash; actual gameplay co-op still absent.
+
+Latest code commits through af14d855c612747d77f555de5f7598ef64f30790; current official HEAD must be fetched, not assumed. New network preflight 44930785583 SUCCESS and TLS JVM 44930785371 SUCCESS on preceding d78e3d9. Check newer runs triggered by b89fc9d and af14d855. Latest full candidate workflow is black-coop-room-network-apk.yml, with concurrency cancel-in-progress=true at code 8a42b42 so obsolete Windows runs can be cancelled; no new APK success may be claimed before artifact verification.
+
+Update memory after each batch, protect single-player/main, don't publish licensed original assets or private keys. Next repair latest APK CI, distribute test safely, then independently confirm real LAN 2/4 and Back/Leave via both devices. No second actor/body/AI/combat/story synchronization yet.
+
+---
+
+
 # BO-COOP — Latest restore Session32 (2026-11-21)
 
 **Only writable GitHub branch `alwansan/BO:experiment/black-coop`.** Read `AGENTS.md`, `memory/STATE.json`, `memory/sessions/2026-11-21_bo-coop-32-flash-room-network-bridge.md`, then Session31/MEMORY/PLAN/ISSUES and `docs/ROOM_DIRECT_JOIN_AR.md`. Verify LIVE HEAD and Actions before editing; CAS commits only, no force push.

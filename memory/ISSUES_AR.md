@@ -1,3 +1,10 @@
+## SESSION33 — حالات مفتوحة من تجربة هاتفين
+- OWNER-LAN-JOIN: الجهازان على Wi-Fi نفسه لكن لا دليل authenticated JOIN/2/4؛ القديم يحتاج manual IPv4/fingerprint/PIN، ولا سجل network. الجديدة تضيف discovery+safe error codes؛ real device acceptance PENDING.
+- OWNER-ROOM-UI: شاشة Activity منفصلة لا تشبه BLACK وتتسبب بمسار خروج/Back؛ source fix Dialog in BlackActivity and concise Flash buttons. لا ادعاء نجاح الجهاز قبل الاختبار. الواجهة styled وليس 100% Flash.
+- OWNER-ROOM-LOGS: سجل الهاتف الثاني BLACK-Probe-20261121-194623-826/black_log.txt صفر بايت؛ تم إضافة scrubbed persistent coop_room_events.log لكل هاتف + copy; تحقق من الشمولية على الأجهزة.
+- REAL-COOP: لا يوجد START قصة، remote actor+324 مستقل أو game state/mission/combat sync. عدم إظهار زر بدء خادع.
+- NETWORK-TRUST: discovery UDP لا يثبت المضيف. أول اتصال يؤكد SHA256 كاملة وPIN؛ LAN broadcast قد يفشل مع AP isolation/VPN.
+
 # المشكلات المفتوحة
 - SRC-001: إصدار APK العربي والـXBE وإصدار libmain غير مثبت بالمصدر؛ استخرج hashes أولاً ولا تستعمل offsets.
 - SRC-002: Windows recompiler يتطلب default.xbe صالحاً وSDK. لا نملك source الخاص بتعديلات العربية، قد تحتاج لاحقاً من المالك.

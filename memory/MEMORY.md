@@ -1,3 +1,7 @@
+## Session33 — 2026-11-21, two-device room-net feedback and repairs
+Two phones on same Wi-Fi attempted HOST/JOIN; game runs on both and XBE matches c5bfed... but real JOIN not shown. Owner reports native Android form ugly, Back exits game, Leave fails to navigate, discovery absent; second phone exported sparse/empty logs. CL image files indexed, binary not available to inspect pixels. Code fixes on experiment/black-coop: live UDP 1510 discovery with full TLS pin metadata, same-BlackActivity styled RoomOverlay with native game CO-OP rows, distinct BACK/LEAVE, first-trust fingerprint check and PIN, sanitized persistent room logs in Android/data/<package>/files/logs. Preflight 44930785583 SUCCESS, JVM TLS 44930785371 SUCCESS. New Windows APK queued; not tested on phones. Full details memory/sessions/2026-11-21_bo-coop-33-owner-two-phone-lan-feedback.md and docs/ROOM_NETWORK_DEVICE_TEST_AR.md. No gameplay co-op or player body.
+
+
 # ذاكرة BO-COOP
 - الهدف: طور قصة تعاوني مستقل، Host هاتف، إنترنت اختياري وLAN/ZeroTier، واجهة غرف مشابهة Eden.
 - الأصل BO main b1ed1745e3b6b81192581e2824eb0f8daaa977c9. APK مفكك مرتين؛ package com.racas.black.arabic، ARM64، SDL3/Vulkan، INTERNET موجود.
