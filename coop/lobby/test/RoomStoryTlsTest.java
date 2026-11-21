@@ -2,15 +2,15 @@ package com.racas.black.coop;
 import java.net.InetAddress;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BooleanSupplier;
 import javax.net.ssl.SSLContext;
 
 /** Real encrypted loopback SOCKETS; story frames only, no game scene or actor. */
 public final class RoomStoryTlsTest {
     static void ok(boolean v){if(!v)throw new AssertionError("TLS story preflight");}
-    static void until(BooleanSupplier predicate)throws Exception{
+    interface Condition {boolean ready()throws Exception;}
+    static void until(Condition predicate)throws Exception{
         long deadline=System.nanoTime()+TimeUnit.SECONDS.toNanos(8);
-        while(!predicate.getAsBoolean()){
+        while(!predicate.ready()){
             if(System.nanoTime()>deadline)throw new AssertionError("Story handshake timeout");
             Thread.sleep(15);
         }
