@@ -2,6 +2,7 @@
     <uses-sdk android:minSdkVersion="29" android:targetSdkVersion="34" />
     <uses-permission android:name="android.permission.INTERNET" />
     <application android:label="BLACK TLS Platform Test" android:testOnly="true" android:debuggable="true">
+        <activity android:name="com.racas.black.coop.RoomHarnessActivity" android:exported="false" />
         <activity android:name="com.racas.black.coop.RoomLobbyActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
