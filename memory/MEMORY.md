@@ -283,3 +283,7 @@ APK44876183662SUCCESS؛artifact14696342069 نُزلوفُحصhash. راجع memo
 جلسة28/إصلاحCI:run44913282838فشلقبلcompileبسببCRLFفيexit_menu.cpp. اختبارreproducerREDثمLFnormalizationGREEN،13/13preparerPASS؛إعادةCIمطلوبة. المصدرالأولbf9a5c8ليسAPKجاهزاً.
 
 جلسة28/النتيجة: UI APK جاهز،run44913654405 SUCCESS على96f69b6،artifact14710883570،APK SHA256 af133c9b2a74a9714d62ca943bdd209ffc552267a053951085980ad7addfebfe وحجمه21753039B؛نُزل وفُحص مستقلاً. المطلوب أول فحص لموضعCO-OP والدخول والعودة على الهاتف حسبdocs/ROOM_UI_DEVICE_TEST_AR.md. لا Host/Join فعليين أو أجسام بشر متصلين،ولا ISO جديدة. خريطةالربطdocs/COOP_INTEGRATION_ROADMAP_AR.md.
+
+
+## جلسة29 — قبول UI وTLS فعلي
+المالك قبل القوائم وعمل اللعبة؛قُرئت5صوروجميع140pool/692linksمنسجل173522-325صالحة. لا إعادةUI/Probe4. خطأFEAudioواحدبلاcrashمبلغ،السببغيرمثبت. RoomWire/RoomTlsالجديدانينفذانغرفةTLSفعليةعلىJVMمضيف+3عملاءمعpin/PINوheartbeatورفضنسخة/امتلاءوإغلاق. مراجعةمستقلةوجدتpublication-after-closeوmissingPONG؛reproducersREDثمfixesGREENوsuitePASS. Android/discovery/JNIوالأجسام/القصةغيرمكتملة. التفاصيل`memory/sessions/2026-11-21_bo-coop-29-real-tls-core.md`؛الخطةreal-lobby.md.

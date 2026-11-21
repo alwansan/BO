@@ -1,0 +1,40 @@
+name: BO-COOP real TLS room core
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths: ['coop/lobby/**', '.github/workflows/black-coop-real-lobby-core.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: black-coop-real-lobby-core
+  cancel-in-progress: false
+jobs:
+  real-tls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop/lobby
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Strict Java 8 API core and Java 17 integration tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/black-real-room"
+          mkdir -p "$out/classes"
+          trap 'rm -rf "$out"' EXIT
+          javac --release 8 -Xlint:all,-options -Werror -d "$out/classes" coop/lobby/java/com/racas/black/coop/*.java
+          javac --release 17 -Xlint:all -Werror -cp "$out/classes" -d "$out/classes" coop/lobby/test/*.java
+          # Ephemeral TEST identity only. Never bundled, committed, or uploaded.
+          keytool -genkeypair -alias room -keyalg RSA -keysize 2048 -validity 2 -dname CN=localhost -storetype PKCS12 -keystore "$out/test-identity.p12" -storepass test-only -keypass test-only -noprompt
+          timeout 30s java -ea -cp "$out/classes" com.racas.black.coop.WireTest
+          timeout 60s java -ea -cp "$out/classes" com.racas.black.coop.TlsRoomTest "$out/test-identity.p12"
+          timeout 30s java -ea -cp "$out/classes" com.racas.black.coop.HeartbeatTest "$out/test-identity.p12"
+          echo 'PASS actual JVM loopback TLS room; Android adapter and gameplay not implemented by this job'

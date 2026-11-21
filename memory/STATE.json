@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-21_bo-coop-28-title-room-ui.md",
+  "lastSession": "memory/sessions/2026-11-21_bo-coop-29-real-tls-core.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -544,12 +544,38 @@
       "rootPythonTests": 12,
       "nativeRouteSanitizersPassed": true,
       "independentSourceReview": "no material findings",
-      "phoneMenuVerified": false,
+      "phoneMenuVerified": true,
       "hostJoinEnabled": false,
       "realHumanBodiesImplemented": false,
       "playableCoop": false,
       "artifactExpires": "2026-12-05T14:32:57Z",
       "localOutput": "/home/a/Desktop/black/RoomUI-44913654405"
+    },
+    "ROOM_UI_OWNER_PHONE": {
+      "status": "OWNER_REPORT_WORKING_AND_FIVE_SCREENSHOTS_VISUALLY_VERIFIED",
+      "evidence": "memory/evidence/ROOM-UI-owner-173522-safe-summary.json",
+      "package": "org.bocoop.black.roomui",
+      "twoPhoneGameplay": false,
+      "directBackSeparatelyInstrumented": false
+    },
+    "REAL_TLS_ROOM_LOCAL": {
+      "status": "PASS_REAL_JVM_LOOPBACK_TLS_AFTER_REVIEW_FIXES",
+      "files": [
+        "coop/lobby/java/com/racas/black/coop/RoomWire.java",
+        "coop/lobby/java/com/racas/black/coop/RoomTls.java"
+      ],
+      "coreJavaApiRelease": 8,
+      "integrationTestsRelease": 17,
+      "hostAndThreeClients": true,
+      "wrongPinAndCertificateRejected": true,
+      "wrongImageAndVersionRejected": true,
+      "partialTlsRecordsAccepted": true,
+      "trickleJoinDeadlineTested": true,
+      "closedRosterNotResurrected": true,
+      "missingPongDespiteRosterTimeoutTested": true,
+      "androidRuntime": false,
+      "discoveryIntegrated": false,
+      "gameplayIntegrated": false
     }
   },
   "pending": {
@@ -560,7 +586,7 @@
     },
     "ACTOR_001": "Real Probe2 13 LOD+animation correlations, 9 first observed late, 2 10s sampling gaps; NOT NPC death/spawn or ownership proof. ACTOR001A analyzer and value-only mock remote roster pass isolated CI, actual game actor factory/proxy unimplemented.",
     "COMBAT_001": "not_started",
-    "DEVICE": "Solo Probe4 capture accepted; title CO-OP UI APK now requires its first menu placement/navigation phone check. No two-phone gameplay build yet.",
+    "DEVICE": "UI accepted by owner and verified screenshots. No UI/Probe4 retest. Next device gate should be meaningful real two-phone LAN/VPN room or actor gameplay experiment.",
     "SRC_002": "Separate candidate build and owner baseline runtime accepted for this limited device test; not original Arabic source equivalence/full campaign proof.",
     "NET_004": "Synthetic host+scene inbox composition PASS. Real Android LAN/ZeroTier, secure session auth, actor mapping and game-thread integration NOT tested.",
     "SRC_002B": {
@@ -604,7 +630,7 @@
       "sampleSize": 130243
     },
     "COOP_ROOM_MENU": {
-      "status": "APK_CI_SUCCESS_HASH_VERIFIED_OWNER_MENU_TEST_PENDING",
+      "status": "OWNER_UI_ACCEPTED_REAL_HOST_JOIN_BACKEND_IN_PROGRESS",
       "run": 44913654405,
       "package": "org.bocoop.black.roomui",
       "hostJoinEnabled": false,
@@ -663,6 +689,11 @@
       "nullBrainRegisteredProxy": "REJECTED_DAMAGE_NULL_DEREFERENCE",
       "brainPool": "16 preconstructed, stride1FE0, not player capacity proof",
       "noTwoPhoneTestYet": true
+    },
+    "QUIT_FE_AUDIO": {
+      "status": "ONE_OWNER_LOG_EVENT_ROOT_CAUSE_UNPROVEN",
+      "sourceLogBlob": "18a961045099701d651b2a49517fe2b55c3c853d",
+      "ownerReportedCrash": false
     }
   },
   "apk": {
@@ -673,18 +704,18 @@
     "sha256": "af133c9b2a74a9714d62ca943bdd209ffc552267a053951085980ad7addfebfe",
     "bytes": 21753039,
     "sourceCommit": "96f69b6c8e912760fedaf5d7add52928f3b212f7",
-    "deviceAccepted": false,
+    "deviceAccepted": true,
     "gameplayCoop": false
   },
-  "next": "Owner may test CO-OP placement, direct room page and Back using docs/ROOM_UI_DEVICE_TEST_AR.md. Independently continue native actor/controller and full-body compatibility audit before real two-phone gameplay. No repeated passive Probe4 capture.",
+  "next": "Verify real TLS room core in Actions; implement AndroidKeyStore identity/pin verification, discovery/direct join and real Flash/JNI room integration; continue independent native actor/body acquisition. No repeated accepted UI or passive capture test.",
   "latestHandoff": {
     "date": "2026-11-21",
-    "session": 28,
-    "kind": "title_room_ui_implementation",
-    "newApk": true,
+    "session": 29,
+    "kind": "owner_ui_acceptance_and_real_tls_lobby_core",
+    "newApk": false,
     "newCI": true,
     "actorPoolEvidence": "memory/sessions/2026-11-21_bo-coop-19-cloud-handoff.md",
-    "next": "Owner may test CO-OP placement, direct room page and Back using docs/ROOM_UI_DEVICE_TEST_AR.md. Independently continue native actor/controller and full-body compatibility audit before real two-phone gameplay. No repeated passive Probe4 capture.",
+    "next": "Verify real TLS room core in Actions; implement AndroidKeyStore identity/pin verification, discovery/direct join and real Flash/JNI room integration; continue independent native actor/body acquisition. No repeated accepted UI or passive capture test.",
     "cloudFilesRequiredFromOwner": false,
     "actorPoolContracts": "docs/ACTOR_POOL_STATIC_CONTRACTS_AR.md",
     "fullOwnerObjective": "docs/OWNER_PROJECT_OBJECTIVE_AR.md",
@@ -692,7 +723,7 @@
     "poolReader": "coop/probe3/pool_snapshot.hpp",
     "poolReaderStatus": "OWNER_PROBE3_AND_PROBE4_CAPTURE_ACCEPTED"
   },
-  "executionStatus": "room_ui_apk_verified_owner_menu_test_pending_actor_network_work_remains",
+  "executionStatus": "real_tls_lobby_core_local_verified_ci_pending_android_integration_remaining",
   "ownerClarifications": {
     "session": 28,
     "previousPhoneTests": "solo local human plus enemy/friendly NPCs only; never two phones",
