@@ -15,7 +15,13 @@ public final class RoomIdentity {
     private static final String ALIAS="BLACK_COOP_TLS_ID_V1";
     private final SSLContext server;
     private final byte[] fingerprint;
-    private RoomIdentity(SSLContext server,byte[] fingerprint){this.server=server;this.fingerprint=fingerprint.clone();}
+    private final java.util.concurrent.atomic.AtomicReference<String> requestedType;
+    private RoomIdentity(SSLContext server,byte[] fingerprint,
+                         java.util.concurrent.atomic.AtomicReference<String> requestedType){
+        this.server=server;this.fingerprint=fingerprint.clone();this.requestedType=requestedType;
+    }
+    /** Key algorithm only; no key material. */
+    public String lastRequestedKeyType(){return requestedType.get();}
     public SSLContext serverContext(){return server;}
     public byte[] fingerprint(){return fingerprint.clone();}
     public String fingerprintHex(){
@@ -46,8 +52,13 @@ public final class RoomIdentity {
         if(key==null||key.getEncoded()!=null||stored==null||stored.length!=1||!(stored[0] instanceof X509Certificate))
             throw new KeyStoreException("Missing or unexpected opaque room identity");
         X509Certificate certificate=(X509Certificate)stored[0];certificate.checkValidity();
+        final java.util.concurrent.atomic.AtomicReference<String> keyType=
+            new java.util.concurrent.atomic.AtomicReference<>("none");
         X509ExtendedKeyManager manager=new X509ExtendedKeyManager(){
-            private boolean rsa(String type){return "RSA".equals(type);}
+            private boolean rsa(String type){
+                keyType.set(type==null?"null":type.replaceAll("[^A-Za-z0-9_-]","?"));
+                return "RSA".equals(type);
+            }
             public String[] getClientAliases(String type,Principal[] issuers){return null;}
             public String chooseClientAlias(String[] types,Principal[] issuers,Socket socket){return null;}
             public String[] getServerAliases(String type,Principal[] issuers){return rsa(type)?new String[]{ALIAS}:null;}
@@ -57,6 +68,6 @@ public final class RoomIdentity {
             public PrivateKey getPrivateKey(String alias){return ALIAS.equals(alias)?key:null;}
         };
         SSLContext server=SSLContext.getInstance("TLS");server.init(new KeyManager[]{manager},null,new SecureRandom());
-        return new RoomIdentity(server,MessageDigest.getInstance("SHA-256").digest(certificate.getEncoded()));
+        return new RoomIdentity(server,MessageDigest.getInstance("SHA-256").digest(certificate.getEncoded()),keyType);
     }
 }

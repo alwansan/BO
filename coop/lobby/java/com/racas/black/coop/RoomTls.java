@@ -64,6 +64,9 @@ public final class RoomTls {
         private int nextId=2;
         private long revision=1;
         private volatile boolean closed;
+        // Pre-JOIN handshake diagnostics only; never store PINs or peer identities.
+        private volatile String handshakeFailureKind="none";
+        public String handshakeFailureKind(){return handshakeFailureKind;}
         private static final class Attempt {long start;int count;Attempt(long start){this.start=start;}}
         private final class Peer {
             final int id;final String name;final byte[] echo;final SSLSocket socket;
@@ -130,9 +133,11 @@ public final class RoomTls {
         private void reject(DataOutputStream out,int reason)throws IOException{RoomWire.write(out,RoomWire.reject(reason));}
         private void serve(SSLSocket socket){
             Peer peer=null;
+            boolean tlsEstablished=false;
             try{
                 socket.setSoTimeout(3000);socket.setTcpNoDelay(true);socket.setSendBufferSize(8192);
                 socket.setEnabledProtocols(protocols(socket.getSupportedProtocols()));socket.startHandshake();
+                tlsEstablished=true;
                 DataInputStream in=new DataInputStream(socket.getInputStream());DataOutputStream out=new DataOutputStream(socket.getOutputStream());
                 String ip=socket.getInetAddress().getHostAddress();
                 if(limited(ip)){reject(out,5);return;}
@@ -166,7 +171,16 @@ public final class RoomTls {
                     lastSequence=sequence;owned.lastSeen=now();owned.send(RoomWire.pulse(RoomWire.PONG,sequence));
                 }
             }catch(IOException|RuntimeException ignored){
-                // A malformed/untrusted/stalled peer is closed, without logging its PIN or private address.
+                if(!tlsEstablished){
+                    String message=ignored.getMessage();
+                    if(message==null)message="";
+                    message=message.replaceAll("[^A-Za-z0-9 ._:/-]","?");
+                    if(message.length()>100)message=message.substring(0,100);
+                    Throwable cause=ignored.getCause();
+                    handshakeFailureKind=ignored.getClass().getSimpleName()+
+                        (cause==null?"":("/"+cause.getClass().getSimpleName()))+" "+message;
+                }
+                // Untrusted peers are closed; no incoming JOIN bytes are logged.
             }finally{
                 if(peer!=null){peer.stop();synchronized(lock){if(peers.remove(peer.id)!=null)revision++;}broadcast();}
                 pending.remove(socket);sockets.remove(socket);closeSocket(socket);

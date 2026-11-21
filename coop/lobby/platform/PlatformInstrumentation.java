@@ -17,10 +17,16 @@ public final class PlatformInstrumentation extends Instrumentation {
             check(first.fingerprint().length==32&&first.fingerprintHex().length()==64);
             check(MessageDigest.isEqual(first.fingerprint(),second.fingerprint()));
             InetAddress loop=InetAddress.getByName("127.0.0.1");
-            try(RoomTls.Server host=RoomTls.Server.start(first.serverContext(),loop,0,"Host","Android Room","01234567");
-                RoomTls.Client peer=RoomTls.Client.connect(RoomTls.pinnedContext(first.fingerprint()),loop,host.port(),"Client","01234567")){
-                check(peer.snapshot()!=null&&peer.snapshot().players.size()==2&&peer.snapshot().self>1);
-                check(host.snapshot().players.size()==2);Thread.sleep(1500);check(peer.isRunning());
+            try(RoomTls.Server host=RoomTls.Server.start(first.serverContext(),loop,0,"Host","Android Room","01234567")){
+                try(RoomTls.Client peer=RoomTls.Client.connect(RoomTls.pinnedContext(first.fingerprint()),loop,host.port(),"Client","01234567")){
+                    check(peer.snapshot()!=null&&peer.snapshot().players.size()==2&&peer.snapshot().self>1);
+                    check(host.snapshot().players.size()==2);Thread.sleep(1500);check(peer.isRunning());
+                }catch(Throwable failure){
+                    Thread.sleep(80);
+                    android.util.Log.e("BlackTlsPlatform","TLS server failure kind="+host.handshakeFailureKind()+
+                                       " requestedKeyType="+first.lastRequestedKeyType());
+                    throw failure;
+                }
             }
             long deadline=System.nanoTime()+8_000_000_000L;
             while(Thread.getAllStackTraces().keySet().stream().anyMatch(t->t.isAlive()&&t.getName().startsWith("bo-room-"))){
