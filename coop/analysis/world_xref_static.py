@@ -22,7 +22,7 @@ MAX_EXECUTABLE_BYTES = 8 * 1024 * 1024
 MAX_WRITER_ADDRESSES = 32
 MAX_XREFS = 10000
 OP_LINE = re.compile(r"^\s*([0-9a-fA-F]+):\s+([A-Za-z][\w.]*)\s*(.*)$")
-WORLD_OPERAND = re.compile(r"\[[^\]]*\b0x2d45d4\b[^\]]*\]", re.I)
+WORLD_OPERAND = re.compile(r"(?:\[\s*0x2d45d4\s*\]|\bds:0x2d45d4\b(?!\[))", re.I)
 
 
 def classify_xref(mnemonic, operands):
