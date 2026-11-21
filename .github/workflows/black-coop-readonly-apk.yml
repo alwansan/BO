@@ -1,8 +1,8 @@
-name: BO-COOP HOOK001 read-only Android APK candidate
+name: BO-COOP HOOK001 read-only Android APK with room menu + log export
 on:
   push:
     branches: [experiment/black-coop]
-    paths: ['.github/workflows/black-coop-readonly-apk.yml', 'coop/prepare_probe.py', 'coop/probe/**', 'coop/probe_prepare_checks.py']
+    paths: ['.github/workflows/black-coop-readonly-apk.yml', 'coop/prepare_probe.py', 'coop/probe/**', 'coop/android/**', 'coop/probe_prepare_checks.py']
   workflow_dispatch:
 permissions:
   contents: read
@@ -87,14 +87,17 @@ jobs:
           changed = prepare(pathlib.Path('reference'), pathlib.Path('bo/coop/probe'))
           # Probe hooks are read-only and must be the only original game-code diffs.
           actual=set(subprocess.check_output(['git','-C','reference','diff','--name-only','--','src','native','config','CMakeLists.txt'],text=True).splitlines())
-          if actual != {'src/game/cheats.cpp','src/game/hooks.cpp'}:
-              raise SystemExit('Native/gameplay change outside the two approved observer hooks: '+str(actual))
+          if actual != {'src/game/cheats.cpp','src/game/hooks.cpp','src/game/options_menu.cpp'}:
+              raise SystemExit('Native/gameplay change outside the approved observer hooks and read-only room UI: '+str(actual))
           additions={p.name for p in pathlib.Path('reference/src/coop').iterdir()}
           if additions != {'probe.cpp','probe.h','probe_core.hpp'}:
               raise SystemExit('Missing or unexpected probe source files: '+str(additions))
+          if not pathlib.Path('reference/app/src/main/java/com/racas/black/ProbeLogExporter.java').is_file():
+              raise SystemExit('Missing scoped-storage diagnostics exporter')
           p = pathlib.Path(os.environ['RUNNER_TEMP']) / 'candidate-identity.json'
           report = json.loads(p.read_text())
-          report.update(package=PACKAGE, changed_packaging=changed, observer_hook_source_allowlist_verified=True, guest_memory_writes_added=False, probe_off_by_default=True)
+          report.update(package=PACKAGE, changed_packaging=changed, observer_hook_source_allowlist_verified=True, read_only_room_menu=True,
+                        shared_download_export=True, guest_memory_writes_added=False, probe_off_by_default=True)
           p.write_text(json.dumps(report, indent=2))
       - name: Regenerate candidate guest code in runner only
         shell: python
@@ -141,7 +144,7 @@ jobs:
         env:
           CMAKE_BUILD_PARALLEL_LEVEL: 2
         run: |
-          .\gradlew.bat assembleDebug --no-daemon --max-workers=2 "-Dorg.gradle.jvmargs=-Xmx2g" "-PversionName=1.5.0-probe1" "-PversionCode=1"
+          .\gradlew.bat assembleDebug --no-daemon --max-workers=2 "-Dorg.gradle.jvmargs=-Xmx2g" "-PversionName=1.5.0-probe2" "-PversionCode=1"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Verify read-only probe package, JNI, signature, ABI and compile image
         shell: python
@@ -153,7 +156,7 @@ jobs:
           apk = pathlib.Path('reference/app/build/outputs/apk/debug/app-debug.apk').resolve()
           bt = pathlib.Path(os.environ['ANDROID_HOME']) / 'build-tools/34.0.0'
           badging = subprocess.check_output([str(bt / 'aapt.exe'), 'dump', 'badging', str(apk)], text=True)
-          if "package: name='org.bocoop.black.probe1'" not in badging:
+          if "package: name='org.bocoop.black.probe2'" not in badging:
               raise SystemExit('Package isolation failed')
           if "launchable-activity: name='com.racas.black.BlackActivity'" not in badging:
               raise SystemExit('Activity/JNI namespace mismatch')
@@ -161,7 +164,7 @@ jobs:
               raise SystemExit('Broad storage permission leaked into probe APK')
           if any("uses-permission: name='android.permission." + p + "'" in badging for p in ('INTERNET','ACCESS_NETWORK_STATE')):
               raise SystemExit('Read-only probe must not request network permissions')
-          if "BLACK Probe 1 - READ ONLY" not in badging:
+          if "BLACK Probe 2 - READ ONLY" not in badging:
               raise SystemExit('Incorrect visible probe app label')
           signature = subprocess.check_output([str(bt / 'apksigner.bat'), 'verify', '--verbose', '--print-certs', str(apk)], text=True)
           if 'CN=Android Debug' not in signature:
@@ -184,7 +187,7 @@ jobs:
           symbol_dump = subprocess.check_output([str(ndk),'-Ws',str(lib)],text=True)
           if 'Java_com_racas_black_BlackActivity_nativeCoopProbeEnable' not in symbol_dump:
               raise SystemExit('Optional JNI entry not exported in Android ELF')
-          report.update(probe_jni_export_verified=True, package_label='BLACK Probe 1 - READ ONLY',
+          report.update(probe_jni_export_verified=True, package_label='BLACK Probe 2 - READ ONLY',
                         no_network_permission=True, apk_built=True, apk_sha256=hashlib.sha256(apk.read_bytes()).hexdigest(),
                         apk_bytes=apk.stat().st_size, native=identity, debug_signature_verified=True,
                         package_and_activity_verified=True, no_original_assets_in_apk=True,
@@ -192,7 +195,7 @@ jobs:
           report_path.write_text(json.dumps(report, indent=2))
           artifact = temp / 'probe-verified-output'
           artifact.mkdir()
-          shutil.copy2(apk, artifact / 'black-probe1-candidate-READ-ONLY-NO-COOP.apk')
+          shutil.copy2(apk, artifact / 'black-probe2-candidate-READ-ONLY-NO-COOP.apk')
           shutil.copy2(report_path, artifact / 'probe-metadata.json')
           notices = ['PROBE TEST ONLY. Read-only capture requires explicit opt-in. No co-op implemented. Probe APK untested on phone.\n',
                      'Game image/assets are not included and are not licensed by the open source MIT notices.\n']
@@ -209,13 +212,13 @@ jobs:
           print(json.dumps(report, indent=2))
       - uses: actions/upload-artifact@v4
         with:
-          name: black-probe1-android-arm64-READ-ONLY-NO-COOP
+          name: black-probe2-android-arm64-READ-ONLY-NO-COOP
           path: ${{ runner.temp }}/probe-verified-output/
           if-no-files-found: error
           retention-days: 14
       - uses: actions/upload-artifact@v4
         with:
-          name: black-probe1-build-metadata
+          name: black-probe2-build-metadata
           path: ${{ runner.temp }}/candidate-identity.json
           if-no-files-found: warn
       - name: Remove temporary game derivatives

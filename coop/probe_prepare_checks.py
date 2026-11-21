@@ -5,7 +5,7 @@ import tempfile
 import unittest
 import xml.etree.ElementTree as ET
 
-from prepare_probe import BASE_FILES, GAME_FILES, PROBE_FILES, PACKAGE, prepare
+from prepare_probe import BASE_FILES, GAME_FILES, PROBE_FILES, ANDROID_FILES, PACKAGE, prepare
 
 class ProbePrepareTests(unittest.TestCase):
     @classmethod
@@ -30,13 +30,26 @@ class ProbePrepareTests(unittest.TestCase):
             old=self.fixture(dest)
             changed=prepare(dest,self.probes)
             self.assertEqual(set(changed), set(BASE_FILES)|set(GAME_FILES)|
-                             {f"src/coop/{n}" for n in PROBE_FILES})
-            self.assertEqual(len(changed),10)
+                             {f"src/coop/{n}" for n in PROBE_FILES}|
+                             {f"app/src/main/java/com/racas/black/{n}" for n in ANDROID_FILES})
+            self.assertEqual(len(changed),12)
             self.assertIn(f'applicationId "{PACKAGE}"',(dest/"app/build.gradle").read_text())
             self.assertIn("READ ONLY",(dest/"app/src/main/res/values/strings.xml").read_text())
             java=(dest/"app/src/main/java/com/racas/black/BlackActivity.java").read_text()
             self.assertIn("private static native void nativeCoopProbeEnable();",java)
             self.assertIn("Play without capture",java)
+            self.assertIn("probeLogExporter.start();",java)
+            self.assertIn("probeLogExporter.snapshot();",java)
+            self.assertIn("Download/Games/cl/black log/logs",java)
+            exported=(dest/"app/src/main/java/com/racas/black/ProbeLogExporter.java").read_text()
+            self.assertIn("MediaStore.Downloads.EXTERNAL_CONTENT_URI",exported)
+            self.assertIn("Games/cl/black log/logs/",exported)
+            self.assertNotIn("MANAGE_EXTERNAL_STORAGE",exported.split("final class ProbeLogExporter")[1].split("private static final")[0])
+            menu=(dest/"src/game/options_menu.cpp").read_text()
+            self.assertIn('"CO-OP / ROOM"',menu)
+            self.assertIn('bool IsRoomRow(',menu)
+            self.assertIn('if (IsRoomRow(row)) return;',menu)
+            self.assertIn('if (!p.extra && !room && app::rows::Restorable',menu)
             self.assertIn("if (ok) offerCoopProbe();",java)
             self.assertIn('new File(getExternalFilesDir(null), "assets");',java)
             self.assertIn("bo_probe::ObservePlayer(me,base);",(dest/"src/game/cheats.cpp").read_text())

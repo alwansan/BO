@@ -4,6 +4,7 @@ on:
     branches: [experiment/black-coop]
     paths:
       - 'coop/probe/**'
+      - 'coop/android/**'
       - 'coop/prepare_probe.py'
       - 'coop/probe_prepare_checks.py'
       - '.github/workflows/black-coop-probe-host.yml'
@@ -56,8 +57,9 @@ jobs:
                    'app/src/main/java/com/racas/black/BlackActivity.java',
                    'app/src/main/java/com/racas/black/UpdateChecker.java',
                    'app/src/main/res/values/strings.xml',
-                   'src/game/cheats.cpp','src/game/hooks.cpp'}
+                   'src/game/cheats.cpp','src/game/hooks.cpp','src/game/options_menu.cpp'}
           assert changed==allowed, (changed,allowed)
           assert {p.name for p in Path('reference/src/coop').iterdir()}=={'probe_core.hpp','probe.h','probe.cpp'}
-          print('PASS: 7 modified existing files + 3 added; native/config untouched')
+          assert (Path('reference/app/src/main/java/com/racas/black/ProbeLogExporter.java').is_file())
+          print('PASS: 8 modified existing files + 4 added; native/config untouched')
           PY

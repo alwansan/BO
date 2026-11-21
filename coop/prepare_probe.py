@@ -14,7 +14,7 @@ import tempfile
 
 from prepare_baseline import prepare as prepare_baseline
 
-PACKAGE = "org.bocoop.black.probe1"
+PACKAGE = "org.bocoop.black.probe2"
 BASE_FILES = (
     "app/build.gradle",
     "app/src/main/AndroidManifest.xml",
@@ -22,7 +22,8 @@ BASE_FILES = (
     "app/src/main/java/com/racas/black/UpdateChecker.java",
     "app/src/main/java/com/racas/black/BlackActivity.java",
 )
-GAME_FILES = ("src/game/cheats.cpp", "src/game/hooks.cpp")
+GAME_FILES = ("src/game/cheats.cpp", "src/game/hooks.cpp", "src/game/options_menu.cpp")
+ANDROID_FILES = ("ProbeLogExporter.java",)
 PROBE_FILES = ("probe_core.hpp", "probe.h", "probe.cpp")
 
 def once(source, old, new, name):
@@ -40,6 +41,12 @@ def prepare(root: pathlib.Path, probe_dir: pathlib.Path):
     source_files = {}
     for name in PROBE_FILES:
         source_files[f"src/coop/{name}"] = (probe_dir/name).read_text(encoding="utf-8")
+    for name in ANDROID_FILES:
+        source_files[f"app/src/main/java/com/racas/black/{name}"] = (
+            probe_dir.parent/"android"/name).read_text(encoding="utf-8")
+    if "MediaStore.Downloads.EXTERNAL_CONTENT_URI" not in source_files[
+            "app/src/main/java/com/racas/black/ProbeLogExporter.java"]:
+        raise ValueError("MediaStore Downloads export must be explicit")
     if "Java_com_racas_black_BlackActivity_nativeCoopProbeEnable" not in source_files["src/coop/probe.cpp"]:
         raise ValueError("The expected static native JNI entry is absent")
     if "#include <algorithm>" not in source_files["src/coop/probe.cpp"]:
@@ -76,15 +83,16 @@ def prepare(root: pathlib.Path, probe_dir: pathlib.Path):
 
     label = "app/src/main/res/values/strings.xml"
     pending[label] = once(pending[label], "BLACK Baseline - NO CO-OP",
-                          "BLACK Probe 1 - READ ONLY", label)
+                          "BLACK Probe 2 - READ ONLY", label)
 
     java = "app/src/main/java/com/racas/black/BlackActivity.java"
     text = pending[java]
-    text = once(text, 'setTitle("BLACK Baseline")', 'setTitle("BLACK Probe 1")', java)
+    text = once(text, 'setTitle("BLACK Baseline")', 'setTitle("BLACK Probe 2")', java)
     text = once(text,
         "    private boolean checking;   // a check asked from the menu is under way",
         "    private boolean checking;   // a check asked from the menu is under way\n"
-        "    private boolean coopProbePrompted;\n",java)
+        "    private boolean coopProbePrompted;\n"
+        "    private final ProbeLogExporter probeLogExporter = new ProbeLogExporter(this);\n",java)
     text = once(text, "    private static native void nativeLooseRelease();",
         "    private static native void nativeLooseRelease();\n"
         "    private static native void nativeCoopProbeEnable();", java)
@@ -104,14 +112,17 @@ def prepare(root: pathlib.Path, probe_dir: pathlib.Path):
         if (own == null || !hasGame(new File(own, "assets"))) return;
         coopProbePrompted = true;
         dialog = new AlertDialog.Builder(this)
-                .setTitle("BLACK Probe 1 - READ ONLY")
+                .setTitle("BLACK Probe 2 - READ ONLY")
                 .setMessage("Optional diagnostic capture of local character observations.\n\n"
-                        + "Records stay in this test app's private logs/coop_probe.jsonl. "
-                        + "No network, actor creation, save changes or gameplay changes. "
-                        + "Capture ends automatically (up to 180 seconds after entering the world).")
+                        + "If you start capture, readable .txt snapshots of the probe and game logs "
+                        + "are exported to Download/Games/cl/black log/logs/BLACK-Probe-[date]/. "
+                        + "These shared files may be read by other apps; do not post private logs publicly. "
+                        + "No network, actor creation or save changes. "
+                        + "Capture ends automatically (up to 180 seconds in the world).")
                 .setPositiveButton("Start capture", (d, w) -> {
                     try {
                         nativeCoopProbeEnable();
+                        probeLogExporter.start();
                         Toast.makeText(this, "Read-only capture enabled for this launch",
                                 Toast.LENGTH_LONG).show();
                     } catch (UnsatisfiedLinkError err) {
@@ -124,6 +135,8 @@ def prepare(root: pathlib.Path, probe_dir: pathlib.Path):
 
 '''
     text = once(text, "    private void startImport() {", java_method + "    private void startImport() {", java)
+    text = once(text, "    protected void onPause() {\n        resumed = false;",
+                "    protected void onPause() {\n        probeLogExporter.snapshot();\n        resumed = false;", java)
     pending[java] = text
 
     cheats = "src/game/cheats.cpp"
@@ -139,6 +152,79 @@ def prepare(root: pathlib.Path, probe_dir: pathlib.Path):
     text = once(text, 'X86_FUNC(sub_0017B130) {',
                  'X86_FUNC(sub_0017B130) {\n    bo_probe::ObserveAnimation(ctx.esp,base);',hooks)
     pending[hooks]=text
+
+    # Co-op/Room must be a genuine subpage of BLACK's existing game OPTIONS
+    # Flash menu, not a separate Android overlay. This is intentionally
+    # read-only until ACTOR/COMBAT/NET integration has real device evidence.
+    menu = "src/game/options_menu.cpp"
+    text = original[menu]
+    text = once(text,
+        'const char* const kCaptions[] = {"GRAPHICS", "TOUCH CONTROLS", "GENERAL", "MOUSE AND KEYBOARD", "CHEATS"};',
+        'const char* const kCaptions[] = {"GRAPHICS", "TOUCH CONTROLS", "GENERAL", "MOUSE AND KEYBOARD", "CHEATS", "CO-OP / ROOM"};',
+        menu)
+    text = once(text,
+        'const Row kPageRow{app::rows::Kind::Value, -1, "PAGE"};',
+        '''const Row kPageRow{app::rows::Kind::Value, -1, "PAGE"};
+// Safe discovery-only page. No host/join network work or guest actor changes.
+constexpr Row kRoomRows[] = {
+    {app::rows::Kind::Heading, -1, "ROOM / CO-OP"},
+    {app::rows::Kind::Value, -101, "ROOM STATUS"},
+    {app::rows::Kind::Value, -102, "HOST ROOM"},
+    {app::rows::Kind::Value, -103, "JOIN ROOM"},
+    {app::rows::Kind::Value, -104, "PLAYERS"},
+    {app::rows::Kind::Value, -105, "NETWORK"},
+    {app::rows::Kind::Heading, -1, "MULTIPLAYER IN DEVELOPMENT"},
+};
+bool IsRoomRow(const Row* row) {
+    return row && row->id <= -101 && row->id >= -105;
+}''', menu)
+    text = once(text,
+        '''    const Row* list = p.extra ? app::rows::Controller(&count) : app::rows::Page(p.mode - 1, &count);
+    for (size_t i = 0; i < count; i++) p.rows.push_back(&list[i]);
+    if (!p.extra && app::rows::Restorable(p.mode - 1)) p.rows.push_back(nullptr);''',
+        '''    const bool room = !p.extra && p.mode == kEntries;
+    const Row* list = room ? kRoomRows : (p.extra ? app::rows::Controller(&count) : app::rows::Page(p.mode - 1, &count));
+    if (room) count = std::size(kRoomRows);
+    for (size_t i = 0; i < count; i++) p.rows.push_back(&list[i]);
+    if (!p.extra && !room && app::rows::Restorable(p.mode - 1)) p.rows.push_back(nullptr);''',
+        menu)
+    text = once(text,
+        '''    if (!row || IsHeading(row)) return " ";
+    std::string value = app::rows::Value(*row);''',
+        '''    if (!row || IsHeading(row)) return " ";
+    if (IsRoomRow(row)) {
+        switch (row->id) {
+            case -101: return "OFFLINE / PREVIEW";
+            case -102: return "NOT AVAILABLE";
+            case -103: return "NOT AVAILABLE";
+            case -104: return "2-4 PLANNED";
+            case -105: return "LAN / VPN PLANNED";
+            default: return " ";
+        }
+    }
+    std::string value = app::rows::Value(*row);''',
+        menu)
+    text = once(text,
+        '''bool Steppable(const Row* row) {
+    if (row == &kPageRow) return true;''',
+        '''bool Steppable(const Row* row) {
+    if (IsRoomRow(row)) return false;
+    if (row == &kPageRow) return true;''',
+        menu)
+    text = once(text,
+        '''    const Row* row = p.rows[p.top + slot];
+    if (IsHeading(row)) return;''',
+        '''    const Row* row = p.rows[p.top + slot];
+    if (IsRoomRow(row) || IsHeading(row)) return;''',
+        menu)
+    text = once(text,
+        '''    const Row* row = g_page.rows[g_page.top + slot];
+    if (clear) Clear(ctx, row);''',
+        '''    const Row* row = g_page.rows[g_page.top + slot];
+    if (IsRoomRow(row)) return; // no action until a real tested room exists
+    if (clear) Clear(ctx, row);''',
+        menu)
+    pending[menu]=text
     for name,text in source_files.items():
         if (root/name).exists():
             raise ValueError(f"Refusing to overwrite existing source: {name}")
