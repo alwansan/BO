@@ -9,7 +9,9 @@
 - [x] RED test valid relocated default-player model, wrong actor, malformed bounds, missing model, first-person draw-list and full-body candidate classification, unchanged output and unchanged guest bytes.
 - [x] Implement bounded read-only `default_player/model_contract.hpp` and actual observer include, <=8records, <=1Hz, safe reads, host-state preservation.
 - [x] Atomic `prepare_room_player.py` on prepare_room_network only; separate package, original protagonist hook only, no1DF440 hook. Stage and native sanitizer tests; independent review.
-- [ ] Build/verify actual APK in Actions and update owner steering in STATE/RESTORE/AGENTS.
+- [x] Build/verify actual APK in Actions and update owner steering in STATE/RESTORE/AGENTS.
 - [ ] Necessary owner test: enable capture and load a mission with the original player; inspect `default_player_model` records before writing any replicated actor/context.
 
 **Next implementation:** host-authoritative mission prepare/load/ready, real local-player state published into bounded room messages and game-thread remote-state inbox, then independent original player contexts/visible representation verified against this gate. No shared Start or rendered second human is claimed by lobby or metadata success. A default actor on each phone must still be connected to one authoritative world; do not ship two independent missions as co-op.
+
+Verified build:44946597973/artifact14724535514, code8bc7f92, APK SHA25694400c2d650d772293ab5f3a1d0c72e91d1974dea64a3004d18404e90ccb02d0. Device capture pending, no gameplay completion claim.

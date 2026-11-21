@@ -1,0 +1,26 @@
+{
+  "package": "org.bocoop.black.defaultplayer",
+  "apk_sha256": "94400c2d650d772293ab5f3a1d0c72e91d1974dea64a3004d18404e90ccb02d0",
+  "apk_bytes": 21860751,
+  "native": {
+    "architecture": "AArch64",
+    "compile_image_sha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+    "xbe_hash_literal_present": true,
+    "symbol_matches_disc": true
+  },
+  "debug_signature_verified": true,
+  "original_protagonist_model_observation": true,
+  "alternate_actor_models": false,
+  "default_model_observation_max_records": 8,
+  "manual_pin_required": false,
+  "manual_fingerprint_required": false,
+  "presence_udp_port": 1511,
+  "default_tcp_port": 24872,
+  "gameplay_coop": false,
+  "run": 44946597973,
+  "artifact": 14724535514,
+  "independent_zip_crc_and_sha256_verified": true,
+  "code": "8bc7f92e17c1d35c6c125013bc4057afe320527f",
+  "device_tested": false,
+  "scope": "Original local protagonist primary model observations and automatic room networking, no new actor or shared story"
+}

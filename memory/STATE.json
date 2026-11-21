@@ -876,7 +876,7 @@
     "session": 34,
     "base": "3608ac51b43a9cfd99eb91a47d9de4148293f285",
     "task": "original protagonist only, verify runtime bound default model before independent remote context and shared Start; no NPC/ally body substitution",
-    "status": "automatic room APK built; original-player diagnostic tests and independent review passed, APK CI pending",
+    "status": "original-player diagnostic APK ready and verified; await new phone capture of actual default primary model before independent actor/context writes; shared Start and gameplay incomplete",
     "tcpPort": 24872,
     "presenceUdpPort": 1511,
     "wireVersion": 2,
@@ -940,6 +940,13 @@
     "maxRecords": 8,
     "maxHz": 1,
     "scope": "read-only original local player model metadata; no remote actor or gameplay sync",
-    "status": "local native/stage tests and independent review pass; building next"
+    "status": "APK built, downloaded and independently CRC/SHA256 verified; necessary original-player phone capture pending",
+    "code": "8bc7f92e17c1d35c6c125013bc4057afe320527f",
+    "run": 44946597973,
+    "artifact": 14724535514,
+    "apkSha256": "94400c2d650d772293ab5f3a1d0c72e91d1974dea64a3004d18404e90ccb02d0",
+    "apkBytes": 21860751,
+    "evidence": "memory/evidence/DEFAULT-PLAYER-APK-44946597973.json",
+    "deviceTested": false
   }
 }

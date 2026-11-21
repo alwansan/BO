@@ -1,34 +1,30 @@
-## جلسة36 — أحدث توجيه واجب
-المالك يريد شخصيةاللعبةالأصليةعلىكلهاتف،ولايريدbodyبوتأوحليف. اقرَأmemory/sessions/2026-11-21_bo-coop-36-original-player-steering.md والخطةdefault-player-link. تجربةالهاتفالتاليةتتحققمنMODELالمحمّلفيlocalplayerالأصلي،لاتطلبNPCfactorycaptureبعدهذاالتوجيه. لاsharedStartأوبعيدمرئيبعد؛المحليوالـreviewللقارئالجديدPASS،APKالتاليقيدالإطلاق. لاادعاءأنمجردlocalplayerعلىكلجهازينسخالجسموالعالمعبرالشبكة.
+# استعادة BO-COOP — جلسة36، الشخصية الأصلية فقط
 
+اقرأ AGENTS.md ثم memory/STATE.json وmemory/sessions/2026-11-21_bo-coop-36-original-player-steering.md والخطة docs/superpowers/plans/2026-11-21-default-player-link.md. راجع MEMORY وPLAN وISSUES وdocs/SOURCE_MAP_AR.md وdocs/REFERENCE_BLACK_PC_COOP_AR.md. افحص HEAD وActions الحيين قبل أي تعديل. الكتابة في alwansan/BO فرعexperiment/black-coop، دونforce-push أوتغييرmain. عمل هذه الجلسة فيBO-network-fix؛BO-active وBO-coop نسخ محلية قديمة لا تنقلها فوقremote.
 
-## مرجع وتقدم أصول جديد بعد رفع جلسة35
-اكتشفنا portingpete/Black-2006-Recomp@b2512fafd3e181e4febfb298f297245b845ef628،LICENSE MIT قرئ. راجع docs/REFERENCE_BLACK_PC_COOP_AR.md؛PC split-screen لديه player-context وpuppets لكنAIلايستهدفP2 بعد،وليسAndroid/network coop. لا نقل أعمىلـslotcopy؛+250عضويةالمجموعةيحتاجحماية. أداةBOالأصليةmodel_inventory.pyقرأَت271ملفاًمحلياًو4286MODEL،76مرشحbodyبـ10keysفريدة؛protagonistغيرمثبت.3اختباراتحدودوتصنيفPASS،لاgeometry/أصولمصدرة. نتائجآمنةفيOWNER-MODEL-CANDIDATES-20261121.json. تبقىخطةactualactor/control/AI/story،ولاStartوهمي.
+## أحدث طلب للمالك
+كل هاتف يجب أن يستخدم شخصية اللعبة الرئيسية الأصلية، بحركاتها ومزاياها؛ لا يريد موديلات بوتات أوحلفاء بديلاً للاعبين. يريد Host يبدأ المهمة وبقية البشر معه، ويريد متابعة العمل حتى تجربة هاتف ضرورية. هذا يتقدم على اقتراحNPC-factory في جلسة35. لا تطلب منه تجربةfactoryroom الآن؛أدواتها محفوظة للبحث فقط. لا تضفStart يزعم لعباً مشتركاً لمجرد إغلاق نافذة الغرفة.
 
-FactoryAPK run44944691802 على96413485bdde48981c7000ff9f9ff6019740fa7b:coreنجحوالـgeneratedABIguardنجحوبناءARM64قيدالتجميعوقتكتابةهذاالتحديث. لا تطلبهاتفاًحتىنجاحartifactوفحصه.
-# تحديث الاستعادة — جلسة35 أولاً
-اقرأ memory/sessions/2026-11-21_bo-coop-35-owner-lan-pass-factory-contract.md وSTATE الحالية والخطةdocs/superpowers/plans/2026-11-21-actor-factory-observation.md قبل بقية النص أدناه. المالك أرسل تجربة ناجحة جديدة بالـAPKالقديمة: صور HOSTING/JOINED و2/4 على الطرفين وسجل guest JOIN_AUTHENTICATED؛ LANالقديم مقبول. لا تطلب تكراره لمجرد الانتظار. النسخة التلقائية الجديدة44942892701 ناجحة ومفحوصة،artifact14722613067 وSHA256b149bc2cbc96b8ea9ff072841878d09ca58334338ea5cee49a6c3b6ab1e1f6d1،لكن لا هاتف بعد. المالك طلب متابعة التطوير نحو shared Start وأجسام حقيقية، لا الوقوف عند اللوبي.
+## تقدم مثبت
+المالك أثبت LAN على هاتفين بالـAPK القديمة بعد إدخالPIN: شاهدنا صورتَيCL22:47، المضيفHOSTING والضيفJOINED وكلاهما2/4،وسجلguest JOIN_AUTHENTICATED. هذا قبولاللوبيالقديم، لاVPN أوgameplay.
 
-العمل الحالي: probe5 رصد قراءة فقط لمسارfactory1DF440 الأصلي، حتى32recordبدونعناوين/إحداثيات،لاspawn. الحزمةfactoryroom منفصلة وبها نفس الاتصال المبسط؛المحليوالمراجعةPASS. تابعworkflowblack-coop-room-factory-apk.yml حتىالنهاية،أصلحالفشل،افحصartifactوسجلالذاكرة،ثماطلباختبارcaptureمحددقبلتحميلالمهمةوظهورNPCثمcheckpointreloadخلال3دقائق. هذه معلوماتجديدةعنcontroller/resource/descriptorوليسإعادةProbe4. لاتفعّلStartجماعييزعموجودأجسامقبلتنفيذها. بقيةالهدفالكاملمحفوظ.
+النسخة المبسطة تلغيPIN والبصمة اليدوية وإدخال المنفذ من المستخدم. أسماءفقط،TCP24872 داخلي،اكتشافأجهزةخاملةوغرف علىUDP1511،manualIP احتياطي. TLS داخلي وتلقائي،Wire2/Profile2 يتطلب تحديث الطرفين. الاكتشافbroadcast و/24 محدود، لا سرد لكلحسابVPN. AndroidKeyStore EC P256 محفوظ. كود4c9f8bb اجتازJVM8suitesوAndroid29 Hostbutton/automaticJOIN/Back؛source7ثم19preparerنجحت. نسخةالاتصال552161d بُنيتوفُحصت:run44942892701/artifact14722613067،APKsha256b149bc2cbc96b8ea9ff072841878d09ca58334338ea5cee49a6c3b6ab1e1f6d1،21854231بايت. لا اختبار هاتف لهذه النسخة الجديدة بعد. فشلWindowsالقديم كانترميزcp1252فيالاختبارات وأصلحUTF-8قراءةوكتابةوPYTHONUTF8.
 
-# استعادة BO-COOP — جلسة34
+## العمل الحالي المطلوب متابعته
+كود8bc7f92e17c1d35c6c125013bc4057afe320527f يضيفحزمةorg.bocoop.black.defaultplayer باسمBLACK ORIGINAL PLAYER TEST. تعتمداتصالroomnetنفسه،وتراقبMODELالمحمّلفيشخصيةاللعبالأصليةفقط منhookتحديثهاالموجود،دونNPCfactoryhook أوactorcreationأوguestwrites. حتى8سجلاتdefault_player_model/1Hz:counts وbooleans لتصنيفالمفاصلوdraw-list؛لا أسماءأوعناوينأوهندسة. القارئيستعملrelocatedpointersويعيدفحصهويةplayer/model/world. body_candidate قرينةskeleton لا إثباتfullbodyمرئي أوهوية بطل.
 
-اقرأ AGENTS.md ثم memory/STATE.json وجلسة memory/sessions/2026-11-21_bo-coop-34-simple-auto-network.md والخطة docs/superpowers/plans/2026-11-21-simple-auto-network.md. راجع MEMORY وPLAN وISSUES وdocs/SOURCE_MAP_AR.md وcoop/README_AR.md، وافحص HEAD وActions الحيين قبل التعديل. المستودع alwansan/BO وفرع الكتابة experiment/black-coop. النسخ المحلية القديمة BO-active وBO-coop ليست أحدث مصدر؛ عمل هذه الجلسة في BO-network-fix. رسالة الاستعادة السابقة محفوظة كتاريخ في memory/sessions/2026-11-21_restore-before-34.md.
+محلياًnativeASAN/UBSANو19preparerوالمراجعةالمستقلةPASS. بناءAPK44946597973 على8bc7f92e17c1d35c6c125013bc4057afe320527f اكتملSUCCESS؛قرئتlogs وفيهاBUILD SUCCESSFUL وLOD/resetguards والصورةمطابقة. artifact14724535514 نُزلوفُحصCRCوالـAPK SHA25694400c2d650d772293ab5f3a1d0c72e91d1974dea64a3004d18404e90ccb02d0 والحجم21860751B. الحزمةوالتوقيعوالـJNIوAArch64وصورةc5وغيابأصولISO/XBE تحققتبالـCIوالـartifact. التقريرmemory/evidence/DEFAULT-PLAYER-APK-44946597973.json. رابطالتحميلالدائم https://github.com/alwansan/BO/actions/runs/44946597973/artifacts/14724535514 . لا تعِدبناءنفسالحزمةأوتكرارالفحوص دونتغييرأوفشل؛التالياختبارهاتفجديدوليسCIقيدالتشغيل. لاphoneproofلهذهالحزمةبعد.
 
-## طلب المالك الحالي
-استمر في إصلاح تجربة هاتفين فشلت فيها الاستضافة والانضمام. ألغِ PIN وكلمة المرور ونسخ بصمة TLS وإدخال المنفذ من المستخدم. الاستضافة بالاسم واسم الغرفة، والانضمام باكتشاف تلقائي للأجهزة والغرف، بما فيها الأجهزة المفتوحة التي لم تستضف. IP يدوي احتياطي. إذن البحث والتجارب وActions مستمر حتى اختبار الهاتفين الذي يحتاج المالك.
+نطاقdefault_player_modelهوprimarydrawmodelفقط:actor320 ثمwrapper[0]. body_candidate=falseلايثبتغيابجسمآخرفيمواردالنسخة،وcompleteيصفmetadataللنموذجالأولالمقروءلاكلالشخصية. لاافتراضأنwrapperمخصص200بايتلمجردوجودPCcopy.
 
-## ما ثبت وما تغير
-شاهدنا فعلياً ثلاث صور roomnet الأخيرة في CL، وقرأنا سجلات الطرفين. حقول PIN فارغة، والأحداث HOST_INPUT_ERROR وJOIN_INPUT_ERROR سبقت أي اتصال. أزيل PIN من بروتوكول JOIN، وأصبح Wire VERSION2 وPROFILE2؛ يجب تحديث الهاتفين معاً. Host يستخدم TCP24872 تلقائياً. RoomPresence على UDP1511 يبدأ مع BlackActivity ويعرض متاح/مضيف/منضم، والبحث يتجدد تلقائياً. TLS داخلي وتلقائي دون تحقق يدوي من الهوية. الاكتشاف محدود ببث الشبكة ومسح /24 حتى512عنواناً، وليس واجهة سرد حساب ZeroTier؛ يبقى IP احتياطياً عند حجب المرور أو اختلاف الشبكات الفرعية.
+التجربةالمطلوبةالآنعلىالهاتفالمحددةفيdocs/DEFAULT_PLAYER_DEVICE_TEST_AR.md:هاتفواحد،Startcaptureقبلتحميلمهمة،اللعب20–30ثانيةبالشخصيةالأصلية،ثمcoop_probe.txt وblack_log.txtالجديدان منDownloads/Games/cl/black log/logs/BLACK-Probe-[date]. لا تطلبإعادةbaselineأوProbe4القديم. يمكنفحصالاتصالالمبسطعلىالطرفينبنفسAPKكتجربةمنفصلة. النتيجةالحيةتحسمماهوالنموذجالافتراضيقبلنسخملكيةactor/context.
 
-الكود الأساسي4c9f8bb اجتاز JVM44942174361 ومصدرAndroid44942174338 ومحاكيAndroid29 رقم44942174364. قرئ سجل instrumentation: زرHost الفعلي بالأسماء الافتراضية فتح المنفذ التلقائي، joinAutomatic نجح وBack لم يغلقActivity. مراجعة مستقلة وجدت JOINمعلقاً بعدLeave؛ صُحح وفُحص عدم استهلاكID لطلب ملغى. لم يبق مانع في المراجعة.
+## المراجع والمصادر
+- CL/black log: https://github.com/alwansan/CL/tree/main/black%20log،صورimg وسجلات«من الهاتف الثاني». فهرسآمنmemory/evidence/SESSION34-owner-two-phone-source-index.json.
+- مرجعجديدMITقرئترخيصه:portingpete/Black-2006-Recomp@b2512fafd3e181e4febfb298f297245b845ef628. اقرأdocs/REFERENCE_BLACK_PC_COOP_AR.md. PC player-context معسلاح/كاميرا/HUD مستقل،والأعداءلا تستهدفP2فيه بعد. لاAndroid/networkجاهزاً،ولا نسخABIأوslot+250بلااختبار. لمينسخBOكودruntimeمنه؛أرفقالنسبةوMITإذااستُعمللاحقاً.
+- تحليل271ملفاًمحلياًبقارئBOأصلي أعطى4286MODEL و76مرشحbodyبـ10keys. هذه معلوماتعنالمحتوى،لا إذنلاستبدالشخصيةولا إثباتprotagonist. الملخصOWNER-MODEL-CANDIDATES-20261121.json؛لاgeometryأصولمصدرة.
+- Peterson047/BLACK-XBEMultiplayer مرجعWindowsTDMbinary-only،ليسco-opsourceمرخصاً. لا تنسخEXE/DLL/body.bca.
+- biso pin9ceb6a65 يحويISOمفكوكاً؛لاطلبإعادةرفع. XBEc5bfed25449c8212d7a976f15246e87ead57713f،baselinef3754d6 وSDK99078b1. لا حاجةلتعديلISO لهذهالدفعات. لا تنشرأصولاللعبةأوالحفظأومفاتيح.
 
-بناءAPK الأول44942174355 والثاني44942585121 توقفا قبل تجميع اللعبة بسبب قراءة/كتابة اختبارات Python بترميزWindows cp1252. أصلح UTF-8 في الجانبين، وأضيف PYTHONUTF8 إلىjob؛ نجحت16اختبارات بمحاكاةcp1252. آخرcommit تقني552161df57031f6ee98d218a16b0532dee0928d4، وبناءAPK الحالي44942892701. تحقق من النتيجة الحية ولا تعلن نجاحه قبلها. تقرير الحزمة يصف اتصالاً تلقائياً opportunistic TLS، وليس هوية موثقة خارج القناة.
-
-## المطلوب مباشرة
-تابع بناءAPK، أصلح أي فشل، ثم افحص artifact وmetadata وSHA256 والتوقيع والحزمةorg.bocoop.black.roomnet وصورةc5 وغيابISO/XBE. حدث الذاكرة ورسالة الاستعادة بالنتيجة. سلّم APK للمالك مع docs/ROOM_NETWORK_DEVICE_TEST_AR.md: فتح اللعبة على الاثنين، ظهور الجهاز الخامل، Host ثمJoin و2/4 على الطرفين، Back وLeave، ثمVPN. احصل على سجلي الغرفة وصور الحالة من الجهازين عند الفشل. لا توقف العمل على مجرد خطة أو CI قيد التشغيل.
-
-## الهدف الكامل والمصادر
-هذا لوبي وشبكة فقط؛ لا جسم لاعب ثان أو مزامنة حركة/AI/combat/story بعد. الهدف الكامل ما زال4بشر وقصة وhost authority وlate join وأسماء وfriendly fire و60ثانيةdown و5ثوانٍrevive وانتقال المراحل. لا تعلن اكتمالco-op ولا تستبدل الأجسام الحقيقية ببوتات. راجع أدلة actor/brain/factory/vtable القديمة؛ لا guest writes منnetwork thread.
-
-مصادر المالك: https://github.com/alwansan/CL/tree/main/black%20log والصور فيimg وسجلات الهاتف الثاني فيمجلد«من الهاتف الثاني». مرجع https://github.com/Peterson047/BLACK-XBEMultiplayer هوWindows binary-only، ليس مصدرco-op مرخصاً للنسخ. biso pin9ceb6a65 يحويISO المفكوك، فلا تطلب رفعه مجدداً. XBE c5bfed25449c8212d7a976f15246e87ead57713f مثبت، baseline f3754d6 وSDK99078b1. لا حاجة لتعديلISO لهذه الدفعة. لا تنشر أصول اللعبة أو الحفظ أو المفاتيح، لا force-push، ولا تمسح العمل المحلي القديم. المالك طلب تحديث الذاكرة والاستعادة دورياً؛ حافظ عليه.
+## ما لم ينجز من الهدف
+لا جسمبشريبعبد،لاsharedStart أوmission prepare/load/ready،ولاstatewireللشخصية/game-threadremotecontext بعد. ثمAI/combat/story/latejoin/friendlyfire والأسماء و60sdown/5srevive وانتقالاتالمراحل. وجودlocalactorعلىكلجهازلا يزامنالعالمتلقائياً؛لا تسوّق لُعبتينمنفصلتينكـco-op. تابعالهدفالأصليبأربعةبشر،معحفظالسنغلبلايروالأصل. حدثSTATE/MEMORY/PLAN/ISSUES/RESTOREبعدكلدفعةوCI.

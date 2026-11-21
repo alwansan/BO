@@ -1,3 +1,6 @@
+
+## نتيجة جلسة36 — حزمة جاهزة والتحقق مكتمل
+run44946597973 على8bc7f92 SUCCESS؛قرئتjob136975283608:BUILD SUCCESSFUL وoriginalLOD/resetguardsPASS وصورةc5مطابقة. artifact14724535514 نُزل،CRCوالـAPKsha25694400c2d650d772293ab5f3a1d0c72e91d1974dea64a3004d18404e90ccb02d0 تحققااستقلالاً،الحجم21860751B. الحزمةorg.bocoop.black.defaultplayer،originalprotagonist-onlymetadata،alternate_actor_models=false،لاguestwrites/newactor/sharedStart. التقريرالآمنmemory/evidence/DEFAULT-PLAYER-APK-44946597973.json. مطلوبالآنفقطcaptureحيجديدللشخصيةالأصليةوفقdocs/DEFAULT_PLAYER_DEVICE_TEST_AR.md،لاNPCfactoryولاإعادةbaseline. لاphoneproofلهذهالحزمةبعد.
 ## جلسة36 — أحدث توجيه واجب
 المالك يريد شخصيةاللعبةالأصليةعلىكلهاتف،ولايريدbodyبوتأوحليف. اقرَأmemory/sessions/2026-11-21_bo-coop-36-original-player-steering.md والخطةdefault-player-link. تجربةالهاتفالتاليةتتحققمنMODELالمحمّلفيlocalplayerالأصلي،لاتطلبNPCfactorycaptureبعدهذاالتوجيه. لاsharedStartأوبعيدمرئيبعد؛المحليوالـreviewللقارئالجديدPASS،APKالتاليقيدالإطلاق. لاادعاءأنمجردlocalplayerعلىكلجهازينسخالجسموالعالمعبرالشبكة.
 
