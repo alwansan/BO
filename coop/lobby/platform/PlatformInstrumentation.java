@@ -45,6 +45,27 @@ public final class PlatformInstrumentation extends Instrumentation {
                     throw failure;
                 }
             }
+            // Owner reported BindException after quick Host/Leave/Host.
+            // Exercise a closed listener's port with active TLS clients, while
+            // rejecting another LISTEN before the old host closes.
+            int restartPort;
+            try(RoomTls.Server earlier=RoomTls.Server.start(first.serverContext(),loop,0,"Host","Rebind")){
+                restartPort=earlier.port();
+                try(RoomTls.Server duplicate=RoomTls.Server.start(first.serverContext(),loop,restartPort,"Other","Other")){
+                    throw new AssertionError("Concurrent listener unexpectedly accepted");
+                }catch(java.net.BindException expected){}
+                try(RoomTls.Client connection=RoomTls.Client.connect(
+                    RoomTls.pinnedContext(first.fingerprint()),loop,restartPort,"Before restart")){
+                    check(connection.snapshot().players.size()==2);
+                }
+            }
+            for(int i=0;i<3;i++){
+                try(RoomTls.Server again=RoomTls.Server.start(first.serverContext(),loop,restartPort,"Host","Rebind");
+                    RoomTls.Client connection=RoomTls.Client.connect(
+                        RoomTls.pinnedContext(first.fingerprint()),loop,restartPort,"Rejoined")){
+                    check(again.port()==restartPort&&connection.snapshot().players.size()==2);
+                }
+            }
             // Exercise the same bounded session lifecycle on a real Android
             // socket provider. This remains independent of the game's Flash/UI.
             try(RoomSession hosting=RoomSession.create();RoomSession joining=RoomSession.create()){
@@ -90,7 +111,7 @@ public final class PlatformInstrumentation extends Instrumentation {
             while(Thread.getAllStackTraces().keySet().stream().anyMatch(t->t.isAlive()&&t.getName().startsWith("bo-room-"))){
                 if(System.nanoTime()>deadline)throw new AssertionError("Room threads survived close");Thread.sleep(10);
             }
-            result.putString("stream","TLS_PLATFORM_PASS: AndroidKeyStore TLS room, host-story PREPARE / guest explicit READY / host COMMIT succeeded over Android29 sockets; names-only Host, automatic Join and Back regression passed (NO BLACK game loader/actor)\n");
+            result.putString("stream","TLS_PLATFORM_PASS: AndroidKeyStore TLS room, host-story PREPARE / guest explicit READY / host COMMIT and same-port rapid rehost succeeded over Android29 sockets; names-only Host, automatic Join and Back regression passed (NO BLACK game loader/actor)\n");
             finish(Activity.RESULT_OK,result);
         }catch(Throwable failure){
             android.util.Log.e("BlackTlsPlatform","Platform test failed",failure);
