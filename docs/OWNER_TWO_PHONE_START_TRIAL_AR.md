@@ -1,3 +1,11 @@
+### Session78 verified Android START alpha and single valuable owner test — 2026-11-22
+- Full Windows ARM64 Android Actions [#45054921483 SUCCESS](https://github.com/alwansan/BO/actions/runs/45054921483) on code fbfeedffcc9c85dad6eb44084e58797c723ca2d0, artifact **14767551339** `black-room-network-android-arm64-NO-GAMEPLAY-COOP`. Extracted APK `black-room-network-NO-GAMEPLAY-COOP.apk`, **21,955,695 bytes**, SHA256 `29cd05eedb36af77646c6004a2546c9156c6dde97a9c1511a078f40b03113d7e`, package `org.bocoop.black.roomnet`. Exact downloaded zip and APK hash verified. Older metadata labels room protocol v6 while source `RoomWire` defines v7; fix on future substantive build, do not confuse with actual wire version.
+- Real TLS two-phone START test #45054921382 SUCCESS, original source preflight #45054921402 SUCCESS, Android29 #45054921375 SUCCESS, UDP #45054921322 SUCCESS. START on HOST with exactly 2 humans sends authentic TLS PREPARE mission0/stage0, but automatic original stage launch still absent; both must manually pick mission1 in original BLACK. Original other player's BOT body remains unrendered, AI/objectives are independent.
+- Owner now offers high-value phone trial. One integrated 2-phone diagnostic check with this valid APK is useful to verify Android physical room 2/4 -> START -> independent original stage load/source-scope READY/COMMIT -> live input/positions and connectivity; **never present this as visible shared gameplay**. Export bounded room logs on both phones and one sequence video. The test script is `docs/OWNER_TWO_PHONE_START_TRIAL_AR.md`.
+- Continue P0: genuine original menu autoplay for guest and host; independent original bot visual actor creation/render ABI; one host-authoritative enemy/combat/mission simulation. Only writable branch `experiment/black-coop`. Update restore/state/plan and avoid noisy micro-tests.
+
+---
+
 # BLACK Co-op — تجربة دمج الهاتفين والمرحلة الأولى (جلسة 78)
 
 **هدف التجربة:** الهوست + لاعب واحد، زر START داخل الغرفة، طلب بدء المرحلة الأولى يصل للجهاز الثاني عبر TLS، ثم التأكد من حالة اللعبة الأصلية باستخدام تسجيل واحد شامل. هذه النسخة **ليست بعد لعباً تعاونياً مكتملاً**: اختيار المرحلة الأصلية يدوي على الهاتفين، ولا يظهر مجسم اللاعب الآخر بعد.

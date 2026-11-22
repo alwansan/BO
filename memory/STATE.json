@@ -2786,11 +2786,16 @@
     "sourcePreflightRun": 45054921402,
     "android29Run": 45054921375,
     "androidApkRun": 45054921483,
-    "ciStatus": "real_TLS_source_Android29_success_full_APK_in_progress",
+    "ciStatus": "all_green_full_APK_alpha_SUCCESS_not_gameplay",
     "autoOriginalGuestMissionLaunch": false,
     "remoteCharacterOriginalDraw": false,
     "hostSharedOriginalEnemySimulation": false,
-    "requiresPhoneTrialNow": false,
-    "testPlan": "docs/OWNER_TWO_PHONE_START_TRIAL_AR.md"
+    "requiresPhoneTrialNow": true,
+    "testPlan": "docs/OWNER_TWO_PHONE_START_TRIAL_AR.md",
+    "apkRunConclusion": "success",
+    "apkArtifact": 14767551339,
+    "apkBytes": 21955695,
+    "apkSha256": "29cd05eedb36af77646c6004a2546c9156c6dde97a9c1511a078f40b03113d7e",
+    "phoneTrialPurpose": "one integrated two-phone START/TLS/native-scene diagnostics; no visible actor or shared AI yet"
   }
 }
