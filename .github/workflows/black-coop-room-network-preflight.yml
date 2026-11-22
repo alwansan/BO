@@ -74,6 +74,9 @@ jobs:
           g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread -fsanitize=undefined \
             bo/coop/room_network/test_room_original_guest_host_world_contract.cpp -o "$RUNNER_TEMP/test_guest_host_world"
           "$RUNNER_TEMP/test_guest_host_world"
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread -fsanitize=undefined \
+            bo/coop/room_network/test_room_original_guest_prepared_story_contract.cpp -o "$RUNNER_TEMP/test_guest_story_prepare"
+          "$RUNNER_TEMP/test_guest_story_prepare"
       - uses: actions/setup-java@v4
         with:
           distribution: temurin

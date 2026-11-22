@@ -80,6 +80,11 @@ def prepare(root: pathlib.Path):
     public int coopHostAppearancePeerMaskFromGameThread() {
         return com.racas.black.coop.RoomAppRooms.hostAppearancePeerMaskFromGameThread();
     }
+    // Pinned original BLACK FRONTEND tick polls the verified host's
+    // PREPARE without any local player body. Bounded 8 ints; no loader.
+    public int[] coopPollGuestPreparedStoryFromOriginalFrontend() {
+        return com.racas.black.coop.RoomAppRooms.guestPreparedStoryFromOriginalFrontend();
+    }
     // Matched original core/stream level and stage as values on the genuine
     // BLACK game thread. NOT a loaded-scene callback, never auto PREPARE.
     public void coopRecordOriginalStageIdentity(int episode,int level,int stage) {
@@ -144,6 +149,8 @@ def prepare(root: pathlib.Path):
         else if (code == 73) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HUMAN_LOOK_NO_ORIGINAL_BOT_TEMPLATE");
         else if (code == 74) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HUMAN_LOOK_NOT_ENOUGH_SAFE_BLANK_SLOTS");
         else if (code == 75) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HUMAN_LOOK_PROPOSAL_INVALIDATED_NO_ACTOR");
+        else if (code == 76) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_GUEST_HOST_STAGE_ON_FRONTEND_ENGINE_THREAD_NO_LOADER");
+        else if (code == 77) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_GUEST_HOST_STAGE_CHANGED_ON_FRONTEND_THREAD_NO_LOADER");
         else if (code == 20) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_EASY_NOT_MISSION");
         else if (code == 21) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_NORMAL_NOT_MISSION");
         else if (code == 22) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_HARD_NOT_MISSION");
@@ -246,6 +253,8 @@ def prepare(root: pathlib.Path):
     pending['src/coop/room_original_trusted_input_witness.hpp'] = (HERE / 'room_network/room_original_trusted_input_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_guest_host_world_contract.hpp'] = (HERE / 'room_network/room_original_guest_host_world_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_guest_host_world_witness.hpp'] = (HERE / 'room_network/room_original_guest_host_world_witness.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_guest_prepared_story_contract.hpp'] = (HERE / 'room_network/room_original_guest_prepared_story_contract.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_guest_prepared_story_witness.hpp'] = (HERE / 'room_network/room_original_guest_prepared_story_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/world_tick_contract.hpp'] = (HERE / 'room_network/world_tick_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/gpu_decl_contract.hpp'] = (HERE / 'room_network/gpu_decl_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/gpu_decl_witness.hpp'] = (HERE / 'room_network/gpu_decl_witness.hpp').read_text(encoding='utf-8')
@@ -311,8 +320,14 @@ def prepare(root: pathlib.Path):
     # Original upstream files remain untouched and output stays LF.
     launch=pending.get(difficulty,originals[difficulty].decode('utf-8')).replace('\r\n','\n')
     launch=once(launch,'#include "xdk/hle.h"',
-                '#include "xdk/hle.h"\n#include "coop/room_world_tick.hpp"\n#include "coop/room_original_launch_difficulty_witness.hpp"\n#include "coop/room_original_streaming_stage_witness.hpp"',difficulty)
-    launch=once(launch,'    __imp__sub_00124CF0(ctx, base);',
+                '#include "xdk/hle.h"\n#include "coop/room_world_tick.hpp"\n#include "coop/room_original_launch_difficulty_witness.hpp"\n#include "coop/room_original_streaming_stage_witness.hpp"\n#include "coop/room_original_guest_prepared_story_witness.hpp"',difficulty)
+    # Pinned upstream original FRONTEND frame wrapper. In PREPARE phase the
+    # guest has no body, so original player-update hooks never run. Poll
+    # only the verified TLS ticket on this actual original frontend tick.
+    launch=once(launch,
+        '    Unlock();\n    __imp__sub_00115030(ctx, base);\n    OfferBlackOps();',
+        '    Unlock();\n    blackcoop::ObserveOriginalGuestPreparedStoryFrontend();\n    __imp__sub_00115030(ctx, base);\n    OfferBlackOps();',difficulty)
+    launch=once(launch,'    __imp__sub_00124CF0(ctx, base);'
         '''    blackcoop::ObserveMissionLaunchCandidate(); // attempt, NOT loaded scene
     const uint32_t originalLaunchEpisode=blackcoop::ObserveOriginalLaunchDifficulty();
     __imp__sub_00124CF0(ctx, base); // ORIGINAL call unchanged

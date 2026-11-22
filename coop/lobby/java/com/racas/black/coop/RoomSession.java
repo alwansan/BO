@@ -79,6 +79,7 @@ public final class RoomSession implements AutoCloseable {
     private OriginalStageCandidate lastSourceStage;
     private long lastSourceStageAtNs;
     private final RoomOriginalHostStagePrepareGate sourceStagePrepare=new RoomOriginalHostStagePrepareGate();
+    private Thread originalGuestFrontendThread;
     /** Compact TLS roster positions, NOT long-lived RoomWire.Player IDs.
      * Source-only bot appearance proposal for genuine joined human devices. */
     public int hostAppearancePeerMaskFromGameThread(){
@@ -146,6 +147,35 @@ public final class RoomSession implements AutoCloseable {
                 return ticket!=null&&sourceStagePrepare.markOffered(
                     ticket.rosterRevision,epoch);
             }catch(IOException ignored){return false;}
+        }
+    }
+    /** Original native FRONTEND callback on guest: TLS-authenticated host
+     * PREPARE values enter original engine thread even WITHOUT a loaded
+     * player body. Does NOT call the BLACK stage loader or publish READY.
+     */
+    public int[] guestPreparedStoryFromOriginalFrontend(){
+        synchronized(lock){
+            final int[] empty=new int[8];
+            if(closed||phase!=Phase.JOINED||client==null||
+               !client.isRunning())return empty;
+            if(originalGuestFrontendThread==null)
+                originalGuestFrontendThread=Thread.currentThread();
+            if(originalGuestFrontendThread!=Thread.currentThread())return empty;
+            RoomStoryWire.Ticket ticket=client.storyTicket();
+            RoomWire.State roster=client.snapshot();
+            if(ticket==null||roster==null||client.storyCommitted()||
+               ticket.mission<0||ticket.mission>7||
+               ticket.stage<0||ticket.stage>15||
+               roster.revision!=ticket.rosterRevision||
+               !java.security.MessageDigest.isEqual(roster.session,ticket.session())||
+               roster.players.size()<2||roster.players.size()>4||
+               roster.players.size()!=Integer.bitCount(ticket.participants))
+                return empty;
+            int slot=RoomWire.storySlot(roster,roster.self);
+            if(slot<2||slot>4||!ticket.includes(slot))return empty;
+            return new int[]{ticket.sceneEpoch,ticket.mission,ticket.stage,
+                (int)ticket.rosterRevision,(int)(ticket.token>>>32),
+                (int)ticket.token,slot,ticket.participants};
         }
     }
     /** Source-only evidence for future launcher verification, not READY. */
@@ -377,6 +407,7 @@ public final class RoomSession implements AutoCloseable {
             lastStageResourceFolder=-1;lastStageResourceObservedAt=0;
             lastSourceStage=null;lastSourceStageAtNs=0;
             sourceStagePrepare.reset();
+            originalGuestFrontendThread=null;
             oldHost=host;oldClient=client;oldAnnouncer=announcer;
             host=null;client=null;announcer=null;phase=Phase.CONNECTING;
             description="Connecting";fingerprint="";
@@ -516,6 +547,7 @@ public final class RoomSession implements AutoCloseable {
             lastStageResourceFolder=-1;lastStageResourceObservedAt=0;
             lastSourceStage=null;lastSourceStageAtNs=0;
             sourceStagePrepare.reset();
+            originalGuestFrontendThread=null;
             oldHost=host;oldClient=client;oldAnnouncer=announcer;
             host=null;client=null;announcer=null;phase=Phase.IDLE;description="";fingerprint="";
         }

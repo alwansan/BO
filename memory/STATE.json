@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-69-source-matched-host-prepares-story.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-70-guest-original-frontend-tls-stage-plan.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -1682,6 +1682,22 @@
       "android29LastObserved": "completed_success",
       "roomOnlyApkRun": 45035225062,
       "roomOnlyApkLastObserved": "in_progress"
+    },
+    "ORIGINAL_GUEST_FRONTEND_AUTH_TLS_STAGE": {
+      "status": "SOURCE_PUSHED_CI_PENDING_GUEST_LOADER_OFF",
+      "originalFrontendFunction": "sub_00115030",
+      "authenticatedTlsTicket": true,
+      "frontendSeparateOriginalThread": true,
+      "sceneTicketParts": 8,
+      "inboxFreshMs": 1200,
+      "invalidAndAbortReset": true,
+      "hostStartStageOnly": true,
+      "guestEngineAutoLaunch": false,
+      "sceneLoadedCallback": false,
+      "readySent": false,
+      "commit": false,
+      "remoteBotBody": false,
+      "tests": "test_room_original_guest_prepared_story_contract.cpp"
     }
   },
   "pending": {

@@ -97,6 +97,15 @@ public final class RoomAppRooms {
   synchronized(RoomAppRooms.class){session=active;}
   return session==null?0:session.hostAppearancePeerMaskFromGameThread();
  }
+ /** Poll from the game's original FRONTEND tick, even before a player
+  * actor exists. Network-selected values ONLY, not a launcher call.
+  */
+ public static int[] guestPreparedStoryFromOriginalFrontend(){
+  final RoomSession session;
+  synchronized(RoomAppRooms.class){session=active;}
+  return session==null?new int[8]:
+      session.guestPreparedStoryFromOriginalFrontend();
+ }
  public static void originalStageIdentityFromGameThread(int episode,int level,int stage){
   if(episode<=0||level<0||level>8||stage<0||stage>15)return;
   RoomSession session;
