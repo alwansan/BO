@@ -97,6 +97,15 @@ public final class RoomAppRooms {
   synchronized(RoomAppRooms.class){session=active;}
   return session==null?0:session.hostAppearancePeerMaskFromGameThread();
  }
+ /**
+  * Both original frontends: exact host-authenticated FIRST STAGE start,
+  * no game engine writes/actor creation on this Java network boundary.
+  */
+ public static int[] firstStageAutoMenuPlanFromOriginalFrontend(){
+  RoomSession s;
+  synchronized(RoomAppRooms.class){s=active;}
+  return s==null?new int[8]:s.firstStageAutoMenuPlanFromOriginalFrontend();
+ }
  /** Poll from the game's original FRONTEND tick, even before a player
   * actor exists. Network-selected values ONLY, not a launcher call.
   */

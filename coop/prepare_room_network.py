@@ -80,6 +80,11 @@ def prepare(root: pathlib.Path):
     public int[] coopPollOtherHumanBodySourceFromGameThread() {
         return com.racas.black.coop.RoomAppRooms.pollOtherHumanBodySourceFromGameThread();
     }
+    // Both phones: original UI frontend receives exact authenticated
+    // first-stage host START intent, no Java-side game loader.
+    public int[] coopPollFirstStageAutoMenuPlanFromOriginalFrontend() {
+        return com.racas.black.coop.RoomAppRooms.firstStageAutoMenuPlanFromOriginalFrontend();
+    }
     // Obtain HOST-owned authenticated room roster ordinal slots only.
     // No guest coordinates, no actor pointers and no game scene READY.
     public int coopHostAppearancePeerMaskFromGameThread() {

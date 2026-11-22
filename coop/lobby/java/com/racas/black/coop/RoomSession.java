@@ -194,6 +194,42 @@ public final class RoomSession implements AutoCloseable {
             }catch(IOException ignored){return false;}
         }
     }
+    /**
+     * Authenticated FIRST ORIGINAL MISSION on both phones.
+     * This only returns a ticket; native must independently verify the
+     * actual ORIGINAL frontend/UI before issuing its own menu transition.
+     */
+    public int[] firstStageAutoMenuPlanFromOriginalFrontend(){
+        synchronized(lock){
+            final int[] empty=new int[8];
+            if(closed||!((phase==Phase.HOSTING&&host!=null&&host.isRunning())||
+               (phase==Phase.JOINED&&client!=null&&client.isRunning())))
+                return empty;
+            if(originalGuestFrontendThread==null)
+                originalGuestFrontendThread=Thread.currentThread();
+            if(originalGuestFrontendThread!=Thread.currentThread())return empty;
+            RoomStoryWire.Ticket ticket=phase==Phase.HOSTING?
+                host.storyTicket():client.storyTicket();
+            if(ticket==null||ticket.mission!=0||ticket.stage!=1||
+               ticket.participants!=3||ticket.sceneEpoch<=0||
+               (phase==Phase.HOSTING?host.storyCommitted():client.storyCommitted()))
+                return empty;
+            try{
+                RoomWire.State roster=phase==Phase.HOSTING?
+                    host.snapshot():client.snapshot();
+                if(roster==null||roster.players.size()!=2||
+                   roster.revision!=ticket.rosterRevision||
+                   !java.security.MessageDigest.isEqual(
+                       roster.session,ticket.session()))return empty;
+                int self=RoomWire.storySlot(roster,roster.self);
+                if(self!=(phase==Phase.HOSTING?1:2)||!ticket.includes(self))
+                    return empty;
+                return new int[]{ticket.sceneEpoch,0,1,
+                    (int)ticket.rosterRevision,(int)(ticket.token>>>32),
+                    (int)ticket.token,self,ticket.participants};
+            }catch(IOException unavailable){return empty;}
+        }
+    }
     /** Original native FRONTEND callback on guest: TLS-authenticated host
      * PREPARE values enter original engine thread even WITHOUT a loaded
      * player body. Does NOT call the BLACK stage loader or publish READY.

@@ -41,6 +41,12 @@ public final class RoomTwoPhoneFirstStageStartTlsTest {
                 return t!=null&&t.same(first);
             });
             ok(!host.storyStatus().committed&&!guest.storyStatus().committed);
+            int[] autoHost=host.firstStageAutoMenuPlanFromOriginalFrontend();
+            int[] autoGuest=guest.firstStageAutoMenuPlanFromOriginalFrontend();
+            ok(autoHost[0]==first.sceneEpoch&&autoHost[1]==0&&
+               autoHost[2]==1&&autoHost[6]==1&&autoHost[7]==3);
+            ok(autoGuest[0]==first.sceneEpoch&&autoGuest[1]==0&&
+               autoGuest[2]==1&&autoGuest[6]==2&&autoGuest[7]==3);
             int[] guestPlan=guest.guestPreparedStoryFromOriginalFrontend();
             ok(guestPlan.length==8&&guestPlan[0]==1&&guestPlan[1]==0&&
                guestPlan[2]==1&&guestPlan[6]==2&&guestPlan[7]==3);
