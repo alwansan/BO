@@ -60,12 +60,16 @@ def bounded_geometry(data,base):
     array=base+u32(data,base+0x1C)
     span(data,array,buffers*0x1C)
     total_draws,total_indices,nonrepeat,referenced=0,0,0,set()
+    stride_counts={24:0,28:0,36:0}
+    format_patterns=set()
     for b in range(buffers):
         v=array+0x1C*b
         stride=u32(data,v+0x14)
         draws=u32(data,v+0x10)
         if stride not in STRIDES or draws>MODEL_MAX_DRAWS:
             raise ValueError("Unknown vertex descriptor layout")
+        stride_counts[stride]+=1
+        format_patterns.add(u32(data,v+0x18))
         vertex=v+u32(data,v+0x04)
         descriptors=v+u32(data,v+0x0C)
         span(data,descriptors,draws*0x30)
@@ -91,6 +95,10 @@ def bounded_geometry(data,base):
             total_draws+=1
     if not total_draws or not total_indices or not nonrepeat or not referenced:
         raise ValueError("Candidate lacks indexed surface geometry")
+    texture_count=u32(data,base+0x50)
+    if texture_count>64:raise ValueError("Model texture slots out of budget")
+    if texture_count:
+        span(data,base+u32(data,base+0x4C),texture_count*4)
     return {
         "buffers_checked":buffers,
         "draw_descriptors_checked":total_draws,
@@ -98,6 +106,11 @@ def bounded_geometry(data,base):
         "nonrepeat_strip_triangle_candidates":nonrepeat,
         "distinct_buffer_vertex_references":len(referenced),
         "finite_referenced_positions":True,
+        "vertex_buffer_stride_distribution":{str(k):v for k,v in sorted(stride_counts.items()) if v},
+        "distinct_raw_vertex_format_pattern_count":len(format_patterns),
+        "model_texture_name_slots":texture_count,
+        "skin_attribute_layout_decoded":False,
+        "material_texture_bindings_proven":False,
     }
 
 def analyze_file(data,filename):
