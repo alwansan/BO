@@ -1,3 +1,8 @@
+### Session66 verified Android29 platform CI
+[Android 29 Keystore and REAL TLS platform 45031867981 SUCCESS](https://github.com/alwansan/BO/actions/runs/45031867981). Native/Java source [45031868035 SUCCESS](https://github.com/alwansan/BO/actions/runs/45031868035), real TLS [45031867931 SUCCESS](https://github.com/alwansan/BO/actions/runs/45031867931), UDP [45031868012 SUCCESS](https://github.com/alwansan/BO/actions/runs/45031868012). Windows Android room-only [45031867965](https://github.com/alwansan/BO/actions/runs/45031867965) IN_PROGRESS on last live check; do not call APK successful or co-op playable yet.
+
+---
+
 ## Session66 — original native stage identity -> room session game-thread bridge (2026-11-22)
 - Only writable `alwansan/BO:experiment/black-coop`. Owner original c5 XBE [45030934728 SUCCESS](https://github.com/alwansan/BO/actions/runs/45030934728) static source counts +0x5AEC LEVEL (12), +0x5AED STAGE (5) within 0x001EDC90 window. This is NOT an actual scene-loader ABI or scene completion.
 - Fix C++ source identity witness: an initial UNKNOWN/CONFLICT no longer hides a later MATCH within the same original launch. New regression tests cover unknown→match.

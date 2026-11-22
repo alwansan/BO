@@ -1546,7 +1546,7 @@
       "windowsRebuildRun": 45031007275
     },
     "ORIGINAL_STAGE_ROOM_CANDIDATE_BRIDGE": {
-      "status": "SOURCE_JAVA_CI_PASS_WINDOWS_APK_AND_PLATFORM_STILL_RUNNING_NO_GAMEPLAY",
+      "status": "SOURCE_CI_REAL_TLS_ANDROID29_SUCCESS_WINDOWS_ROOM_APK_PENDING_NO_GAMEPLAY",
       "nativeMethod": "coopRecordOriginalStageIdentity(III)V",
       "javaMethod": "observeOriginalStageIdentityFromGameThread",
       "sourceOriginalXbeRun": 45030934728,
@@ -1565,7 +1565,7 @@
       "windowsApkRun": 45031867965,
       "windowsApkLastObserved": "in_progress",
       "android29Run": 45031867981,
-      "android29LastObserved": "in_progress"
+      "android29LastObserved": "completed_success"
     }
   },
   "pending": {
