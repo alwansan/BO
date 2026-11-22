@@ -16,6 +16,7 @@ int main(){
  assert(!b.Read(1,1349,out));
  assert(!b.Read(3,1351,out));
  assert(!b.Ingest(host,23,1400)); // replay tick
+ assert(b.Read(3,1349,out)&&out.peer==3); // same tick MUST NOT clear it
  host[2]=31;host[5]=3;assert(!b.Ingest(host,23,1400)); // unordered duplicate
  host[5]=2;host[10]=4;assert(!b.Ingest(host,23,1400)); // impossible flags
  host[10]=0;host[16]=19000;assert(!b.Ingest(host,23,1400));

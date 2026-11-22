@@ -41,8 +41,12 @@ inline void PollOriginalOtherHumanBodySource(JNIEnv* env,jobject activity,jclass
  std::array<int32_t,23> safe{};
  for(jsize i=0;i<n;i++)
   safe[static_cast<size_t>(i)]=static_cast<int32_t>(raw[static_cast<size_t>(i)]);
- if(!AllOtherHumanBodies().Ingest(safe.data(),
-       static_cast<size_t>(n),static_cast<uint64_t>(SDL_GetTicks())))
-  AllOtherHumanBodies().Reset();
+ // A 10 Hz original game-thread poll can run faster than the HOST world
+ // snapshot transport. A repeated validated tick is a benign NO-OP, not
+ // evidence of disconnect: keep the last snapshot until its strict 350ms
+ // freshness expires. The 5-int tombstone, JNI errors or scene unload
+ // still revoke poses immediately.
+ AllOtherHumanBodies().Ingest(safe.data(),
+       static_cast<size_t>(n),static_cast<uint64_t>(SDL_GetTicks()));
 }
 } // namespace blackcoop
