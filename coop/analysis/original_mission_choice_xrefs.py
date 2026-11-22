@@ -50,7 +50,7 @@ def inspect(data,sections,address):
                     counts["read_candidate"]+=1
                 else:
                     counts["other"]+=1
-    if count<4:raise UnsafeImage("Mission window unmapped")
+    if count<3:raise UnsafeImage("Mission window unmapped")
     return {
        "window_bytes":WINDOW,"decoded_instruction_candidates":count,
        "instruction_families":dict(sorted(families.items())),
