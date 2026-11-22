@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-61-actual-body-feet-and-host-world-guest-inbox.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-62-original-npc-visual-source-readonly-live-bridge.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -2160,7 +2160,29 @@
     "session61GameplayOriginalStageLoaded": false,
     "session61ActualGuestOriginalMissionAutoStart": false,
     "session61RealRemoteHumanBotModelRendered": false,
-    "session61ActualHostSharedCombat": false
+    "session61ActualHostSharedCombat": false,
+    "session62OwnerRestoreAlwaysUpdate": true,
+    "session62BotLookPoolContractCommit": "44498fa6b01afa548f94d624c09e073725129186",
+    "session62OriginalBotPoolSourceCommit": "18874aeb40e664ad3cc71b941007466ba7c401cd",
+    "session62OriginalBotPoolLiveScanWiredReadOnly": true,
+    "session62OriginalBotPoolGuestPageGuard": "PINNED_XBOX_SDK_MEM_ISCOMMITTED_EACH_PAGE",
+    "session62OriginalBotPoolCoarseCodes": [
+      60,
+      61,
+      62,
+      63,
+      64
+    ],
+    "session62OriginalBotPoolNoNpcAiCopies": true,
+    "session62NativeReadOnlyStagingRun": 44983239377,
+    "session62NativeReadOnlyStagingResult": "SUCCESS_CXX_SANITIZER_JAVA8_SOURCE_STAGE",
+    "session62FullAndroidApkRun": 44983239391,
+    "session62FullAndroidApkResultAtCheck": "IN_PROGRESS_ROOM_ONLY_NO_GAMEPLAY",
+    "session62BotPoolActualDeviceAvailability": "NOT_OBSERVED_NO_PHONE_TRIAL",
+    "session62ActualRemoteHumanModelCreated": false,
+    "session62ActualGuestMissionLaunched": false,
+    "session62RealStoryReadyCallback": false,
+    "session62CrossDeviceCombatSync": false
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
