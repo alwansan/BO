@@ -120,6 +120,46 @@ public final class SessionTest {
             for(String code:guestEvents)check(code.matches("[A-Z0-9_]{1,70}")&&
                 !code.contains("Story guest")&&!code.contains("127.0.0.1"));
         }
+        // SESSION69: synthetic native core/stream MATCH enters the genuine
+        // RoomSession original-game-thread facade. The Java source gate may
+        // send TLS STORY_PREPARE, but never scene READY/COMMIT or a guest loader.
+        try(RoomSession owner=RoomSession.create();RoomSession remote=RoomSession.create()){
+            owner.startHost(source,loop,0,"Native host","Native stage");
+            until(()->owner.snapshot().phase==RoomSession.Phase.HOSTING);
+            RoomSession.Status access=owner.snapshot();
+            remote.join("127.0.0.1:"+access.port,access.fingerprint,"Rejoin guest");
+            until(()->remote.snapshot().phase==RoomSession.Phase.JOINED&&
+                      owner.snapshot().roster.players.size()==2);
+            check(!owner.prepareObservedHostStageFromGameThread()); // no source
+            check(owner.bindStoryGameThread()); // fake callback owner thread
+            check(owner.observeOriginalStageIdentityFromGameThread(11,0,0));
+            check(owner.prepareObservedHostStageFromGameThread());
+            until(()->remote.storyStatus().ticket!=null);
+            RoomStoryWire.Ticket original=owner.storyStatus().ticket;
+            check(original!=null&&original.mission==0&&original.stage==0&&
+                  original.sceneEpoch==1&&original.participants==3);
+            check(!owner.storyStatus().committed&&!remote.storyStatus().committed);
+            check(!owner.prepareObservedHostStageFromGameThread());
+            check(owner.cancelStoryFromGameThread());
+            until(()->remote.storyStatus().ticket==null);
+            check(!owner.observeOriginalStageIdentityFromGameThread(11,0,0));
+            check(!owner.prepareObservedHostStageFromGameThread()); // same roster
+            int priorWireId=remote.snapshot().roster.self;
+            remote.stop();
+            until(()->owner.snapshot().roster.players.size()==1);
+            remote.join("127.0.0.1:"+access.port,access.fingerprint,"Rejoined human");
+            until(()->remote.snapshot().phase==RoomSession.Phase.JOINED&&
+                      owner.snapshot().roster.players.size()==2);
+            check(remote.snapshot().roster.self>priorWireId);
+            check(!owner.observeOriginalStageIdentityFromGameThread(11,0,0));
+            check(owner.prepareObservedHostStageFromGameThread());
+            until(()->remote.storyStatus().ticket!=null);
+            RoomStoryWire.Ticket after=owner.storyStatus().ticket;
+            check(after!=null&&after.sceneEpoch==2&&
+                  after.mission==0&&after.stage==0&&after.participants==3&&
+                  !after.same(original));
+            check(!remote.storyStatus().committed);
+        }
         System.out.println("STORY_DIAGNOSTICS_PASS: authenticated TLS lifecycle emits only bounded safe codes even without room UI");
         System.out.println("SESSION_STORY_BRIDGE_PASS: authenticated TLS ticket via pinned game-thread facade, no implicit READY, host-only prepare, replay and cancel fences");
         System.out.println("ROOM_SESSION_PASS: real host/join, immutable roster, reject, cancellation, lifecycle");
