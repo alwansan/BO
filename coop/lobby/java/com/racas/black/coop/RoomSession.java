@@ -78,6 +78,7 @@ public final class RoomSession implements AutoCloseable {
     }
     private OriginalStageCandidate lastSourceStage;
     private long lastSourceStageAtNs;
+    private final RoomOriginalHostStagePrepareGate sourceStagePrepare=new RoomOriginalHostStagePrepareGate();
     /** Compact TLS roster positions, NOT long-lived RoomWire.Player IDs.
      * Source-only bot appearance proposal for genuine joined human devices. */
     public int hostAppearancePeerMaskFromGameThread(){
@@ -101,11 +102,40 @@ public final class RoomSession implements AutoCloseable {
             if(closed||!validStoryThread()||
                (phase!=Phase.HOSTING&&phase!=Phase.JOINED)||
                episode<=0||level<0||level>8||stage<0||stage>15||
-               (lastSourceStage!=null&&episode<=lastSourceStage.originalEpisode))
+               (lastSourceStage!=null&&episode<lastSourceStage.originalEpisode))
                 return false;
+            long now=System.nanoTime();
+            if(lastSourceStage!=null&&episode==lastSourceStage.originalEpisode){
+                if(level!=lastSourceStage.level||stage!=lastSourceStage.stage)return false;
+                lastSourceStageAtNs=now;
+                if(phase==Phase.HOSTING)sourceStagePrepare.observe(episode,level,stage,now);
+                return false;
+            }
             lastSourceStage=new OriginalStageCandidate(episode,level,stage);
-            lastSourceStageAtNs=System.nanoTime();
+            lastSourceStageAtNs=now;
+            if(phase==Phase.HOSTING)sourceStagePrepare.observe(episode,level,stage,now);
             return true;
+        }
+    }
+    /** Native original core/stream match queues real TLS STORY_PREPARE only.
+     * Does NOT start guests, trigger scene READY, or touch original game RAM.
+     */
+    public boolean prepareObservedHostStageFromGameThread(){
+        synchronized(lock){
+            if(!validStoryThread()||phase!=Phase.HOSTING||host==null||
+               !host.isRunning()||lastSourceStage==null||
+               host.storyTicket()!=null)return false;
+            try{
+                RoomWire.State state=host.snapshot();
+                if(state.players.size()<2||state.players.size()>4||
+                   state.players.get(0).id!=1)return false;
+                int epoch=sourceStagePrepare.nextOffer(
+                    state.revision,state.players.size()-1,false,System.nanoTime());
+                if(epoch==0)return false;
+                RoomStoryWire.Ticket ticket=host.prepareStory(
+                    sourceStagePrepare.level(),sourceStagePrepare.stage(),epoch);
+                return ticket!=null&&sourceStagePrepare.markOffered(state.revision,epoch);
+            }catch(IOException ignored){return false;}
         }
     }
     /** Source-only evidence for future launcher verification, not READY. */
@@ -336,6 +366,7 @@ public final class RoomSession implements AutoCloseable {
             localEyeTransportSeq=0;hostEyeWorldTick=0;eyeBridgeErrorLogged=false;
             lastStageResourceFolder=-1;lastStageResourceObservedAt=0;
             lastSourceStage=null;lastSourceStageAtNs=0;
+            sourceStagePrepare.reset();
             oldHost=host;oldClient=client;oldAnnouncer=announcer;
             host=null;client=null;announcer=null;phase=Phase.CONNECTING;
             description="Connecting";fingerprint="";
@@ -474,6 +505,7 @@ public final class RoomSession implements AutoCloseable {
             localEyeTransportSeq=0;hostEyeWorldTick=0;eyeBridgeErrorLogged=false;
             lastStageResourceFolder=-1;lastStageResourceObservedAt=0;
             lastSourceStage=null;lastSourceStageAtNs=0;
+            sourceStagePrepare.reset();
             oldHost=host;oldClient=client;oldAnnouncer=announcer;
             host=null;client=null;announcer=null;phase=Phase.IDLE;description="";fingerprint="";
         }

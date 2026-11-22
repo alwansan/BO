@@ -101,8 +101,12 @@ public final class RoomAppRooms {
   if(episode<=0||level<0||level>8||stage<0||stage>15)return;
   RoomSession session;
   synchronized(RoomAppRooms.class){session=active;}
-  if(session!=null&&session.observeOriginalStageIdentityFromGameThread(episode,level,stage))
-   RoomDiagnostics.event("ORIGINAL_CORE_STREAM_STAGE_IDENTITY_CACHED_NOT_SCENE_READY");
+  if(session!=null){
+   if(session.observeOriginalStageIdentityFromGameThread(episode,level,stage))
+    RoomDiagnostics.event("ORIGINAL_CORE_STREAM_STAGE_IDENTITY_CACHED_NOT_SCENE_READY");
+   if(session.prepareObservedHostStageFromGameThread())
+    RoomDiagnostics.event("ORIGINAL_HOST_STAGE_TLS_PREPARE_QUEUED_NOT_SCENE_READY");
+  }
  }
  public static void originalStreamingStageFromGameThread(int code){
   if(code<500||code>2029)return;

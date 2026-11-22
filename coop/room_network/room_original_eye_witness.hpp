@@ -115,7 +115,13 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
         if(env->ExceptionCheck())env->ExceptionClear();
         // Only a source-matched ORIGINAL stage may become a value-only hint
         // for the room, never a scene-loaded report or STORY_READY.
-        if(identityCode==67&&coreEpisode>0){
+        static uint64_t lastStageRefreshAt=0;
+        if(!lookSourceMatched)lastStageRefreshAt=0;
+        // Re-offer verified source stage at most every 2s, for late joiners.
+        if(lookSourceMatched&&coreEpisode>0&&
+           (identityCode==67||!lastStageRefreshAt||
+            at<lastStageRefreshAt||at-lastStageRefreshAt>=2000u)){
+            lastStageRefreshAt=at;
             jmethodID stageMethod=env->GetMethodID(
                 cls,"coopRecordOriginalStageIdentity","(III)V");
             if(env->ExceptionCheck())env->ExceptionClear();

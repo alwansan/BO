@@ -209,6 +209,7 @@ def prepare(root: pathlib.Path):
         'RoomDirect.java': 'lobby/java/com/racas/black/coop/RoomDirect.java',
         'RoomDiscovery.java': 'lobby/java/com/racas/black/coop/RoomDiscovery.java',
         'RoomSession.java': 'lobby/java/com/racas/black/coop/RoomSession.java',
+        'RoomOriginalHostStagePrepareGate.java': 'lobby/java/com/racas/black/coop/RoomOriginalHostStagePrepareGate.java',
         'RoomHostHumanKinematics.java': 'lobby/java/com/racas/black/coop/RoomHostHumanKinematics.java',
         'RoomGuestHostWorldSource.java': 'lobby/java/com/racas/black/coop/RoomGuestHostWorldSource.java',
         'RoomScanGate.java': 'lobby/java/com/racas/black/coop/RoomScanGate.java',
