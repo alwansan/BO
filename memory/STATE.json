@@ -1684,7 +1684,7 @@
       "roomOnlyApkLastObserved": "in_progress"
     },
     "ORIGINAL_GUEST_FRONTEND_AUTH_TLS_STAGE": {
-      "status": "SOURCE_CI_SUCCESS_REAL_TLS_FRONTEND_REGRESSION_PENDING",
+      "status": "SOURCE_NATIVE_TLS_ANDROID29_CI_SUCCESS_ROOM_ONLY_APK_RUNNING_NO_LOADER",
       "originalFrontendFunction": "sub_00115030",
       "authenticatedTlsTicket": true,
       "frontendSeparateOriginalThread": true,
@@ -1702,7 +1702,18 @@
       "firstPreflightOutcome": "failure_missing_comma_source_transform",
       "sourceCiRun": 45036307188,
       "sourceCiConclusion": "success",
-      "realTlsFrontendRegression": "coop/lobby/test/SessionTest.java"
+      "realTlsFrontendRegression": "coop/lobby/test/SessionTest.java",
+      "sourcePreflightRun": 45036440734,
+      "sourcePreflightConclusion": "success",
+      "realTlsRun": 45036440629,
+      "realTlsConclusion": "success",
+      "android29Run": 45036440585,
+      "android29Conclusion": "success",
+      "udpRun": 45036440578,
+      "udpConclusion": "success",
+      "roomOnlyApkRun": 45036440579,
+      "roomOnlyApkLastObserved": "in_progress_install_pinned_android_build_tools",
+      "originalPcOverrideRoute": "portingpete/Black-2006-Recomp b2512fafd scripts/generate.py:391-398 -- lab-only, no Android verified call ABI"
     }
   },
   "pending": {
