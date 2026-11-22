@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-53-original-camera-eye-v6-authenticated-world.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-54-real-stage-resource-file-open-correlated-with-original-player.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -1432,6 +1432,37 @@
       "sceneCallbacksSynthetic": true,
       "continuousOwnerMicroPhoneTestsRequested": false,
       "sessionFile": "memory/sessions/2026-11-22_bo-coop-53-original-camera-eye-v6-authenticated-world.md"
+    },
+    "ORIGINAL_STAGE_FOLDER_OPEN_AND_PLAYER_SOURCE_20261122": {
+      "status": "SUCCESS_SOURCE_ONLY_NOT_RUNTIME_GAMEPLAY",
+      "branch": "experiment/black-coop",
+      "levelDirectories": [
+        0,
+        1,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "verifiedOriginalKernelSuccessFileOpen": true,
+      "files": [
+        "LevelDat.bin",
+        "Unit_01.bin"
+      ],
+      "sourceFolderIdsOnly": true,
+      "singleAtomicSharedWatcherAcrossXboxKernelAndNativePlayer": true,
+      "actualGameThreadJNIStaged": true,
+      "actualDeviceRuntimeVerified": false,
+      "stageLoadedProof": false,
+      "originalSelectedMissionIdProven": false,
+      "dynamicGuestAutoStageLaunch": false,
+      "remoteHumanRendered": false,
+      "sourceCi": 44975377158,
+      "androidSourceCi": 44975377204,
+      "realTlsCi": 44975377200,
+      "sessionFile": "memory/sessions/2026-11-22_bo-coop-54-real-stage-resource-file-open-correlated-with-original-player.md"
     }
   },
   "pending": {
@@ -1605,10 +1636,10 @@
     "deviceTested": true,
     "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "Session53 v6 real source camera eye sampled on original BLACK game update, gated after real story COMMIT, guest TLS -> host latest eyes -> world snapshot all 4, CI44973843153 and Android CI44973843154/44973843200 SUCCESS with synthetic fixtures, NOT playable/scene. Nonfrontend original state 30 stable samples diagnostic only CI44974018224 SUCCESS_SOURCE_ONLY_NOT_SCENE_PROOF. Android room-only build44974018195 IN_PROGRESS_NO_GAMEPLAY. P0 prove host original mission ID + guest same actual loader and committed stage, render independently controlled human body with ANY bot enemy/friendly look, share AI/quest. No minor owner test. Update RESTORE.",
+  "next": "SESSION54 original file-open+player source correlation CI44975377158/44975377204/44975377200 SUCCESS. Verify Windows NO-GAMEPLAY build44975377208 and Android29 TLS44975377221 live. P0 original actual host mission ID, guest same stage auto loader and true game-thread stage-loaded READY, independent remote bot character (any enemy/ally look) and host AI/quest/combat. No owner small phone trial. Keep RESTORE updated.",
   "latestHandoff": {
     "date": "2026-11-22",
-    "session": 53,
+    "session": 54,
     "kind": "owner_CI_only_stage_static_plus_safe_tls_story_diagnostics",
     "plan": "docs/superpowers/plans/2026-11-22-host-story-remote-ally.md",
     "sourceCiRun": 44951425780,
@@ -1638,7 +1669,7 @@
     "engineHookVerified": false,
     "remoteHumanActorRendered": false,
     "ownerV3DeviceAccepted": false,
-    "sessionFile": "memory/sessions/2026-11-22_bo-coop-53-original-camera-eye-v6-authenticated-world.md",
+    "sessionFile": "memory/sessions/2026-11-22_bo-coop-54-real-stage-resource-file-open-correlated-with-original-player.md",
     "ownerTestPolicy": "CI_FIRST_MAJOR_TRIAL_ONLY",
     "ownerXbeStaticRun": 44956138064,
     "storyDiagnosticJvmRun": 44956473684,
@@ -1665,10 +1696,10 @@
     "engineActualSharedStory": false,
     "ownerWriterFlowRun": 44961768279,
     "nativeWorldWitnessRun": 44962215874,
-    "latestRoomApkRun": 44974018195,
+    "latestRoomApkRun": 44975377208,
     "realSceneLoadedHook": false,
     "ownerPhoneTestRequested": false,
-    "latestRoomApkStatus": "IN_PROGRESS_NO_GAMEPLAY",
+    "latestRoomApkStatus": "CHECK_LIVE_NO_GAMEPLAY",
     "previousRoomApkFailure": 44962275637,
     "ciAllowlistRepaired": true,
     "externalTdmReferenceReviewed": true,
@@ -1733,7 +1764,13 @@
     "v6SourceStageRun": 44973843200,
     "originalNonFrontendStableRun": 44974018224,
     "originalNonFrontendStableResult": "SUCCESS_NOT_SCENE_PROOF",
-    "actualRemoteHumanBotDraw": false
+    "actualRemoteHumanBotDraw": false,
+    "stageResourceSourceCi": 44975377158,
+    "stageNativeSourceCi": 44975377204,
+    "stageRealTlsCI": 44975377200,
+    "androidTlsRun": 44975377221,
+    "phoneTestRequiredNow": false,
+    "originalSceneLoaded": false
   },
   "executionStatus": "Session49 owner observed bot ally green reticle + inability shoot/kill. New value-only AllyTargetPolicy source+ASAN44969897865 SUCCESS (not actual game). Read docs/OWNER_ALLY_GREEN_RETICLE_RESEARCH_AR.md and Session49; CL images listed, binary pixels not inspected. Next independently trace original c5 aim target faction tint and damage suppression, map original friendly actor->MODEL->GPU draw/RCB. Real verified game-thread host-selected stage epoch and human fullbody/shared world still missing. One future major two-phone trial only.",
   "ownerClarifications": {
@@ -1747,9 +1784,9 @@
   },
   "integrationRoadmap": "docs/COOP_INTEGRATION_ROADMAP_AR.md",
   "currentWork": {
-    "session": 53,
-    "task": "Real original BLACK first-person eye read-only JNI -> TLS v6 guest-source camera samples -> host authenticates peer eyes and fans to 3 clients after true story COMMIT. Nonfrontend stable source evidence gate.",
-    "status": "Real TLS 4-party v6 camera samples and host snapshot CI44973843153 SUCCESS (mock xyz/scene), native Android source-stage CI44973843200 SUCCESS, Android TLS44973843154 SUCCESS; true game scene load/guest mission launch and original remote bot actor still absent.",
+    "session": 54,
+    "task": "Original owner XBE game difficulty read-only at mission-launch attempt and pinned Xbox kernel successful source stage level file opens correlated on ORIGINAL character game-thread; key missing original selected mission and actual loaded-scene/remote human gameplay.",
+    "status": "Real pinned Xbox kernel stage-file source witness CI44975377158 SUCCESS; Android/native source preflight CI44975377204 SUCCESS; real 4-party TLS v6 CI44975377200 SUCCESS. Resource OPEN + original player NOT full stage loaded. Phone test still not requested.",
     "sourceCi": 44951425780,
     "sourceCode": "9938283748ad1bdb06f15259d7e4fcb791a47574",
     "latestOwnerTestedAndroidApkRun": 44946597973,
@@ -1897,7 +1934,20 @@
     "latestNoGameplayApkRun": 44974018195,
     "latestNoGameplayApkResult": "IN_PROGRESS_NO_GAMEPLAY",
     "actualHostSelectedSceneLoaded": false,
-    "realOriginalRemoteBotRendered": false
+    "realOriginalRemoteBotRendered": false,
+    "stageResourceOpenCiRun": 44975377158,
+    "stageSourcePreflightCiRun": 44975377204,
+    "stageTlsRun": 44975377200,
+    "stageSrcCommit": "8c1f996a08b9e868443c5d3c2e91ec029c08c66c",
+    "originalStageResourceOpenedAndroidRuntimeVerified": false,
+    "originalSelectedMissionProven": false,
+    "originalSceneLoadedProven": false,
+    "guestRealStageLoaded": false,
+    "remoteHumanBotRendered": false,
+    "latestDiagnosticBuildRun": 44975377208,
+    "latestDiagnosticBuildResult": "CHECK_LIVE_NO_GAMEPLAY",
+    "latestAndroidTlsRun": 44975377221,
+    "latestAndroidTlsResult": "CHECK_LIVE"
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
