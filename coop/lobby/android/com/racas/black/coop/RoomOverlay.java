@@ -159,7 +159,7 @@ public final class RoomOverlay {
         status=label(statusPanel,"OFFLINE",14,FG);
         notice=label(statusPanel,"اختر الاستضافة أو جهازاً من القائمة.",12,MUTED);
         twoPhoneStart=button(statusPanel,
-            "START • المرحلة الأولى — هاتفان (تجريبي)",
+            "START • المستوى 0 / المرحلة 1 — هاتفان",
             this::startTwoPhoneFirstStage);
         twoPhoneStart.setTag("room_story_start_first_two");
         twoPhoneStart.setEnabled(false);
@@ -264,7 +264,7 @@ public final class RoomOverlay {
             return;
         }
         RoomDiagnostics.event("TWO_PHONE_START_FIRST_STAGE_REQUESTED");
-        notice.setText("أُرسل START للضيف بنجاح. انتقل الآن إلى BLACK واختر المرحلة الأولى؛ على هاتف الضيف اختر نفس المرحلة. ظهور الأجسام ما زال قيد التطوير.");
+        notice.setText("أُرسل START للمستوى 0/المرحلة 1. ما يزال دخول قائمة BLACK يدوياً على الهاتفين، والعالم المشترك قيد التطوير.");
         android.widget.Toast.makeText(activity,
             "START وصل للغرفة. افتح المرحلة الأولى داخل BLACK على الهاتفين.",
             android.widget.Toast.LENGTH_LONG).show();

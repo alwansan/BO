@@ -34,7 +34,8 @@ final class RoomOriginalHostStagePrepareGate {
         return true;
     }
     // A HOST pressing START in a room of exactly 2 humans may create an
-    // authenticated stage-0 PREPARE before the real original level begins.
+    // authenticated first-original-stage (level_00/stg_0001) PREPARE
+    // before the real original level begins.
     // Does NOT launch the original game or imply any scene was loaded.
     int nextTwoPhoneFirstStageEpoch(long revision,int remoteHumans,
                                     boolean hasTicket){

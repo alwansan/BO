@@ -138,7 +138,7 @@ public final class RoomSession implements AutoCloseable {
     }
     /**
      * Host-owned TWO-PHONE FIRST STAGE START from the Android lobby.
-     * Sends a genuine TLS STORY_PREPARE for mission 0/stage 0 to the one
+     * Sends a genuine TLS STORY_PREPARE for level 0/stage 1 to the one
      * connected phone. The original game stage is NOT started here.
      * Original game-thread source stage matching and independent scene
      * readiness remain necessary for READY/COMMIT, with no fake actors.
@@ -152,13 +152,13 @@ public final class RoomSession implements AutoCloseable {
                 if(current==null||current.players.size()!=2||
                    current.players.get(0).id!=1||
                    (lastSourceStage!=null&&
-                    (lastSourceStage.level!=0||lastSourceStage.stage!=0)))
+                    (lastSourceStage.level!=0||lastSourceStage.stage!=1)))
                     return false;
                 int epoch=sourceStagePrepare.nextTwoPhoneFirstStageEpoch(
                     current.revision,1,false);
                 if(epoch==0)return false;
-                RoomStoryWire.Ticket ticket=host.prepareStory(0,0,epoch);
-                if(ticket==null||ticket.mission!=0||ticket.stage!=0||
+                RoomStoryWire.Ticket ticket=host.prepareStory(0,1,epoch);
+                if(ticket==null||ticket.mission!=0||ticket.stage!=1||
                    ticket.participants!=3||
                    ticket.rosterRevision!=current.revision||
                    !sourceStagePrepare.markTwoPhoneFirstStageOffered(

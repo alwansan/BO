@@ -34,7 +34,7 @@ public final class RoomTwoPhoneFirstStageStartTlsTest {
             ok(host.requestTwoPhoneFirstStageFromLobby()); // UI thread
             ok(!host.requestTwoPhoneFirstStageFromLobby()); // no second START
             RoomStoryWire.Ticket first=host.storyStatus().ticket;
-            ok(first!=null&&first.mission==0&&first.stage==0&&
+            ok(first!=null&&first.mission==0&&first.stage==1&&
                 first.participants==3&&first.sceneEpoch==1);
             until(()->{
                 RoomStoryWire.Ticket t=guest.storyStatus().ticket;
@@ -43,12 +43,12 @@ public final class RoomTwoPhoneFirstStageStartTlsTest {
             ok(!host.storyStatus().committed&&!guest.storyStatus().committed);
             int[] guestPlan=guest.guestPreparedStoryFromOriginalFrontend();
             ok(guestPlan.length==8&&guestPlan[0]==1&&guestPlan[1]==0&&
-               guestPlan[2]==0&&guestPlan[6]==2&&guestPlan[7]==3);
+               guestPlan[2]==1&&guestPlan[6]==2&&guestPlan[7]==3);
             ok(host.bindStoryGameThread()&&guest.bindStoryGameThread());
             // No game source means NO READY, NO COMMIT, NO remote NPC rendering.
-            ok(host.attestOriginalRunningSceneFromGameThread(10,0,0,0,0,0,0,0)==0);
+            ok(host.attestOriginalRunningSceneFromGameThread(10,0,1,0,0,0,0,0)==0);
             ok(guest.attestOriginalRunningSceneFromGameThread(
-                20,0,0,first.sceneEpoch,(int)first.rosterRevision,
+                20,0,1,first.sceneEpoch,(int)first.rosterRevision,
                 (int)(first.token>>>32),(int)first.token,2)==0);
             // If owner actually starts another mission, pending first-stage
             // request must ABORT, not silently label wrong game as ready.
@@ -74,12 +74,17 @@ public final class RoomTwoPhoneFirstStageStartTlsTest {
             ok(host.bindStoryGameThread()&&guest.bindStoryGameThread());
             // Simulated genuine native original scene callbacks. Real engine
             // does not auto-launch from the Android UI yet.
-            ok(host.observeOriginalStageIdentityFromGameThread(77,0,0));
-            ok(host.attestOriginalRunningSceneFromGameThread(77,0,0,0,0,0,0,0)==1);
+            ok(host.observeOriginalStageIdentityFromGameThread(77,0,1));
+            // First original loading episode now MUST preserve initial TLS
+            // ticket; previous stage=0 incorrectly ABORTED and re-PREPARED.
+            ok(host.storyStatus().ticket!=null&&host.storyStatus().ticket.same(t));
+            ok(guest.storyStatus().ticket!=null&&guest.storyStatus().ticket.same(t));
+            ok(host.attestOriginalRunningSceneFromGameThread(77,0,1,0,0,0,0,0)==1);
             ok(!host.storyStatus().committed);
-            ok(guest.observeOriginalStageIdentityFromGameThread(91,0,0));
+            ok(guest.observeOriginalStageIdentityFromGameThread(91,0,1));
+            ok(guest.storyStatus().ticket!=null&&guest.storyStatus().ticket.same(t));
             ok(guest.attestOriginalRunningSceneFromGameThread(
-                91,0,0,t.sceneEpoch,(int)t.rosterRevision,
+                91,0,1,t.sceneEpoch,(int)t.rosterRevision,
                 (int)(t.token>>>32),(int)t.token,2)==2);
             until(()->host.storyStatus().committed&&guest.storyStatus().committed);
             ok(host.observeOriginalEyeFromGameThread(
