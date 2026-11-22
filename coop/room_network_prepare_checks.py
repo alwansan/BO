@@ -37,7 +37,10 @@ class RoomNetPrepareTests(unittest.TestCase):
             for safe in ('GPU_V36_DECL_CANDIDATE',
                          'GPU_V36_SLOT12_PACKED_DECL','GPU_V36_SLOT16_PACKED_DECL',
                          'GPU_V36_SLOT20_PACKED_DECL','GPU_V36_SLOT24_NORMPACK_DECL',
-                         'GPU_V36_SLOT28_FLOAT2_DECL'):
+                         'GPU_V36_SLOT28_FLOAT2_DECL',
+                         'GPU_V36_BOUND_INDEXED_DRAW',
+                         'GPU_V36_BOUND_ARRAY_DRAW',
+                         'GPU_V36_BOUND_SAME_STREAM_12_20'):
                 self.assertIn(safe,java)
             self.assertIn('RoomAppRooms.shutdown()',java)
             overlay=(root/'app/src/main/java/com/racas/black/coop/RoomOverlay.java').read_text(encoding='utf-8')
@@ -87,6 +90,10 @@ class RoomNetPrepareTests(unittest.TestCase):
             shader_source=(root/'src/d3d/d3d8.cpp').read_text(encoding='utf-8')
             self.assertIn('gpu::ParseDeclaration(*vs);',shader_source)
             self.assertIn('blackcoop::ObserveOriginalGpuDecl(*vs)',shader_source)
+            self.assertIn('blackcoop::ObserveOriginalGpuDraw(g_state, false)',shader_source)
+            self.assertIn('blackcoop::ObserveOriginalGpuDraw(g_state, true)',shader_source)
+            self.assertIn('if (g_backend) g_backend->Draw(g_state, a[0], a[1], a[2], nullptr)',shader_source)
+            self.assertIn('if (g_backend) g_backend->Draw(g_state, a[0], 0, a[1], indices)',shader_source)
             self.assertIn('#include "coop/gpu_decl_witness.hpp"',shader_source)
             gpu_guard=(root/'src/coop/gpu_decl_contract.hpp').read_text(encoding='utf-8')
             gpu_reporter=(root/'src/coop/gpu_decl_witness.hpp').read_text(encoding='utf-8')
@@ -94,6 +101,10 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('static gpu_probe::Once observed',gpu_reporter)
             self.assertIn('kStride36',gpu_guard)
             self.assertIn('SendSafeWorldCodeToAndroid(9)',gpu_reporter)
+            self.assertIn('gpu_probe::ClassifyBoundDraw(desc,bound,indexed)',gpu_reporter)
+            self.assertIn('static gpu_probe::Once observedDraws',gpu_reporter)
+            self.assertIn('SendSafeWorldCodeToAndroid(12)',gpu_reporter)
+            self.assertIn('kDrawPacked12And20SameStream',gpu_guard)
             self.assertNotIn('reportSceneLoadedFromGameThread',gpu_guard+gpu_reporter)
             self.assertNotIn('acknowledgeSceneLoaded',gpu_guard+gpu_reporter)
     def test_fail_closed_on_changed_anchor(self):

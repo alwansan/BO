@@ -40,6 +40,39 @@ inline uint32_t Classify(const Decl& d) noexcept {
     }
     return bits;
 }
+// Source-only draw classification: both the original parsed declaration and
+// the CURRENT D3D8 bound vertex stream must independently agree on 36 bytes.
+// It observes a draw call, but does not associate the stream with a MODEL.
+struct BoundStream {
+    bool has_vertex_buffer=false;
+    uint32_t stride=0;
+};
+using BoundStreams=std::array<BoundStream,16>;
+enum DrawCategory : uint32_t {
+    kDrawIndexedActive36=1u<<0,
+    kDrawArrayActive36=1u<<1,
+    kDrawPacked12And20SameStream=1u<<2,
+};
+inline uint32_t ClassifyBoundDraw(const Decl& decl,
+                                  const BoundStreams& bound,
+                                  bool indexed) noexcept {
+    bool active=false;
+    uint32_t packed12=0,packed20=0;
+    for(const Input& in:decl.input) {
+        if(in.stream<0||in.stream>=16)continue;
+        const unsigned slot=static_cast<unsigned>(in.stream);
+        if(!bound[slot].has_vertex_buffer ||
+           bound[slot].stride!=36 || decl.stride[slot]!=36)continue;
+        active=true;
+        const bool byte4=(in.type==0x40 || in.type==0x44 || in.type==0x34);
+        if(in.offset==12 && byte4)packed12|=1u<<slot;
+        if(in.offset==20 && byte4)packed20|=1u<<slot;
+    }
+    if(!active)return 0;
+    uint32_t flags=indexed?kDrawIndexedActive36:kDrawArrayActive36;
+    if((packed12&packed20)!=0)flags|=kDrawPacked12And20SameStream;
+    return flags;
+}
 class Once final {
     std::atomic<uint32_t> delivered_{0};
 public:

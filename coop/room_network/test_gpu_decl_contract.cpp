@@ -29,6 +29,38 @@ int main() {
     d.stride[0]=24;
     assert(Classify(d)==0);
     d.stride[0]=36;
+    // No phantom draw: both parsed layout and actual bound stream must match.
+    BoundStreams bs{};
+    assert(ClassifyBoundDraw(d,bs,true)==0);
+    bs[0]={true,36};
+    assert(ClassifyBoundDraw(d,bs,true)==
+           (kDrawIndexedActive36|kDrawPacked12And20SameStream));
+    assert(ClassifyBoundDraw(d,bs,false)==
+           (kDrawArrayActive36|kDrawPacked12And20SameStream));
+    bs[0].stride=40;
+    assert(ClassifyBoundDraw(d,bs,true)==0);
+    bs[0].stride=36;
+    bs[0].has_vertex_buffer=false;
+    assert(ClassifyBoundDraw(d,bs,false)==0);
+    bs[0].has_vertex_buffer=true;
+    d.stride[0]=32;
+    assert(ClassifyBoundDraw(d,bs,true)==0);
+    d.stride[0]=36;
+    d.input[3].type=0x32;
+    assert(ClassifyBoundDraw(d,bs,true)==kDrawIndexedActive36);
+    d.input[3].type=0x34;
+    // Never combine packed offsets from two different streams.
+    Decl other{};
+    other.stride[0]=36;other.stride[1]=36;
+    other.input[0]={0,12,0x44};
+    other.input[1]={1,20,0x40};
+    bs[1]={true,36};
+    assert(ClassifyBoundDraw(other,bs,true)==kDrawIndexedActive36);
+    other.input[2]={1,12,0x44};
+    assert(ClassifyBoundDraw(other,bs,true)==
+           (kDrawIndexedActive36|kDrawPacked12And20SameStream));
+    bs[1].stride=0;
+    assert(ClassifyBoundDraw(other,bs,true)==kDrawIndexedActive36);
     Once once;
     assert(once.NewBits(kStride36)==kStride36);
     assert(once.NewBits(kStride36)==0);
@@ -42,5 +74,5 @@ int main() {
     assert(sum==all);
     assert(concurrent.NewBits(all)==0);
     // No code may claim a model's actual skin weights or loaded scene.
-    std::cout<<"GPU_V36_DECL_CONTRACT_PASS: bounded fixed codes once, not proven model skinning or game scene\n";
+    std::cout<<"GPU_V36_DECL_CONTRACT_PASS: fixed draw/layout codes, no MODEL identity, skinning or scene proof\n";
 }
