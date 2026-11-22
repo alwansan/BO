@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-48-stride36-tripled-lanes-android-build.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-49-owner-green-friendly-reticle.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -1316,6 +1316,27 @@
       "realRemoteBody": false,
       "evidence": "memory/evidence/OWNER-SKIN-TRIPLE-LANES-20261122-safe-summary.json",
       "session": "memory/sessions/2026-11-22_bo-coop-48-stride36-tripled-lanes-android-build.md"
+    },
+    "OWNER_ALLY_GREEN_RETICLE_FRIENDLY_FIRE_OBSERVATION_20261122": {
+      "status": "OWNER_OBSERVATION_RECORDED_SYNTHETIC_POLICY_CI_SUCCESS_REAL_GAME_UNVERIFIED",
+      "source": "Owner reports green reticle on original BLACK bot allies and cannot shoot or kill them",
+      "sourceImages": "https://github.com/alwansan/CL/tree/main/black%20log/img",
+      "sourceImageFilesListed": 25,
+      "sourceImagePixelsInspected": false,
+      "sourceLogs": "black log/logs/BLACK-Probe-20261122-035406-841/black_log.txt",
+      "sourceGameImageSHA1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+      "ownerAssetRepo": "https://github.com/alwansan/biso",
+      "sourceCommit": "67c885484ecd4047df59a0a98ef497a099b7af53",
+      "asanUbsanRun": 44969897865,
+      "udpRun": 44969897868,
+      "nativeBridgePreflightRun": 44969897873,
+      "originalGameFactionVerified": false,
+      "originalReticleCodeIdentified": false,
+      "originalDamageGuardFound": false,
+      "actualAllyModelMappedToActor": false,
+      "actualRemoteHumanRendering": false,
+      "ownerPhoneTestRequested": false,
+      "nextResearch": "docs/OWNER_ALLY_GREEN_RETICLE_RESEARCH_AR.md"
     }
   },
   "pending": {
@@ -1489,10 +1510,10 @@
     "deviceTested": true,
     "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "Session48 private pinned owner MODEL stride36 lane test44968462670 SUCCESS: both +16/+20 packed 4B lanes all values multiple3 and /3<25 for 38917 samples; slots differ (0 identical full words), not enough to identify shader-index lane; +12 summed weights only heuristic. Bound-original-D3D8 APK44967448414 SUCCESS artifact14732891166, room-only, NOT gameplay. Next original named MODEL->D3D actual bound draw, true c5 game-thread loaded mission/stage/epoch before STORY_READY, independent human remote fullbody and host world gameplay sync. Fix stale v2 JSON metadata vs actual RoomWire v3 on next substantive build. No owner small tests.",
+  "next": "Session49 owner observed bot ally green reticle + inability shoot/kill. New value-only AllyTargetPolicy source+ASAN44969897865 SUCCESS (not actual game). Read docs/OWNER_ALLY_GREEN_RETICLE_RESEARCH_AR.md and Session49; CL images listed, binary pixels not inspected. Next independently trace original c5 aim target faction tint and damage suppression, map original friendly actor->MODEL->GPU draw/RCB. Real verified game-thread host-selected stage epoch and human fullbody/shared world still missing. One future major two-phone trial only.",
   "latestHandoff": {
     "date": "2026-11-22",
-    "session": 48,
+    "session": 49,
     "kind": "owner_CI_only_stage_static_plus_safe_tls_story_diagnostics",
     "plan": "docs/superpowers/plans/2026-11-22-host-story-remote-ally.md",
     "sourceCiRun": 44951425780,
@@ -1522,7 +1543,7 @@
     "engineHookVerified": false,
     "remoteHumanActorRendered": false,
     "ownerV3DeviceAccepted": false,
-    "sessionFile": "memory/sessions/2026-11-22_bo-coop-48-stride36-tripled-lanes-android-build.md",
+    "sessionFile": "memory/sessions/2026-11-22_bo-coop-49-owner-green-friendly-reticle.md",
     "ownerTestPolicy": "CI_FIRST_MAJOR_TRIAL_ONLY",
     "ownerXbeStaticRun": 44956138064,
     "storyDiagnosticJvmRun": 44956473684,
@@ -1595,9 +1616,12 @@
     "latestRoomApkSha256": "9aa7d608e02f2b82956e47bdbafcaa4a763616f68bae22e48888ecf14725c24a",
     "originalOwnerTripleRowsRun": 44968462670,
     "originalOwnerTripleRowsSafeArtifact": 14732965565,
-    "realRemoteHumanFullBodyRendered": false
+    "realRemoteHumanFullBodyRendered": false,
+    "allyFriendlyPolicySyntheticRun": 44969897865,
+    "originalAllyFactionVerified": false,
+    "latestOwnerScreenshotPixelsInspected": false
   },
-  "executionStatus": "Session48 current source/owner-private stats SUCCESS, full APK CI44967448414 SUCCESS no gameplay; no original shader/skin/scene proof. Full details in memory/sessions/2026-11-22_bo-coop-48-stride36-tripled-lanes-android-build.md",
+  "executionStatus": "Session49 owner observed bot ally green reticle + inability shoot/kill. New value-only AllyTargetPolicy source+ASAN44969897865 SUCCESS (not actual game). Read docs/OWNER_ALLY_GREEN_RETICLE_RESEARCH_AR.md and Session49; CL images listed, binary pixels not inspected. Next independently trace original c5 aim target faction tint and damage suppression, map original friendly actor->MODEL->GPU draw/RCB. Real verified game-thread host-selected stage epoch and human fullbody/shared world still missing. One future major two-phone trial only.",
   "ownerClarifications": {
     "session": 28,
     "previousPhoneTests": "Solo gameplay and two-phone real LAN lobby now confirmed, but no two-phone SAME WORLD gameplay",
@@ -1609,9 +1633,9 @@
   },
   "integrationRoadmap": "docs/COOP_INTEGRATION_ROADMAP_AR.md",
   "currentWork": {
-    "session": 48,
-    "task": "Original body resource/GPU draw identity and actual host mission scene loader; private packed index row pattern discovered, no runtime character renderer yet",
-    "status": "Room-only APK44967448414 SUCCESS; private 3x encoded lanes CI44968462670 SUCCESS; original shader-to-MODEL and true loaded scene still OPEN",
+    "session": 49,
+    "task": "Verify original BLACK ally recognition through owner green reticle and friendly damage exclusion; value-only source CI pass; original engine target/faction/damage hooks NOT found",
+    "status": "Owner ally observation saved. ASAN/UBSAN ally target policy44969897865 SUCCESS; GPU/model provenance, actual friend/foe engine implementation, host scene epoch and playable co-op remain open.",
     "sourceCi": 44951425780,
     "sourceCode": "9938283748ad1bdb06f15259d7e4fcb791a47574",
     "latestOwnerTestedAndroidApkRun": 44946597973,
@@ -1738,7 +1762,8 @@
     "actualRemoteHumanFullBodyRendered": false,
     "actualBlackSceneLoadedCallback": false,
     "ownerOriginalSkinningProven": false,
-    "originalCandidateEncodedRowsSafeRun": 44968462670
+    "originalCandidateEncodedRowsSafeRun": 44968462670,
+    "ownerAllyReference": "docs/OWNER_ALLY_GREEN_RETICLE_RESEARCH_AR.md"
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
@@ -1777,7 +1802,13 @@
     "hostOneSharedStoryWorldRequired": true,
     "remoteBodyGameplayProven": false,
     "sharedStoryStartProven": false,
-    "avoidRepeatOriginalModelCapture": true
+    "avoidRepeatOriginalModelCapture": true,
+    "originalBotAllyAimReticleGreenObservedByOwner": true,
+    "originalBotAllyNotShootableOrKillableReportedByOwner": true,
+    "doNotReuseBotAIForRemoteHumans": true,
+    "reuseOnlyVerifiedOriginalAllyVisualAndFriendlyBehavior": true,
+    "ownerImagesClBlackLog": "https://github.com/alwansan/CL/tree/main/black%20log/img",
+    "ownerDataBisoReadOnly": "https://github.com/alwansan/biso"
   },
   "originalPlayerDiagnostic": {
     "package": "org.bocoop.black.defaultplayer",
