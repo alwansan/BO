@@ -4,6 +4,10 @@ public final class RoomOriginalHostStagePrepareGateTest {
     public static void main(String[]args) {
         RoomOriginalHostStagePrepareGate gate=new RoomOriginalHostStagePrepareGate();
         ok(gate.nextOffer(1,1,false,10)==0);
+        ok(gate.nextTwoPhoneFirstStageEpoch(1,0,false)==0);
+        ok(gate.nextTwoPhoneFirstStageEpoch(1,4,false)==0);
+        ok(gate.nextTwoPhoneFirstStageEpoch(1,1,true)==0);
+        ok(gate.nextTwoPhoneFirstStageEpoch(1,3,false)==1);
         ok(!gate.observe(0,0,0,10));
         ok(gate.observe(1,0,0,100));
         ok(!gate.observe(1,0,1,150));
