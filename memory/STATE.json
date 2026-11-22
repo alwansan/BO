@@ -1659,7 +1659,7 @@
     "deviceTested": true,
     "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "Session55 original sub_00124CF0 launch epoch resets file opens; exact two source stage files only same stage/epoch, stable 30 player samples, bounded logs; candidate globals0x2D0D60/68 read only and correlated to actual resource folder in same epoch, NOT selected mission proof. CI44976311777/44976311742/44976311799/44976311775/44976590109 SUCCESS. Check live 44976590159 and 44976590182. P0 original host-selected mission and safe real guest game loader, actual stage-loaded READY, independent any-bot human body, host AI/quest. No tiny owner phone tests.",
+  "next": "Static pinned owner original XBE 0x00124CF0 mission-launch candidate has direct source call to 0x0011C3C0 in first-linear-RET bounded excerpt; latter calls 0x0011BC00 and 0x001B6EB0. PRIVATE CI44976902032 and44977028006 SUCCESS, artifacts14735709038/14736088372 numeric only. NEXT targeted inspect 0x001B6EB0 and0x0011BC00 to identify verified ORIGINAL mission loader ABI and selected mission (source no proven loader yet); wire actual guest load+real scene READY; independent any-BOT remote human body and host AI/quest. No tiny owner tests. Windows room-only APK44976590182 IN PROGRESS NO GAMEPLAY.",
   "latestHandoff": {
     "date": "2026-11-22",
     "session": 55,
@@ -1722,7 +1722,7 @@
     "latestRoomApkRun": 44976590182,
     "realSceneLoadedHook": false,
     "ownerPhoneTestRequested": false,
-    "latestRoomApkStatus": "CHECK_LIVE_NO_GAMEPLAY",
+    "latestRoomApkStatus": "IN_PROGRESS_NO_GAMEPLAY",
     "previousRoomApkFailure": 44962275637,
     "ciAllowlistRepaired": true,
     "externalTdmReferenceReviewed": true,
@@ -1798,7 +1798,15 @@
     "originalXbeLevelPointerArtifact": 14736120332,
     "originalXbeLevelNameScan": "SUCCESS_ALL_ZERO_8_LEVELS_NO_ORDER_PROOF",
     "originalLaunchEpochSourceRun": 44976311777,
-    "originalMissionCandidateSourceRun": 44976590109
+    "originalMissionCandidateSourceRun": 44976590109,
+    "directCalleeSourceRun": 44976902032,
+    "directCalleeOneHopRun": 44977028006,
+    "directCalleeCandidate": "0x0011C3C0",
+    "directCalleeChildren": [
+      "0x0011BC00",
+      "0x001B6EB0"
+    ],
+    "originalLoaderAbiProven": false
   },
   "executionStatus": "Session49 owner observed bot ally green reticle + inability shoot/kill. New value-only AllyTargetPolicy source+ASAN44969897865 SUCCESS (not actual game). Read docs/OWNER_ALLY_GREEN_RETICLE_RESEARCH_AR.md and Session49; CL images listed, binary pixels not inspected. Next independently trace original c5 aim target faction tint and damage suppression, map original friendly actor->MODEL->GPU draw/RCB. Real verified game-thread host-selected stage epoch and human fullbody/shared world still missing. One future major two-phone trial only.",
   "ownerClarifications": {
@@ -1814,7 +1822,7 @@
   "currentWork": {
     "session": 55,
     "task": "Original mission launch attempt episode-scope resource-open witness, rejects stale/mixed/replayed evidence; passive unverified mission field A/B candidates from original XBE with same epoch in sanitized logs; next prove actual host mission and guest stage loader.",
-    "status": "Original Xbox episode stage witness CI44976311777 SUCCESS, Android source CI44976311742 SUCCESS, Android29 TLS44976311775 SUCCESS, 4-party core44976311799 SUCCESS. New candidate source CI44976590109 SUCCESS. Actual original mission index and real guest shared story unproven; room-only APK queued/in progress; no owner test requested.",
+    "status": "Original launch epoch+real file-open safe source tests PASS; source-selected mission global candidates LOGGED ONLY; original pinned XBE first-RET direct call edge 0x124CF0->0x11C3C0 -> 0x11BC00/0x1B6EB0 extracted in private CI44976902032 and 44977028006 SUCCESS; target ABI/actual scene loader NOT proven; no original shared game yet.",
     "sourceCi": 44951425780,
     "sourceCode": "9938283748ad1bdb06f15259d7e4fcb791a47574",
     "latestOwnerTestedAndroidApkRun": 44946597973,
@@ -1993,9 +2001,19 @@
     "episodeSourceCi": 44976311777,
     "candidateAndroidSourceCi": 44976590109,
     "latestTlsCoreCi": 44976590159,
-    "latestNoGameplayApkStatus": "CHECK_LIVE",
+    "latestNoGameplayApkStatus": "IN_PROGRESS_NO_GAMEPLAY",
     "realGuestStoryLaunch": false,
-    "remoteBotActorRendered": false
+    "remoteBotActorRendered": false,
+    "originalLaunchImmediateDirectCallee": "0x0011C3C0",
+    "originalLaunchDirectCalleeChildren": [
+      "0x0011BC00",
+      "0x001B6EB0"
+    ],
+    "sourceXbeDirectCallScanRun": 44976902032,
+    "sourceXbeDirectCallScanArtifact": 14735709038,
+    "sourceXbeOneHopCalleeRun": 44977028006,
+    "sourceXbeOneHopCalleeArtifact": 14736088372,
+    "originalLaunchCallTreeProof": "SOURCE_ONLY_FIRST_LINEAR_RET_NOT_CFG_NO_LOADER_ABI"
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",

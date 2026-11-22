@@ -1,3 +1,10 @@
+## Session55 source-CALL research result, not a proven loader
+- [Pinned original XBE direct edge CI44976902032 SUCCESS](https://github.com/alwansan/BO/actions/runs/44976902032): 0x00124CF0 → 0x0011C3C0 one direct-call candidate in first-linear-RET-clipped excerpt.
+- [One-hop callee CI44977028006 SUCCESS](https://github.com/alwansan/BO/actions/runs/44977028006): 0x0011C3C0 references 0x0011BC00 and 0x001B6EB0. Numeric source pointers only; NOT proof of real loader/ABI/missions.
+- Next P0 inspect original actual loader calls, safely identify selected mission->stage, guest execute original scene launch and only then READY; independent any BOT-appearance remote human with host NPC/objective sync. No tiny phone test; one major trial when playable.
+
+---
+
 ## Session55 P0 original mission launcher — 2026-11-22
 - Shipped 0cec393c: mission launch attempt episode gate, original Xbox file-open both LevelDat.bin+Unit_01.bin same folder/episode, stable original player read-only. Old file mask no longer permits stale/restart/cross-folder matches; [Xbox CI44976311777 PASS](https://github.com/alwansan/BO/actions/runs/44976311777).
 - Shipped 97a50577: only a diagnostic bounded link of XBE 0x2D0D60/68 read-only candidate values (0–7 vs OTHER) to the later ACTUAL stage folder in same original launch. No mission index proof; not a guest stage loader/READY. [source CI44976590109 PASS](https://github.com/alwansan/BO/actions/runs/44976590109). Next: verify mission index and safe original guest engine loader, independent remote bot human body, host AI/objectives.
