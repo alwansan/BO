@@ -1,0 +1,83 @@
+name: BO-COOP pinned original XBE level and stage byte source survey (NO GAMEPLAY)
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/analysis/original_streaming_stage_xbe.py'
+      - 'coop/analysis/test_original_streaming_stage_xbe.py'
+      - '.github/workflows/black-coop-original-streaming-source.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: bo-original-streaming-source
+  cancel-in-progress: true
+jobs:
+  synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Byte-width positive negative and original-XBE identity guards
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s coop/analysis -p test_original_streaming_stage_xbe.py -v
+  owner-private:
+    needs: synthetic
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: bo
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - uses: actions/checkout@v4
+        with:
+          repository: alwansan/biso
+          ref: 9ceb6a65fb5a4414c106ca3961295a1f8f7e558b
+          path: owner-biso
+          sparse-checkout: Black_Xbox_Extracted/default.xbe
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+          lfs: false
+      - name: Read only selected original XBE streaming byte candidate window
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          set -euo pipefail
+          python3 bo/coop/analysis/original_streaming_stage_xbe.py \
+            --owner-xbe owner-biso/Black_Xbox_Extracted/default.xbe \
+            --report "$RUNNER_TEMP/bo-original-streaming-safe.json"
+          python3 - <<'PY'
+          import json,os,pathlib
+          f=pathlib.Path(os.environ["RUNNER_TEMP"])/"bo-original-streaming-safe.json"
+          d=json.loads(f.read_text())
+          assert d["schema"]=="bo-private-original-streaming-byte-candidates-v1"
+          assert d["owner_xbe_sha1_pinned"]
+          assert d["candidate_function"]=="001EDC90"
+          assert d["window_bytes"]==0x900
+          assert not any(d[k] for k in ("dynamic_call_reachability_proven",
+              "actual_host_mission_identity_proven","safe_guest_stage_loader_abi_proven",
+              "actual_stage_loaded_callback_proven","story_ready_or_coop_gameplay_proven",
+              "raw_original_instructions_or_assets_exported"))
+          assert f.stat().st_size<=3000
+          print("BO_ORIGINAL_XBE_STREAMING_SANITIZED_PASS: byte-level counters only, no stage loader or gameplay assertion")
+          PY
+      - name: Upload safe counts only, never owner code or binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: bo-original-xbe-level-stage-sanitized
+          path: ${{ runner.temp }}/bo-original-streaming-safe.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Remove ephemeral owner XBE and report
+        if: always()
+        run: |
+          rm -rf owner-biso
+          rm -f "$RUNNER_TEMP/bo-original-streaming-safe.json"
