@@ -22,7 +22,7 @@ MAX_BUFFERS=12
 MAX_DRAW_PER_BUFFER=128
 MAX_INDICES_PER_DRAW=131072
 MAX_SAMPLES_REPORT=48
-MAX_REPORT_BYTES=65536
+MAX_REPORT_BYTES=256*1024
 
 def lane_counts(data,vertex_base,stride,indices,joints):
     """Aggregate summaries only: original float/u16/u8 values never returned."""
@@ -143,5 +143,19 @@ def main():
 if __name__=="__main__":
     try:main()
     except (ValueError,OSError) as ex:
-        print("BO_OWNER_VERTEX36_LANE_STATS_BLOCKED: "+type(ex).__name__)
+        # Only fixed, non-sensitive error reason names leave private CI.
+        reasons={
+            "Report limit":"SAFE_REPORT_BUDGET",
+            "Model budget":"MODEL_ENUMERATION_BUDGET",
+            "Asset bound":"PRIVATE_ASSET_BUDGET",
+            "Model buffer count":"MODEL_BUFFER_BUDGET",
+            "Only original verified human stride36 accepted":"UNEXPECTED_VERTEX_STRIDE",
+            "Draw count exceeded":"DRAW_COUNT_BUDGET",
+            "Index count budget":"INDEX_COUNT_BUDGET",
+            "Report model count":"REPORT_MODEL_LIMIT",
+            "Missing pinned original stage":"PRIVATE_STAGE_MISSING",
+            "Invalid original owner data root":"OWNER_ROOT_INVALID",
+        }
+        reason=reasons.get(str(ex),"UNVERIFIED_DATA_RANGE_OR_FORMAT")
+        print("BO_OWNER_VERTEX36_LANE_STATS_BLOCKED: "+reason)
         raise SystemExit(1)
