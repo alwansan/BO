@@ -35,6 +35,9 @@ int main(){
     assert(track.ObserveSuccessfulOpen("D:\\levels\\level_00\\Unit_01.bin",result));
     assert(track.ObserveSuccessfulOpen("D:\\levels\\level_08\\LevelDat.bin",result));
     assert(track.LastResourceFolderHint()==8);
+    assert(!track.BothEssentialFilesOpenedForCandidate());
+    assert(track.ObserveSuccessfulOpen("D:\\levels\\level_08\\Unit_01.bin",result));
+    assert(track.BothEssentialFilesOpenedForCandidate());
     assert((track.SeenMask()&(1u<<16))!=0);
     // Atomic once gate under concurrent genuine engine file threads.
     OriginalStageFileOpenOnce parallel;

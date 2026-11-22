@@ -21,9 +21,8 @@ def patched(original):
                    '#include "kernel/exports.h"\n#include "kernel/coop_stage_resource_contract.hpp"')
     s=exactly_once(s,'    LOG_FIRST(400, "open %s", name.c_str());\n    return kSuccess;\n}\n\n}  // namespace',
 '''    // Original XBE asked to OPEN an actual disc file; this is NOT stage loaded.
-    static blackcoop::OriginalStageFileOpenOnce witness;
     blackcoop::OriginalStageResource seen;
-    if(witness.ObserveSuccessfulOpen(name,seen))
+    if(blackcoop::g_originalStageFileOpen.ObserveSuccessfulOpen(name,seen))
         LOGR("BO_STAGE_RESOURCE_OPEN_LEVEL_%02d_TYPE_%d_NOT_SCENE",seen.folder,seen.resource);
     LOG_FIRST(400, "open %s", name.c_str());
     return kSuccess;
@@ -40,9 +39,8 @@ def patched(original):
     W32(handle_out, NewHandle(f));
     IoStatus(iosb, kSuccess, info);
     // Host extracted files behave identically to original mounted ISO.
-    static blackcoop::OriginalStageFileOpenOnce hostCreateWatch;
     blackcoop::OriginalStageResource opened;
-    if(hostCreateWatch.ObserveSuccessfulOpen(name,opened))
+    if(blackcoop::g_originalStageFileOpen.ObserveSuccessfulOpen(name,opened))
         LOGR("BO_STAGE_RESOURCE_OPEN_LEVEL_%02d_TYPE_%d_NOT_SCENE",opened.folder,opened.resource);
     LOG_FIRST(400, "open %s", name.c_str());''')
     s=exactly_once(s,'''    (void)options;
@@ -55,9 +53,8 @@ def patched(original):
 '''    (void)options;
     W32(handle_out, NewHandle(f));
     IoStatus(iosb, kSuccess, 1);
-    static blackcoop::OriginalStageFileOpenOnce hostOpenWatch;
     blackcoop::OriginalStageResource opened;
-    if(hostOpenWatch.ObserveSuccessfulOpen(name,opened))
+    if(blackcoop::g_originalStageFileOpen.ObserveSuccessfulOpen(name,opened))
         LOGR("BO_STAGE_RESOURCE_OPEN_LEVEL_%02d_TYPE_%d_NOT_SCENE",opened.folder,opened.resource);
     return kSuccess;
 }

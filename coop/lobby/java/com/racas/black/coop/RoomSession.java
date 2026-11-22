@@ -65,6 +65,29 @@ public final class RoomSession implements AutoCloseable {
     private LocalEye lastEye;
     private int localEyeTransportSeq,hostEyeWorldTick;
     private boolean eyeBridgeErrorLogged;
+    private int lastStageResourceFolder=-1;
+    private long lastStageResourceObservedAt;
+    /** Two exact original Xbox level file OPENs + original game-thread player
+     * sample. Does not prove selected mission, stage loaded or renderer. */
+    boolean observeStageResourceFolderFromOriginalGameThread(int folder){
+        synchronized(lock){
+            if(closed||!validStoryThread()||
+               (phase!=Phase.HOSTING&&phase!=Phase.JOINED)||
+               (folder!=0&&folder!=1&&(folder<3||folder>8)))return false;
+            boolean changed=lastStageResourceFolder!=folder;
+            lastStageResourceFolder=folder;
+            lastStageResourceObservedAt=System.nanoTime();
+            return changed;
+        }
+    }
+    /** Diagnostic, never used to trigger READY/COMMIT. */
+    public int originalStageFolderHintFromGameThread(){
+        synchronized(lock){
+            if(!validStoryThread()||lastStageResourceFolder<0||
+               System.nanoTime()-lastStageResourceObservedAt>60000000000L)return -1;
+            return lastStageResourceFolder;
+        }
+    }
     boolean observeOriginalEyeFromGameThread(int x,int y,int z){
         synchronized(lock){
             if(closed||(phase!=Phase.HOSTING&&phase!=Phase.JOINED)||
@@ -241,6 +264,7 @@ public final class RoomSession implements AutoCloseable {
             token=++generation;
             storyGameThread=null;lastEye=null;
             localEyeTransportSeq=0;hostEyeWorldTick=0;eyeBridgeErrorLogged=false;
+            lastStageResourceFolder=-1;lastStageResourceObservedAt=0;
             oldHost=host;oldClient=client;oldAnnouncer=announcer;
             host=null;client=null;announcer=null;phase=Phase.CONNECTING;
             description="Connecting";fingerprint="";
@@ -377,6 +401,7 @@ public final class RoomSession implements AutoCloseable {
         synchronized(lock){
             ++generation;storyGameThread=null;lastEye=null;
             localEyeTransportSeq=0;hostEyeWorldTick=0;eyeBridgeErrorLogged=false;
+            lastStageResourceFolder=-1;lastStageResourceObservedAt=0;
             oldHost=host;oldClient=client;oldAnnouncer=announcer;
             host=null;client=null;announcer=null;phase=Phase.IDLE;description="";fingerprint="";
         }

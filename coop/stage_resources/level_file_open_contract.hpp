@@ -70,5 +70,14 @@ public:
     uint32_t SeenMask()const noexcept{
         return mask_.load(std::memory_order_acquire);
     }
+    bool BothEssentialFilesOpenedForCandidate()const noexcept{
+        const int folder=LastResourceFolderHint();
+        if(folder<0||folder>8)return false;
+        const uint32_t both=uint32_t(3u)<<(folder*2);
+        return (SeenMask()&both)==both;
+    }
 };
+// One source of truth shared between original Xbox kernel file-open hooks
+// and original first-person-player sample; READ-ONLY observability only.
+inline OriginalStageFileOpenOnce g_originalStageFileOpen;
 } // namespace blackcoop

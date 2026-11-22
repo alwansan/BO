@@ -38,6 +38,7 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('WORLD_MISSION_LAUNCH_ATTEMPT',java)
             self.assertIn('ORIGINAL_LAUNCH_DIFFICULTY_BLACK_OPS_NOT_MISSION',java)
             self.assertIn('ORIGINAL_LAUNCH_DIFFICULTY_UNAVAILABLE',java)
+            self.assertIn('RoomAppRooms.originalLevelResourceHintFromGameThread(code - 30)',java)
             self.assertIn('ORIGINAL_NON_FRONTEND_PLAYER_STABLE_UNVERIFIED_MISSION',java)
             for safe in ('GPU_V36_DECL_CANDIDATE',
                          'GPU_V36_SLOT12_PACKED_DECL','GPU_V36_SLOT16_PACKED_DECL',
@@ -87,6 +88,10 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('kernel::G<float>(original_player+0x108)',eye)
             self.assertIn('SDL_GetAndroidJNIEnv()',eye)
             self.assertIn('NonFrontendOriginalPlayerWitness stable;',eye)
+            self.assertIn('#include "kernel/coop_stage_resource_contract.hpp"',eye)
+            self.assertIn('g_originalStageFileOpen',eye)
+            self.assertIn('BothEssentialFilesOpenedForCandidate()',eye)
+            self.assertIn('SendSafeWorldCodeToAndroid(30+folder)',eye)
             self.assertIn('SendSafeWorldCodeToAndroid(13)',eye)
             self.assertIn('kernel::R32(game+layout::kGameState)',eye)
             self.assertIn('layout::kFrontEnd',eye)

@@ -53,6 +53,14 @@ public final class RoomAppRooms {
      localEyeLogged.compareAndSet(false,true))
    RoomDiagnostics.event("ORIGINAL_LOCAL_CAMERA_EYE_VALIDATED");
  }
+ /** Only called from real original player hook after two known file opens. */
+ public static void originalLevelResourceHintFromGameThread(int folder){
+  if(folder!=0&&folder!=1&&(folder<3||folder>8))return;
+  RoomSession current;
+  synchronized(RoomAppRooms.class){current=active;}
+  if(current!=null&&current.observeStageResourceFolderFromOriginalGameThread(folder))
+   RoomDiagnostics.event("ORIGINAL_LEVEL_"+folder+"_TWO_FILES_OPEN_NOT_SCENE");
+ }
  public static void shutdown(){
   RoomSession old;RoomPresence.Service beacon;
   synchronized(RoomAppRooms.class){epoch++;starting=false;old=active;beacon=presence;active=null;presence=null;}

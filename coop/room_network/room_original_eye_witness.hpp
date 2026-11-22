@@ -7,6 +7,7 @@
 #include "coop/room_original_eye_contract.hpp"
 #include "coop/room_nonfrontend_original_player.hpp"
 #include "coop/room_world_tick.hpp"
+#include "kernel/coop_stage_resource_contract.hpp"
 #include "game/layout.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_system.h>
@@ -52,5 +53,16 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
         env->DeleteLocalRef(cls);
     }else if(env->ExceptionCheck())env->ExceptionClear();
     env->DeleteLocalRef(activity);
+    // Two genuine file opens in the original Xbox kernel plus the original
+    // player update are useful evidence; still NOT scene-loaded or mission-ID.
+    const auto& opened=g_originalStageFileOpen;
+    const int folder=opened.LastResourceFolderHint();
+    if(opened.BothEssentialFilesOpenedForCandidate()&&folder>=0&&folder<=8&&folder!=2){
+        static std::atomic<int> lastReported{-1};
+        int was=lastReported.load(std::memory_order_relaxed);
+        if(was!=folder&&lastReported.compare_exchange_strong(was,folder,
+                                             std::memory_order_acq_rel))
+            SendSafeWorldCodeToAndroid(30+folder);
+    }
 }
 } // namespace blackcoop
