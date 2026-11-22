@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-77-original-guest-launch-entry-cfg.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-78-two-phone-first-stage-start.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -2776,5 +2776,20 @@
     "originalRemoteHumanBotRendered": false,
     "hostSharedCampaignImplemented": false,
     "ownerPhoneTrialRequiredNow": false
+  },
+  "session78": {
+    "ownerPriority": "two_phone_host_START_mission0_stage0_see_each_other_original_bot",
+    "codeCommit": "fbfeedffcc9c85dad6eb44084e58797c723ca2d0",
+    "twoPhoneStartButtonImplemented": true,
+    "hostTlsStoryPrepareFromButton": true,
+    "realTlsRun": 45054921382,
+    "sourcePreflightRun": 45054921402,
+    "android29Run": 45054921375,
+    "androidApkRun": 45054921483,
+    "ciStatus": "pending",
+    "autoOriginalGuestMissionLaunch": false,
+    "remoteCharacterOriginalDraw": false,
+    "hostSharedOriginalEnemySimulation": false,
+    "requiresPhoneTrialNow": false
   }
 }
