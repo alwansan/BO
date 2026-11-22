@@ -121,6 +121,23 @@ public final class RoomSession implements AutoCloseable {
             return false;
         }
     }
+    /** Real TLS movement command, offered only from the verified BLACK game thread. */
+    public boolean offerHumanInputFromGameThread(int seq,int x,int y,int yaw,
+                                                  boolean fire,boolean jump)
+        throws IOException{
+        synchronized(lock){
+            return validStoryThread()&&phase==Phase.JOINED&&client!=null&&
+                client.offerHumanInput(seq,x,y,yaw,fire,jump);
+        }
+    }
+    /** Trust comes from TLS peer identity; no direct NPC or guest memory writes. */
+    public java.util.List<RoomTls.Server.TrustedInput> drainHumanInputsFromGameThread(){
+        synchronized(lock){
+            if(!validStoryThread()||phase!=Phase.HOSTING||host==null)
+                return java.util.Collections.emptyList();
+            return host.drainLatestTrustedInputs();
+        }
+    }
     /** Host scene unload/cancel invalidates its prepared ticket. */
     public boolean cancelStoryFromGameThread(){
         synchronized(lock){

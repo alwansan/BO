@@ -77,11 +77,39 @@ public final class RoomTls {
         // Pre-JOIN handshake diagnostics only; never store PINs or peer identities.
         private volatile String handshakeFailureKind="none";
         public String handshakeFailureKind(){return handshakeFailureKind;}
+        // Every identity comes from the TLS socket, never a network payload.
+        public static final class TrustedInput {
+            public final int peerId;
+            public final RoomHumanInputWire.Input value;
+            private TrustedInput(int id,RoomHumanInputWire.Input value){
+                this.peerId=id;this.value=value;
+            }
+        }
+        public List<TrustedInput> drainLatestTrustedInputs(){
+            synchronized(lock){
+                if(closed||story==null||!storyCommitted||revision!=story.rosterRevision)
+                    return Collections.emptyList();
+                List<TrustedInput> result=new ArrayList<>(3);
+                long at=now();
+                for(Peer peer:peers.values()){
+                    RoomHumanInputWire.Input input=peer.latestInput;
+                    peer.latestInput=null;
+                    if(input!=null&&!peer.dead.get()&&input.matches(story)&&
+                       at>=peer.latestInputAt&&at-peer.latestInputAt<=250&&
+                       storySlots.containsKey(peer.id))
+                        result.add(new TrustedInput(peer.id,input));
+                }
+                return result;
+            }
+        }
         private final class Peer {
             final int id;final String name;final byte[] echo;final SSLSocket socket;
             final ArrayBlockingQueue<byte[]> outbound=new ArrayBlockingQueue<>(8);
             volatile long lastSeen=now();
             volatile Thread writer;
+            int lastInputSequence;
+            RoomHumanInputWire.Input latestInput;
+            long latestInputAt;
             final AtomicBoolean dead=new AtomicBoolean();
             Peer(int id,RoomWire.Join join,SSLSocket socket){this.id=id;this.name=join.name;this.echo=join.nonce.clone();this.socket=socket;}
             void send(byte[] data){if(!dead.get()&&!outbound.offer(data))stop();}
@@ -150,6 +178,7 @@ public final class RoomTls {
                         throw new IOException("Peer story prepare queue unexpectedly filled");
                 }
                 story=ticket;storyReadyMask=0;storyCommitted=false;
+                for(Peer p:peers.values()){p.lastInputSequence=0;p.latestInput=null;}
                 storySlots.clear();storySlots.putAll(slots);
                 record("STORY_HOST_PREPARED");
                 return ticket;
@@ -191,6 +220,7 @@ public final class RoomTls {
         private void abortStoryLocked(){
             RoomStoryWire.Ticket old=story;
             story=null;storyReadyMask=0;storyCommitted=false;storySlots.clear();
+            for(Peer p:peers.values()){p.lastInputSequence=0;p.latestInput=null;}
             if(old!=null)record("STORY_HOST_ABORTED");
             if(old!=null)try{
                 byte[] cancel=RoomStoryWire.encode(RoomWire.STORY_ABORT,old);
@@ -252,11 +282,26 @@ public final class RoomTls {
                     try{while(!owned.dead.get())RoomWire.write(out,owned.outbound.take());}
                     catch(IOException e){owned.stop();}catch(InterruptedException e){Thread.currentThread().interrupt();owned.stop();}
                 });owned.writer.start();broadcast();socket.setSoTimeout(5000);
-                long lastSequence=0,window=now()/1000;int packets=0;
+                long lastSequence=0,window=now()/1000;int packets=0,inputPackets=0;
                 while(!closed&&!owned.dead.get()){
                     RoomWire.Packet p=RoomWire.decode(RoomWire.read(in));
-                    long current=now()/1000;if(current!=window){window=current;packets=0;}
-                    if(++packets>10)throw new IOException("Peer rate exceeded");
+                    long current=now()/1000;
+                    if(current!=window){window=current;packets=0;inputPackets=0;}
+                    if(p.type==RoomWire.HUMAN_INPUT){
+                        if(++inputPackets>60)throw new IOException("Input rate exceeded");
+                        RoomHumanInputWire.Input input=RoomHumanInputWire.parse(p);
+                        synchronized(lock){
+                            if(closed||story==null||!storyCommitted||
+                               revision!=story.rosterRevision||
+                               !storySlots.containsKey(owned.id)||!input.matches(story)||
+                               input.sequence<=owned.lastInputSequence)
+                                throw new IOException("Input before story commit or invalid sequence");
+                            owned.lastInputSequence=input.sequence;
+                            owned.latestInput=input;owned.latestInputAt=now();
+                        }
+                        continue;
+                    }
+                    if(++packets>10)throw new IOException("Peer control rate exceeded");
                     if(p.type==RoomWire.LEAVE){RoomWire.parseLeave(p);break;}
                     if(p.type==RoomWire.STORY_READY){
                         RoomStoryWire.Ticket ready=RoomStoryWire.parse(p);
@@ -320,6 +365,10 @@ public final class RoomTls {
         // TLS writes must NEVER run on the verified BLACK game thread.
         // READY is a single, bounded, fail-closed task: no per-frame queueing.
         // Heartbeat uses its existing dedicated background scheduler.
+        // Conflated newest-input queue, one dedicated TLS output worker.
+        private final ArrayBlockingQueue<byte[]> inputFrames=new ArrayBlockingQueue<>(1);
+        private final Thread inputWriter;
+        private int lastQueuedInputSequence;
         private final ThreadPoolExecutor readyWriter=new ThreadPoolExecutor(
             1,1,0L,TimeUnit.MILLISECONDS,new ArrayBlockingQueue<>(1),
             RoomTls::thread,new ThreadPoolExecutor.AbortPolicy());
@@ -363,7 +412,9 @@ public final class RoomTls {
             finally{deadline.shutdownNow();}
             heartbeat=Executors.newSingleThreadScheduledExecutor(RoomTls::thread);
             reader=thread(this::receive);
-            heartbeat.scheduleAtFixedRate(this::ping,0,1000,TimeUnit.MILLISECONDS);reader.start();
+            inputWriter=thread(this::writeInputs);
+            heartbeat.scheduleAtFixedRate(this::ping,0,1000,TimeUnit.MILLISECONDS);
+            reader.start();inputWriter.start();
         }
         public RoomWire.State snapshot(){RoomWire.State value=view;return value==null?null:RoomWire.copy(value);}
         public RoomStoryWire.Ticket storyTicket(){return story;}
@@ -420,6 +471,45 @@ public final class RoomTls {
                 close();
             }
         }
+        /** Only the RoomSession verified game-thread adapter should call. */
+        public boolean offerHumanInput(int seq,int x,int y,int yaw,
+                                       boolean fire,boolean jump)throws IOException {
+            synchronized(lifecycle){
+                RoomStoryWire.Ticket ticket=story;
+                RoomWire.State state=view;
+                if(closed.get()||!storyCommitted||ticket==null||state==null||
+                   state.revision!=ticket.rosterRevision||
+                   !MessageDigest.isEqual(state.session,ticket.session())||
+                   seq<=lastQueuedInputSequence)return false;
+                byte[] frame=RoomHumanInputWire.encode(ticket,seq,x,y,yaw,fire,jump);
+                lastQueuedInputSequence=seq;
+                inputFrames.clear();
+                return inputFrames.offer(frame);
+            }
+        }
+        private void writeInputs(){
+            try{
+                while(!closed.get()){
+                    byte[] frame=inputFrames.take();
+                    RoomHumanInputWire.Input parsed=
+                        RoomHumanInputWire.parse(RoomWire.decode(frame));
+                    synchronized(lifecycle){
+                        if(closed.get()||!storyCommitted||story==null||
+                           !parsed.matches(story))continue;
+                    }
+                    synchronized(out){
+                        if(closed.get())return;
+                        RoomWire.write(out,frame);
+                    }
+                    record("HUMAN_INPUT_TLS_SENT");
+                }
+            }catch(InterruptedException done){
+                Thread.currentThread().interrupt();
+            }catch(IOException|RuntimeException failure){
+                record("HUMAN_INPUT_TLS_FAILED");
+                close();
+            }
+        }
         public String failure(){return failure;}
         public boolean isRunning(){return !closed.get();}
         private void ping(){
@@ -455,6 +545,7 @@ public final class RoomTls {
                         synchronized(lifecycle){
                             if(!closed.get()){
                                 story=incoming;storyReadySent=false;storyCommitted=false;
+                                lastQueuedInputSequence=0;inputFrames.clear();
                                 record("STORY_GUEST_PREPARED");
                             }
                         }
@@ -475,6 +566,7 @@ public final class RoomTls {
                         synchronized(lifecycle){
                             if(story!=null&&story.same(incoming)){
                                 story=null;storyReadySent=false;storyCommitted=false;
+                                lastQueuedInputSequence=0;inputFrames.clear();
                                 record("STORY_GUEST_ABORTED");
                             }
                         }
@@ -488,6 +580,7 @@ public final class RoomTls {
                     synchronized(lifecycle){
                         if(story!=null&&story.rosterRevision!=next.revision){
                             story=null;storyReadySent=false;storyCommitted=false;
+                            lastQueuedInputSequence=0;inputFrames.clear();
                             record("STORY_GUEST_ROSTER_INVALIDATED");
                         }
                     }
@@ -499,9 +592,10 @@ public final class RoomTls {
             synchronized(lifecycle){
                 if(!closed.compareAndSet(false,true))return;
                 view=null;story=null;storyReadySent=false;storyCommitted=false;
+                lastQueuedInputSequence=0;inputFrames.clear();
             }
             readyWriter.shutdownNow();
-            closeSocket(socket);heartbeat.shutdownNow();reader.interrupt();
+            closeSocket(socket);heartbeat.shutdownNow();reader.interrupt();inputWriter.interrupt();
         }
     }
 }
