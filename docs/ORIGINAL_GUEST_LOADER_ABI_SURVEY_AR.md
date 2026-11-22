@@ -1,3 +1,11 @@
+### Session71 pinned OWNER original-XBE guest loader static source audit VERIFIED (2026-11-22)
+- [Original guest frontend/launch/stream survey CI #45036959346 SUCCESS](https://github.com/alwansan/BO/actions/runs/45036959346): synthetic owner-identity positive+negative tests and private pinned C5 owner XBE both passed. Sanitized 1536-byte per-candidate linear windows report: original FRONTEND `0x00115030` mapped=1, call candidates=31, original level byte source mentions=1, stage mentions=0; original MENU LAUNCH `0x00124CF0` mapped=1, call candidates=24, level mentions=3, stage mentions=0; original STREAM entry `0x001EDC90` mapped=1, call candidates=31, level mentions=1, stage mentions=1.
+- IMPORTANT CAVEAT: 1536-byte linear decoding crosses adjacent functions/data; all reported mentions/calls are SOURCE WINDOW CANDIDATES ONLY. **These are not verified entry ABI, guest loader, loaded scene or engine actor**. No private XBE bytes, decoder instructions, raw register dumps, player tokens or assets exported. Original game memory untouched.
+- Privacy CI [#45036959320 SUCCESS](https://github.com/alwansan/BO/actions/runs/45036959320) and UDP [#45036959367 SUCCESS](https://github.com/alwansan/BO/actions/runs/45036959367). Existing frontend TLS delivery code source+native+Java [#45036440734 SUCCESS](https://github.com/alwansan/BO/actions/runs/45036440734), real TLS [#45036440629 SUCCESS](https://github.com/alwansan/BO/actions/runs/45036440629), Android29 [#45036440585 SUCCESS](https://github.com/alwansan/BO/actions/runs/45036440585). Latest Windows standalone ROOM-ONLY APK [#45036440579](https://github.com/alwansan/BO/actions/runs/45036440579) STILL IN_PROGRESS at last check; no current green rebuilt APK claimed.
+- Next P0: independently prove exact owner original frontend menu mission/difficulty transition and launch ABI before authentic host-selected guest AUTO-START; then separately establish true loaded-scene attestation/READY/COMMIT and original drawn BODY from any live BOT look for each human. Keep first-person local controls and owner one major phone trial.
+
+---
+
 # الجلسة 71 — فحص خاص ومحدود لدوال تشغيل المرحلة الأصلية على الضيف
 
 الهدف: الانتقال من وصول `STORY_PREPARE` إلى خيط واجهة BLACK الأصلي، إلى إثبات الطريقة الصحيحة لاستدعاء محرك تحميل مرحلة القصة دون كسر اللعبة.

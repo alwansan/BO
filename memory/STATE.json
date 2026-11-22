@@ -1716,7 +1716,7 @@
       "originalPcOverrideRoute": "portingpete/Black-2006-Recomp b2512fafd scripts/generate.py:391-398 -- lab-only, no Android verified call ABI"
     },
     "ORIGINAL_GUEST_LAUNCH_XBE_SOURCE_SURVEY": {
-      "status": "SOURCE_PUSHED_PRIVATE_CI_PENDING_NO_ABI",
+      "status": "ORIGINAL_OWNER_PRIVATE_CI_SUCCESS_ABI_NOT_PROVEN",
       "ownerSHA1": "c5bfed25449c8212d7a976f15246e87ead57713f",
       "targets": [
         "0x00115030",
@@ -1728,7 +1728,39 @@
       "autoLaunch": false,
       "engineABIProven": false,
       "actualLoadedSceneProven": false,
-      "safeWhileOtherApkBuildRuns": true
+      "safeWhileOtherApkBuildRuns": true,
+      "workflowRun": 45036959346,
+      "conclusion": "success",
+      "privateNumericCounts": {
+        "original_frontend_tick": {
+          "addr": "0x00115030",
+          "mapped": true,
+          "nearCallCandidates": 31,
+          "levelByteMentions": 1,
+          "stageByteMentions": 0
+        },
+        "original_menu_launch_attempt": {
+          "addr": "0x00124CF0",
+          "mapped": true,
+          "nearCallCandidates": 24,
+          "levelByteMentions": 3,
+          "stageByteMentions": 0
+        },
+        "original_stream_loader_entry": {
+          "addr": "0x001EDC90",
+          "mapped": true,
+          "nearCallCandidates": 31,
+          "levelByteMentions": 1,
+          "stageByteMentions": 1
+        }
+      },
+      "functionBoundariesNotProven": true,
+      "safeGuestLaunchABI": false,
+      "loadedSceneProof": false,
+      "privacyRun": 45036959320,
+      "udpRun": 45036959367,
+      "roomOnlyApkRun": 45036440579,
+      "roomOnlyApkLastChecked": "in_progress"
     }
   },
   "pending": {
