@@ -1,3 +1,8 @@
+## Session57 CI verified — 2026-11-22
+Source commit [`7346abc9`](https://github.com/alwansan/BO/commit/7346abc9b2e38829944f5ff3ca8aa504d9cb10f5) separates ORIGINAL XBE WORD B_BEFORE/B_AFTER around unchanged native mission-launch call, four event buckets A/B_BEFORE/B_AFTER/C, same original launch+resource pair+stable player gating. [CI44978712336 SUCCESS](https://github.com/alwansan/BO/actions/runs/44978712336) confirmed C++ sanitized pre/post source tests, pinned original source staging, and Java8 compilation. [UDP44978712333 SUCCESS](https://github.com/alwansan/BO/actions/runs/44978712333). New Android APK [44978712319](https://github.com/alwansan/BO/actions/runs/44978712319) and Android29 TLS [44978712299](https://github.com/alwansan/BO/actions/runs/44978712299) still IN_PROGRESS at last check, no result claimed. Original mission index/guest game loader/scene READY/remote body/host AI/objective/combat remain UNIMPLEMENTED. No small phone tests; only one major later shared-gameplay trial. WRITE ONLY BO experiment/black-coop.
+
+---
+
 ## Session56 (2026-11-22) — mission source WORD widths corrected; original loader still P0
 - [Windows room-only APK44976590182 SUCCESS](https://github.com/alwansan/BO/actions/runs/44976590182), original XBE identity ARM64, not gameplay, no original assets.
 - [Pinned XBE second-hop44977623118 PASS](https://github.com/alwansan/BO/actions/runs/44977623118): 0x11BC00 calls 0x0A23A4 and0x11A4A0 (also level choice); 0x1B6EB0 no direct calls within first-RET excerpt. Not loader ABI.

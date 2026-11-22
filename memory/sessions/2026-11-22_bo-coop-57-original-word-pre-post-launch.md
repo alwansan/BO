@@ -12,3 +12,8 @@ Input HEAD 752e1679affd611c409eebd7a5a4ed206612af85. CI [44978058718](https://gi
 **Not implemented:** verified selected campaign index, safe original guest level loader, true game scene-loaded callback and READY, independently rendered remote human bot, host-authoritative AI/combat/objectives. Owner wants actual shared BLACK campaign on 2–4 phones with ANY enemy/friend bot appearance temporarily and normal original first person locally. No small phone tests; one substantial two-phone trial only after real gameplay exists, all details via bounded logs.
 
 Next: actual source-verified original stage loader and authoritative host-selected scene proof; do not auto-load a guessed folder.
+
+## Verified later this session
+- [C++ + pinned stage + Java8 preflight 44978712336 SUCCESS](https://github.com/alwansan/BO/actions/runs/44978712336). Actual job log contains `ORIGINAL_MISSION_PRE_POST_WORD_PASS` (synthetic contract), `ROOM_NET_STAGE_PASS` and `ROOM_NET_JAVA_PASS`; this verifies code compilation/staging, not game device runtime.
+- [UDP CI44978712333 SUCCESS](https://github.com/alwansan/BO/actions/runs/44978712333).
+- [Full Android APK44978712319](https://github.com/alwansan/BO/actions/runs/44978712319) and [Android29 TLS44978712299](https://github.com/alwansan/BO/actions/runs/44978712299) IN_PROGRESS when checked; always recheck live. No actual shared BLACK campaign or phone trial.
