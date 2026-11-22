@@ -7,7 +7,7 @@ import struct
 import unittest
 
 from story_entry_static import UnsafeImage
-from ally_bullet_xbe_neighborhood import audit,TARGETS,WINDOW
+from ally_bullet_xbe_neighborhood import audit,TARGETS,WINDOW,SOLDIER_WINDOW
 
 def image():
     lo=min(TARGETS.values())-0x1000
@@ -34,8 +34,8 @@ class TestOriginalSoldierBulletMap(unittest.TestCase):
         result=audit(data,hashlib.sha1(data).hexdigest())
         self.assertTrue(result["owner_original_xbe_sha1_verified"])
         self.assertEqual(set(result["targets"]),set(TARGETS))
-        for counts in result["targets"].values():
-            self.assertEqual(counts["window_bytes"],WINDOW)
+        for name,counts in result["targets"].items():
+            self.assertEqual(counts["window_bytes"],SOLDIER_WINDOW if name=="soldier_bullet_receiver" else WINDOW)
             self.assertGreater(counts["conditional_branch_candidates"],0)
             self.assertGreater(counts["decoded_instruction_count"],3)
             self.assertGreater(counts["known_actor_offset_references"]["local_player_cheat_invulnerable_source"],0)

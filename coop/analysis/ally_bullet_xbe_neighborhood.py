@@ -26,6 +26,7 @@ TARGETS = {
     "local_player_damage_candidate_b": 0x001ED700,
 }
 WINDOW = 256
+SOLDIER_WINDOW = 1024  # original 256B survey showed no RET; expanded bounded follow-up
 MAX_REPORT_BYTES = 8192
 OFFSETS = {
     0xC4: "character_kind_source",
@@ -37,16 +38,16 @@ OFFSETS = {
 # integers within arithmetic must not be mistaken for a faction member.
 MEMBER = re.compile(r"\[\s*(?:e(?:ax|bx|cx|dx|si|di))\s*\+\s*0x([0-9a-f]+)\s*\]",re.I)
 CONDITIONAL = re.compile(r"^j(?!mp)[a-z]+$")
-MAX_OPS = 256
+MAX_OPS = 1024
 
-def classify_window(data, address, sections):
+def classify_window(data, address, sections, window=WINDOW):
     if not isinstance(address,int) or address<=0:
         raise UnsafeImage("Bad target")
     mapping=[off+address-va for va,n,off in sections
-             if va<=address and address+WINDOW<=va+n]
+             if va<=address and address+window<=va+n]
     if len(mapping)!=1:
         raise UnsafeImage("Missing or ambiguous executable window")
-    raw=bytes(data[mapping[0]:mapping[0]+WINDOW])
+    raw=bytes(data[mapping[0]:mapping[0]+window])
     with tempfile.TemporaryDirectory(prefix="bo-owner-bullet-private-") as folder:
         loc=Path(folder)/"window.bin"
         loc.write_bytes(raw)
@@ -67,7 +68,7 @@ def classify_window(data, address, sections):
         m=OP_LINE.match(line)
         if m is None:continue
         ip=int(m.group(1),16)
-        if ip<address or ip>=address+WINDOW:continue
+        if ip<address or ip>=address+window:continue
         instructions+=1
         if instructions>MAX_OPS:raise UnsafeImage("Instruction budget")
         op,operands=m.group(2).lower(),m.group(3).lower()
@@ -77,7 +78,7 @@ def classify_window(data, address, sections):
         if op.startswith("ret"):return_count+=1
         if op.startswith(("call","j")):
             target=direct_target(operands)
-            if target is not None and address<=target<address+WINDOW:
+            if target is not None and address<=target<address+window:
                 branch_inside+=1
                 if op.startswith("call"):call_near+=1
         for part in MEMBER.finditer(operands):
@@ -88,7 +89,7 @@ def classify_window(data, address, sections):
     if instructions<3:raise UnsafeImage("Too few decoded instructions")
     return {
         "mapped_executable_window":True,
-        "window_bytes":WINDOW,
+        "window_bytes":window,
         "decoded_instruction_count":instructions,
         "instruction_families":dict(sorted(family.items())),
         "conditional_branch_candidates":conditional,
@@ -120,12 +121,13 @@ def audit(data, expected_sha1=OWNER_SHA1, targets=TARGETS):
     for key,address in targets.items():
         if not isinstance(key,str) or not re.fullmatch("[a-z_]{3,60}",key):
             raise UnsafeImage("Bad target key")
-        windows[key]=classify_window(data,address,sections)
+        windows[key]=classify_window(data,address,sections,SOLDIER_WINDOW if key=='soldier_bullet_receiver' else WINDOW)
     output={
-       "schema":"bo-private-original-bullet-damage-neighborhood-v1",
+       "schema":"bo-private-original-bullet-damage-neighborhood-v2",
        "owner_original_xbe_sha1_verified":True,
        "targets":windows,
        "source_attribution":"Pinned upstream cheats.cpp identifies the soldier bullet receiver and LOCAL-PLAYER-only damage candidates; these are static disassembly neighborhoods, not friend/foe code.",
+       "soldier_window_expanded_after_initial_256_bytes_without_ret":True,
        "hud_tint_original_proven":False,
        "original_friend_foe_field_verified":False,
        "original_no_friendly_fire_hook_verified":False,

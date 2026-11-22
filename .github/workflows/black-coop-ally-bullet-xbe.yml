@@ -60,7 +60,7 @@ jobs:
           import json,os,pathlib
           p=pathlib.Path(os.environ['RUNNER_TEMP'])/'bo-owner-bullet-neighborhood-safe.json'
           x=json.loads(p.read_text())
-          assert x['schema']=='bo-private-original-bullet-damage-neighborhood-v1'
+          assert x['schema']=='bo-private-original-bullet-damage-neighborhood-v2'
           assert len(x['targets'])==3
           assert all(v['mapped_executable_window'] for v in x['targets'].values())
           assert not x['original_friend_foe_field_verified']
