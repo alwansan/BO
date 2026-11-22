@@ -8,3 +8,7 @@
 
 ### Session65 source follow-up — PRIVATE original-XBE byte-width audit queued
 - Extended existing SHA1-locked, runner-private, 2048-byte bounded `original_core_running_xbe.py` (three original functions only) with **byte ptr** candidate count/first relative offsets for core+0x5AEC and +0x5AED (level and stage from MIT PC checkpoint), plus positive/negative synthetic tests. Only anonymous counters leave CI; no XBE, ISO, decoded instructions, absolute guest pointers or game files copied to BO. This cannot establish runtime reachability, semantics, actual loaded callback or safe guest start. Private workflow `.github/workflows/black-coop-original-core-running-source.yml` automatically runs after this patch; check live.
+
+### Session65 CI packaging correction, 2026-11-22
+- New core stage contract source preflight [45030706269 SUCCESS](https://github.com/alwansan/BO/actions/runs/45030706269) and UDP [45030706264 SUCCESS](https://github.com/alwansan/BO/actions/runs/45030706264).
+- Full APK [45030706282 FAILED](https://github.com/alwansan/BO/actions/runs/45030706282) at runner **before regeneration/build**, due to static exact `reference/src/coop` file allowlist missing the newly staged `room_original_core_stage_identity_contract.hpp`. Logs show all prior source preparer tests PASS; this is packaging manifest only, **not** original BLACK game crash. Added exact new file to Windows APK CI allowlist; keep all other allowlisted source names unchanged. A new build must be checked and not called successful until completion.

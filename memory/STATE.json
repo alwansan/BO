@@ -1507,7 +1507,7 @@
       "sessionFile": "memory/sessions/2026-11-22_bo-coop-56-verified-xbe-word-width-and-native-source-fix.md"
     },
     "ORIGINAL_CORE_STAGE_IDENTITY_SOURCE_ONLY": {
-      "status": "SOURCE_PRELIMINARY_CI_PASS_OWNER_XBE_CROSSCHECK_QUEUED_NO_GAMEPLAY",
+      "status": "SOURCE_CI_PASS_WINDOWS_PACKAGING_ALLOWLIST_FIXED_REBUILD_PENDING",
       "baseEvidence": "portingpete/Black-2006-Recomp@b2512fafd src/black_checkpoint.inc level byte core+0x5AEC stage byte +0x5AED",
       "ownerXbeOffsetsIndependentlyVerified": false,
       "contract": "coop/room_network/room_original_core_stage_identity_contract.hpp",
@@ -1526,7 +1526,10 @@
       "preflightRun": 45030706269,
       "udpRun": 45030706264,
       "ownerXbeAudit": "coop/analysis/original_core_running_xbe.py",
-      "ownerXbeCrosscheckPending": true
+      "ownerXbeCrosscheckPending": true,
+      "buildFailureRun": 45030706282,
+      "buildFailureCause": "Windows exact staged src/coop allowlist lacked new source header; stage tests PASS before abort; no Android compiler reached",
+      "buildManifestFixedIn": ".github/workflows/black-coop-room-network-apk.yml"
     }
   },
   "pending": {
