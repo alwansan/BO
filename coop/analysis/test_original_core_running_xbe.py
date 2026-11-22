@@ -1,7 +1,7 @@
 import hashlib,struct,unittest,shutil
 from original_core_running_xbe import audit,TARGETS,WINDOW
 from story_entry_static import UnsafeImage
-def synthetic(yes=True):
+def synthetic(yes=True,direct_literal=False):
     low=min(TARGETS.values())-0x100
     top=max(TARGETS.values())+WINDOW+0x100
     count=top-low
@@ -16,7 +16,9 @@ def synthetic(yes=True):
        else bytes.fromhex("89 d8 83 f8 1c c3")
     for at in TARGETS.values():
         raw=0x400+at-low
-        b[raw:raw+len(op)]=op
+        body=(bytes.fromhex("c7 80 e0 5a 00 00 1c 00 00 00 83 b8 e0 5a 00 00 1c c3")
+              if direct_literal else op)
+        b[raw:raw+len(body)]=body
     return bytes(b)
 @unittest.skipUnless(shutil.which("objdump"),"objdump required")
 class CorePhase(unittest.TestCase):
@@ -35,6 +37,16 @@ class CorePhase(unittest.TestCase):
         r=audit(b,hashlib.sha1(b).hexdigest())
         self.assertTrue(all(x["relative_5ae0_mentions"]==0 for x in r["windows"].values()))
         self.assertFalse(r["scene_loaded_proven"])
+    def test_direct_running_literal_assignment_and_compare_are_candidates(self):
+        b=synthetic(direct_literal=True)
+        r=audit(b,hashlib.sha1(b).hexdigest())
+        for row in r["windows"].values():
+            self.assertEqual(row["direct_write_candidates"],1)
+            self.assertEqual(row["literal_1c_memory_write_candidates"],1)
+            self.assertEqual(row["direct_1c_memory_compare_candidates"],1)
+        self.assertFalse(r["scene_loaded_proven"])
+        self.assertFalse(r["core_phase_semantics_proven"])
+        self.assertNotIn("c7 80",str(r))
     def test_mismatched_owner_is_rejected(self):
         b=synthetic()
         with self.assertRaises(UnsafeImage):audit(b,"0"*40)

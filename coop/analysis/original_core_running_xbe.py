@@ -33,16 +33,32 @@ def audit(data,pinned=OWNER_SHA1):
             if m and entry<=int(m.group(1),16)<entry+WINDOW:
                 ops.append((int(m.group(1),16),m.group(2).lower(),m.group(3).lower()))
         if not 3<=len(ops)<=WINDOW:raise UnsafeImage("Unexpected decoded window")
-        found=[];neighbor=[]
+        found=[];neighbor=[];writes=[];sets_running=[];compares=[]
         for i,(at,op,args) in enumerate(ops):
-            if CORE.search(args):
-                found.append(at-entry)
-                if any(op2 in ("cmp","sub","test") and CMP.search(args2)
-                       for _,op2,args2 in ops[i+1:i+5]):
-                    neighbor.append(at-entry)
+            if not CORE.search(args):continue
+            relative=at-entry
+            found.append(relative)
+            left=args.split(",",1)[0]
+            immediate=args.rsplit(",",1)[-1].strip()
+            memory_destination=bool(CORE.search(left))
+            if memory_destination and op in ("mov","add","sub","or","and","xor","inc","dec"):
+                writes.append(relative)
+                if op=="mov" and immediate in ("0x1c","0x0000001c"):
+                    sets_running.append(relative)
+            if memory_destination and op=="cmp" and immediate in ("0x1c","0x0000001c"):
+                compares.append(relative)
+            if any(op2 in ("cmp","sub","test") and CMP.search(args2)
+                   for _,op2,args2 in ops[i+1:i+5]):
+                neighbor.append(relative)
         windows[label]={"entry":"%08X"%entry,"decoded":len(ops),
             "relative_5ae0_mentions":len(found),"near_1c_compare_candidates":len(neighbor),
-            "first_offsets":found[:4],"first_near_compare_offsets":neighbor[:4]}
+            "direct_write_candidates":len(writes),
+            "literal_1c_memory_write_candidates":len(sets_running),
+            "direct_1c_memory_compare_candidates":len(compares),
+            "first_offsets":found[:4],"first_near_compare_offsets":neighbor[:4],
+            "first_write_offsets":writes[:4],
+            "first_literal_1c_write_offsets":sets_running[:4],
+            "first_direct_1c_compare_offsets":compares[:4]}
     report={"schema":"bo-core-phase-candidate-private-v1",
       "owner_source_pinned":True,
       "pc_reference":"portingpete/Black-2006-Recomp@b2512fafd3e181e4febfb298f297245b845ef628",
@@ -50,7 +66,7 @@ def audit(data,pinned=OWNER_SHA1):
       "windows":windows,"core_phase_semantics_proven":False,
       "scene_loaded_proven":False,"safe_guest_loader_proven":False,
       "remote_actor_proven":False,"original_bytes_or_disassembly_exported":False,
-      "warning":"Static linear bounded windows can include adjacent code; nearby compare may use another value, no proof of CFG/runtime/READY. Absence not global absence."}
+      "warning":"Static linear bounded windows can include adjacent code; direct memory literal writes are candidates only, not validated runtime reachability or scene callbacks. Nearby compares may use another value. Negative is not global absence."}
     if len(json.dumps(report,separators=(",",":")))>3000:raise UnsafeImage("Privacy budget exceeded")
     return report
 def main():
@@ -63,8 +79,10 @@ def main():
     d=audit(a.owner_xbe.read_bytes())
     a.report.write_text(json.dumps(d,sort_keys=True,separators=(",",":"))+"\n")
     for key,r in d["windows"].items():
-        print("BO_CORE_PHASE_HINT %s memory=%d near1c=%d NOT_READY"%(
-           key,r["relative_5ae0_mentions"],r["near_1c_compare_candidates"]))
+        print("BO_CORE_PHASE_HINT %s memory=%d near1c=%d writes=%d write_1c=%d cmp_1c=%d NOT_READY"%(
+           key,r["relative_5ae0_mentions"],r["near_1c_compare_candidates"],
+           r["direct_write_candidates"],r["literal_1c_memory_write_candidates"],
+           r["direct_1c_memory_compare_candidates"]))
     print("BO_PRIVATE_CORE_PHASE_PASS: only source-derived numeric counters")
 if __name__=="__main__":
     try:main()
