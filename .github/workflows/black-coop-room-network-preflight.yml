@@ -47,6 +47,9 @@ jobs:
           "$RUNNER_TEMP/test_nonfrontend"
           g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -fsanitize=undefined             bo/coop/room_network/test_original_launch_difficulty_contract.cpp -o "$RUNNER_TEMP/test_original_difficulty"
           "$RUNNER_TEMP/test_original_difficulty"
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread -fsanitize=undefined \
+            bo/coop/room_network/test_room_original_mission_field_hint.cpp -o "$RUNNER_TEMP/test_original_mission_hint"
+          "$RUNNER_TEMP/test_original_mission_hint"
       - uses: actions/setup-java@v4
         with:
           distribution: temurin

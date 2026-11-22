@@ -8,6 +8,7 @@
 #include "coop/room_nonfrontend_original_player.hpp"
 #include "coop/room_world_tick.hpp"
 #include "kernel/coop_stage_resource_contract.hpp"
+#include "coop/room_original_mission_field_hint.hpp"
 #include "game/layout.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_system.h>
@@ -59,8 +60,18 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
     if(stable.IsStable()){
         int folder=-1;uint32_t episode=0;
         if(g_originalStageFileOpen.TakeCandidateFromOriginalPlayer(folder,episode)){
-            (void)episode; // strictly private, no epoch value in logs
             SendSafeWorldCodeToAndroid(30+folder);
+            // Pair two unverified XBE globals sampled only at this original
+            // mission launch with the actual later level resource file opens.
+            // Exact candidate values 0..7 only, all other values one UNKNOWN
+            // bucket. Nothing here calls a stage loader or STORY_READY.
+            const auto hints=g_originalMissionFieldHints.ForCorrelatedEpisode(episode);
+            if(hints.episode==episode){
+                const int a=EncodeOriginalMissionFieldEvent(0,hints.readCandidate,folder);
+                const int b=EncodeOriginalMissionFieldEvent(1,hints.writeCandidate,folder);
+                if(a>=0)SendSafeWorldCodeToAndroid(a);
+                if(b>=0)SendSafeWorldCodeToAndroid(b);
+            }
         }
     }
 }

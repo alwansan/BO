@@ -16,6 +16,12 @@ struct OriginalMissionFieldHints {
 inline int ClassifyOriginalMissionFieldHint(uint32_t value)noexcept{
     return value<8?static_cast<int>(value):-1;
 }
+inline int EncodeOriginalMissionFieldEvent(int which,int candidate,int folder)noexcept{
+    // This numeric tuple is UNTRUSTED evidence: never trigger stage READY.
+    if((which!=0&&which!=1)||candidate< -1||candidate>7||
+       (folder!=0&&folder!=1&&(folder<3||folder>8)))return -1;
+    return 100+((which*9+(candidate+1))*9)+folder;
+}
 class OriginalMissionFieldObservation final {
     std::atomic<uint64_t> observation_{0};
 public:

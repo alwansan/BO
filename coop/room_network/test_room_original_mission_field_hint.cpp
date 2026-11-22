@@ -10,6 +10,12 @@ int main(){
     assert(ClassifyOriginalMissionFieldHint(7)==7);
     assert(ClassifyOriginalMissionFieldHint(8)==-1);
     assert(ClassifyOriginalMissionFieldHint(0xffffffffu)==-1);
+    assert(EncodeOriginalMissionFieldEvent(0,-1,0)==100);
+    assert(EncodeOriginalMissionFieldEvent(0,7,8)==180);
+    assert(EncodeOriginalMissionFieldEvent(1,7,8)==261);
+    assert(EncodeOriginalMissionFieldEvent(0,2,2)==-1);
+    assert(EncodeOriginalMissionFieldEvent(2,2,3)==-1);
+    assert(EncodeOriginalMissionFieldEvent(0,8,3)==-1);
     OriginalMissionFieldObservation reader;
     assert(reader.ForCorrelatedEpisode(1).episode==0);
     reader.CaptureAtOriginalLaunch(1,3,6);

@@ -61,6 +61,28 @@ public final class RoomAppRooms {
   if(current!=null&&current.observeStageResourceFolderFromOriginalGameThread(folder))
    RoomDiagnostics.event("ORIGINAL_LEVEL_"+folder+"_TWO_FILES_OPEN_NOT_SCENE");
  }
+ /**
+  * A and B are ONLY UNPROVEN read-only XBE global values captured at the
+  * original mission launch, then correlated with later actual level file
+  * opens on this original player's game thread. Not a real mission index.
+  */
+ public static void originalMissionFieldCandidateFromGameThread(int code){
+  if(code<100||code>261)return;
+  final int encoded=code-100;
+  final int which=encoded/81;
+  final int candidateBucket=(encoded%81)/9;
+  final int folder=encoded%9;
+  if(which>1||candidateBucket>8||
+     (folder!=0&&folder!=1&&(folder<3||folder>8)))return;
+  RoomSession session;
+  synchronized(RoomAppRooms.class){session=active;}
+  if(session==null||session.originalStageFolderHintFromGameThread()!=folder)return;
+  // No addresses, memory bytes, paths, credentials, names or arbitrary strings.
+  final String source=which==0?"A":"B";
+  final String value=candidateBucket==0?"OTHER":Integer.toString(candidateBucket-1);
+  RoomDiagnostics.event("ORIGINAL_MISSION_"+source+"_"+value+
+                        "_LEVEL_"+folder+"_UNPROVEN");
+ }
  public static void shutdown(){
   RoomSession old;RoomPresence.Service beacon;
   synchronized(RoomAppRooms.class){epoch++;starting=false;old=active;beacon=presence;active=null;presence=null;}

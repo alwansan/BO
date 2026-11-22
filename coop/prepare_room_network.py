@@ -103,6 +103,8 @@ def prepare(root: pathlib.Path):
         else if (code == 24) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_UNAVAILABLE");
         else if (code >= 30 && code <= 38 && code != 32)
             com.racas.black.coop.RoomAppRooms.originalLevelResourceHintFromGameThread(code - 30);
+        else if (code >= 100 && code <= 261)
+            com.racas.black.coop.RoomAppRooms.originalMissionFieldCandidateFromGameThread(code);
     }
     public String coopRoomStatusLine(int row) {''', java)
     pending[java] = text
@@ -175,6 +177,7 @@ def prepare(root: pathlib.Path):
     pending['src/coop/room_original_eye_contract.hpp'] = (HERE / 'room_network/room_original_eye_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_nonfrontend_original_player.hpp'] = (HERE / 'room_network/room_nonfrontend_original_player.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_launch_difficulty_contract.hpp'] = (HERE / 'room_network/room_original_launch_difficulty_contract.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_mission_field_hint.hpp'] = (HERE / 'room_network/room_original_mission_field_hint.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_launch_difficulty_witness.hpp'] = (HERE / 'room_network/room_original_launch_difficulty_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_eye_witness.hpp'] = (HERE / 'room_network/room_original_eye_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/world_tick_contract.hpp'] = (HERE / 'room_network/world_tick_contract.hpp').read_text(encoding='utf-8')
