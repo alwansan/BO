@@ -18,11 +18,14 @@ inline void ObserveOriginalLaunchDifficulty() noexcept{
     // New original launch attempt invalidates all previous observed files.
     // Its epoch is diagnostic only; it NEVER creates a story ticket.
     const uint32_t epoch=g_originalStageFileOpen.BeginOriginalLaunchAttempt();
-    // These two ORIGINAL XBE global addresses were derived from a pinned
-    // private static xref scan. The values might NOT be mission selection.
-    // Observe only 0..7 buckets and do not write either global or launch.
+    // Private original XBE WIDTH source evidence CI44977857722:
+    // 0x2D0D60 and 0x2D0D68 accessed as WORD, not DWORD! A 32-bit
+    // read included unrelated neighboring memory. The menu 0x2EC598
+    // is another WORD-write candidate; no field is a proven mission ID.
+    // All reads strictly source-sized and NEVER written to original game.
     g_originalMissionFieldHints.CaptureAtOriginalLaunch(
-        epoch,kernel::R32(0x2D0D60),kernel::R32(0x2D0D68));
+        epoch,kernel::R16(0x2D0D60),kernel::R16(0x2D0D68),
+        kernel::R16(0x2EC598));
     constexpr uint32_t kDifficulty=0x2014C;
     uint32_t game=kernel::R32(layout::kGame);
     uint32_t value=game?kernel::R32(game+kDifficulty):0xffffffffu;

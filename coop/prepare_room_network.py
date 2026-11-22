@@ -103,7 +103,7 @@ def prepare(root: pathlib.Path):
         else if (code == 24) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_UNAVAILABLE");
         else if (code >= 30 && code <= 38 && code != 32)
             com.racas.black.coop.RoomAppRooms.originalLevelResourceHintFromGameThread(code - 30);
-        else if (code >= 100 && code <= 261)
+        else if (code >= 100 && code <= 342)
             com.racas.black.coop.RoomAppRooms.originalMissionFieldCandidateFromGameThread(code);
     }
     public String coopRoomStatusLine(int row) {''', java)
