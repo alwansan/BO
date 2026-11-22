@@ -92,7 +92,10 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('g_originalStageFileOpen',eye)
             self.assertIn('TakeCandidateFromOriginalPlayer(folder,episode)',eye)
             self.assertIn('stable.IsStable()',eye)
-            self.assertNotIn('BothEssentialFilesOpenedForCandidate()',eye)
+            # Only the original CORE-PHASE candidate needs to recheck the
+            # fresh two-file pair; the original one-shot stage report still
+            # relies exclusively on TakeCandidateFromOriginalPlayer below.
+            self.assertEqual(eye.count('BothEssentialFilesOpenedForCandidate()'),1)
             self.assertIn('SendSafeWorldCodeToAndroid(30+folder)',eye)
             self.assertIn('g_originalMissionFieldHints.ForCorrelatedEpisode(episode)',eye)
             self.assertIn('EncodeOriginalMissionFieldEvent(',eye)
