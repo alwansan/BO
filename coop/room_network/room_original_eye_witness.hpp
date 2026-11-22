@@ -9,6 +9,7 @@
 #include "coop/room_world_tick.hpp"
 #include "kernel/coop_stage_resource_contract.hpp"
 #include "coop/room_original_mission_field_hint.hpp"
+#include "coop/room_original_streaming_stage_contract.hpp"
 #include "game/layout.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_system.h>
@@ -75,6 +76,15 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
                 if(bPre>=0)SendSafeWorldCodeToAndroid(bPre);
                 if(bPost>=0)SendSafeWorldCodeToAndroid(bPost);
                 if(c>=0)SendSafeWorldCodeToAndroid(c);
+            }
+            // A stronger source-proven streaming ENTRY, correlated to the
+            // SAME original launch episode and ORIGINAL successful level file
+            // opens, but NEVER a loaded scene/mission ID/READY.
+            const auto stream=g_originalStreamingStageHints.ForCorrelatedEpisode(episode);
+            if(stream.episode==episode){
+                const int event=EncodeOriginalStreamingStageHint(
+                    stream.level,stream.stage,folder);
+                if(event>=0)SendSafeWorldCodeToAndroid(event);
             }
         }
     }

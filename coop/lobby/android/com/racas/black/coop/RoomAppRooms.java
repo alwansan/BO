@@ -83,6 +83,25 @@ public final class RoomAppRooms {
   RoomDiagnostics.event("ORIGINAL_MISSION_"+source+"_"+value+
                         "_LEVEL_"+folder+"_UNPROVEN");
  }
+ /**
+  * Read-only, source XBE-confirmed original streaming candidate LEVEL/STAGE
+  * values; only after matching original level file pair and stable game-thread
+  * original player. NOT scene loaded or mission/ticket identity.
+  */
+ public static void originalStreamingStageFromGameThread(int code){
+  if(code<500||code>2029)return;
+  final int encoded=code-500, pair=encoded/9, folder=encoded%9;
+  final int levelBucket=pair/17, stageBucket=pair%17;
+  if(levelBucket>9||stageBucket>16||
+     (folder!=0&&folder!=1&&(folder<3||folder>8)))return;
+  RoomSession session;
+  synchronized(RoomAppRooms.class){session=active;}
+  if(session==null||session.originalStageFolderHintFromGameThread()!=folder)return;
+  final String level=levelBucket==0?"OTHER":Integer.toString(levelBucket-1);
+  final String stage=stageBucket==0?"OTHER":Integer.toString(stageBucket-1);
+  RoomDiagnostics.event("ORIGINAL_STREAM_LEVEL_"+level+"_STAGE_"+stage+
+                        "_FOLDER_"+folder+"_UNPROVEN");
+ }
  public static void shutdown(){
   RoomSession old;RoomPresence.Service beacon;
   synchronized(RoomAppRooms.class){epoch++;starting=false;old=active;beacon=presence;active=null;presence=null;}

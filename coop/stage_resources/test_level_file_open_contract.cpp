@@ -36,7 +36,9 @@ int main(){
     assert(!detector.ObserveSuccessfulOpen("D:\\levels\\level_00\\LevelDat.bin",row,100));
     assert(detector.LastResourceFolderHint()==-1);
     assert(!detector.TakeCandidateFromOriginalPlayer(folder,episode,110));
+    assert(detector.ActiveEpisode()==0);
     assert(detector.BeginOriginalLaunchAttempt(100)==1);
+    assert(detector.ActiveEpisode()==1);
     assert(detector.ObserveSuccessfulOpen("D:\\levels\\level_00\\LevelDat.bin",row,120));
     assert(!detector.ObserveSuccessfulOpen("D:\\levels\\level_00\\LevelDat.bin",row,125));
     assert(!detector.BothEssentialFilesOpenedForCandidate(125));
@@ -48,6 +50,7 @@ int main(){
 
     // Same mission restarted: OLD files from epoch 1 must not count.
     assert(detector.BeginOriginalLaunchAttempt(200)==2);
+    assert(detector.ActiveEpisode()==2);
     assert(!detector.BothEssentialFilesOpenedForCandidate(201));
     assert(detector.ObserveSuccessfulOpen("D:\\levels\\level_00\\Unit_01.bin",row,205));
     assert(!detector.TakeCandidateFromOriginalPlayer(folder,episode,206));

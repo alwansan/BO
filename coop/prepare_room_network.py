@@ -105,6 +105,8 @@ def prepare(root: pathlib.Path):
             com.racas.black.coop.RoomAppRooms.originalLevelResourceHintFromGameThread(code - 30);
         else if (code >= 100 && code <= 423)
             com.racas.black.coop.RoomAppRooms.originalMissionFieldCandidateFromGameThread(code);
+        else if (code >= 500 && code <= 2029)
+            com.racas.black.coop.RoomAppRooms.originalStreamingStageFromGameThread(code);
     }
     public String coopRoomStatusLine(int row) {''', java)
     pending[java] = text
@@ -180,6 +182,8 @@ def prepare(root: pathlib.Path):
     pending['src/coop/room_original_mission_field_hint.hpp'] = (HERE / 'room_network/room_original_mission_field_hint.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_launch_difficulty_witness.hpp'] = (HERE / 'room_network/room_original_launch_difficulty_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_eye_witness.hpp'] = (HERE / 'room_network/room_original_eye_witness.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_streaming_stage_contract.hpp'] = (HERE / 'room_network/room_original_streaming_stage_contract.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_streaming_stage_witness.hpp'] = (HERE / 'room_network/room_original_streaming_stage_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/world_tick_contract.hpp'] = (HERE / 'room_network/world_tick_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/gpu_decl_contract.hpp'] = (HERE / 'room_network/gpu_decl_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/gpu_decl_witness.hpp'] = (HERE / 'room_network/gpu_decl_witness.hpp').read_text(encoding='utf-8')
@@ -209,12 +213,26 @@ def prepare(root: pathlib.Path):
     difficulty='src/game/difficulty.cpp'
     launch=pending.get(difficulty,originals[difficulty].decode('utf-8'))
     launch=once(launch,'#include "xdk/hle.h"',
-                '#include "xdk/hle.h"\n#include "coop/room_world_tick.hpp"\n#include "coop/room_original_launch_difficulty_witness.hpp"',difficulty)
+                '#include "xdk/hle.h"\n#include "coop/room_world_tick.hpp"\n#include "coop/room_original_launch_difficulty_witness.hpp"\n#include "coop/room_original_streaming_stage_witness.hpp"',difficulty)
     launch=once(launch,'    __imp__sub_00124CF0(ctx, base);',
         '''    blackcoop::ObserveMissionLaunchCandidate(); // attempt, NOT loaded scene
     const uint32_t originalLaunchEpisode=blackcoop::ObserveOriginalLaunchDifficulty();
     __imp__sub_00124CF0(ctx, base); // ORIGINAL call unchanged
     blackcoop::ObserveOriginalLaunchReturn(originalLaunchEpisode); // B AFTER, WORD''',difficulty)
+    # Pinned c5 XBE CI44979193377 confirms two BYTE loads inside this
+    # streaming function. Observe them only; preserve its native work.
+    launch=once(launch,
+        '    blackcoop::ObserveOriginalLaunchReturn(originalLaunchEpisode); // B AFTER, WORD\n}',
+        '''    blackcoop::ObserveOriginalLaunchReturn(originalLaunchEpisode); // B AFTER, WORD
+}
+
+// First ORIGINAL streaming entry only: candidate LEVEL/STAGE BYTE read,
+// NEVER guest auto-launch or actual scene-loaded signal.
+X86_EXTERN_FUNC(__imp__sub_001EDC90);
+X86_FUNC(sub_001EDC90) {
+    blackcoop::ObserveOriginalStreamingStageEntry();
+    __imp__sub_001EDC90(ctx, base); // unchanged original game function
+}''',difficulty)
     pending[difficulty]=launch
 
     # Read-only observation of the ORIGINAL title's actual parsed Xbox

@@ -86,6 +86,12 @@ public:
         folder_=-1;resources_=0; // Do not carry a previous level's opens
         return episode_;
     }
+    // Read-only current original launch episode for another source-proven
+    // original stage-stream entry. NOT a scene-loaded notification.
+    uint32_t ActiveEpisode()const noexcept{
+        std::lock_guard<std::mutex> guard(lock_);
+        return episode_;
+    }
     bool ObserveSuccessfulOpen(std::string_view path,OriginalStageResource& report,
                                uint64_t atMs=NowMs()){
         OriginalStageResource sample=ClassifyOriginalStageResource(path);
