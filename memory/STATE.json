@@ -1829,7 +1829,7 @@
       "realBotBodies": false
     },
     "FOUR_HUMAN_SOURCE_ATTESTED_REAL_TLS": {
-      "status": "REJOIN_DYNAMIC_SLOT_FRESH_NATIVE_SCENE_PROOF_TEST_RECHECK_PENDING",
+      "status": "REAL_TLS_CI_SUCCESS_ANDROID29_SUCCESS_ROOM_ONLY_APK_RUNNING",
       "realTlsLoopback": true,
       "participants": 4,
       "hostAndThreeGuests": true,
@@ -1854,10 +1854,16 @@
       "secondTlsRun": 45041901894,
       "secondTlsConclusion": "failure_rejoin_test_assumed_stale_guest_slot",
       "rejoinRequiresNewOriginalSceneEntry": true,
-      "seamlessMidMissionRejoinImplemented": false
+      "seamlessMidMissionRejoinImplemented": false,
+      "tlsRun": 45042108523,
+      "tlsConclusion": "success",
+      "nativeSourceRun": 45042108510,
+      "nativeSourceConclusion": "success",
+      "android29Run": 45042108601,
+      "android29Conclusion": "success"
     },
     "ORIGINAL_BOT_PUPPET_DRAW_SOURCE": {
-      "status": "SOURCE_PUSHED_PRIVATE_CI_PENDING_NO_ACTOR",
+      "status": "OWNER_XBE_PRIVATE_CI_SUCCESS_ABI_UNPROVEN_NO_ACTOR",
       "reference": "portingpete/Black-2006-Recomp@b2512fafd/src/recomp_manual.c:2009-2130,2481-2490",
       "sourceNativeWorldDraw": "0x000D1500",
       "sourceNativeCharacterDraw": "0x001B7440",
@@ -1872,7 +1878,27 @@
       "engineABIVerified": false,
       "visibleGameAvatarVerified": false,
       "sourceTest": "coop/analysis/test_original_bot_puppet_draw_xbe.py",
-      "workflow": ".github/workflows/black-coop-original-puppet-draw-source.yml"
+      "workflow": ".github/workflows/black-coop-original-puppet-draw-source.yml",
+      "workflowRun": 45042499835,
+      "conclusion": "success",
+      "privateNumericCounts": {
+        "original_world_grid_draw": {
+          "address": "0x000D1500",
+          "mapped": true,
+          "possibleCalls": 18,
+          "possibleReturns": 4
+        },
+        "original_character_draw_dispatch": {
+          "address": "0x001B7440",
+          "mapped": true,
+          "possibleCalls": 2,
+          "possibleReturns": 28
+        }
+      },
+      "actorRenderedInActualGame": false,
+      "ownerNativeXbeCopiedOrUploaded": false,
+      "latestRoomOnlyApkRun": 45042108516,
+      "latestApkLastObserved": "in_progress_ubuntu_windows_compile"
     }
   },
   "pending": {
