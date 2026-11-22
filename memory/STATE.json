@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-66-original-stage-identity-session-bridge.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-67-original-human-look-roster-planner.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -1566,6 +1566,23 @@
       "windowsApkLastObserved": "in_progress",
       "android29Run": 45031867981,
       "android29LastObserved": "completed_success"
+    },
+    "ORIGINAL_HUMAN_BOT_LOOK_ROSTER_PLANNER": {
+      "status": "SOURCE_STAGED_CI_PENDING_NO_ACTOR",
+      "source": "OriginalHumanLookPlanner",
+      "guestReadsOnly": true,
+      "hostSourceOrdinalMaskOnly": true,
+      "peerCounts": [
+        1,
+        2,
+        3
+      ],
+      "latchNpcSlotTakeover": true,
+      "noGuestCall": true,
+      "noActorCreation": true,
+      "noSceneReady": true,
+      "preflight": "black-coop-room-network-preflight.yml",
+      "actorABIUnverified": true
     }
   },
   "pending": {

@@ -31,7 +31,8 @@ inline bool OriginalBotSlotRead(uint32_t addr,uint32_t& value)noexcept{
     value=kernel::R32(addr);return true;
 }
 inline bool ReadOriginalBotPoolAvailability(
- OriginalBotPoolAvailability& availability)noexcept{
+ OriginalBotPoolAvailability& availability,
+ std::array<OriginalBotPoolSlotEvidence,32>* inspectedSlots=nullptr)noexcept{
     constexpr uint32_t kPoolGlobal=0x002D1980u;
     constexpr uint32_t kFirst=0xA0u,kStride=0x3C0u,kCount=32u;
     uint32_t root=0;
@@ -64,6 +65,7 @@ inline bool ReadOriginalBotPoolAvailability(
     uint32_t stillRoot=0;
     if(!OriginalBotSlotRead(kPoolGlobal,stillRoot)||stillRoot!=root)return false;
     availability=CountOriginalBotLookSlots(slots);
+    if(inspectedSlots)*inspectedSlots=slots;
     return true;
 }
 inline void ObserveOriginalBotPoolSourceHint(uint32_t episode,
@@ -86,5 +88,45 @@ inline void ObserveOriginalBotPoolSourceHint(uint32_t episode,
     if((emitted&bit)!=0u)return;
     emitted|=bit;
     SendSafeWorldCodeToAndroid(code); // 60..64 coarse counts only, not gameplay
+}
+// Run only from a source-matched original player update. This is an
+// APPEARANCE SLOT PROPOSAL, not a live guest actor, draw, or memory reservation.
+// The mask is returned by our HOST TLS roster on the verified game thread.
+inline void ObserveOriginalHumanLookPlanHint(
+ uint32_t episode,uint32_t world,bool sourceMatched,uint8_t rosterMask)noexcept{
+    static OriginalHumanLookPlanner planner;
+    static uint32_t observedEpisode=0,observedWorld=0;
+    static uint64_t lastMs=0;
+    static unsigned emitted=0;
+    if(!sourceMatched||!episode||!world){
+        planner.Reset();observedEpisode=observedWorld=0;lastMs=0;emitted=0;
+        return;
+    }
+    if(observedEpisode!=episode||observedWorld!=world){
+        planner.Reset();observedEpisode=episode;observedWorld=world;
+        lastMs=0;emitted=0;
+    }
+    const uint64_t now=static_cast<uint64_t>(SDL_GetTicks());
+    if(lastMs&&now>=lastMs&&now-lastMs<2000u)return;
+    lastMs=now;
+    OriginalBotPoolAvailability summary{};
+    std::array<OriginalBotPoolSlotEvidence,32> slots{};
+    // If the original pool is temporarily unreadable, never pretend its
+    // previous contents are safe or select an unvalidated slot.
+    if(!ReadOriginalBotPoolAvailability(summary,&slots)){
+        planner.Reset();return;
+    }
+    const auto status=planner.Observe(episode,world,rosterMask,slots);
+    int code=0;
+    if(status==OriginalHumanLookPlanState::Proposed){
+        code=rosterMask==0x02u?70:rosterMask==0x06u?71:72;
+    }else if(status==OriginalHumanLookPlanState::NoAppearanceSource)code=73;
+    else if(status==OriginalHumanLookPlanState::InsufficientBlankSlots)code=74;
+    else if(status==OriginalHumanLookPlanState::Invalidated)code=75;
+    if(!code)return;
+    const unsigned bit=1u<<static_cast<unsigned>(code-70);
+    if(emitted&bit)return;
+    emitted|=bit;
+    SendSafeWorldCodeToAndroid(code); // 70..75; NO slot indices or guest ptrs
 }
 } // namespace blackcoop

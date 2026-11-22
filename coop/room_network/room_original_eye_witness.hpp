@@ -99,6 +99,9 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
     // NO original actor/character writes and NO scene/mission READY.
     ObserveOriginalBotPoolSourceHint(coreEpisode,candidateReady&&
         phaseQualifiedEpisode==coreEpisode&&phaseQualifiedWorld==world);
+    // The source-match class is a stronger read-only identity than file
+    // opens alone. No engine scene-ready callback is inferred from it.
+    const bool lookSourceMatched=coreStageIdentity.Matched(coreEpisode,world);
     JNIEnv* env=static_cast<JNIEnv*>(SDL_GetAndroidJNIEnv());
     jobject activity=static_cast<jobject>(SDL_GetAndroidActivity());
     if(!env||!activity)return;
@@ -121,6 +124,20 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
                 static_cast<jint>(coreLevel),static_cast<jint>(coreStage));
             if(env->ExceptionCheck())env->ExceptionClear();
         }
+        int peerMask=0;
+        if(lookSourceMatched){
+            jmethodID maskMethod=env->GetMethodID(
+                cls,"coopHostAppearancePeerMaskFromGameThread","()I");
+            if(env->ExceptionCheck())env->ExceptionClear();
+            else if(maskMethod){
+                peerMask=env->CallIntMethod(activity,maskMethod);
+                if(env->ExceptionCheck()){
+                    env->ExceptionClear();peerMask=0;
+                }
+            }
+        }
+        ObserveOriginalHumanLookPlanHint(coreEpisode,world,
+            lookSourceMatched,static_cast<uint8_t>(peerMask));
         env->DeleteLocalRef(cls);
     }else if(env->ExceptionCheck())env->ExceptionClear();
     env->DeleteLocalRef(activity);

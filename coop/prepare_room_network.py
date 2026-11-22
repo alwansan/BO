@@ -75,6 +75,11 @@ def prepare(root: pathlib.Path):
     public int[] coopPollHostWorldSnapshotFromGameThread() {
         return com.racas.black.coop.RoomAppRooms.pollHostWorldSnapshotFromGameThread();
     }
+    // Obtain HOST-owned authenticated room roster ordinal slots only.
+    // No guest coordinates, no actor pointers and no game scene READY.
+    public int coopHostAppearancePeerMaskFromGameThread() {
+        return com.racas.black.coop.RoomAppRooms.hostAppearancePeerMaskFromGameThread();
+    }
     // Matched original core/stream level and stage as values on the genuine
     // BLACK game thread. NOT a loaded-scene callback, never auto PREPARE.
     public void coopRecordOriginalStageIdentity(int episode,int level,int stage) {
@@ -133,6 +138,12 @@ def prepare(root: pathlib.Path):
         else if (code == 67) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_CORE_LEVEL_STAGE_MATCH_STREAM_SOURCE_HINT_NOT_READY");
         else if (code == 68) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_CORE_LEVEL_STAGE_CONFLICT_STREAM_SOURCE_HINT_NOT_READY");
         else if (code == 69) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_CORE_LEVEL_STAGE_UNKNOWN_SOURCE_HINT_NOT_READY");
+        else if (code == 70) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HUMAN_LOOK_ONE_RIG_PROPOSED_NO_ACTOR");
+        else if (code == 71) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HUMAN_LOOK_TWO_RIGS_PROPOSED_NO_ACTOR");
+        else if (code == 72) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HUMAN_LOOK_THREE_RIGS_PROPOSED_NO_ACTOR");
+        else if (code == 73) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HUMAN_LOOK_NO_ORIGINAL_BOT_TEMPLATE");
+        else if (code == 74) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HUMAN_LOOK_NOT_ENOUGH_SAFE_BLANK_SLOTS");
+        else if (code == 75) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HUMAN_LOOK_PROPOSAL_INVALIDATED_NO_ACTOR");
         else if (code == 20) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_EASY_NOT_MISSION");
         else if (code == 21) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_NORMAL_NOT_MISSION");
         else if (code == 22) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_HARD_NOT_MISSION");

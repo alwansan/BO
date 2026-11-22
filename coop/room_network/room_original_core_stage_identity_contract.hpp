@@ -38,6 +38,10 @@ public:
         emittedMask_|=bit;
         return next;
     }
+    bool Matched(uint32_t episode,uint32_t world)const noexcept{
+        return episode&&world&&episode_==episode&&world_==world&&
+               signal_==67&&samples_>=30;
+    }
     void Reset()noexcept{
         episode_=0;world_=0;level_=-2;stage_=-2;signal_=0;
         samples_=0;emittedMask_=0;

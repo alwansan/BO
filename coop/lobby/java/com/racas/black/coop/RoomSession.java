@@ -78,6 +78,24 @@ public final class RoomSession implements AutoCloseable {
     }
     private OriginalStageCandidate lastSourceStage;
     private long lastSourceStageAtNs;
+    /** Compact TLS roster positions, NOT long-lived RoomWire.Player IDs.
+     * Source-only bot appearance proposal for genuine joined human devices. */
+    public int hostAppearancePeerMaskFromGameThread(){
+        synchronized(lock){
+            if(closed||!validStoryThread()||phase!=Phase.HOSTING||
+               host==null||!host.isRunning())return 0;
+            try{
+                RoomWire.State state=host.snapshot();
+                if(state==null||state.players==null||
+                   state.players.size()<2||state.players.size()>4||
+                   state.players.get(0).id!=1)return 0;
+                int joined=state.players.size()-1;
+                return ((1<<(joined+1))-1)&0x0E;
+            }catch(IOException unavailable){
+                return 0;
+            }
+        }
+    }
     boolean observeOriginalStageIdentityFromGameThread(int episode,int level,int stage){
         synchronized(lock){
             if(closed||!validStoryThread()||
