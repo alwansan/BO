@@ -33,6 +33,7 @@ class OriginalHumanBotVisual {
     bool owner_=false;
     bool attempted_=false;
     bool logged_=false;
+    uint8_t assignedPeer_=0;
     static uint32_t fp(float v)noexcept{
         uint32_t bits=0;std::memcpy(&bits,&v,sizeof(bits));return bits;
     }
@@ -125,6 +126,9 @@ class OriginalHumanBotVisual {
         return valid(root);
     }
 public:
+    void BindPeer(uint8_t peer)noexcept{
+        if(!assignedPeer_&&peer>=1&&peer<=4)assignedPeer_=peer;
+    }
     void ObserveScene(uint32_t episode,uint32_t world,bool independentlyRunning)noexcept{
         if(!owner_){gameThread_=std::this_thread::get_id();owner_=true;}
         if(gameThread_!=std::this_thread::get_id())return;
@@ -137,7 +141,7 @@ public:
         sourceAtMs_=static_cast<uint64_t>(SDL_GetTicks());
     }
     void Draw(X86Context& ctx,uint32_t grid)noexcept{
-        if(!owner_||gameThread_!=std::this_thread::get_id()||!sourceWorld_||
+        if(!assignedPeer_||!owner_||gameThread_!=std::this_thread::get_id()||!sourceWorld_||
            !sourceEpisode_)return;
         const uint64_t now=static_cast<uint64_t>(SDL_GetTicks());
         if(now<sourceAtMs_||now-sourceAtMs_>350)return;
@@ -146,7 +150,7 @@ public:
            static_cast<uint64_t>(world)+0x4960u>0xffffffffull||
            grid!=world+0x4960u)return;
         OriginalOtherHumanBody body{};
-        if(!OtherHumanBodySource().Read(now,body)||body.epoch==0||
+        if(!AllOtherHumanBodies().Read(assignedPeer_,now,body)||body.epoch==0||
            !body.revision||body.tick==0)return;
         uint32_t root=0;
         if(!read(kPool,root)||!root||
@@ -198,7 +202,10 @@ public:
         }
     }
 };
-inline OriginalHumanBotVisual& OriginalRemoteHumanBotVisual()noexcept{
-    static OriginalHumanBotVisual body;return body;
+inline OriginalHumanBotVisual& OriginalRemoteHumanBotVisual(uint8_t peer)noexcept{
+    static std::array<OriginalHumanBotVisual,5> bodies{};
+    if(peer<1||peer>4)peer=0;
+    bodies[peer].BindPeer(peer);
+    return bodies[peer];
 }
 } // namespace blackcoop

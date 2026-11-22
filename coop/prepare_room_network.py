@@ -270,6 +270,7 @@ def prepare(root: pathlib.Path):
     pending['src/coop/room_original_launch_difficulty_witness.hpp'] = (HERE / 'room_network/room_original_launch_difficulty_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_eye_witness.hpp'] = (HERE / 'room_network/room_original_eye_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/original_other_human_body_source.hpp'] = (HERE / 'room_network/original_other_human_body_source.hpp').read_text(encoding='utf-8')
+    pending['src/coop/original_all_other_humans_contract.hpp'] = (HERE / 'room_network/original_all_other_humans_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_other_human_body_source_witness.hpp'] = (HERE / 'room_network/room_other_human_body_source_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_live_remote_bot.hpp'] = (HERE / 'room_network/room_original_live_remote_bot.hpp').read_text(encoding='utf-8')
     pending['src/coop/original_first_stage_auto_menu_contract.hpp'] = (HERE / 'room_network/original_first_stage_auto_menu_contract.hpp').read_text(encoding='utf-8')
@@ -339,7 +340,8 @@ X86_EXTERN_FUNC(__imp__sub_000D1500);
 X86_FUNC(sub_000D1500) {
     const uint32_t originalGrid=ctx.edi;
     __imp__sub_000D1500(ctx,base);
-    blackcoop::OriginalRemoteHumanBotVisual().Draw(ctx,originalGrid);
+    for(uint8_t peer=1;peer<=4;peer++)
+        blackcoop::OriginalRemoteHumanBotVisual(peer).Draw(ctx,originalGrid);
 }
 '''
     pending[draw]=visual

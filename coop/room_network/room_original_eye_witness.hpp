@@ -116,8 +116,9 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
         coreEpisode,world,coreLevel,coreStage,lookSourceMatched);
     // Same genuine original game thread and independently stable loaded level.
     // The actual other-human BODY source is checked again at DRAW time.
-    OriginalRemoteHumanBotVisual().ObserveScene(coreEpisode,world,
-        originalLocalSceneRunning&&lookSourceMatched);
+    for(uint8_t peer=1;peer<=4;peer++)
+        OriginalRemoteHumanBotVisual(peer).ObserveScene(coreEpisode,world,
+            originalLocalSceneRunning&&lookSourceMatched);
     JNIEnv* env=static_cast<JNIEnv*>(SDL_GetAndroidJNIEnv());
     jobject activity=static_cast<jobject>(SDL_GetAndroidActivity());
     if(!env||!activity)return;

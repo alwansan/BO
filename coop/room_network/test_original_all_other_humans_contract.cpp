@@ -17,9 +17,9 @@ int main(){
  assert(!b.Read(3,1351,out));
  assert(!b.Ingest(host,23,1400)); // replay tick
  host[2]=31;host[5]=3;assert(!b.Ingest(host,23,1400)); // unordered duplicate
- host[5]=2;host[10]=1;assert(!b.Ingest(host,23,1400)); // impossible flags
+ host[5]=2;host[10]=4;assert(!b.Ingest(host,23,1400)); // impossible flags
  host[10]=0;host[16]=19000;assert(!b.Ingest(host,23,1400));
- host[16]=1200;assert(b.Ingest(host,23,1400));
+ host[16]=1;assert(b.Ingest(host,23,1400));
  bool cross=false;
  std::thread other([&](){cross=b.Ingest(host,23,1410);});
  other.join();assert(!cross);
