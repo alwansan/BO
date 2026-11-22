@@ -12,9 +12,9 @@ import java.util.*;
 public final class RoomWire {
     private RoomWire() {}
     public static final int JOIN=1, ACCEPT=2, ROSTER=3, PING=4, PONG=5, LEAVE=6, REJECT=7,
-        STORY_PREPARE=8, STORY_READY=9, STORY_COMMIT=10, STORY_ABORT=11;
+        STORY_PREPARE=8, STORY_READY=9, STORY_COMMIT=10, STORY_ABORT=11, HUMAN_INPUT=12;
     // Story messages are incompatible with old room-only APKs; reject mixed versions.
-    public static final int MAX_FRAME=512, MAX_PLAYERS=4, VERSION=3, PROFILE=3;
+    public static final int MAX_FRAME=512, MAX_PLAYERS=4, VERSION=4, PROFILE=4;
     private static final byte[] IMAGE=hex("c5bfed25449c8212d7a976f15246e87ead57713f");
     public static final class Incompatible extends IOException {
         private static final long serialVersionUID=1L;
@@ -84,7 +84,7 @@ public final class RoomWire {
     }
     private static void nonce(byte[] b)throws IOException{if(b==null||b.length!=16)throw new IOException("Bad nonce length");}
     static byte[] frame(int type,byte[] body)throws IOException {
-        if(type<JOIN||type>STORY_ABORT||body.length>MAX_FRAME-8)throw new IOException("Invalid frame");
+        if(type<JOIN||type>HUMAN_INPUT||body.length>MAX_FRAME-8)throw new IOException("Invalid frame");
         ByteArrayOutputStream b=new ByteArrayOutputStream();DataOutputStream out=new DataOutputStream(b);
         out.writeInt(0x4243524d);out.writeByte(VERSION);out.writeByte(type);out.writeShort(body.length);out.write(body);
         return b.toByteArray();
@@ -94,7 +94,7 @@ public final class RoomWire {
         DataInputStream in=new DataInputStream(new ByteArrayInputStream(raw));
         if(in.readInt()!=0x4243524d||in.readUnsignedByte()!=VERSION)throw new Incompatible();
         int type=in.readUnsignedByte(),n=in.readUnsignedShort();
-        if(type<JOIN||type>STORY_ABORT||n!=raw.length-8)throw new IOException("Invalid type or length");
+        if(type<JOIN||type>HUMAN_INPUT||n!=raw.length-8)throw new IOException("Invalid type or length");
         byte[] body=new byte[n];in.readFully(body);return new Packet(type,body);
     }
     public static byte[] read(DataInputStream in)throws IOException {

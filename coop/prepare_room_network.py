@@ -137,6 +137,7 @@ def prepare(root: pathlib.Path):
     java_sources = {
         'RoomWire.java': 'lobby/java/com/racas/black/coop/RoomWire.java',
         'RoomStoryWire.java': 'lobby/java/com/racas/black/coop/RoomStoryWire.java',
+        'RoomHumanInputWire.java': 'lobby/java/com/racas/black/coop/RoomHumanInputWire.java',
         'RoomTls.java': 'lobby/java/com/racas/black/coop/RoomTls.java',
         'RoomDirect.java': 'lobby/java/com/racas/black/coop/RoomDirect.java',
         'RoomDiscovery.java': 'lobby/java/com/racas/black/coop/RoomDiscovery.java',
