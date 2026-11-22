@@ -1650,7 +1650,7 @@
       "roomOnlyApkLastObserved": "in_progress"
     },
     "ORIGINAL_HOST_SOURCE_STAGE_TLS_PREPARE": {
-      "status": "STAGE_TRANSITION_CI_PENDING",
+      "status": "REAL_TLS_SOURCE_PREFLIGHT_SUCCESS_ANDROID29_APK_PENDING_GUEST_NOT_LOADED",
       "sourceMatchedRealGameThread": true,
       "hostStageSourceRefreshSeconds": 2,
       "stageRange": "0..15",
@@ -1666,15 +1666,22 @@
       "storyCommit": false,
       "realRemoteBotBody": false,
       "tests": "RoomOriginalHostStagePrepareGateTest.java",
-      "sourcePreflightRun": 45034956912,
+      "sourcePreflightRun": 45035225001,
       "sourcePreflightConclusion": "success",
       "realTlsCoreRun": 45034956938,
       "realTlsCoreConclusion": "success",
-      "android29Run": 45034956993,
+      "android29Run": 45035224995,
       "android29Conclusion": "success",
       "hostSourceNewStageAbortsOldTlsTicket": true,
       "hostReturnedRosterRevision": true,
-      "sourceTransitionTlsTest": "SessionTest.java"
+      "sourceTransitionTlsTest": "SessionTest.java",
+      "storyTlsRun": 45035225007,
+      "storyTlsConclusion": "success",
+      "udpRun": 45035225078,
+      "udpConclusion": "success",
+      "android29LastObserved": "in_progress",
+      "roomOnlyApkRun": 45035225062,
+      "roomOnlyApkLastObserved": "in_progress"
     }
   },
   "pending": {
@@ -2514,5 +2521,7 @@
     "preferCiJVMAndroid29BeforePhysical": true,
     "noPartialPhoneTrials": true
   },
-  "nextActorSourceDoc": "docs/ORIGINAL_REMOTE_HUMAN_BODY_ADAPTER_NEXT_AR.md"
+  "nextActorSourceDoc": "docs/ORIGINAL_REMOTE_HUMAN_BODY_ADAPTER_NEXT_AR.md",
+  "externalReference": "docs/BLACK_WINDOWS_TDM_REFERENCE_SCOPE_AR.md",
+  "externalWindowsTdmSourceRepoAccessible": false
 }
