@@ -92,6 +92,14 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('blackcoop::ObserveOriginalGpuDecl(*vs)',shader_source)
             self.assertIn('blackcoop::ObserveOriginalGpuDraw(g_state, false)',shader_source)
             self.assertIn('blackcoop::ObserveOriginalGpuDraw(g_state, true)',shader_source)
+            # Both hooks must be immediately adjacent to the unchanged
+            # original backend draw, not a synthetic draw or a side path.
+            self.assertIn('''    if (g_backend && a[2] != 0)
+        blackcoop::ObserveOriginalGpuDraw(g_state, false); // bounded draw witness
+    if (g_backend) g_backend->Draw(g_state, a[0], a[1], a[2], nullptr);''',shader_source)
+            self.assertIn('''    if (g_backend && a[1] != 0)
+        blackcoop::ObserveOriginalGpuDraw(g_state, true); // bounded indexed witness
+    if (g_backend) g_backend->Draw(g_state, a[0], 0, a[1], indices);''',shader_source)
             self.assertIn('if (g_backend) g_backend->Draw(g_state, a[0], a[1], a[2], nullptr)',shader_source)
             self.assertIn('if (g_backend) g_backend->Draw(g_state, a[0], 0, a[1], indices)',shader_source)
             self.assertIn('#include "coop/gpu_decl_witness.hpp"',shader_source)
