@@ -1231,6 +1231,34 @@
       "realBlackRendererOrActorWired": false,
       "firstPersonUnchanged": true,
       "realGameplaySync": false
+    },
+    "ORIGINAL_GPU_D3D8_SHADER_DECL_DIAGNOSTIC_20261122": {
+      "status": "ASAN_UBSAN_AND_SOURCE_STAGING_SUCCESS_ANDROID_FULL_BUILD_CHECK_LIVE",
+      "nativeSanitizerRun": 44966575850,
+      "sourcePreflightRun": 44966623833,
+      "fullAndroidRun": 44966638815,
+      "androidBuildStatus": "IN_PROGRESS_AT_WINDOWS_XBE_ANALYSIS_TOOLS_STAGE",
+      "originalTitleRef": "RanggaCasper/Black-Android@f3754d6985a8c35204e7df071546e586b10f1806",
+      "originalSdkRef": "TGP482/XboxXBERecomp@99078b119b5d5e0d1d6afb1390e29437c0c984c0",
+      "originalHookLocation": "src/d3d/d3d8.cpp D3DDevice_CreateVertexShader after gpu::ParseDeclaration(*vs)",
+      "sourceStagingOnly": true,
+      "nativeSourceFileModifiedInStageOnly": "src/d3d/d3d8.cpp",
+      "safeFixedCodes": [
+        "GPU_V36_DECL_CANDIDATE",
+        "GPU_V36_SLOT12_PACKED_DECL",
+        "GPU_V36_SLOT16_PACKED_DECL",
+        "GPU_V36_SLOT20_PACKED_DECL",
+        "GPU_V36_SLOT24_NORMPACK_DECL",
+        "GPU_V36_SLOT28_FLOAT2_DECL"
+      ],
+      "fixedCodesAtMostOncePerAppRuntime": true,
+      "originalModelActuallyDrawnWithObservedShader": false,
+      "originalSkinWeightsOffsetsIdentified": false,
+      "guestMemoryWritesAdded": false,
+      "storyReadyFromTheseSignals": false,
+      "actualHostSharedStory": false,
+      "ownerPhoneTestRequiredNow": false,
+      "details": "docs/ORIGINAL_GPU_DECL_SAFE_WITNESS_AR.md"
     }
   },
   "pending": {
@@ -1404,7 +1432,7 @@
     "deviceTested": true,
     "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "Session46: pinned original owner MODEL stride36 lane audit44965837041 SUCCESS (12 body models, 38917 referenced sampled vertex entries, six 4-byte lanes), +12 byte4 sum near255 83.63%, +20 all u8 values <25 90.85% = weak heuristics, NOT proven weights or indices. SDK runtime GPU vertex formats support packed attributes generically; need actual title D3D shader vertex declaration and its bound MODEL before decoding. Synthetic CPU parent pose/inverse bind/4 weights ASAN+UBSAN44966105790 PASS, NO actual BLACK skinning. Independently prove c5 actual scene loaded game-thread callback/stage epoch before story READY and human remote AllyBody. Owner phone test deferred until substantial real co-op shared host story and human body.",
+  "next": "Session46: original owner stride36 lane metadata-only CI44965837041 success (38917 samples), synthetic CPU ally skin ASAN+UBSAN44966105790 success. New true ORIGINAL D3D8 shader-declaration read-only observer staged with fixed one-shot safe codes, sanitizer44966575850 success and preflight44966623833 success. Windows Android TLS lobby diagnostic APK build44966638815 CHECK LIVE; repair actual compile issues on experiment/black-coop only. No owner phone trial until visible shared host campaign and independent remote human AllyBody. Observing shader creation is NOT proof body model bound; verify actual draw and stage/scene callback before real gameplay.",
   "latestHandoff": {
     "date": "2026-11-22",
     "session": 46,
@@ -1464,10 +1492,10 @@
     "engineActualSharedStory": false,
     "ownerWriterFlowRun": 44961768279,
     "nativeWorldWitnessRun": 44962215874,
-    "latestRoomApkRun": 44962611024,
+    "latestRoomApkRun": 44966638815,
     "realSceneLoadedHook": false,
     "ownerPhoneTestRequested": false,
-    "latestRoomApkStatus": "SUCCESS_NOT_GAMEPLAY",
+    "latestRoomApkStatus": "CHECK_LIVE_NOT_GAMEPLAY",
     "previousRoomApkFailure": 44962275637,
     "ciAllowlistRepaired": true,
     "externalTdmReferenceReviewed": true,
@@ -1500,9 +1528,13 @@
     "originalVertex36LaneSafeArtifact": 14731657226,
     "syntheticAllySkinContractRun": 44966105790,
     "originalShaderDeclarationObserved": false,
-    "originalSkinnedRemoteAllyRunning": false
+    "originalSkinnedRemoteAllyRunning": false,
+    "originalGpuDeclNativeCIRun": 44966575850,
+    "originalGpuDeclSourcePreflightRun": 44966623833,
+    "safeGpuObserverDoc": "docs/ORIGINAL_GPU_DECL_SAFE_WITNESS_AR.md",
+    "actualOriginalGpuDeclRuntimeObserved": false
   },
-  "executionStatus": "Session46 GitHub code+CI: owner stride36 metadata-only analysis44965837041 SUCCESS, 12/12 candidates across 3 StLevel files, ~38917 samples × 6 lanes, artifact14731657226. Synthetic CPU skin4 joint hierarchy reference ASAN+UBSAN44966105790 SUCCESS. Original RCB hierarchy and animation bank metadata from Session45 pass; no real vertex input declaration, pose playback, rendered human remote ally, engine scene-loaded callback, host story or gameplay channel. User CI first; no minor phone trial.",
+  "executionStatus": "Session46 owner pinned 36-byte lane data audit44965837041 PASS and 64joint/4weight synthetic-only CPU pose rig44966105790 PASS. Added safe original D3D8 ParseDeclaration observer via JNI fixed codes 4..9; pure C++ ASAN+UBSAN44966575850 PASS, source CI44966623833 PASS. Full room-only diagnostic Android APK44966638815 in progress Windows tools stage, no actual runtime declaration observation, no interpreted skin weights/remote body/host mission scene proof, no user phone test.",
   "ownerClarifications": {
     "session": 28,
     "previousPhoneTests": "Solo gameplay and two-phone real LAN lobby now confirmed, but no two-phone SAME WORLD gameplay",
@@ -1515,7 +1547,7 @@
   "integrationRoadmap": "docs/COOP_INTEGRATION_ROADMAP_AR.md",
   "currentWork": {
     "session": 46,
-    "task": "privately sample original stride36 vertex data lanes and validate bounded synthetic skeletal pose/skin reference under ASAN/UBSAN",
+    "task": "original owner stride36 metadata and synthetic skin contract PASS; staged real original GPU D3D8 vertex-declaration one-shot safe witness, Android full compile pending",
     "status": "Original owner stride36 lane metadata CI44965837041 SUCCESS, 38917 samples × six offsets, no proven weights/indices. C++ synthetic skin reference CI44966105790 SUCCESS. Actual title GPU attribute declaration and game remote actor still missing.",
     "sourceCi": 44951425780,
     "sourceCode": "9938283748ad1bdb06f15259d7e4fcb791a47574",
@@ -1634,7 +1666,14 @@
     "actualBlackVertexInputTypeMappingProven": false,
     "actualRemoteHumanAllyRenderer": false,
     "actualBlackMissionLoadedCallback": false,
-    "requestedOwnerPhoneTestNow": false
+    "requestedOwnerPhoneTestNow": false,
+    "gpuDeclNativeSanitizerRun": 44966575850,
+    "gpuDeclSourcePreflightRun": 44966623833,
+    "gpuDeclFullAndroidBuildRun": 44966638815,
+    "gpuDeclFullAndroidBuildStatus": "CHECK_LIVE",
+    "gpuDeclActualRuntimeDeviceObserved": false,
+    "actualRemoteHumanFullBodyRendered": false,
+    "actualBlackSceneLoadedCallback": false
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
