@@ -156,8 +156,12 @@ public:
         if(replica_&&(!valid(root)||replicaEpoch_!=body.epoch)){
             // Never overwrite or rescue a slot taken back by NPC engine.
             // No undocumented force-release: only stop drawing it.
+            // The drawing hook is independent from the resource file
+            // witness translation unit. Preserve only this already-verified
+            // original launch episode; never infer an episode from a draw.
+            const uint32_t existingEpisode=sourceEpisode_;
             purgeEvidence();
-            sourceWorld_=world;sourceEpisode_=g_originalStageFileOpen.ActiveEpisode();
+            sourceWorld_=world;sourceEpisode_=existingEpisode;
             sourceAtMs_=now;
             return;
         }
