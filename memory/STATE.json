@@ -1568,7 +1568,7 @@
       "android29LastObserved": "completed_success"
     },
     "ORIGINAL_HUMAN_BOT_LOOK_ROSTER_PLANNER": {
-      "status": "HEADER_FIX_PUSHED_AWAIT_CI",
+      "status": "SOURCE_CI_PASS_ROOM_ONLY_APK_PENDING_NO_ACTOR",
       "source": "OriginalHumanLookPlanner",
       "guestReadsOnly": true,
       "hostSourceOrdinalMaskOnly": true,
@@ -1585,7 +1585,19 @@
       "actorABIUnverified": true,
       "firstSourcePreflightRun": 45032641407,
       "firstSourcePreflightConclusion": "failure_missing_cstddef",
-      "fix": "add <cstddef> include"
+      "fix": "add <cstddef> include",
+      "sourcePreflightFixedRun": 45032729987,
+      "sourcePreflightFixedConclusion": "success"
+    },
+    "OWNER_PRIVATE_HUMAN_LOOK_ABI_SURVEY": {
+      "status": "SOURCE_PUSHED_CI_PENDING_NO_GUEST_CALL",
+      "source": "coop/analysis/original_human_look_xbe.py",
+      "windowBytesEach": 768,
+      "targetFunctionCount": 3,
+      "sourceOwnerXbePinnedSHA1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+      "originalCodeExported": false,
+      "originalEngineABIProven": false,
+      "noActorCreation": true
     }
   },
   "pending": {

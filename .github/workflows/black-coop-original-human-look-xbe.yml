@@ -1,0 +1,82 @@
+name: BO-COOP owner XBE original human bot LOOK source survey (NO ACTOR)
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/analysis/original_human_look_xbe.py'
+      - 'coop/analysis/test_original_human_look_xbe.py'
+      - '.github/workflows/black-coop-original-human-look-xbe.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: bo-pinned-owner-look-xbe
+  cancel-in-progress: true
+jobs:
+  synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Verify strictly bounded private owner image survey and negative tests
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s coop/analysis -p test_original_human_look_xbe.py -v
+  owner-private:
+    needs: synthetic
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: bo
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - uses: actions/checkout@v4
+        with:
+          repository: alwansan/biso
+          ref: 9ceb6a65fb5a4414c106ca3961295a1f8f7e558b
+          path: owner-biso
+          sparse-checkout: Black_Xbox_Extracted/default.xbe
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+          lfs: false
+      - name: Verify pinned original c5 XBE contains executable candidates only
+        run: |
+          set -euo pipefail
+          python3 bo/coop/analysis/original_human_look_xbe.py \
+            --owner-xbe owner-biso/Black_Xbox_Extracted/default.xbe \
+            --report "$RUNNER_TEMP/bo-original-look-candidates.json"
+          python3 - <<'PY'
+          import json,os,pathlib
+          report=pathlib.Path(os.environ["RUNNER_TEMP"])/"bo-original-look-candidates.json"
+          d=json.loads(report.read_text())
+          assert d["schema"]=="bo-original-human-look-private-v1"
+          assert d["owner_xbe_sha1_pinned"]
+          assert len(d["windows"])==3
+          assert all(r["executable_window_mapped"] for r in d["windows"].values())
+          assert not any(d[x] for x in (
+              "android_engine_guest_abi_verified",
+              "actor_instantiation_or_rendering_verified",
+              "source_function_boundaries_verified",
+              "original_bytes_exported"))
+          assert report.stat().st_size<=3200
+          print("BO_PRIVATE_XBE_LOOK_CANDIDATES_PASS: only sanitized counters, NO guest actor")
+          PY
+      - name: Export bounded source-derived counts (NO owner executable bytes)
+        uses: actions/upload-artifact@v4
+        with:
+          name: bo-original-human-look-private-numeric-evidence
+          path: ${{ runner.temp }}/bo-original-look-candidates.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Destroy private original XBE workspace
+        if: always()
+        run: |
+          rm -rf owner-biso
+          rm -f "$RUNNER_TEMP/bo-original-look-candidates.json"

@@ -1,3 +1,9 @@
+### Session67 original owner XBE visual/animation/pose function private audit
+- Added `coop/analysis/original_human_look_xbe.py`, synthetic positive/negative tests, and GitHub Action `black-coop-original-human-look-xbe.yml`. Reuses pinned owner c5 XBE read-only within the runner; inspects only 768 private bytes each at PC MIT candidate addresses `0x0017E420`, `0x0017E130`, `0x001801B0`. The workflow checks executable section mapping and bounded decode/field-reference count, never exports raw code, disassembly, guest pointers or owner private files. NO function boundaries, return/register ABI, safe guest call, engine-created remote character or drawable bot is asserted.
+- Its next meaningful outcome is whether the 3 PC-source candidate offsets exist in this exact owner XBE; on success it narrows next *dynamic* ABI validation, not a safe permission to call these functions. Maintain one major owner test only when shared story works.
+
+---
+
 # BLACK Co-op — المخطط الهندسي القادم لجسم الإنسان من مظهر بوت اللعبة الأصلي
 
 **مصدر مباشر مراجع:** `portingpete/Black-2006-Recomp@b2512fafd`، الملف `src/recomp_manual.c` (الأسطر التقريبية 2009–2130)، وخطة `docs/plans/split-screen-coop.md`. مصدر PC تجريبي وهو **ليس** برهان صلاحية الاتصال بدوال محرك BLACK على أندرويد.
