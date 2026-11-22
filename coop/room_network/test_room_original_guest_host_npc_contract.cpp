@@ -15,8 +15,8 @@ int main(){
  assert(!s.Ingest(f,sizeof(f)/4,1400)); // repeat tick no freshness bump
  assert(s.Read(15,1349,v));             // last valid state remains
  f[1]=4;f[9]=0;assert(!s.Ingest(f,sizeof(f)/4,1400)); // unsorted
- f[9]=15;f[13]=2;assert(!s.Ingest(f,sizeof(f)/4,1400)); // invalid dead
- f[13]=1;assert(s.Ingest(f,sizeof(f)/4,1400));
+ f[9]=15;f[14]=2;assert(!s.Ingest(f,sizeof(f)/4,1400)); // invalid dead
+ f[14]=1;assert(s.Ingest(f,sizeof(f)/4,1400));
  bool accepted=true;std::thread t([&]{accepted=s.Ingest(f,sizeof(f)/4,1410);});
  t.join();assert(!accepted);
  int32_t tombstone[]={0,0,0};
