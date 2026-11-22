@@ -211,6 +211,16 @@ public final class RoomAppRooms {
   try{return RoomGuestHostWorldSource.pack(after.ticket,source,status.roster);}
   catch(java.io.IOException invalidHostWorld){return empty;}
  }
+ /**
+  * Strict source-only HOST-authoritative two-phone other-human pose.
+  * Must be invoked by the original BLACK game thread, never UI/TLS.
+  * No original game memory, actors or AI can be changed by this function.
+  */
+ public static int[] pollOtherHumanBodySourceFromGameThread(){
+  RoomSession s;
+  synchronized(RoomAppRooms.class){s=active;}
+  return s==null?new int[10]:s.otherHumanBodySourceFromGameThread();
+ }
  // Source-only native gamepad -> authenticated GUEST TLS inputs.
  // Exact COMMITTED ticket scope resets the per-story sequence.
  // Not a loaded scene, NPC input, remote actor controller or physics.

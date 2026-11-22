@@ -90,6 +90,15 @@ public final class RoomTwoPhoneFirstStageStartTlsTest {
             ok(host.observeOriginalEyeFromGameThread(
                 1300,1400,1500,9000,14000,11000));
             until(()->guest.readHostWorldFromGameThread()!=null);
+            int[] hostOther=host.otherHumanBodySourceFromGameThread();
+            int[] guestOther=guest.otherHumanBodySourceFromGameThread();
+            ok(hostOther.length==10&&hostOther[0]==t.sceneEpoch&&
+               hostOther[3]==1&&hostOther[4]==2&&
+               hostOther[2]>0&&hostOther[5]>9000);
+            ok(guestOther.length==10&&guestOther[0]==t.sceneEpoch&&
+               guestOther[3]==2&&guestOther[4]==1&&
+               guestOther[5]==9000&&guestOther[6]==14000&&
+               guestOther[7]==11000);
             RoomWorldSnapshotWire.Snapshot values=guest.readHostWorldFromGameThread();
             ok(values.avatars.size()==2&&values.avatars.get(0).playerId==1&&
                values.avatars.get(1).playerId==2);
@@ -99,6 +108,8 @@ public final class RoomTwoPhoneFirstStageStartTlsTest {
             ok(host.cancelStoryFromGameThread());
             until(()->guest.storyStatus().ticket==null);
             ok(guest.readHostWorldFromGameThread()==null);
+            ok(host.otherHumanBodySourceFromGameThread()[0]==0);
+            ok(guest.otherHumanBodySourceFromGameThread()[0]==0);
         }
         System.out.println("TWO_PHONE_FIRST_STAGE_START_REAL_TLS_PASS: UI-start PREPARE, two device original-source synthetic READY/COMMIT, host two poses, guest input, ABORT; NO AUTO LAUNCH, NO VISIBLE BOTS");
     }

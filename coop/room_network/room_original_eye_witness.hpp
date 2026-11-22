@@ -15,6 +15,7 @@
 #include "coop/room_original_bot_pool_witness.hpp"
 #include "coop/room_original_guest_launch_match_witness.hpp"
 #include "coop/room_original_running_scene_source_gate.hpp"
+#include "coop/room_other_human_body_source_witness.hpp"
 #include "game/layout.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_system.h>
@@ -179,6 +180,10 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
         }
         ObserveOriginalHumanLookPlanHint(coreEpisode,world,
             lookSourceMatched,static_cast<uint8_t>(peerMask));
+        // Actually fetch the other REAL human's HOST-owned feet for a future
+        // independent original-bot draw. Still NO original actor memory write.
+        PollOriginalOtherHumanBodySource(env,activity,cls,
+            originalLocalSceneRunning&&lookSourceMatched);
         env->DeleteLocalRef(cls);
     }else if(env->ExceptionCheck())env->ExceptionClear();
     env->DeleteLocalRef(activity);

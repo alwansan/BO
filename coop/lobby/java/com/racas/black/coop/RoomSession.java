@@ -490,6 +490,64 @@ public final class RoomSession implements AutoCloseable {
             return client.worldSnapshot();
         }
     }
+    /**
+     * One authenticated TWO-HUMAN original body source for a future BOT LOOK.
+     * Exact [epoch, rosterRevision, worldTick, localSlot, otherSlot,
+     *        otherFeetXcm, otherFeetYcm, otherFeetZcm, yawCentiDeg, flags].
+     *
+     * Values are HOST-authoritative; the second phone never chooses an actor
+     * pointer/transform. Source only, not an engine character or render call.
+     * [0]*10 means no live currently committed exact 2-phone snapshot.
+     */
+    public int[] otherHumanBodySourceFromGameThread(){
+        synchronized(lock){
+            final int[] empty=new int[10];
+            if(!validStoryThread())return empty;
+            RoomStoryWire.Ticket t=phase==Phase.HOSTING&&host!=null?
+                host.storyTicket():phase==Phase.JOINED&&client!=null?
+                client.storyTicket():null;
+            if(t==null||t.participants!=3||t.sceneEpoch<=0||
+               t.rosterRevision<=0||t.rosterRevision>0xffffffffL)
+                return empty;
+            try{
+                RoomWire.State state;
+                int self,peer,tick;
+                RoomWorldSnapshotWire.Avatar other=null;
+                if(phase==Phase.HOSTING&&host!=null&&host.isRunning()&&
+                   host.storyCommitted()){
+                    state=host.snapshot();
+                    self=RoomWire.storySlot(state,state.self);peer=2;
+                    if(self!=1||hostEyeWorldTick<=0||lastEye==null||
+                       System.nanoTime()-lastEye.atNs>350000000L)return empty;
+                    for(RoomWorldSnapshotWire.Avatar v:
+                        hostHumanPoses.remotePoses(t))
+                        if(v.playerId==peer)other=v;
+                    tick=hostEyeWorldTick;
+                }else if(phase==Phase.JOINED&&client!=null&&
+                         client.isRunning()&&client.storyCommitted()){
+                    state=client.snapshot();
+                    self=RoomWire.storySlot(state,state.self);peer=1;
+                    if(self!=2)return empty;
+                    RoomWorldSnapshotWire.Snapshot w=client.worldSnapshot();
+                    if(w==null||!w.matches(t)||w.avatars.size()!=2)
+                        return empty;
+                    for(RoomWorldSnapshotWire.Avatar v:w.avatars)
+                        if(v.playerId==peer)other=v;
+                    tick=w.tick;
+                }else return empty;
+                if(state==null||other==null||tick<=0||
+                   state.revision!=t.rosterRevision||
+                   state.players.size()!=2||
+                   !java.security.MessageDigest.isEqual(
+                       state.session,t.session())||
+                   !t.includes(self)||!t.includes(peer))
+                    return empty;
+                return new int[]{t.sceneEpoch,(int)t.rosterRevision,
+                    tick,self,peer,other.xCm,other.yCm,other.zCm,
+                    other.yawCentiDeg,other.flags};
+            }catch(IOException invalid){return empty;}
+        }
+    }
     /** Host scene unload/cancel invalidates its prepared ticket. */
     public boolean cancelStoryFromGameThread(){
         synchronized(lock){
