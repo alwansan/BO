@@ -116,10 +116,10 @@ jobs:
           # observed read-only: original player update + launch *attempt*.
           # Never allow game loader/actor writes or an automatic story READY.
           actual=set(subprocess.check_output(['git','-C','reference','diff','--name-only','--','src','native','config','CMakeLists.txt'],text=True).splitlines())
-          if actual != {'src/game/cheats.cpp','src/game/hooks.cpp','src/game/options_menu.cpp','src/game/exit_menu.cpp','src/game/difficulty.cpp'}:
+          if actual != {'src/game/cheats.cpp','src/game/hooks.cpp','src/game/options_menu.cpp','src/game/exit_menu.cpp','src/game/difficulty.cpp','src/d3d/d3d8.cpp'}:
               raise SystemExit('Native/gameplay change outside the observer and title/room UI allowlist: '+str(actual))
           additions={p.name for p in pathlib.Path('reference/src/coop').iterdir()}
-          if additions != {'probe.cpp','probe.h','probe_core.hpp','pool_snapshot.hpp','pool_observer.inc','instance_graph.hpp','room_ui.h','room_route.hpp','room_net_ui.hpp','room_world_tick.hpp','world_tick_contract.hpp'}:
+          if additions != {'probe.cpp','probe.h','probe_core.hpp','pool_snapshot.hpp','pool_observer.inc','instance_graph.hpp','room_ui.h','room_route.hpp','room_net_ui.hpp','room_world_tick.hpp','world_tick_contract.hpp','gpu_decl_contract.hpp','gpu_decl_witness.hpp'}:
               raise SystemExit('Missing or unexpected probe source files: '+str(additions))
           if not pathlib.Path('reference/app/src/main/java/com/racas/black/ProbeLogExporter.java').is_file():
               raise SystemExit('Missing scoped-storage diagnostics exporter')
