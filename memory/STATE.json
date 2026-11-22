@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-54-real-stage-resource-file-open-correlated-with-original-player.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-55-original-mission-epoch-and-field-hints.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -1463,6 +1463,29 @@
       "androidSourceCi": 44975377204,
       "realTlsCi": 44975377200,
       "sessionFile": "memory/sessions/2026-11-22_bo-coop-54-real-stage-resource-file-open-correlated-with-original-player.md"
+    },
+    "ORIGINAL_MISSION_EPISODE_AND_STATIC_XBE_CANDIDATE_20261122": {
+      "status": "SOURCE_VERIFIED_NO_REAL_ORIGINAL_SCENE_PROOF",
+      "branch": "experiment/black-coop",
+      "sourceEpisodeCommit": "0cec393c1833617d3efda9c4d9ff18d275505f1e",
+      "candidateCorrelationCommit": "97a505778a2ee0ef2a86e94d2c79a2d6d9fada42",
+      "originalFileOpenStaleAcrossLaunchRejected": true,
+      "originalLevelMixingRejected": true,
+      "originalStageResourceProofIsNotLoadedScene": true,
+      "selectedMissionIndexProven": false,
+      "xbeGlobalA": "0x2D0D60",
+      "xbeGlobalB": "0x2D0D68",
+      "xbeFieldsOnlyNumericHypotheses": true,
+      "passiveBoundedGameThreadLogOnly": true,
+      "remoteHumanBodyOriginalActorRendered": false,
+      "originalGameStageShared": false,
+      "sourceRuns": [
+        44976311777,
+        44976311742,
+        44976590109
+      ],
+      "prior4PartyTlsRun": 44976311799,
+      "sessionFile": "memory/sessions/2026-11-22_bo-coop-55-original-mission-epoch-and-field-hints.md"
     }
   },
   "pending": {
@@ -1636,10 +1659,10 @@
     "deviceTested": true,
     "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "Session54 original Xbox stage file OPEN+actual player source witness validated CI44975377158/44975377204/44975377200/44975377221. Additional private original XBE literal-level/pointer order CI44975833014 SUCCESS but ZERO textual level_00/01/03..08 labels and ZERO 8-entry table candidates. DO NOT guess host mission->folder. Actual mission index and safe guest loader, verified scene loaded, independent bot visual/shared AI remain P0. Windows room-only build44975377208 check live. No tiny owner device trials.",
+  "next": "Session55 original sub_00124CF0 launch epoch resets file opens; exact two source stage files only same stage/epoch, stable 30 player samples, bounded logs; candidate globals0x2D0D60/68 read only and correlated to actual resource folder in same epoch, NOT selected mission proof. CI44976311777/44976311742/44976311799/44976311775/44976590109 SUCCESS. Check live 44976590159 and 44976590182. P0 original host-selected mission and safe real guest game loader, actual stage-loaded READY, independent any-bot human body, host AI/quest. No tiny owner phone tests.",
   "latestHandoff": {
     "date": "2026-11-22",
-    "session": 54,
+    "session": 55,
     "kind": "owner_CI_only_stage_static_plus_safe_tls_story_diagnostics",
     "plan": "docs/superpowers/plans/2026-11-22-host-story-remote-ally.md",
     "sourceCiRun": 44951425780,
@@ -1669,7 +1692,7 @@
     "engineHookVerified": false,
     "remoteHumanActorRendered": false,
     "ownerV3DeviceAccepted": false,
-    "sessionFile": "memory/sessions/2026-11-22_bo-coop-54-real-stage-resource-file-open-correlated-with-original-player.md",
+    "sessionFile": "memory/sessions/2026-11-22_bo-coop-55-original-mission-epoch-and-field-hints.md",
     "ownerTestPolicy": "CI_FIRST_MAJOR_TRIAL_ONLY",
     "ownerXbeStaticRun": 44956138064,
     "storyDiagnosticJvmRun": 44956473684,
@@ -1696,7 +1719,7 @@
     "engineActualSharedStory": false,
     "ownerWriterFlowRun": 44961768279,
     "nativeWorldWitnessRun": 44962215874,
-    "latestRoomApkRun": 44975377208,
+    "latestRoomApkRun": 44976590182,
     "realSceneLoadedHook": false,
     "ownerPhoneTestRequested": false,
     "latestRoomApkStatus": "CHECK_LIVE_NO_GAMEPLAY",
@@ -1773,7 +1796,9 @@
     "originalSceneLoaded": false,
     "originalXbeLevelNameOrderRun": 44975833014,
     "originalXbeLevelPointerArtifact": 14736120332,
-    "originalXbeLevelNameScan": "SUCCESS_ALL_ZERO_8_LEVELS_NO_ORDER_PROOF"
+    "originalXbeLevelNameScan": "SUCCESS_ALL_ZERO_8_LEVELS_NO_ORDER_PROOF",
+    "originalLaunchEpochSourceRun": 44976311777,
+    "originalMissionCandidateSourceRun": 44976590109
   },
   "executionStatus": "Session49 owner observed bot ally green reticle + inability shoot/kill. New value-only AllyTargetPolicy source+ASAN44969897865 SUCCESS (not actual game). Read docs/OWNER_ALLY_GREEN_RETICLE_RESEARCH_AR.md and Session49; CL images listed, binary pixels not inspected. Next independently trace original c5 aim target faction tint and damage suppression, map original friendly actor->MODEL->GPU draw/RCB. Real verified game-thread host-selected stage epoch and human fullbody/shared world still missing. One future major two-phone trial only.",
   "ownerClarifications": {
@@ -1787,9 +1812,9 @@
   },
   "integrationRoadmap": "docs/COOP_INTEGRATION_ROADMAP_AR.md",
   "currentWork": {
-    "session": 54,
-    "task": "Original owner XBE game difficulty read-only at mission-launch attempt and pinned Xbox kernel successful source stage level file opens correlated on ORIGINAL character game-thread; key missing original selected mission and actual loaded-scene/remote human gameplay.",
-    "status": "Real pinned Xbox kernel stage-file source witness CI44975377158 SUCCESS; Android/native source preflight CI44975377204 SUCCESS; real 4-party TLS v6 CI44975377200 SUCCESS. Resource OPEN + original player NOT full stage loaded. Phone test still not requested.",
+    "session": 55,
+    "task": "Original mission launch attempt episode-scope resource-open witness, rejects stale/mixed/replayed evidence; passive unverified mission field A/B candidates from original XBE with same epoch in sanitized logs; next prove actual host mission and guest stage loader.",
+    "status": "Original Xbox episode stage witness CI44976311777 SUCCESS, Android source CI44976311742 SUCCESS, Android29 TLS44976311775 SUCCESS, 4-party core44976311799 SUCCESS. New candidate source CI44976590109 SUCCESS. Actual original mission index and real guest shared story unproven; room-only APK queued/in progress; no owner test requested.",
     "sourceCi": 44951425780,
     "sourceCode": "9938283748ad1bdb06f15259d7e4fcb791a47574",
     "latestOwnerTestedAndroidApkRun": 44946597973,
@@ -1934,7 +1959,7 @@
     "v6AndroidPlatformRun": 44973843154,
     "originalNonFrontendWitnessRun": 44974018224,
     "originalNonFrontendWitnessResult": "SUCCESS_SOURCE_ONLY_NOT_SCENE_LOADER",
-    "latestNoGameplayApkRun": 44974018195,
+    "latestNoGameplayApkRun": 44976590182,
     "latestNoGameplayApkResult": "IN_PROGRESS_NO_GAMEPLAY",
     "actualHostSelectedSceneLoaded": false,
     "realOriginalRemoteBotRendered": false,
@@ -1956,7 +1981,21 @@
     "originalXbeLevelNameOrderResult": "SUCCESS_SAFE_STATIC_SCAN_ZERO_LEVEL_STRINGS_NO_POINTER_ORDER_PROOF",
     "originalXbeLevelLabelsInPinnedXbe": 0,
     "originalXbeLevelPointerPermutations": 0,
-    "originalMissionMappingStillUnknown": true
+    "originalMissionMappingStillUnknown": true,
+    "launchEpisodeStageWitnessCommit": "0cec393c1833617d3efda9c4d9ff18d275505f1e",
+    "missionCandidateCorrelationCommit": "97a505778a2ee0ef2a86e94d2c79a2d6d9fada42",
+    "originalMissionValueHypothesesOnly": true,
+    "candidateXbeAbsoluteGlobals": [
+      "0x2D0D60",
+      "0x2D0D68"
+    ],
+    "candidateGlobalsValidatedAsSelectedMission": false,
+    "episodeSourceCi": 44976311777,
+    "candidateAndroidSourceCi": 44976590109,
+    "latestTlsCoreCi": 44976590159,
+    "latestNoGameplayApkStatus": "CHECK_LIVE",
+    "realGuestStoryLaunch": false,
+    "remoteBotActorRendered": false
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
