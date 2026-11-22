@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-60-tls-human-input-game-thread-and-bot-look-plan.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-61-actual-body-feet-and-host-world-guest-inbox.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -2139,7 +2139,28 @@
     "session60BotLookPlanSanitizerResult": "SUCCESS_ANY_ENEMY_OR_ALLY_LOOK_THREE_EMPTY_SLOTS_NOT_RENDERED",
     "session60ActualOriginalGuestMissionStart": false,
     "session60ActualRemoteHumanBotBodyRendered": false,
-    "session60SingleWorldHostAICombatObjectives": false
+    "session60SingleWorldHostAICombatObjectives": false,
+    "session61BodyFeetWireV7Commit": "33f4a065600dd93f60dbc2872fb7aa0f4f48bd3d",
+    "session61BodyFeetOriginalSource": "FIRST_PERSON_ACTOR_OFFSET_0xA0_VS_EYE_0x100",
+    "session61BodyFeetNativePreflightRun": 44982274474,
+    "session61BodyFeetTlsRun": 44982274531,
+    "session61BodyFeetAndroid29Run": 44982274430,
+    "session61HostKinematicsCode": "9cb47de549d8280fd0d2c6d75dc549521659082d",
+    "session61HostKinematicsIntegrated": "779ccdfd8c30fa2bd0a5e0af93c3f84db90a9c1a",
+    "session61HostKinematicsCollisionEngineImplemented": false,
+    "session61HostKinematicsCombatEngineImplemented": false,
+    "session61GuestWorldSourceCode": "2f96962529da813e4940a6839d28c2c5cd4f26a0",
+    "session61GuestWorldJNIIntegrated": "81bbeb106714f6bde44637432607d12f5ba1456a",
+    "session61GuestWorldNativePreflightRun": 44982679713,
+    "session61GuestWorldNativePreflightResult": "SUCCESS_CPP_GUEST_NATIVE_JAVA8_STAGING",
+    "session61GuestWorldTlsRun": 44982679692,
+    "session61GuestWorldTlsResult": "SUCCESS_SYNTHETIC_REAL_4_PARTY_TLS",
+    "session61FullWindowsApkRun": 44982679707,
+    "session61FullWindowsApkResultAtCheck": "IN_PROGRESS_ROOM_ONLY_NOT_GAMEPLAY",
+    "session61GameplayOriginalStageLoaded": false,
+    "session61ActualGuestOriginalMissionAutoStart": false,
+    "session61RealRemoteHumanBotModelRendered": false,
+    "session61ActualHostSharedCombat": false
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
