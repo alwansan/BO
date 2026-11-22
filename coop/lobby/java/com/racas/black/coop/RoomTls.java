@@ -210,6 +210,17 @@ public final class RoomTls {
         public boolean isRunning(){return !closed;}
         public RoomStoryWire.Ticket storyTicket(){synchronized(lock){return story;}}
         public boolean storyCommitted(){synchronized(lock){return story!=null&&storyCommitted;}}
+        /** A false hostSceneLoaded() may mean WAITING for guests, not
+         * rejection. Check the original host READY bit under same lock.
+         * Exact ticket identity avoids attributing an old ready after abort.
+         */
+        public boolean hostLocalStageReady(RoomStoryWire.Ticket exact){
+            synchronized(lock){
+                return !closed&&story!=null&&exact!=null&&
+                    story.same(exact)&&revision==story.rosterRevision&&
+                    (storyReadyMask&1)!=0;
+            }
+        }
         /**
          * Only a future VERIFIED game-thread mission-choice hook may invoke
          * this. The network must never trigger BLACK's scene loader itself.

@@ -218,6 +218,7 @@ public final class RoomSession implements AutoCloseable {
                     // The return boolean is COMMIT, not whether the host
                     // source-scene-ready bit was installed successfully.
                     host.hostSceneLoaded(level,stage,ticket.sceneEpoch);
+                    if(!host.hostLocalStageReady(ticket))return 0;
                     originalRunningReadyTicket=ticket;
                     event("ORIGINAL_HOST_LOCAL_RUNNING_STAGE_READY_NO_SHARED_AI");
                     return 1;

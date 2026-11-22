@@ -244,8 +244,34 @@ public final class SessionTest {
                 (int)(ready.token>>>32),(int)ready.token,2)==0);
             until(()->hostReady.storyStatus().committed&&
                      guestReady.storyStatus().committed);
-            check(!hostReady.cancelStoryFromGameThread()||
-                !guestReady.storyStatus().committed);
+            // The REAL TLS barrier is now complete. Verify authoritative
+            // host world distribution and authenticated guest->host human
+            // command, using synthetic source positions only.
+            java.util.List<RoomWorldSnapshotWire.Avatar> world=
+                java.util.Arrays.asList(
+                  new RoomWorldSnapshotWire.Avatar(1,250,400,500,0,0),
+                  new RoomWorldSnapshotWire.Avatar(2,325,400,500,0,0));
+            check(hostReady.publishWorldSnapshotFromGameThread(1,world));
+            until(()->guestReady.readHostWorldFromGameThread()!=null&&
+                guestReady.readHostWorldFromGameThread().tick==1);
+            check(guestReady.readHostWorldFromGameThread().avatars.size()==2);
+            check(guestReady.offerHumanInputFromGameThread(
+                1,500,-200,4000,true,false));
+            java.util.concurrent.atomic.AtomicBoolean acceptedGuest=
+                new java.util.concurrent.atomic.AtomicBoolean();
+            until(()->{
+                for(RoomTls.Server.TrustedInput command:
+                    hostReady.drainHumanInputsFromGameThread())
+                    if(command.playerSlot==2&&command.value.fire&&
+                       command.value.moveX==500)acceptedGuest.set(true);
+                return acceptedGuest.get();
+            });
+            check(hostReady.cancelStoryFromGameThread());
+            until(()->guestReady.storyStatus().ticket==null);
+            check(!guestReady.storyStatus().committed&&
+                  guestReady.readHostWorldFromGameThread()==null);
+            check(!guestReady.offerHumanInputFromGameThread(
+                2,0,0,0,false,false));
         }
         System.out.println("ORIGINAL_STABLE_RUNNING_STAGE_TLS_READY_GATE_PASS: synthetic callback, real TLS ticket+roster+original source identity; no auto guest loader or shared AI");
         System.out.println("STORY_DIAGNOSTICS_PASS: authenticated TLS lifecycle emits only bounded safe codes even without room UI");
