@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Strict synthetic-only test fixture; no original owner MODEL bytes."""
 import unittest
-from ally_skin_influence_hypotheses import HYPOTHESES,pair_counts,stage_scan
+from ally_skin_influence_hypotheses import HYPOTHESES,pair_counts,index_lane_relationship,stage_scan
 
 class Hypotheses(unittest.TestCase):
     def test_conditional_active_influences_and_negative_control(self):
@@ -31,6 +31,22 @@ class Hypotheses(unittest.TestCase):
         wrong=pair_counts(data,0,[0,1,2],25,12,24)
         self.assertNotEqual(wrong["near_255_and_active_indices_in_range"],
                             c["near_255_and_active_indices_in_range"])
+    def test_packed_lane_relation_only_derived_counts(self):
+        sample=bytearray(72)
+        sample[12:16]=bytes((255,0,0,0))
+        sample[16:20]=bytes((3,6,0,0))
+        sample[20:24]=bytes((3,9,0,0))
+        sample[48:52]=bytes((128,127,0,0))
+        sample[52:56]=bytes((3,6,0,0))
+        sample[56:60]=bytes((3,6,0,0))
+        c=index_lane_relationship(sample,0,[0,1])
+        self.assertEqual(c["sample_count"],2)
+        self.assertEqual(c["active_byte_count"],3)
+        self.assertEqual(c["same_value_active_byte_count"],2)
+        self.assertEqual(c["same_all_four_byte_slots"],1)
+        self.assertEqual(c["same_all_active_byte_slots"],1)
+        self.assertEqual(c["both_index_lanes_active_tripled_under_25"],2)
+        self.assertEqual(c["both_index_lanes_all_four_tripled_under_25"],2)
     def test_reject_invalid_offsets_indices_and_limits(self):
         data=bytes(36)
         for w,i in ((-1,20),(12,36),(12,12),(11,20)):

@@ -51,6 +51,31 @@ def pair_counts(data,base,indices,joints,weights_at,indices_at):
         # Additional tests are NOT proof of the layout or a functioning GPU.
     return dict(sorted(c.items()))
 
+def index_lane_relationship(data,base,vertices,weights_at=12):
+    """Derived pairwise agreement of +16/+20 packs only; no source words."""
+    if len(vertices)>MAX_SAMPLES_PER_BUFFER or weights_at!=12:
+        raise ValueError("Cross-lane sample budget")
+    c=Counter()
+    for vertex in vertices:
+        if not isinstance(vertex,int) or vertex<0:
+            raise ValueError("Cross-lane index")
+        w=span(data,base+vertex*36+weights_at,4)
+        left=span(data,base+vertex*36+16,4)
+        right=span(data,base+vertex*36+20,4)
+        active=[i for i in range(4) if w[i]]
+        c["sample_count"]+=1
+        c["active_byte_count"]+=len(active)
+        c["same_value_active_byte_count"]+=sum(left[i]==right[i] for i in active)
+        c["same_all_four_byte_slots"]+=all(left[i]==right[i] for i in range(4))
+        c["same_all_active_byte_slots"]+=bool(active) and all(
+            left[i]==right[i] for i in active)
+        c["both_index_lanes_all_four_tripled_under_25"]+=all(
+            v%3==0 and v//3<25 for v in (*left,*right))
+        c["both_index_lanes_active_tripled_under_25"]+=bool(active) and all(
+            left[i]%3==0 and right[i]%3==0 and
+            left[i]//3<25 and right[i]//3<25 for i in active)
+    return dict(sorted(c.items()))
+
 def stage_scan(data,stage_ordinal):
     if not data or len(data)>MAX_FILE:raise ValueError("Stage budget")
     models=[]
@@ -81,7 +106,9 @@ def stage_scan(data,stage_ordinal):
             sampled=sorted(refs)[:MAX_SAMPLES_PER_BUFFER]
             for i in sampled:span(data,vb+i*36,36)
             hypotheses=[{"weight_offset":w,"index_offset":idx,**pair_counts(data,vb,sampled,joints,w,idx)} for w,idx in HYPOTHESES]
-            buffers.append({"ordinal":bi,"referenced_indices":len(refs),"sampled_indices":len(sampled),"hypotheses":hypotheses})
+            buffers.append({"ordinal":bi,"referenced_indices":len(refs),"sampled_indices":len(sampled),
+                            "index_lane_relationship":index_lane_relationship(data,vb,sampled),
+                            "hypotheses":hypotheses})
         models.append({"ordinal":ordinal,"bone_count":joints,"buffers":buffers})
     return {"stage_ordinal":stage_ordinal,"models":models}
 
