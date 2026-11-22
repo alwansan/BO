@@ -2832,10 +2832,15 @@
     "hostStartJVMFourPeerTlsCi": 45070918389,
     "hostAllBodyTlsCi": 45071151487,
     "nativeAllBodySanitizerCi": 45071316506,
-    "androidFullBuildRun": 45071574359,
-    "androidFullBuildStatus": "queued_at_handoff",
+    "androidFullBuildRun": 45071908517,
+    "androidFullBuildStatus": "in_progress_at_last_check",
     "ciLastCompileFailureFixed": "room_original_live_remote_bot.hpp:160 undefined g_originalStageFileOpen (39df2567)",
     "autoMenuUiRootFix": "ba34d965 + 4c131fca",
-    "ownerNextMajorTrial": "Only when the host has actual other original physics player actors, enemy AI, weapons and objectives truly one host authoritative original game world."
+    "ownerNextMajorTrial": "Only when the host has actual other original physics player actors, enemy AI, weapons and objectives truly one host authoritative original game world.",
+    "aiTargetSource": "MIT PC black_p2_target @recomp_manual.c:2241-2250; root 0x2D1988, 32 slots, +0xFAC, +0x378 target index",
+    "aiTargetWitnessCommit": "73403bd11c08e9ba8b8adbd26df1b1de4c267aa6",
+    "aiTargetWitnessOnlyRead": true,
+    "aiTargetNativeCiSuccess": 45071908485,
+    "aiTargetSourcePreflightSuccess": 45071908413
   }
 }
