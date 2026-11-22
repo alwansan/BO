@@ -36,6 +36,8 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('WORLD_LOCAL_PLAYER_UPDATE_SEEN',java)
             self.assertIn('WORLD_POINTER_CHANGED_UNVERIFIED',java)
             self.assertIn('WORLD_MISSION_LAUNCH_ATTEMPT',java)
+            self.assertIn('ORIGINAL_LAUNCH_DIFFICULTY_BLACK_OPS_NOT_MISSION',java)
+            self.assertIn('ORIGINAL_LAUNCH_DIFFICULTY_UNAVAILABLE',java)
             self.assertIn('ORIGINAL_NON_FRONTEND_PLAYER_STABLE_UNVERIFIED_MISSION',java)
             for safe in ('GPU_V36_DECL_CANDIDATE',
                          'GPU_V36_SLOT12_PACKED_DECL','GPU_V36_SLOT16_PACKED_DECL',
@@ -96,6 +98,14 @@ class RoomNetPrepareTests(unittest.TestCase):
             difficulty=(root/'src/game/difficulty.cpp').read_text(encoding='utf-8')
             self.assertIn('blackcoop::ObserveMissionLaunchCandidate()',difficulty)
             self.assertIn('__imp__sub_00124CF0(ctx, base)',difficulty)
+            self.assertIn('blackcoop::ObserveOriginalLaunchDifficulty()',difficulty)
+            self.assertIn('#include "coop/room_original_launch_difficulty_witness.hpp"',difficulty)
+            difficulty_witness=(root/'src/coop/room_original_launch_difficulty_witness.hpp').read_text(encoding='utf-8')
+            difficulty_guard=(root/'src/coop/room_original_launch_difficulty_contract.hpp').read_text(encoding='utf-8')
+            self.assertIn('kernel::R32(game+kDifficulty)',difficulty_witness)
+            self.assertIn('constexpr uint32_t kDifficulty=0x2014C',difficulty_witness)
+            self.assertIn('ClassifyOriginalLaunchDifficulty',difficulty_guard)
+            self.assertNotIn('reportSceneLoadedFromGameThread',difficulty_guard+difficulty_witness)
             self.assertNotIn('reportSceneLoadedFromGameThread',difficulty)
             self.assertIn('#include "coop/room_world_tick.hpp"',native)
             witness=(root/'src/coop/room_world_tick.hpp').read_text(encoding='utf-8')

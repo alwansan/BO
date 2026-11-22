@@ -96,6 +96,11 @@ def prepare(root: pathlib.Path):
         else if (code == 11) com.racas.black.coop.RoomDiagnostics.event("GPU_V36_BOUND_ARRAY_DRAW");
         else if (code == 12) com.racas.black.coop.RoomDiagnostics.event("GPU_V36_BOUND_SAME_STREAM_12_20");
         else if (code == 13) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_NON_FRONTEND_PLAYER_STABLE_UNVERIFIED_MISSION");
+        else if (code == 20) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_EASY_NOT_MISSION");
+        else if (code == 21) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_NORMAL_NOT_MISSION");
+        else if (code == 22) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_HARD_NOT_MISSION");
+        else if (code == 23) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_BLACK_OPS_NOT_MISSION");
+        else if (code == 24) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_UNAVAILABLE");
     }
     public String coopRoomStatusLine(int row) {''', java)
     pending[java] = text
@@ -167,6 +172,8 @@ def prepare(root: pathlib.Path):
     pending['src/coop/room_world_tick.hpp'] = (HERE / 'room_network/room_world_tick.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_eye_contract.hpp'] = (HERE / 'room_network/room_original_eye_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_nonfrontend_original_player.hpp'] = (HERE / 'room_network/room_nonfrontend_original_player.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_launch_difficulty_contract.hpp'] = (HERE / 'room_network/room_original_launch_difficulty_contract.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_launch_difficulty_witness.hpp'] = (HERE / 'room_network/room_original_launch_difficulty_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_eye_witness.hpp'] = (HERE / 'room_network/room_original_eye_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/world_tick_contract.hpp'] = (HERE / 'room_network/world_tick_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/gpu_decl_contract.hpp'] = (HERE / 'room_network/gpu_decl_contract.hpp').read_text(encoding='utf-8')
@@ -197,9 +204,10 @@ def prepare(root: pathlib.Path):
     difficulty='src/game/difficulty.cpp'
     launch=pending.get(difficulty,originals[difficulty].decode('utf-8'))
     launch=once(launch,'#include "xdk/hle.h"',
-                '#include "xdk/hle.h"\n#include "coop/room_world_tick.hpp"',difficulty)
+                '#include "xdk/hle.h"\n#include "coop/room_world_tick.hpp"\n#include "coop/room_original_launch_difficulty_witness.hpp"',difficulty)
     launch=once(launch,'    __imp__sub_00124CF0(ctx, base);',
         '''    blackcoop::ObserveMissionLaunchCandidate(); // attempt, NOT loaded scene
+    blackcoop::ObserveOriginalLaunchDifficulty(); // source-known 0..3, NOT mission ID
     __imp__sub_00124CF0(ctx, base);''',difficulty)
     pending[difficulty]=launch
 

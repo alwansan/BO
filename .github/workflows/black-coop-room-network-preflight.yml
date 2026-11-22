@@ -45,6 +45,8 @@ jobs:
           "$RUNNER_TEMP/test_original_eye"
           g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -fsanitize=undefined             bo/coop/room_network/test_room_nonfrontend_original_player.cpp -o "$RUNNER_TEMP/test_nonfrontend"
           "$RUNNER_TEMP/test_nonfrontend"
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -fsanitize=undefined             bo/coop/room_network/test_original_launch_difficulty_contract.cpp -o "$RUNNER_TEMP/test_original_difficulty"
+          "$RUNNER_TEMP/test_original_difficulty"
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
