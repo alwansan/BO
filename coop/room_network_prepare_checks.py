@@ -163,6 +163,8 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('X86_FUNC(sub_001EDC90)',difficulty)
             self.assertIn('blackcoop::ObserveOriginalStreamingStageEntry()',difficulty)
             self.assertIn('blackcoop::ObserveOriginalGuestPreparedStoryFrontend()',difficulty)
+            self.assertIn('blackcoop::ObserveOriginalFirstStageAutoMenu(ctx)',difficulty)
+            self.assertIn('#include "coop/room_original_first_stage_auto_menu_witness.hpp"',difficulty)
             self.assertIn('#include "coop/room_original_guest_prepared_story_witness.hpp"',difficulty)
             prepared=(root/'src/coop/room_original_guest_prepared_story_witness.hpp').read_text(encoding='utf-8')
             self.assertIn('coopPollGuestPreparedStoryFromOriginalFrontend',prepared)

@@ -174,6 +174,8 @@ def prepare(root: pathlib.Path):
         else if (code == 81) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_GUEST_RUNNING_LEVEL_MATCHES_HOST_STAGE_NO_SHARED_WORLD");
         else if (code == 90) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_REMOTE_HUMAN_BOT_VISUAL_SLOT_INITIALIZED_UNTESTED");
         else if (code == 91) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_REMOTE_HUMAN_BOT_DRAW_CALLED_NOT_VISUAL_PROOF");
+        else if (code == 92) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_TWO_PHONE_AUTO_MENU_DIFFICULTY_PAGE_REQUESTED");
+        else if (code == 93) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_TWO_PHONE_AUTO_MENU_CONFIRM_SENT");
         else if (code == 20) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_EASY_NOT_MISSION");
         else if (code == 21) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_NORMAL_NOT_MISSION");
         else if (code == 22) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_HARD_NOT_MISSION");
@@ -266,6 +268,8 @@ def prepare(root: pathlib.Path):
     pending['src/coop/original_other_human_body_source.hpp'] = (HERE / 'room_network/original_other_human_body_source.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_other_human_body_source_witness.hpp'] = (HERE / 'room_network/room_other_human_body_source_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_live_remote_bot.hpp'] = (HERE / 'room_network/room_original_live_remote_bot.hpp').read_text(encoding='utf-8')
+    pending['src/coop/original_first_stage_auto_menu_contract.hpp'] = (HERE / 'room_network/original_first_stage_auto_menu_contract.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_first_stage_auto_menu_witness.hpp'] = (HERE / 'room_network/room_original_first_stage_auto_menu_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_streaming_stage_contract.hpp'] = (HERE / 'room_network/room_original_streaming_stage_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_streaming_stage_witness.hpp'] = (HERE / 'room_network/room_original_streaming_stage_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_core_phase_witness.hpp'] = (HERE / 'room_network/room_original_core_phase_witness.hpp').read_text(encoding='utf-8')
@@ -368,13 +372,13 @@ X86_FUNC(sub_000D1500) {
     # Original upstream files remain untouched and output stays LF.
     launch=pending.get(difficulty,originals[difficulty].decode('utf-8')).replace('\r\n','\n')
     launch=once(launch,'#include "xdk/hle.h"',
-                '#include "xdk/hle.h"\n#include "coop/room_world_tick.hpp"\n#include "coop/room_original_launch_difficulty_witness.hpp"\n#include "coop/room_original_streaming_stage_witness.hpp"\n#include "coop/room_original_guest_prepared_story_witness.hpp"',difficulty)
+                '#include "xdk/hle.h"\n#include "coop/room_world_tick.hpp"\n#include "coop/room_original_launch_difficulty_witness.hpp"\n#include "coop/room_original_streaming_stage_witness.hpp"\n#include "coop/room_original_guest_prepared_story_witness.hpp"\n#include "coop/room_original_first_stage_auto_menu_witness.hpp"',difficulty)
     # Pinned upstream original FRONTEND frame wrapper. In PREPARE phase the
     # guest has no body, so original player-update hooks never run. Poll
     # only the verified TLS ticket on this actual original frontend tick.
     launch=once(launch,
         '    Unlock();\n    __imp__sub_00115030(ctx, base);\n    OfferBlackOps();',
-        '    Unlock();\n    blackcoop::ObserveOriginalGuestPreparedStoryFrontend();\n    __imp__sub_00115030(ctx, base);\n    OfferBlackOps();',difficulty)
+        '    Unlock();\n    blackcoop::ObserveOriginalGuestPreparedStoryFrontend();\n    blackcoop::ObserveOriginalFirstStageAutoMenu(ctx);\n    __imp__sub_00115030(ctx, base);\n    OfferBlackOps();',difficulty)
     launch=once(launch,'    __imp__sub_00124CF0(ctx, base);',
         '''    blackcoop::ObserveMissionLaunchCandidate(); // attempt, NOT loaded scene
     const uint32_t originalLaunchEpisode=blackcoop::ObserveOriginalLaunchDifficulty();
