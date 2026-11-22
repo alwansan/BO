@@ -34,6 +34,11 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('WORLD_LOCAL_PLAYER_UPDATE_SEEN',java)
             self.assertIn('WORLD_POINTER_CHANGED_UNVERIFIED',java)
             self.assertIn('WORLD_MISSION_LAUNCH_ATTEMPT',java)
+            for safe in ('GPU_V36_DECL_CANDIDATE',
+                         'GPU_V36_SLOT12_PACKED_DECL','GPU_V36_SLOT16_PACKED_DECL',
+                         'GPU_V36_SLOT20_PACKED_DECL','GPU_V36_SLOT24_NORMPACK_DECL',
+                         'GPU_V36_SLOT28_FLOAT2_DECL'):
+                self.assertIn(safe,java)
             self.assertIn('RoomAppRooms.shutdown()',java)
             overlay=(root/'app/src/main/java/com/racas/black/coop/RoomOverlay.java').read_text(encoding='utf-8')
             self.assertIn('RoomAppRooms.obtain()',overlay)
@@ -77,6 +82,20 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('std::atomic<uint32_t>',guard)
             self.assertNotIn('reportSceneLoadedFromGameThread',witness)
             self.assertNotIn('acknowledgeSceneLoaded',witness)
+            # This observes the genuine title's D3D shader input declaration,
+            # not a shader program, original vertex buffer or claimed skinned NPC.
+            shader_source=(root/'src/d3d/d3d8.cpp').read_text(encoding='utf-8')
+            self.assertIn('gpu::ParseDeclaration(*vs);',shader_source)
+            self.assertIn('blackcoop::ObserveOriginalGpuDecl(*vs)',shader_source)
+            self.assertIn('#include "coop/gpu_decl_witness.hpp"',shader_source)
+            gpu_guard=(root/'src/coop/gpu_decl_contract.hpp').read_text(encoding='utf-8')
+            gpu_reporter=(root/'src/coop/gpu_decl_witness.hpp').read_text(encoding='utf-8')
+            self.assertIn('gpu_probe::Classify(desc)',gpu_reporter)
+            self.assertIn('static gpu_probe::Once observed',gpu_reporter)
+            self.assertIn('kStride36',gpu_guard)
+            self.assertIn('SendSafeWorldCodeToAndroid(9)',gpu_reporter)
+            self.assertNotIn('reportSceneLoadedFromGameThread',gpu_guard+gpu_reporter)
+            self.assertNotIn('acknowledgeSceneLoaded',gpu_guard+gpu_reporter)
     def test_fail_closed_on_changed_anchor(self):
         with tempfile.TemporaryDirectory() as directory:
             root=pathlib.Path(directory)
