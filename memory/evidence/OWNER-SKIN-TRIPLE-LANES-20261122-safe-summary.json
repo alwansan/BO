@@ -1,0 +1,53 @@
+{
+  "schema": "bo-coop-owner-model-encoded-lanes-safe-evidence-v1",
+  "date": "2026-11-22",
+  "pinned_owner_resource_repo": "alwansan/biso",
+  "owner_resource_commit": "9ceb6a65fb5a4414c106ca3961295a1f8f7e558b",
+  "runs": {
+    "first": 44967973826,
+    "encoded_rows": 44968297799,
+    "cross_lane": 44968462670,
+    "android_room_only": 44967448414
+  },
+  "artifacts": {
+    "first": 14731639360,
+    "encoded_rows": 14733070306,
+    "cross_lane": 14732965565,
+    "android_room_only": 14732891166
+  },
+  "files_scanned": 3,
+  "models_checked": 12,
+  "buffers_checked": 36,
+  "samples": 38917,
+  "candidate_weight_offset": 12,
+  "weight_sum_254_256_count": 32548,
+  "weight_sum_254_256_percent": 83.63,
+  "assumed_25_raw_joint_ids": {
+    "plus20_normalized_and_active_index_valid_count": 31209,
+    "plus20_normalized_and_active_index_valid_percent": 80.19,
+    "plus16_normalized_and_active_index_valid_percent": 12.3,
+    "plus24_normalized_and_active_index_valid_percent": 9.59,
+    "interpretation": "Direct raw <25 check is a weak or misleading encoding assumption"
+  },
+  "row_3x_25": {
+    "both_plus16_and_plus20_all_four_byte_values_divisible_by_three_and_quotient_under25_count": 38917,
+    "both_plus16_and_plus20_all_four_byte_values_divisible_by_three_and_quotient_under25_percent": 100,
+    "active_slot_samples": 72157,
+    "equal_active_slots_plus16_plus20": 23208,
+    "equal_active_slots_percent": 32.16,
+    "full_four_byte_lane_equal_samples": 0,
+    "all_active_slots_equal_samples": 0
+  },
+  "active_duplicate_rate_candidate_plus16_percent": 12.35,
+  "active_duplicate_rate_candidate_plus20_percent": 47.22,
+  "claims_proven": {
+    "shader_decl_binds_this_named_model": false,
+    "original_skin_weights": false,
+    "rig_matrices": false,
+    "renderable_remote_human": false,
+    "host_selected_story_loaded": false,
+    "shared_gameplay": false
+  },
+  "raw_owner_asset_bytes_exported": false,
+  "source": "Derived from private pinned owner MODEL CI, never original raw fields."
+}
