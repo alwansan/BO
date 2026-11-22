@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-64-black-video-visual-proof-and-touch-pad-merge.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-65-original-core-stage-identity.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -1505,6 +1505,24 @@
       "actualGuestAutoLaunch": false,
       "sourceReport": "docs/ORIGINAL_MISSION_WORD_WIDTHS_AND_CALL_CHAIN_AR.md",
       "sessionFile": "memory/sessions/2026-11-22_bo-coop-56-verified-xbe-word-width-and-native-source-fix.md"
+    },
+    "ORIGINAL_CORE_STAGE_IDENTITY_SOURCE_ONLY": {
+      "status": "CODE_PUSHED_CI_PENDING_NO_GAMEPLAY",
+      "baseEvidence": "portingpete/Black-2006-Recomp@b2512fafd src/black_checkpoint.inc level byte core+0x5AEC stage byte +0x5AED",
+      "ownerXbeOffsetsIndependentlyVerified": false,
+      "contract": "coop/room_network/room_original_core_stage_identity_contract.hpp",
+      "nativeHook": "coop/room_network/room_original_eye_witness.hpp",
+      "loggingCodes": [
+        67,
+        68,
+        69
+      ],
+      "stableSamples": 30,
+      "realSceneLoadedCallback": false,
+      "guestStageLauncher": false,
+      "independentRemoteBody": false,
+      "latestPreviousRoomOnlyApkRun": 45029723927,
+      "latestPreviousRoomOnlyApkConclusion": "success_no_shared_story"
     }
   },
   "pending": {

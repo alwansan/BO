@@ -124,6 +124,9 @@ def prepare(root: pathlib.Path):
         else if (code == 64) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_POOL_BOT_LOOK_THREE_OR_MORE_BLANK_RIG_SLOTS_NOT_READY");
         else if (code == 65) com.racas.black.coop.RoomDiagnostics.event("FIRST_SOURCE_ORIGINAL_GUEST_MERGED_INPUT_QUEUED_NOT_GAMEPLAY");
         else if (code == 66) com.racas.black.coop.RoomDiagnostics.event("FIRST_ORIGINAL_GUEST_TOUCH_INPUT_QUEUED_NOT_GAMEPLAY");
+        else if (code == 67) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_CORE_LEVEL_STAGE_MATCH_STREAM_SOURCE_HINT_NOT_READY");
+        else if (code == 68) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_CORE_LEVEL_STAGE_CONFLICT_STREAM_SOURCE_HINT_NOT_READY");
+        else if (code == 69) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_CORE_LEVEL_STAGE_UNKNOWN_SOURCE_HINT_NOT_READY");
         else if (code == 20) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_EASY_NOT_MISSION");
         else if (code == 21) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_NORMAL_NOT_MISSION");
         else if (code == 22) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_HARD_NOT_MISSION");
@@ -215,6 +218,7 @@ def prepare(root: pathlib.Path):
     pending['src/coop/room_original_streaming_stage_contract.hpp'] = (HERE / 'room_network/room_original_streaming_stage_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_streaming_stage_witness.hpp'] = (HERE / 'room_network/room_original_streaming_stage_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_core_phase_witness.hpp'] = (HERE / 'room_network/room_original_core_phase_witness.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_core_stage_identity_contract.hpp'] = (HERE / 'room_network/room_original_core_stage_identity_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_bot_pool_contract.hpp'] = (HERE / 'room_network/room_original_bot_pool_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_bot_pool_witness.hpp'] = (HERE / 'room_network/room_original_bot_pool_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_local_pad_tap.hpp'] = (HERE / 'room_network/room_original_local_pad_tap.hpp').read_text(encoding='utf-8')

@@ -11,6 +11,7 @@
 #include "coop/room_original_mission_field_hint.hpp"
 #include "coop/room_original_streaming_stage_contract.hpp"
 #include "coop/room_original_core_phase_witness.hpp"
+#include "coop/room_original_core_stage_identity_contract.hpp"
 #include "coop/room_original_bot_pool_witness.hpp"
 #include "game/layout.h"
 #include <SDL3/SDL.h>
@@ -75,6 +76,24 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
         phaseQualifiedEpisode=coreEpisode;phaseQualifiedWorld=world;
         SendSafeWorldCodeToAndroid(14); // source-gated RUNNING hint, NOT READY
     }
+    // The MIT PC recomp checkpoint source reads canonical CORE level+stage
+    // bytes at +0x5AEC/+0x5AED; unlike game+0x2020C/+0x2020E,
+    // these may give a second independent stage-identity witness.
+    // Guard the whole span on the genuine original game thread; this is
+    // not proof of a loaded scene, safe loader ABI or host mission choice.
+    const uint64_t identityEnd=static_cast<uint64_t>(world)+0x5AEDu+1u;
+    const bool identityReadable=world&&identityEnd<=0x100000000ull&&
+        OriginalGuestSpanCommitted(world+0x5AECu,2u);
+    const int coreLevel=identityReadable?
+        static_cast<int>(kernel::G<uint8_t>(world+0x5AECu)):-1;
+    const int coreStage=identityReadable?
+        static_cast<int>(kernel::G<uint8_t>(world+0x5AEDu)):-1;
+    static OriginalCoreStageIdentityWitness coreStageIdentity;
+    const int identityCode=coreStageIdentity.Observe(
+        coreEpisode,world,candidateReady&&
+        phaseQualifiedEpisode==coreEpisode&&phaseQualifiedWorld==world,
+        coreStream.level,coreStream.stage,identityReadable,coreLevel,coreStage);
+    if(identityCode)SendSafeWorldCodeToAndroid(identityCode); // 67..69 hints only
     // Additional P0-readiness proof: at most one safe coarse event per
     // readiness category / launch episode. NO model pointer ever exported,
     // NO original actor/character writes and NO scene/mission READY.
