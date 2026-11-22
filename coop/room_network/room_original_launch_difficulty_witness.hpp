@@ -12,7 +12,7 @@
 #include "xdk/hle.h"
 #include <cstdint>
 namespace blackcoop {
-inline void ObserveOriginalLaunchDifficulty() noexcept{
+inline uint32_t ObserveOriginalLaunchDifficulty() noexcept{
     // Source proof: pinned Black-Android cheats.cpp kDifficulty=0x2014C,
     // layout.h kGame=0x2D45F0. This field is not mission/stage selection.
     // New original launch attempt invalidates all previous observed files.
@@ -32,5 +32,12 @@ inline void ObserveOriginalLaunchDifficulty() noexcept{
     static OriginalLaunchDifficultyOnce events;
     const int code=events.Observe(game!=0,value);
     if(code)SendSafeWorldCodeToAndroid(static_cast<jint>(code));
+    return epoch;
+}
+// The native original function has a source-observed WORD write inside it.
+// Read B again AFTER it returns; still no proof of mission or stage identity.
+inline void ObserveOriginalLaunchReturn(uint32_t episode) noexcept {
+    if(episode)g_originalMissionFieldHints.CompleteOriginalLaunch(
+        episode,kernel::R16(0x2D0D68));
 }
 } // namespace blackcoop

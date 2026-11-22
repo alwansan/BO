@@ -68,10 +68,12 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
             const auto hints=g_originalMissionFieldHints.ForCorrelatedEpisode(episode);
             if(hints.episode==episode){
                 const int a=EncodeOriginalMissionFieldEvent(0,hints.readCandidate,folder);
-                const int b=EncodeOriginalMissionFieldEvent(1,hints.writeCandidate,folder);
-                const int c=EncodeOriginalMissionFieldEvent(2,hints.menuCandidate,folder);
+                const int bPre=EncodeOriginalMissionFieldEvent(1,hints.launchBeforeCandidate,folder);
+                const int bPost=EncodeOriginalMissionFieldEvent(2,hints.launchAfterCandidate,folder);
+                const int c=EncodeOriginalMissionFieldEvent(3,hints.menuCandidate,folder);
                 if(a>=0)SendSafeWorldCodeToAndroid(a);
-                if(b>=0)SendSafeWorldCodeToAndroid(b);
+                if(bPre>=0)SendSafeWorldCodeToAndroid(bPre);
+                if(bPost>=0)SendSafeWorldCodeToAndroid(bPost);
                 if(c>=0)SendSafeWorldCodeToAndroid(c);
             }
         }

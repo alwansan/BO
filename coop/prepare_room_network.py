@@ -103,7 +103,7 @@ def prepare(root: pathlib.Path):
         else if (code == 24) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_UNAVAILABLE");
         else if (code >= 30 && code <= 38 && code != 32)
             com.racas.black.coop.RoomAppRooms.originalLevelResourceHintFromGameThread(code - 30);
-        else if (code >= 100 && code <= 342)
+        else if (code >= 100 && code <= 423)
             com.racas.black.coop.RoomAppRooms.originalMissionFieldCandidateFromGameThread(code);
     }
     public String coopRoomStatusLine(int row) {''', java)
@@ -212,8 +212,9 @@ def prepare(root: pathlib.Path):
                 '#include "xdk/hle.h"\n#include "coop/room_world_tick.hpp"\n#include "coop/room_original_launch_difficulty_witness.hpp"',difficulty)
     launch=once(launch,'    __imp__sub_00124CF0(ctx, base);',
         '''    blackcoop::ObserveMissionLaunchCandidate(); // attempt, NOT loaded scene
-    blackcoop::ObserveOriginalLaunchDifficulty(); // source-known 0..3, NOT mission ID
-    __imp__sub_00124CF0(ctx, base);''',difficulty)
+    const uint32_t originalLaunchEpisode=blackcoop::ObserveOriginalLaunchDifficulty();
+    __imp__sub_00124CF0(ctx, base); // ORIGINAL call unchanged
+    blackcoop::ObserveOriginalLaunchReturn(originalLaunchEpisode); // B AFTER, WORD''',difficulty)
     pending[difficulty]=launch
 
     # Read-only observation of the ORIGINAL title's actual parsed Xbox

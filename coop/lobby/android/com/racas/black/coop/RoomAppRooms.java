@@ -67,18 +67,18 @@ public final class RoomAppRooms {
   * opens on this original player's game thread. Not a real mission index.
   */
  public static void originalMissionFieldCandidateFromGameThread(int code){
-  if(code<100||code>342)return;
+  if(code<100||code>423)return;
   final int encoded=code-100;
   final int which=encoded/81;
   final int candidateBucket=(encoded%81)/9;
   final int folder=encoded%9;
-  if(which>2||candidateBucket>8||
+  if(which>3||candidateBucket>8||
      (folder!=0&&folder!=1&&(folder<3||folder>8)))return;
   RoomSession session;
   synchronized(RoomAppRooms.class){session=active;}
   if(session==null||session.originalStageFolderHintFromGameThread()!=folder)return;
   // No addresses, memory bytes, paths, credentials, names or arbitrary strings.
-  final String source=which==0?"A":which==1?"B":"C";
+  final String source=which==0?"A":which==1?"B_BEFORE":which==2?"B_AFTER":"C";
   final String value=candidateBucket==0?"OTHER":Integer.toString(candidateBucket-1);
   RoomDiagnostics.event("ORIGINAL_MISSION_"+source+"_"+value+
                         "_LEVEL_"+folder+"_UNPROVEN");
