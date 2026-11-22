@@ -35,7 +35,7 @@ class Hypotheses(unittest.TestCase):
         sample=bytearray(72)
         sample[12:16]=bytes((255,0,0,0))
         sample[16:20]=bytes((3,6,0,0))
-        sample[20:24]=bytes((3,9,0,0))
+        sample[20:24]=bytes((9,9,0,0))
         sample[48:52]=bytes((128,127,0,0))
         sample[52:56]=bytes((3,6,0,0))
         sample[56:60]=bytes((3,6,0,0))
