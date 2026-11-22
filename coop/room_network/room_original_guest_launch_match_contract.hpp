@@ -35,6 +35,11 @@ public:
                                       int chosenStage,
                                       const OriginalGuestPreparedStory* host)noexcept{
         std::lock_guard<std::mutex> guard(mutex_);
+        if(episode>sourceEpisode_){
+            // A new actual native launch MUST invalidate an older host
+            // stage plan, even if no TLS PREPARE remains at this entry.
+            resetLocked();sourceEpisode_=episode;
+        }
         if(!episode||chosenLevel<0||chosenLevel>8||
            chosenStage<0||chosenStage>15||!host||
            host->sceneEpoch==0||host->revision==0||
@@ -46,9 +51,6 @@ public:
            (host->tokenHi==0&&host->tokenLo==0))
             return 0;
         if(sourceEpisode_>episode)return 0; // reject old native launch
-        if(sourceEpisode_<episode){
-            resetLocked();sourceEpisode_=episode;
-        }
         if(hasSample_)return 0; // first original entry is authoritative
         hasSample_=true;
         evidence_.originalEpisode=episode;
@@ -72,12 +74,18 @@ public:
                                     int coreLevel,int coreStage,
                                     bool originalSourcesMatched)noexcept{
         std::lock_guard<std::mutex> guard(mutex_);
+        if(episode>sourceEpisode_){
+            resetLocked();sourceEpisode_=episode;
+            return 0;
+        }
         if(!matched_||!sourceEpisode_||episode!=sourceEpisode_||
            !world||!originalSourcesMatched||
            coreLevel!=evidence_.level||coreStage!=evidence_.stage){
-            samples_=0;world_=0;return 0;
+            samples_=0;world_=0;signaled_=false;return 0;
         }
-        if(world_!=world){world_=world;samples_=0;}
+        if(world_!=world){
+            world_=world;samples_=0;signaled_=false;
+        }
         if(samples_<30)++samples_;
         if(samples_>=30&&!signaled_){signaled_=true;return 81;}
         return 0;

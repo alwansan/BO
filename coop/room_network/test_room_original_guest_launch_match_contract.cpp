@@ -56,6 +56,10 @@ int main(){
         assert(g.ObserveOriginalRunningWorld(4,0x3d0000,7,15,true)==0);
     assert(g.ObserveOriginalRunningWorld(4,0x3d0000,7,15,true)==81);
     assert(g.ReadMatchedKey(result));
+    assert(g.ObserveOriginalRunningWorld(4,0x3d0000,7,14,true)==0);
+    assert(!g.ReadMatchedKey(result)); // source disagreed, no stale ready proof
+    assert(g.ObserveOriginalStreamingEntry(5,7,15,nullptr)==0);
+    assert(!g.ReadMatchedKey(result)); // new source launch without TLS ticket
     assert(g.ObserveOriginalStreamingEntry(3,7,15,&stale)==0);
     std::cout<<"ORIGINAL_GUEST_LAUNCH_STAGE_CORRELATION_PASS: source stage, real local original world 30 samples, mismatches and resets; NO READY\n";
 }

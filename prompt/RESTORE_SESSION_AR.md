@@ -1,3 +1,10 @@
+### Session72 corrected initial native source CI and stale evidence invalidation
+- First [source preflight #45039511227](https://github.com/alwansan/BO/actions/runs/45039511227) FAILED because Python test referenced local `stream` before assignment (UnboundLocalError); C++ pipeline never ran. Moved loaded stream declaration before its assertions; adjusted assertion to verify no automatic guest engine call or ready adapter in source gate.
+- Hardened original guest native gate: a NEW original launch episode invalidates an earlier same-level/ticket proof EVEN when the authenticated host TLS ticket has already disappeared. Any wrong-stage/wrong-world original running observation revokes a previously signaled matched-world candidate; extra C++ regression covers both paths. Still only read-only correlation, no game writes/READY/renderer or guest auto-launch.
+- Initial #45036440579 APK concluded SUCCESS with artifact #14759533773 from previous frontend-TLS step; new original-stage correlation APK pending Actions. Preserve one substantial owner phone test goal.
+
+---
+
 ## Session72 — correlate authenticated HOST PREPARE with *genuine original guest* mission launch and stable first-person world
 - Observed latest Windows Android room-only APK [#45036440579 SUCCESS](https://github.com/alwansan/BO/actions/runs/45036440579), artifact `black-room-network-android-arm64-NO-GAMEPLAY-COOP` #14759533773 (~8.8MB zip). Source+native #45036440734 SUCCESS, TLS #45036440629 SUCCESS, Android29 #45036440585 SUCCESS.
 - New native `OriginalGuestLaunchMatchGate`: only a real original streaming entry `sub_001EDC90` occurring after original frontend menu launch `sub_00124CF0` may compare selected level+stage BYTE source with currently fresh 8-int authenticated host STORY_PREPARE. Fixed privacy-safe codes 78 MATCH or 79 WRONG ORIGINAL LEVEL; never change stage bytes or call guest loader. Repeated original stream entry cannot relabel an attempt.
