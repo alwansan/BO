@@ -1546,7 +1546,7 @@
       "windowsRebuildRun": 45031007275
     },
     "ORIGINAL_STAGE_ROOM_CANDIDATE_BRIDGE": {
-      "status": "SOURCE_PUSHED_CI_PENDING_NOT_SCENE_READY",
+      "status": "SOURCE_JAVA_CI_PASS_WINDOWS_APK_AND_PLATFORM_STILL_RUNNING_NO_GAMEPLAY",
       "nativeMethod": "coopRecordOriginalStageIdentity(III)V",
       "javaMethod": "observeOriginalStageIdentityFromGameThread",
       "sourceOriginalXbeRun": 45030934728,
@@ -1555,7 +1555,17 @@
       "ttlSeconds": 60,
       "automaticGuestLaunch": false,
       "engineSceneLoadedProof": false,
-      "remoteHumanBody": false
+      "remoteHumanBody": false,
+      "sourcePreflightRun": 45031868035,
+      "sourcePreflightConclusion": "success",
+      "tlsRun": 45031867931,
+      "tlsConclusion": "success",
+      "udpRun": 45031868012,
+      "udpConclusion": "success",
+      "windowsApkRun": 45031867965,
+      "windowsApkLastObserved": "in_progress",
+      "android29Run": 45031867981,
+      "android29LastObserved": "in_progress"
     }
   },
   "pending": {
@@ -2394,5 +2404,6 @@
     "automaticMinorDetailsFromCL": true,
     "preferCiJVMAndroid29BeforePhysical": true,
     "noPartialPhoneTrials": true
-  }
+  },
+  "nextActorSourceDoc": "docs/ORIGINAL_REMOTE_HUMAN_BODY_ADAPTER_NEXT_AR.md"
 }
