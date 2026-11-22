@@ -84,7 +84,7 @@ class TestRcbStrict(unittest.TestCase):
         fails(lambda b:put32(b,base+0x80+0x4,0x700)) # parent location outside
         fails(lambda b:struct.pack_into("<i",b,base+0x100+1*8,2)) # cycle 1->2->1
         fails(lambda b:struct.pack_into("<i",b,base+0x100+1*8,1)) # self-cycle
-        fails(lambda b:put32(b,base+0x240+0x14+0x10,0)) # duplicate index
+        fails(lambda b:put32(b,base+0x240+20+16,struct.unpack_from("<I",b,base+0x240+16)[0])) # force duplicate index from record 0
         fails(lambda b:struct.pack_into("<f",b,base+0x140,float("inf")))
     def test_malformed_rcb_remains_reported_as_invalid_not_valid(self):
         d=synthetic_stage()
