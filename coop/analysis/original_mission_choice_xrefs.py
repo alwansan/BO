@@ -69,7 +69,7 @@ def inspect(data,sections,address):
        "first_linear_ret_offset":first_ret,"absolute_global_xref_count":sum(regs.values()),
        "direct_call_target_candidates":[
            {"address":"%08X"%at,"references":n}
-           for at,n in sorted(calls.items(),key=lambda x:(-x[1],x[0]))[:16]],
+           for at,n in sorted(calls.items(),key=lambda x:(-x[1],x[0]))[:6]],
        "direct_call_targets_not_scene_loader_proof":True,
        "bounded_global_address_hints":[
            {"address":"%08X"%addr,"references":n,"access":access[addr]}
@@ -109,7 +109,7 @@ def main():
     a=p.parse_args()
     if a.owner_xbe.is_symlink() or not a.owner_xbe.is_file() or a.owner_xbe.stat().st_size>MAX_FILE:
         raise UnsafeImage("Owner source absent")
-    a.report.write_text(json.dumps(audit(a.owner_xbe.read_bytes()),indent=2,sort_keys=True)+"\n")
+    a.report.write_text(json.dumps(audit(a.owner_xbe.read_bytes()),sort_keys=True,separators=(",",":"))+"\n")
     print("BO_ORIGINAL_MISSION_CHOICES_STATIC_PASS: owner-pinned xref hints only; no scene loader claimed")
 if __name__=="__main__":
     try:main()
