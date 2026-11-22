@@ -1,3 +1,11 @@
+## Session45 resolved metadata / remaining critical gaps
+- RESOLVED owner source hierarchy ambiguity: 9 serialized RCB records in 3 StLevel files correspond to 1 distinct RCB ID per file with consistent parent/lookup/matrix data; `44965062874 SUCCESS` artifact14731331749. All 12 body-model candidate records match 24/25 local skeleton hashes. **This does not prove vertex skinning or unique actual human ally model**.
+- RESOLVED offline clip span validation: `44964889359 SUCCESS` 22 RCB-linked bank v8 resources, 675 clips and 61,615 encoding4 track records bounded; no runtime animation/player/pose. Asset metadata only.
+- RESOLVED target stream selection: `44965229133 SUCCESS` all 12 body candidates use three stride36 vertex streams with 3 distinct raw format flags/model and one texture-name slot; **bone weights/indices/normals/UV/material meanings remain UNKNOWN**.
+- OPEN CRITICAL: real game-thread stage-loaded hook/actual mission ID/host scene epoch; independent original fullbody human visual body and skin weight/bind matrices/animation pose/material shader; authenticated gameplay snapshots, world AI/combat/quest. Original first-person hands/camera must remain local; no NPC AI takeover and no fake story READY. All Actions pass only metadata and value-only contracts. No owner phone trial yet.
+
+---
+
 ## Session44 new BODY evidence and limitations — 2026-11-22
 Owner MODEL geometry private Actions44964028143 SUCCESS: 12 head/torso/leg name-tagged source candidates from 3 StLevel files, all 12 pass indices/finite XYZ, no raw model data exported; first mission keys BC1_MAT/BC1_TOM/LRG/SOL. Closed only geometry candidate issue, **NOT** verified friendly ALLY render, actual pose/skin weights/texture material, animation hierarchy, actor identity/AI ownership, or engine hooks. Derived buffer-index pairs != true vertex count and triangle strips != rendered mesh triangles. RCB skeleton parent data and MODEL skin influence mapping remain next blockers, do not copy restricted third-party animations.
 Actual c5 scene-loaded callback + host shared story/quest/combat/player sync STILL OPEN. Synthetic host human input generation gate44963681576 PASS, APK room-only44962611024 PASS, owner-phone trial not needed until substantial true shared world. See docs/OWNER_ALLY_GEOMETRY_SAFETY_AR.md.
