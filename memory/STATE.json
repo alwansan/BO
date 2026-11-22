@@ -1684,7 +1684,7 @@
       "roomOnlyApkLastObserved": "in_progress"
     },
     "ORIGINAL_GUEST_FRONTEND_AUTH_TLS_STAGE": {
-      "status": "PREPARE_TRANSFORM_COMMA_FIXED_AWAIT_SOURCE_CI",
+      "status": "SOURCE_CI_SUCCESS_REAL_TLS_FRONTEND_REGRESSION_PENDING",
       "originalFrontendFunction": "sub_00115030",
       "authenticatedTlsTicket": true,
       "frontendSeparateOriginalThread": true,
@@ -1699,7 +1699,10 @@
       "remoteBotBody": false,
       "tests": "test_room_original_guest_prepared_story_contract.cpp",
       "firstPreflightRun": 45036205365,
-      "firstPreflightOutcome": "failure_missing_comma_source_transform"
+      "firstPreflightOutcome": "failure_missing_comma_source_transform",
+      "sourceCiRun": 45036307188,
+      "sourceCiConclusion": "success",
+      "realTlsFrontendRegression": "coop/lobby/test/SessionTest.java"
     }
   },
   "pending": {

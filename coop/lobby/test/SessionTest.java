@@ -131,6 +131,8 @@ public final class SessionTest {
             until(()->remote.snapshot().phase==RoomSession.Phase.JOINED&&
                       owner.snapshot().roster.players.size()==2);
             check(!owner.prepareObservedHostStageFromGameThread()); // no source
+            int[] beforeTicket=remote.guestPreparedStoryFromOriginalFrontend();
+            check(beforeTicket.length==8&&java.util.Arrays.stream(beforeTicket).allMatch(x->x==0));
             check(owner.bindStoryGameThread()); // fake callback owner thread
             check(owner.observeOriginalStageIdentityFromGameThread(11,0,0));
             check(owner.prepareObservedHostStageFromGameThread());
@@ -139,9 +141,26 @@ public final class SessionTest {
             check(original!=null&&original.mission==0&&original.stage==0&&
                   original.sceneEpoch==1&&original.participants==3);
             check(!owner.storyStatus().committed&&!remote.storyStatus().committed);
+            int[] originalGuestFrontend=remote.guestPreparedStoryFromOriginalFrontend();
+            check(originalGuestFrontend.length==8&&originalGuestFrontend[0]==1&&
+                  originalGuestFrontend[1]==0&&originalGuestFrontend[2]==0&&
+                  originalGuestFrontend[6]==2&&originalGuestFrontend[7]==3);
+            long token=((long)originalGuestFrontend[4]<<32)|
+                       (originalGuestFrontend[5]&0xffffffffL);
+            check(token==original.token&&originalGuestFrontend[3]==(int)original.rosterRevision);
+            java.util.concurrent.atomic.AtomicBoolean foreignAccepted=
+                new java.util.concurrent.atomic.AtomicBoolean();
+            Thread unrelated=new Thread(()->{
+                int[] untrusted=remote.guestPreparedStoryFromOriginalFrontend();
+                foreignAccepted.set(java.util.Arrays.stream(untrusted).anyMatch(x->x!=0));
+            },"untrusted-non-original-frontend");
+            unrelated.start();unrelated.join();
+            check(!foreignAccepted.get()); // same original frontend thread only
             check(!owner.prepareObservedHostStageFromGameThread());
             check(owner.cancelStoryFromGameThread());
             until(()->remote.storyStatus().ticket==null);
+            check(java.util.Arrays.stream(remote.guestPreparedStoryFromOriginalFrontend())
+                .allMatch(x->x==0)); // no stale stage after abort
             check(!owner.observeOriginalStageIdentityFromGameThread(11,0,0));
             check(!owner.prepareObservedHostStageFromGameThread()); // same roster
             int priorWireId=remote.snapshot().roster.self;
@@ -159,6 +178,9 @@ public final class SessionTest {
                   after.mission==0&&after.stage==0&&after.participants==3&&
                   !after.same(original));
             check(!remote.storyStatus().committed);
+            int[] secondGuestPlan=remote.guestPreparedStoryFromOriginalFrontend();
+            check(secondGuestPlan[0]==2&&secondGuestPlan[1]==0&&
+                  secondGuestPlan[6]==2&&secondGuestPlan[7]==3);
             // Host original stage transition must revoke old PREPARE and
             // announce the newer source-matched original campaign stage.
             check(owner.observeOriginalStageIdentityFromGameThread(12,1,0));
@@ -169,6 +191,12 @@ public final class SessionTest {
             check(advanced!=null&&advanced.sceneEpoch==3&&advanced.mission==1&&
                   advanced.stage==0&&!advanced.same(after));
             check(!owner.storyStatus().committed&&!remote.storyStatus().committed);
+            int[] nextGuestPlan=remote.guestPreparedStoryFromOriginalFrontend();
+            check(nextGuestPlan[0]==3&&nextGuestPlan[1]==1&&
+                  nextGuestPlan[2]==0&&nextGuestPlan[6]==2&&nextGuestPlan[7]==3);
+            remote.stop();
+            check(java.util.Arrays.stream(remote.guestPreparedStoryFromOriginalFrontend())
+                .allMatch(x->x==0)); // network disconnect resets frontend signal
         }
         System.out.println("STORY_DIAGNOSTICS_PASS: authenticated TLS lifecycle emits only bounded safe codes even without room UI");
         System.out.println("SESSION_STORY_BRIDGE_PASS: authenticated TLS ticket via pinned game-thread facade, no implicit READY, host-only prepare, replay and cancel fences");

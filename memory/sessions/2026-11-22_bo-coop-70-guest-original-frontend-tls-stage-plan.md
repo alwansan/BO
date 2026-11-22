@@ -1,3 +1,9 @@
+### Session70 real TLS integration regression added
+- Extended `coop/lobby/test/SessionTest.java` real TLS scenario: before any signed PREPARE the original guest FRONTEND value poll emits eight zeros; after real TLS PREPARE it emits host sceneEpoch/level/stage/roster revision/token split, current compact slot; wrong thread returns zero; after host ABORT poll purges; after reconnect (new TLS wire id) gets correct compact slot; original host stage transition sends new PREPARE (epoch 3) and guest poll sees new stage 1, never READY. After network stop the eight-field poll clears. This tests the exact Java facade from authenticated TLS, complements C++ UBSAN native contract and pinned original frontend source-stage transform.
+- First source transform CI #45036205365 failed due missing comma; fixed in commit b0f4f64a; [source preflight #45036307188 SUCCESS](https://github.com/alwansan/BO/actions/runs/45036307188) confirmed native UBSAN + Python source transform + Java8 compiled. New real TLS regression requires new CI before pass claim.
+
+---
+
 ### Session70 CI failure 45036205365 and deterministic fix
 [Source preflight 45036205365 FAILED](https://github.com/alwansan/BO/actions/runs/45036205365) at `prepare_room_network.py:330` with `TypeError: once() missing 1 required positional argument: 'name'`. Cause is an accidental missing comma after `'    __imp__sub_00124CF0(ctx, base);'` when instrumenting the new pinned frontend `sub_00115030`; source transform aborts atomically with no game changes. Fixed punctuation and rerun CI. No claim of a successful new room APK until actual workflow completes.
 
