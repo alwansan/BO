@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-76-original-host-canonical-remote-puppet-pose-gate.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-77-original-guest-launch-entry-cfg.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -2757,5 +2757,24 @@
     "bridgePreflightStatus": "success",
     "udpRun": 45053142039,
     "udpStatus": "success"
+  },
+  "session77": {
+    "scope": "read_only_original_menu_entry_rooted_static_control_flow",
+    "sourceCommit": "ffdb6d7a7b83356c6b299662f64c4b43841d5b4b",
+    "sourceOwnerXbeSHA1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+    "ciRun": 45054097462,
+    "ciConclusion": "success",
+    "syntheticJob": 137305394403,
+    "ownerPrivateJob": 137305429033,
+    "originalLaunchCandidateInstructionCount": 113,
+    "originalLaunchExpectedDirectCallCandidateCount": 1,
+    "originalLaunchUnresolvedBranchCount": 1,
+    "originalDirectCalleeInstructionCandidates": 64,
+    "originalDirectCalleeKnownChildCallCount": 2,
+    "guestAutoLaunchImplemented": false,
+    "originalSceneCompletionVerified": false,
+    "originalRemoteHumanBotRendered": false,
+    "hostSharedCampaignImplemented": false,
+    "ownerPhoneTrialRequiredNow": false
   }
 }
