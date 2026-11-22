@@ -138,6 +138,22 @@ public final class RoomSession implements AutoCloseable {
             return host.drainLatestTrustedInputs();
         }
     }
+    /** Publish original HOST game-derived locations after verified COMMIT. */
+    public boolean publishWorldSnapshotFromGameThread(int tick,
+         java.util.List<RoomWorldSnapshotWire.Avatar> avatars)throws IOException{
+        synchronized(lock){
+            return validStoryThread()&&phase==Phase.HOSTING&&host!=null&&
+                host.offerWorldSnapshot(tick,avatars);
+        }
+    }
+    /** Original guest game thread reads latest authenticated HOST-only state. */
+    public RoomWorldSnapshotWire.Snapshot readHostWorldFromGameThread(){
+        synchronized(lock){
+            if(!validStoryThread()||phase!=Phase.JOINED||client==null)
+                return null;
+            return client.worldSnapshot();
+        }
+    }
     /** Host scene unload/cancel invalidates its prepared ticket. */
     public boolean cancelStoryFromGameThread(){
         synchronized(lock){

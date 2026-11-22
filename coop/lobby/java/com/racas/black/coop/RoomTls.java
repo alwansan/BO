@@ -74,6 +74,7 @@ public final class RoomTls {
         private final Map<Integer,Integer> storySlots=new HashMap<>();
         private int storyReadyMask;
         private boolean storyCommitted;
+        private int lastWorldSnapshotTick;
         // Pre-JOIN handshake diagnostics only; never store PINs or peer identities.
         private volatile String handshakeFailureKind="none";
         public String handshakeFailureKind(){return handshakeFailureKind;}
@@ -83,6 +84,30 @@ public final class RoomTls {
             public final RoomHumanInputWire.Input value;
             private TrustedInput(int id,RoomHumanInputWire.Input value){
                 this.peerId=id;this.value=value;
+            }
+        }
+        /**
+         * Only a VERIFIED host BLACK game-thread callback can supply real
+         * original actor positions. Game thread never writes to a socket.
+         */
+        public boolean offerWorldSnapshot(int tick,
+                 List<RoomWorldSnapshotWire.Avatar> avatars)throws IOException{
+            synchronized(lock){
+                if(closed||story==null||!storyCommitted||
+                   revision!=story.rosterRevision||tick<=lastWorldSnapshotTick)
+                    return false;
+                RoomWorldSnapshotWire.Snapshot snap=
+                    RoomWorldSnapshotWire.create(story,tick,avatars);
+                Set<Integer> present=new HashSet<>();
+                for(RoomWire.Player p:players())present.add(p.id);
+                for(RoomWorldSnapshotWire.Avatar a:snap.avatars)
+                    if(!present.contains(a.playerId))
+                        throw new IOException("Non-room player in host snapshot");
+                byte[] wire=RoomWorldSnapshotWire.encode(snap);
+                lastWorldSnapshotTick=tick;
+                for(Peer peer:peers.values())
+                    if(!peer.dead.get())peer.latestWorldFrame.set(wire);
+                return true;
             }
         }
         public List<TrustedInput> drainLatestTrustedInputs(){
@@ -107,6 +132,7 @@ public final class RoomTls {
             final ArrayBlockingQueue<byte[]> outbound=new ArrayBlockingQueue<>(8);
             volatile long lastSeen=now();
             volatile Thread writer;
+            final AtomicReference<byte[]> latestWorldFrame=new AtomicReference<>();
             int lastInputSequence;
             RoomHumanInputWire.Input latestInput;
             long latestInputAt;
@@ -178,7 +204,10 @@ public final class RoomTls {
                         throw new IOException("Peer story prepare queue unexpectedly filled");
                 }
                 story=ticket;storyReadyMask=0;storyCommitted=false;
-                for(Peer p:peers.values()){p.lastInputSequence=0;p.latestInput=null;}
+                lastWorldSnapshotTick=0;
+                for(Peer p:peers.values()){
+                    p.lastInputSequence=0;p.latestInput=null;p.latestWorldFrame.set(null);
+                }
                 storySlots.clear();storySlots.putAll(slots);
                 record("STORY_HOST_PREPARED");
                 return ticket;
@@ -220,7 +249,10 @@ public final class RoomTls {
         private void abortStoryLocked(){
             RoomStoryWire.Ticket old=story;
             story=null;storyReadyMask=0;storyCommitted=false;storySlots.clear();
-            for(Peer p:peers.values()){p.lastInputSequence=0;p.latestInput=null;}
+            lastWorldSnapshotTick=0;
+            for(Peer p:peers.values()){
+                p.lastInputSequence=0;p.latestInput=null;p.latestWorldFrame.set(null);
+            }
             if(old!=null)record("STORY_HOST_ABORTED");
             if(old!=null)try{
                 byte[] cancel=RoomStoryWire.encode(RoomWire.STORY_ABORT,old);
@@ -279,8 +311,26 @@ public final class RoomTls {
                 pending.remove(socket);
                 final Peer owned=peer;
                 owned.writer=thread(()->{
-                    try{while(!owned.dead.get())RoomWire.write(out,owned.outbound.take());}
-                    catch(IOException e){owned.stop();}catch(InterruptedException e){Thread.currentThread().interrupt();owned.stop();}
+                    try{
+                        while(!owned.dead.get()){
+                            byte[] control=owned.outbound.poll(20,TimeUnit.MILLISECONDS);
+                            if(control!=null){RoomWire.write(out,control);continue;}
+                            byte[] frame=owned.latestWorldFrame.getAndSet(null);
+                            if(frame==null)continue;
+                            RoomWorldSnapshotWire.Snapshot sample=
+                                RoomWorldSnapshotWire.parse(RoomWire.decode(frame));
+                            synchronized(lock){
+                                if(closed||story==null||!storyCommitted||
+                                   revision!=story.rosterRevision||
+                                   !sample.matches(story)||owned.dead.get())
+                                    continue;
+                            }
+                            RoomWire.write(out,frame);
+                        }
+                    }catch(IOException e){owned.stop();}
+                    catch(InterruptedException e){
+                        Thread.currentThread().interrupt();owned.stop();
+                    }
                 });owned.writer.start();broadcast();socket.setSoTimeout(5000);
                 long lastSequence=0,window=now()/1000;int packets=0,inputPackets=0;
                 while(!closed&&!owned.dead.get()){
@@ -378,6 +428,8 @@ public final class RoomTls {
         private final Object lifecycle=new Object();
         private volatile RoomWire.State view;
         private volatile RoomStoryWire.Ticket story;
+        private volatile RoomWorldSnapshotWire.Snapshot worldSnapshot;
+        private int lastWorldSnapshotTick;
         private volatile boolean storyReadySent,storyCommitted;
         private volatile String failure="";
         private volatile java.util.function.Consumer<String> safeEventSink;
@@ -419,6 +471,8 @@ public final class RoomTls {
         }
         public RoomWire.State snapshot(){RoomWire.State value=view;return value==null?null:RoomWire.copy(value);}
         public RoomStoryWire.Ticket storyTicket(){return story;}
+        /** Host-origin, validated roster/epoch only. No game actor pointer. */
+        public RoomWorldSnapshotWire.Snapshot worldSnapshot(){return worldSnapshot;}
         public boolean storyCommitted(){return story!=null&&storyCommitted;}
         /**
          * Must be called ONLY after this phone's actual BLACK game scene
@@ -549,6 +603,7 @@ public final class RoomTls {
                             if(!closed.get()){
                                 story=incoming;storyReadySent=false;storyCommitted=false;
                                 lastQueuedInputSequence=0;inputFrames.clear();firstHumanInputSent.set(false);
+                                worldSnapshot=null;lastWorldSnapshotTick=0;
                                 record("STORY_GUEST_PREPARED");
                             }
                         }
@@ -570,8 +625,28 @@ public final class RoomTls {
                             if(story!=null&&story.same(incoming)){
                                 story=null;storyReadySent=false;storyCommitted=false;
                                 lastQueuedInputSequence=0;inputFrames.clear();firstHumanInputSent.set(false);
+                                worldSnapshot=null;lastWorldSnapshotTick=0;
                                 record("STORY_GUEST_ABORTED");
                             }
+                        }
+                        continue;
+                    }
+                    if(packet.type==RoomWire.WORLD_SNAPSHOT){
+                        RoomWorldSnapshotWire.Snapshot sample=
+                            RoomWorldSnapshotWire.parse(packet);
+                        synchronized(lifecycle){
+                            RoomWire.State current=view;
+                            if(closed.get()||!storyCommitted||story==null||
+                               current==null||current.revision!=story.rosterRevision||
+                               !sample.matches(story)||sample.tick<=lastWorldSnapshotTick)
+                                throw new IOException("Uncommitted or replayed host snapshot");
+                            Set<Integer> present=new HashSet<>();
+                            for(RoomWire.Player p:current.players)present.add(p.id);
+                            for(RoomWorldSnapshotWire.Avatar a:sample.avatars)
+                                if(!present.contains(a.playerId))
+                                    throw new IOException("Snapshot contains unknown player");
+                            lastWorldSnapshotTick=sample.tick;
+                            worldSnapshot=sample;
                         }
                         continue;
                     }
@@ -584,6 +659,7 @@ public final class RoomTls {
                         if(story!=null&&story.rosterRevision!=next.revision){
                             story=null;storyReadySent=false;storyCommitted=false;
                             lastQueuedInputSequence=0;inputFrames.clear();firstHumanInputSent.set(false);
+                                worldSnapshot=null;lastWorldSnapshotTick=0;
                             record("STORY_GUEST_ROSTER_INVALIDATED");
                         }
                     }
@@ -596,6 +672,7 @@ public final class RoomTls {
                 if(!closed.compareAndSet(false,true))return;
                 view=null;story=null;storyReadySent=false;storyCommitted=false;
                 lastQueuedInputSequence=0;inputFrames.clear();firstHumanInputSent.set(false);
+                                worldSnapshot=null;lastWorldSnapshotTick=0;
             }
             readyWriter.shutdownNow();
             closeSocket(socket);heartbeat.shutdownNow();reader.interrupt();inputWriter.interrupt();
