@@ -222,7 +222,7 @@ jobs:
           if 'Java_com_racas_black_BlackActivity_nativeCoopProbeEnable' not in symbol_dump:
               raise SystemExit('Optional JNI entry not exported in Android ELF')
           report.update(probe_jni_export_verified=True, package_label='BLACK Co-op NETWORK TEST',
-                        internet_and_network_state_permission=True, authenticated_lobby_only=False, automatic_lobby_only=True, manual_pin_required=False, manual_fingerprint_required=False, room_wire_version=4, room_profile=4, default_tcp_port=24872, presence_udp_port=1511, apk_built=True, apk_sha256=hashlib.sha256(apk.read_bytes()).hexdigest(),
+                        internet_and_network_state_permission=True, authenticated_lobby_only=False, automatic_lobby_only=True, manual_pin_required=False, manual_fingerprint_required=False, room_wire_version=5, room_profile=5, default_tcp_port=24872, presence_udp_port=1511, apk_built=True, apk_sha256=hashlib.sha256(apk.read_bytes()).hexdigest(),
                         apk_bytes=apk.stat().st_size, native=identity, debug_signature_verified=True,
                         package_and_activity_verified=True, no_original_assets_in_apk=True,
                         device_tested=False, multiplayer=False, lobby_networking=True, gameplay_coop=False, probe_device_tested=False, baseline_owner_test_already_accepted=True)
