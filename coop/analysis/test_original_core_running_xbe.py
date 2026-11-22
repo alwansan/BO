@@ -1,7 +1,7 @@
 import hashlib,struct,unittest,shutil
 from original_core_running_xbe import audit,TARGETS,WINDOW
 from story_entry_static import UnsafeImage
-def synthetic(yes=True,direct_literal=False):
+def synthetic(yes=True,direct_literal=False,core_stage_bytes=False):
     low=min(TARGETS.values())-0x100
     top=max(TARGETS.values())+WINDOW+0x100
     count=top-low
@@ -17,7 +17,9 @@ def synthetic(yes=True,direct_literal=False):
     for at in TARGETS.values():
         raw=0x400+at-low
         body=(bytes.fromhex("c7 80 e0 5a 00 00 1c 00 00 00 83 b8 e0 5a 00 00 1c c3")
-              if direct_literal else op)
+              if direct_literal else
+              bytes.fromhex("0f b6 80 ec 5a 00 00 0f b6 88 ed 5a 00 00 c3")
+              if core_stage_bytes else op)
         b[raw:raw+len(body)]=body
     return bytes(b)
 @unittest.skipUnless(shutil.which("objdump"),"objdump required")
@@ -47,6 +49,20 @@ class CorePhase(unittest.TestCase):
         self.assertFalse(r["scene_loaded_proven"])
         self.assertFalse(r["core_phase_semantics_proven"])
         self.assertNotIn("c7 80",str(r))
+    def test_pc_checkpoint_core_byte_refs_are_candidate_only(self):
+        b=synthetic(core_stage_bytes=True)
+        r=audit(b,hashlib.sha1(b).hexdigest())
+        for row in r["windows"].values():
+            self.assertEqual(row["core_level_byte_5aec_candidates"],1)
+            self.assertEqual(row["core_stage_byte_5aed_candidates"],1)
+            self.assertEqual(row["first_core_level_relative_offsets"],[0])
+            self.assertEqual(row["first_core_stage_relative_offsets"],[7])
+        self.assertFalse(r["owner_core_level_stage_fields_verified"])
+        self.assertFalse(r["scene_loaded_proven"])
+        b=synthetic()
+        r=audit(b,hashlib.sha1(b).hexdigest())
+        self.assertTrue(all(row["core_level_byte_5aec_candidates"]==0 for row in r["windows"].values()))
+        self.assertTrue(all(row["core_stage_byte_5aed_candidates"]==0 for row in r["windows"].values()))
     def test_mismatched_owner_is_rejected(self):
         b=synthetic()
         with self.assertRaises(UnsafeImage):audit(b,"0"*40)

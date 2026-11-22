@@ -9,6 +9,9 @@ from world_xref_static import OP_LINE
 WINDOW=2048
 TARGETS={"update":0x001F1080,"stream":0x001EDC90,"spawn":0x0020BC40}
 CORE=re.compile(r"\b(?:byte|word|dword) ptr \[e(?:ax|bx|cx|dx|si|di|bp|sp)\+0x5ae0\]",re.I)
+# MIT PC checkpoint fields at core+0x5AEC/5AED. These are HINTS only.
+CORE_LEVEL=re.compile(r"\bbyte ptr \[e(?:ax|bx|cx|dx|si|di|bp|sp)\+0x5aec\]",re.I)
+CORE_STAGE=re.compile(r"\bbyte ptr \[e(?:ax|bx|cx|dx|si|di|bp|sp)\+0x5aed\]",re.I)
 CMP=re.compile(r"(?:^|,)\s*0x1c(?:\s|$)",re.I)
 def audit(data,pinned=OWNER_SHA1):
     if not isinstance(data,(bytes,bytearray)) or not 0<len(data)<=MAX_FILE:
@@ -33,8 +36,10 @@ def audit(data,pinned=OWNER_SHA1):
             if m and entry<=int(m.group(1),16)<entry+WINDOW:
                 ops.append((int(m.group(1),16),m.group(2).lower(),m.group(3).lower()))
         if not 3<=len(ops)<=WINDOW:raise UnsafeImage("Unexpected decoded window")
-        found=[];neighbor=[];writes=[];sets_running=[];compares=[]
+        found=[];neighbor=[];writes=[];sets_running=[];compares=[];levelHits=[];stageHits=[]
         for i,(at,op,args) in enumerate(ops):
+            if CORE_LEVEL.search(args):levelHits.append(at-entry)
+            if CORE_STAGE.search(args):stageHits.append(at-entry)
             if not CORE.search(args):continue
             relative=at-entry
             found.append(relative)
@@ -58,11 +63,17 @@ def audit(data,pinned=OWNER_SHA1):
             "first_offsets":found[:4],"first_near_compare_offsets":neighbor[:4],
             "first_write_offsets":writes[:4],
             "first_literal_1c_write_offsets":sets_running[:4],
-            "first_direct_1c_compare_offsets":compares[:4]}
+            "first_direct_1c_compare_offsets":compares[:4],
+            "core_level_byte_5aec_candidates":len(levelHits),
+            "core_stage_byte_5aed_candidates":len(stageHits),
+            "first_core_level_relative_offsets":levelHits[:3],
+            "first_core_stage_relative_offsets":stageHits[:3]}
     report={"schema":"bo-core-phase-candidate-private-v1",
       "owner_source_pinned":True,
       "pc_reference":"portingpete/Black-2006-Recomp@b2512fafd3e181e4febfb298f297245b845ef628",
       "source_value":"core+0x5AE0==0x1C","window_bytes_each":WINDOW,
+      "pc_checkpoint_core_level_stage_hypothesis":"byte core+0x5AEC / core+0x5AED (MIT PC source only)",
+      "owner_core_level_stage_fields_verified":False,
       "windows":windows,"core_phase_semantics_proven":False,
       "scene_loaded_proven":False,"safe_guest_loader_proven":False,
       "remote_actor_proven":False,"original_bytes_or_disassembly_exported":False,
@@ -83,6 +94,9 @@ def main():
            key,r["relative_5ae0_mentions"],r["near_1c_compare_candidates"],
            r["direct_write_candidates"],r["literal_1c_memory_write_candidates"],
            r["direct_1c_memory_compare_candidates"]))
+    for key,r in d["windows"].items():
+        print("BO_CORE_STAGE_BYTES %s level_mentions=%d stage_mentions=%d UNVERIFIED_NOT_READY" % (
+          key,r["core_level_byte_5aec_candidates"],r["core_stage_byte_5aed_candidates"]))
     print("BO_PRIVATE_CORE_PHASE_PASS: only source-derived numeric counters")
 if __name__=="__main__":
     try:main()
