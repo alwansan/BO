@@ -1,0 +1,83 @@
+name: BO-COOP original soldier bullet and friendly damage read-only XBE neighborhoods
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/analysis/ally_bullet_xbe_neighborhood.py'
+      - 'coop/analysis/test_ally_bullet_xbe_neighborhood.py'
+      - '.github/workflows/black-coop-ally-bullet-xbe.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: bo-coop-private-original-bullet-neighborhood
+  cancel-in-progress: true
+jobs:
+  synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Synthetic x86 mapping and output privacy
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s coop/analysis -p test_ally_bullet_xbe_neighborhood.py -v
+          echo 'BO_BULLET_NEIGHBORHOOD_SYNTHETIC_PASS: no game hook or faction claim'
+  owner-private:
+    needs: synthetic
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: bo
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - uses: actions/checkout@v4
+        with:
+          repository: alwansan/biso
+          ref: 9ceb6a65fb5a4414c106ca3961295a1f8f7e558b
+          persist-credentials: false
+          path: owner-biso
+          sparse-checkout: Black_Xbox_Extracted/default.xbe
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Verify pinned owner XBE and inspect three bounded neighborhoods privately
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 bo/coop/analysis/ally_bullet_xbe_neighborhood.py \
+            --owner-xbe owner-biso/Black_Xbox_Extracted/default.xbe \
+            --report "$RUNNER_TEMP/bo-owner-bullet-neighborhood-safe.json"
+          python3 - <<'PY'
+          import json,os,pathlib
+          p=pathlib.Path(os.environ['RUNNER_TEMP'])/'bo-owner-bullet-neighborhood-safe.json'
+          x=json.loads(p.read_text())
+          assert x['schema']=='bo-private-original-bullet-damage-neighborhood-v1'
+          assert len(x['targets'])==3
+          assert all(v['mapped_executable_window'] for v in x['targets'].values())
+          assert not x['original_friend_foe_field_verified']
+          assert not x['original_no_friendly_fire_hook_verified']
+          assert not x['original_game_assets_or_disassembly_exported']
+          assert p.stat().st_size<=8192
+          print('BO_OWNER_BULLET_PRIVATE_PASS: only tiny derived counts, not friendly-fire proof')
+          PY
+      - name: Upload small safe metadata ONLY
+        uses: actions/upload-artifact@v4
+        with:
+          name: bo-owner-bullet-neighborhood-counts-safe
+          path: ${{ runner.temp }}/bo-owner-bullet-neighborhood-safe.json
+          retention-days: 7
+          if-no-files-found: error
+      - name: Purge original XBE and derived report
+        if: always()
+        run: |
+          rm -rf owner-biso
+          rm -f "$RUNNER_TEMP/bo-owner-bullet-neighborhood-safe.json"
