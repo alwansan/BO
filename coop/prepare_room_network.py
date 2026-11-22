@@ -85,6 +85,10 @@ def prepare(root: pathlib.Path):
     public int[] coopPollFirstStageAutoMenuPlanFromOriginalFrontend() {
         return com.racas.black.coop.RoomAppRooms.firstStageAutoMenuPlanFromOriginalFrontend();
     }
+    // 2-4 authenticated humans: exact host-sourced remote visual body feed.
+    public int[] coopPollAllOtherHumanBodiesFromGameThread() {
+        return com.racas.black.coop.RoomAppRooms.pollAllOtherHumanBodiesFromGameThread();
+    }
     // Obtain HOST-owned authenticated room roster ordinal slots only.
     // No guest coordinates, no actor pointers and no game scene READY.
     public int coopHostAppearancePeerMaskFromGameThread() {

@@ -123,6 +123,16 @@ public final class RoomFourHumanOriginalStageTlsTest {
                 }
                 return true;
             });
+            int[] hostBodies=host.allOtherHumanBodiesFromGameThread();
+            ok(hostBodies.length==23&&hostBodies[0]==ticket.sceneEpoch&&
+               hostBodies[3]==1&&hostBodies[4]==3&&
+               hostBodies[5]==2&&hostBodies[11]==3&&hostBodies[17]==4);
+            for(int i=0;i<3;i++){
+                RoomSession guest=guests[i];
+                int[] bodies=guest.allOtherHumanBodiesFromGameThread();
+                ok(bodies.length==23&&bodies[0]==ticket.sceneEpoch&&
+                   bodies[3]==actualSlots[i]&&bodies[4]==3);
+            }
             RoomWorldSnapshotWire.Snapshot initial=second.readHostWorldFromGameThread();
             ok(initial.avatars.get(0).xCm==10000&&initial.avatars.get(0).playerId==1);
             for(int i=0;i<4;i++)ok(initial.avatars.get(i).playerId==i+1);

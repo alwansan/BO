@@ -588,6 +588,72 @@ public final class RoomSession implements AutoCloseable {
             }catch(IOException invalid){return empty;}
         }
     }
+    /**
+     * All other REAL humans, 2–4 player host roster; bounded values for the
+     * original BLACK game-thread soldier visuals, not engine actors.
+     * [epoch,revision,tick,self,count, (peer,xCm,yCm,zCm,yaw,flags)*count].
+     * Only the HOST constructs positions; guest reads a fresh canonical TLS
+     * HOST world. Fail closed to all-zero [0]*5 when scope/freshness changes.
+     */
+    public int[] allOtherHumanBodiesFromGameThread(){
+        synchronized(lock){
+            final int[] empty=new int[5];
+            if(closed||!validStoryThread())return empty;
+            final boolean hosting=phase==Phase.HOSTING&&host!=null&&
+                                  host.isRunning()&&host.storyCommitted();
+            final boolean joined=phase==Phase.JOINED&&client!=null&&
+                                 client.isRunning()&&client.storyCommitted();
+            if(!hosting&&!joined)return empty;
+            try{
+                RoomStoryWire.Ticket t=hosting?host.storyTicket():client.storyTicket();
+                RoomWire.State roster=hosting?host.snapshot():client.snapshot();
+                if(t==null||roster==null||t.sceneEpoch<=0||
+                   roster.players.size()<2||roster.players.size()>4||
+                   roster.players.size()!=Integer.bitCount(t.participants)||
+                   roster.revision!=t.rosterRevision||
+                   !java.security.MessageDigest.isEqual(
+                       roster.session,t.session()))return empty;
+                final int self=RoomWire.storySlot(roster,roster.self);
+                if(self<1||self>4||!t.includes(self)||
+                   (hosting&&self!=1)||(joined&&self==1))return empty;
+                final int tick;
+                java.util.List<RoomWorldSnapshotWire.Avatar> peers=
+                    new java.util.ArrayList<>(3);
+                if(hosting){
+                    if(hostEyeWorldTick<=0||lastEye==null||
+                       System.nanoTime()-lastEye.atNs>350000000L)return empty;
+                    tick=hostEyeWorldTick;
+                    peers.addAll(hostHumanPoses.remotePoses(t));
+                }else{
+                    RoomWorldSnapshotWire.Snapshot w=client.worldSnapshot();
+                    if(w==null||!w.matches(t)||w.tick<=0||
+                       w.avatars.size()!=roster.players.size())return empty;
+                    tick=w.tick;
+                    for(RoomWorldSnapshotWire.Avatar v:w.avatars)
+                        if(v.playerId!=self)peers.add(v);
+                }
+                if(peers.size()!=roster.players.size()-1)return empty;
+                peers.sort((a,b)->Integer.compare(a.playerId,b.playerId));
+                int[] result=new int[5+6*peers.size()];
+                result[0]=t.sceneEpoch;result[1]=(int)t.rosterRevision;
+                result[2]=tick;result[3]=self;result[4]=peers.size();
+                int encountered=1<<(self-1),previous=0;
+                for(int i=0;i<peers.size();i++){
+                    RoomWorldSnapshotWire.Avatar v=peers.get(i);
+                    int id=v.playerId;
+                    if(id<=previous||id>4||id==self||!t.includes(id)||
+                       id>roster.players.size()||roster.players.get(id-1).id<=0)
+                        return empty;
+                    encountered|=1<<(id-1);previous=id;
+                    int j=5+i*6;
+                    result[j]=id;result[j+1]=v.xCm;result[j+2]=v.yCm;
+                    result[j+3]=v.zCm;result[j+4]=v.yawCentiDeg;
+                    result[j+5]=v.flags;
+                }
+                return encountered==t.participants?result:empty;
+            }catch(IOException invalid){return empty;}
+        }
+    }
     /** Host scene unload/cancel invalidates its prepared ticket. */
     public boolean cancelStoryFromGameThread(){
         synchronized(lock){

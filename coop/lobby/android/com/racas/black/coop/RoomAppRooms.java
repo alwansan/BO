@@ -230,6 +230,12 @@ public final class RoomAppRooms {
   synchronized(RoomAppRooms.class){s=active;}
   return s==null?new int[10]:s.otherHumanBodySourceFromGameThread();
  }
+ /** Current HOST-authoritative bounded other-human BOT LOOK bodies. */
+ public static int[] pollAllOtherHumanBodiesFromGameThread(){
+  RoomSession s;
+  synchronized(RoomAppRooms.class){s=active;}
+  return s==null?new int[5]:s.allOtherHumanBodiesFromGameThread();
+ }
  // Source-only native gamepad -> authenticated GUEST TLS inputs.
  // Exact COMMITTED ticket scope resets the per-story sequence.
  // Not a loaded scene, NPC input, remote actor controller or physics.
