@@ -13,7 +13,7 @@ def fake():
     b[0x400:]=b"\x90"*n
     for at in TARGETS.values():
         o=0x400+at-low
-        b[o:o+12]=bytes.fromhex("a1 9e 0d 2d 00 a3 34 12 2e 00 c3 90")
+        b[o:o+17]=bytes.fromhex("a1 9e 0d 2d 00 a3 34 12 2e 00 e8 30 00 00 00 c3 90")
     return bytes(b)
 @unittest.skipUnless(shutil.which("objdump"),"objdump needed")
 class MissionChoices(unittest.TestCase):
@@ -21,12 +21,17 @@ class MissionChoices(unittest.TestCase):
         b=fake();report=audit(b,hashlib.sha1(b).hexdigest())
         self.assertTrue(report["owner_image_pinned_sha1_verified"])
         self.assertEqual(set(report["entries"]),set(TARGETS))
-        for entry in report["entries"].values():
+        for name,entry in report["entries"].items():
             self.assertGreater(entry["absolute_global_xref_count"],0)
             self.assertTrue(entry["known_original_mission_unlock_table_referenced"])
             self.assertTrue(entry["conservatively_clipped_at_first_linear_return"])
             self.assertTrue(any(x["access"]["read_candidate"] for x in entry["bounded_global_address_hints"]))
             self.assertFalse(entry["selected_mission_field_proven"])
+            self.assertFalse(entry["safe_guest_scene_loader_abi_proven"])
+            self.assertEqual(
+                entry["direct_call_target_candidates"],
+                [{"address":"%08X"%(TARGETS[name]+0x3f),"references":1}]
+            )
         for word in ["XBEH","private.bin","a1 9e 0d 2d","mov eax,ds:"]:
             self.assertNotIn(word,json.dumps(report))
     def test_wrong_image_or_ambiguous_sections(self):

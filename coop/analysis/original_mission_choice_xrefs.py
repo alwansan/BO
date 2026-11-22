@@ -10,6 +10,9 @@ TARGETS={"mission_launch_candidate":0x124CF0,"level_choice_tick":0x11B890,"diffi
 WINDOW=768
 MEM=re.compile(r"(?:\[(?:ds:)?0x([0-9a-f]+)\]|\bds:0x([0-9a-f]+)\b)",re.I)
 KNOWN_OPEN_TABLE=0x2D0D9E
+# Only immediate direct x86 CALL instructions; never treat a target as a
+# mission scene loader. The first-linear-RET fence is NOT a CFG.
+DIRECT_CALL=re.compile(r"^(?:0x)?([0-9a-f]{5,8})(?:\s*<[^>]+>)?$",re.I)
 def inspect(data,sections,address):
     offsets=[raw+address-va for va,n,raw in sections if va<=address and address+WINDOW<=va+n]
     if len(offsets)!=1:raise UnsafeImage("Mission candidate not uniquely executable")
@@ -21,7 +24,7 @@ def inspect(data,sections,address):
                              capture_output=True,text=True,timeout=20)
         except subprocess.TimeoutExpired as e:raise UnsafeImage("Decoder budget") from e
         if r.returncode:raise UnsafeImage("Mission decoder error")
-    regs=Counter();families=Counter();first_ret=None;count=0
+    regs=Counter();families=Counter();calls=Counter();first_ret=None;count=0
     access={}  # per target only derived read/write/other aggregate
     for line in r.stdout.splitlines():
         m=OP_LINE.match(line)
@@ -34,6 +37,15 @@ def inspect(data,sections,address):
         op,args=m.group(2).lower(),m.group(3).lower();count+=1
         if count>WINDOW:raise UnsafeImage("Instruction budget")
         families[instruction_family(op)]+=1
+        if op in ("call","callq"):
+            # Objdump exposes immediate targets without sharing original
+            # instructions. Indirect calls and call edges beyond first RET
+            # remain unresolved. Numeric addresses are only source hints.
+            target=DIRECT_CALL.fullmatch(args.strip())
+            if target:
+                fn=int(target.group(1),16)
+                if any(va<=fn<va+n for va,n,_ in sections):
+                    calls[fn]+=1
         if first_ret is None and op.startswith("ret"):first_ret=pc-address
         for ref in MEM.finditer(args):
             addr=int(ref.group(1) or ref.group(2),16)
@@ -55,6 +67,10 @@ def inspect(data,sections,address):
        "window_bytes":WINDOW,"decoded_instruction_candidates":count,
        "instruction_families":dict(sorted(families.items())),
        "first_linear_ret_offset":first_ret,"absolute_global_xref_count":sum(regs.values()),
+       "direct_call_target_candidates":[
+           {"address":"%08X"%at,"references":n}
+           for at,n in sorted(calls.items(),key=lambda x:(-x[1],x[0]))[:16]],
+       "direct_call_targets_not_scene_loader_proof":True,
        "bounded_global_address_hints":[
            {"address":"%08X"%addr,"references":n,"access":access[addr]}
            for addr,n in sorted(regs.items(),key=lambda x:(-x[1],x[0]))[:16]],
@@ -63,7 +79,8 @@ def inspect(data,sections,address):
        "known_game_object_global_seen":0x2D45F0 in regs,
        "known_ui_object_global_seen":0x2D199C in regs,
        "conservatively_clipped_at_first_linear_return":first_ret is not None,
-       "selected_mission_field_proven":False,"scene_loaded_callback_proven":False
+       "selected_mission_field_proven":False,"scene_loaded_callback_proven":False,
+       "safe_guest_scene_loader_abi_proven":False
     }
 def audit(data,pinned=OWNER_SHA1):
     if not isinstance(data,(bytes,bytearray)) or not 0<len(data)<=MAX_FILE:
@@ -81,7 +98,7 @@ def audit(data,pinned=OWNER_SHA1):
         "original_mission_id_proven":False,"guest_story_launch_supported":False,
         "original_scene_loaded_stage_epoch_verified":False,
         "raw_proprietary_bytes_or_disassembly_exported":False,
-        "caveat":"Conservative first-RET clip is NOT a CFG; other jump paths/function boundaries may differ. Data references and read/write candidates are NOT selected mission field, stage loader or game-thread proof."
+        "caveat":"Conservative first-RET clip is NOT a CFG; other jump paths/function boundaries may differ. Data references and read/write candidates, even direct CALL targets, are NOT selected mission field, stage loader ABI or game-thread proof."
     }
     if len(json.dumps(result))>9500:raise UnsafeImage("Metadata privacy budget")
     return result
