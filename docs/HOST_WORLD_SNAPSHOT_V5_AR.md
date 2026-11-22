@@ -1,0 +1,12 @@
+# Host WORLD_SNAPSHOT v5 — source proof / remaining work
+The owner accepts ANY original bot enemy/friendly mesh as a temporary remote human player body. First goal one real host-selected BLACK story world with players 2–4 seeing and moving together. No separate solo worlds and no NPC AI takeover.
+
+**Network**: v5 RoomWire type13 `WORLD_SNAPSHOT`, host-only, current story session/token/roster revision/scene epoch/tick; one to four sorted real player IDs with bounded xyz centimeters/yaw/flags. Latest-only host TLS outbound per peer, no game-thread blocking, guest rejects non-room/stale/old scene data and expires state after350ms. [JVM 4-person TLS CI44972561727 SUCCESS](https://github.com/alwansan/BO/actions/runs/44972561727). Synthetic test positions, NOT actual original BLACK gameplay.
+
+**Original local source**: pinned `RanggaCasper/Black-Android@f3754d69` `hooks.cpp` explicitly has `kPlayerEye=0x100`. Original local character update `sub_001E5FA0` samples camera eye xyz using G<float> validated original pointer/kind 2, finite/bounded quantization max10Hz, JNI to Activity→RoomAppRooms→RoomSession, cache350ms. ONE safe event code `ORIGINAL_LOCAL_CAMERA_EYE_VALIDATED` no raw coordinates in log; source staging CI44972768370 successful. **Camera eye is not body root/scene-loader proof; not measured on actual phone yet**.
+
+**Mission select / source XBE**: pinned `alwansan/biso@9ceb6a65` owner's c5 XBE; read-only level choice0x11B890, difficulty bind0x124F30, mission launch attempt0x124CF0. [CI44972978138 PASS](https://github.com/alwansan/BO/actions/runs/44972978138) safe anonymized metadata; global candidates near 0x2D0D60/68, 0x2EC598 and source-known0x2EC560 are **NOT validated selected mission fields**. Clipped read/write followup first failed synthetic (minimum4 vs actual3), corrected in7fd43b5e, check new run. Never claim original scene READY from source xref/first player tick/world pointer.
+
+**APK**: run44972799329 Windows compile is room-only diagnostic; check live. It is not playable co-op even if build succeeds. Don't ask device test.
+
+**Next P0**: mission selection provenance and original stage-loaded actual callback; host sends PREPARE, all guests launch same actual mission and prove loaded stage, READY only then COMMIT. Real native controls/actor root and any safe original BOT look independent renderer, host authoritative enemy combat/objectives, then one major two-phone owner trial with automatic bounded safe logs. Write only BO experiment/black-coop.

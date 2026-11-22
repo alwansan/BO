@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-51-fast-four-player-any-bot.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-52-real-original-eye-host-world-v5.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -1372,6 +1372,35 @@
       "originalEnemyModelAllowed": true,
       "npcAiCopied": false,
       "actualBlackRendererConnected": false
+    },
+    "FOUR_HUMANS_WORLD_SNAPSHOT_TLS_V5_20261122": {
+      "status": "PASS_REAL_TLS_HOST_PLUS_3_SOURCE_TEST_ONLY",
+      "run": 44972561727,
+      "wireVersion": 5,
+      "hostFanout": true,
+      "originalGamePositionsSupplied": false,
+      "realSharedWorld": false,
+      "latestOnlyPerPeer": true,
+      "staleTimeoutMs": 350
+    },
+    "ORIGINAL_PLAYER_CAMERA_EYE_SOURCE_20261122": {
+      "status": "PASS_NATIVE_SOURCE_STAGING_NOT_PHONE_RUNTIME",
+      "run": 44972768370,
+      "sourceOffset": "0x100",
+      "source": "RanggaCasper/Black-Android@f3754d69/src/game/hooks.cpp",
+      "sampleType": "original_first_person_camera_eye_not_body_root",
+      "rateHzMax": 10,
+      "realSceneLoaded": false
+    },
+    "OWNER_ORIGINAL_MISSION_MENU_XREFS_20261122": {
+      "status": "PASS_PRIVATE_PINNED_XBE_HINTS_ONLY",
+      "run": 44972978138,
+      "artifact": 14735000003,
+      "sourceSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+      "selectedMissionValueProven": false,
+      "sceneLoadedHookFound": false,
+      "refinementFailedRun": 44973072176,
+      "refinementFix": "7fd43b5e"
     }
   },
   "pending": {
@@ -1545,10 +1574,10 @@
     "deviceTested": true,
     "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "Session51: skip original ally identification and exact skin/rig; any original BOT enemy/friendly look okay. TLS v4 host+3 input source CI44971688698 SUCCESS and bot placeholder source44971624673 PASS, NO game. Prioritize true host original mission scene load + guests same stage/epoch, independent remote human actor with any bot look and game input/snapshots, AI/quest shared host world. Check APK44971762426 live, no small owner trial. Update RESTORE always.",
+  "next": "SESSION52: owner allows ANY original enemy/friendly BOT look; real same-host shared story FIRST. TLS v5 HOST WORLD_SNAPSHOT one host+3 guests source CI44972561727 PASS; native original camera eye +0x100 source staging44972768370 PASS, no phone/runtime, camera not actor root. Original pinned XBE mission menu xrefs CI44972978138 PASS, no selected mission field; v2 clipped xref first synthetic failed44973072176, fixed7fd43b5e check live. Windows APK44972799329 check live, room only. Prove real selected mission and guest stage loaded scene epoch before PREPARE/READY/COMMIT, then native root pose/remote bot render/host AI/quest. One major phone test only.",
   "latestHandoff": {
     "date": "2026-11-22",
-    "session": 51,
+    "session": 52,
     "kind": "owner_CI_only_stage_static_plus_safe_tls_story_diagnostics",
     "plan": "docs/superpowers/plans/2026-11-22-host-story-remote-ally.md",
     "sourceCiRun": 44951425780,
@@ -1578,7 +1607,7 @@
     "engineHookVerified": false,
     "remoteHumanActorRendered": false,
     "ownerV3DeviceAccepted": false,
-    "sessionFile": "memory/sessions/2026-11-22_bo-coop-51-fast-four-player-any-bot.md",
+    "sessionFile": "memory/sessions/2026-11-22_bo-coop-52-real-original-eye-host-world-v5.md",
     "ownerTestPolicy": "CI_FIRST_MAJOR_TRIAL_ONLY",
     "ownerXbeStaticRun": 44956138064,
     "storyDiagnosticJvmRun": 44956473684,
@@ -1605,10 +1634,10 @@
     "engineActualSharedStory": false,
     "ownerWriterFlowRun": 44961768279,
     "nativeWorldWitnessRun": 44962215874,
-    "latestRoomApkRun": 44971762426,
+    "latestRoomApkRun": 44972799329,
     "realSceneLoadedHook": false,
     "ownerPhoneTestRequested": false,
-    "latestRoomApkStatus": "CHECK_LIVE_NO_GAMEPLAY",
+    "latestRoomApkStatus": "CHECK_LIVE_ROOM_ONLY_NO_GAMEPLAY",
     "previousRoomApkFailure": 44962275637,
     "ciAllowlistRepaired": true,
     "externalTdmReferenceReviewed": true,
@@ -1660,7 +1689,13 @@
     "ownerPriority": "ANY_BOT_PLACEHOLDER_SHARED_STORY_FIRST",
     "fourPlayerTlsSourceRun": 44971688698,
     "anyBotVisualSourceRun": 44971624673,
-    "roomWireVersion": 4
+    "roomWireVersion": 5,
+    "snapshotGuide": "docs/HOST_WORLD_SNAPSHOT_V5_AR.md",
+    "hostWorldTlsRun": 44972561727,
+    "originalEyeNativeStagingRun": 44972768370,
+    "originalMissionXrefRun": 44972978138,
+    "originalMissionXrefRefinementFirstFail": 44973072176,
+    "originalMissionXrefRefinementFix": "7fd43b5e"
   },
   "executionStatus": "Session49 owner observed bot ally green reticle + inability shoot/kill. New value-only AllyTargetPolicy source+ASAN44969897865 SUCCESS (not actual game). Read docs/OWNER_ALLY_GREEN_RETICLE_RESEARCH_AR.md and Session49; CL images listed, binary pixels not inspected. Next independently trace original c5 aim target faction tint and damage suppression, map original friendly actor->MODEL->GPU draw/RCB. Real verified game-thread host-selected stage epoch and human fullbody/shared world still missing. One future major two-phone trial only.",
   "ownerClarifications": {
@@ -1674,9 +1709,9 @@
   },
   "integrationRoadmap": "docs/COOP_INTEGRATION_ROADMAP_AR.md",
   "currentWork": {
-    "session": 51,
-    "task": "Owner pivot: any bot body allowed; prioritize real host-selected shared story, 4-player true TLS input stream and independent remote controls.",
-    "status": "RoomWire v4 and real 4-party TLS source tests passed, bot-appearance selection source tests passed; no actual original game scene or remote drawable/movement yet.",
+    "session": 52,
+    "task": "Implement host v5 authenticated WORLD_SNAPSHOT fanout and original first-person eye capture, trace original selected mission via pinned XBE globals.",
+    "status": "TLS host+3 world snapshot CI44972561727 PASS (test positions synthetic), Android original eye source staging44972768370 PASS (not yet phone observed), owner mission xref44972978138 PASS (selected mission unproven); Android room-only full APK44972799329 pending.",
     "sourceCi": 44951425780,
     "sourceCode": "9938283748ad1bdb06f15259d7e4fcb791a47574",
     "latestOwnerTestedAndroidApkRun": 44946597973,
@@ -1686,8 +1721,8 @@
     "remoteBodyRenderedOnPhone": false,
     "ownerPrimaryModelCaptureAvailable": true,
     "imagePixelsInspected": false,
-    "storyWireVersion": 3,
-    "storyProfile": 3,
+    "storyWireVersion": 5,
+    "storyProfile": 5,
     "storyJVMRun": 44952822531,
     "android29StoryRun": 44952822499,
     "sourcePreflightRun": 44959047532,
@@ -1807,7 +1842,13 @@
     "ownerAllyReference": "docs/OWNER_ALLY_GREEN_RETICLE_RESEARCH_AR.md",
     "privateBulletRun": 44970558768,
     "ownerGreenReticleClueStillUnverifiedInEngine": true,
-    "gameplayCriticalBlocker": "Actual BLACK scene-loaded host/guest stage callback and actor/snapshot render integration"
+    "gameplayCriticalBlocker": "Real selected BLACK mission, guest same-stage engine launch, loaded-scene game-thread epoch, then any bot remote drawable",
+    "latestWorldSnapshotCI": 44972561727,
+    "originalEyeStagingCI": 44972768370,
+    "originalMissionMenuCi": 44972978138,
+    "missionXrefRefineFailed": 44973072176,
+    "missionXrefFix": "7fd43b5e",
+    "latestAndroidRoomOnlyRun": 44972799329
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",

@@ -1,3 +1,9 @@
+## Session52 (2026-11-22): priority playable host story; ANY BOT LOOK temporary
+DO NOT block on original ally identification, skinning, green crosshair or correct animations. Remote 2/3/4 human may display any existing original BLACK bot enemy/friend, never copy NPC AI or its live actor. Local player is original FPS.
+Implemented real encrypted `RoomWire` v5 host-only `WORLD_SNAPSHOT` type13, bounded up to 4 players ticket/epoch/roster validation, latest-only fanout and 350ms TTL. [Host+3 TLS CI44972561727 PASS](https://github.com/alwansan/BO/actions/runs/44972561727), but game positions MOCKED. New original player camera eye (upstream `kPlayerEye=0x100`) staging native source read-only/10Hz, JNI to Java RoomSession, [44972768370 SOURCE PASS](https://github.com/alwansan/BO/actions/runs/44972768370); not actual phone runtime, NOT actor root/scene loaded. Real selected mission and guest stage loader remain BLOCKERS; owner pinned XBE mission candidate xrefs [44972978138 private PASS](https://github.com/alwansan/BO/actions/runs/44972978138), xref refinement first CI44973072176 failed only synthetic test length, fixed7fd43b5e. Read `memory/sessions/2026-11-22_bo-coop-52-real-original-eye-host-world-v5.md`, `docs/HOST_WORLD_SNAPSHOT_V5_AR.md`, `prompt/RESTORE_SESSION_AR.md`, `memory/STATE.json`. Android run44972799329 CHECK LIVE, room-only NO GAMEPLAY. One major owner phone trial when real same host-selected original mission/players move together; avoid all minor phone tests; safe automatic logs. Only write BO `experiment/black-coop`.
+
+---
+
 # BO-COOP — خطة نسخة القصة الجماعية السريعة
 **2026-11-22 — توجيه المالك الجديد له الأولوية على اختيار مجسم الحليف.**
 
