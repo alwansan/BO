@@ -15,7 +15,7 @@ def fake_image(valid_refs=True):
     struct.pack_into("<I",b,0x11C,1)
     struct.pack_into("<I",b,0x120,0x10200)
     struct.pack_into("<6I",b,0x200,4,low,n,0x400,n,0)
-    b[0x400:]=b"\\x90"*n
+    b[0x400:]=b"\x90"*n
     body=(bytes.fromhex("55 89 e5 8b 81 28 03 00 00 e8 00 00 00 00 c3")
           if valid_refs else bytes.fromhex("55 89 e5 89 d8 c3"))
     for entry in TARGETS.values():

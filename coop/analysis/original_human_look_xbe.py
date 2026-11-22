@@ -56,7 +56,7 @@ def audit(data,pinned=OWNER_SHA1):
                 instructions.append((m.group(2).lower(),m.group(3).lower()))
         if not 3<=len(instructions)<=WINDOW:raise UnsafeImage("Unexpected decoder result")
         fields={
-            key:sum(bool(re.search(r"\\+0x%x\\]"%offset,args)) for _,args in instructions)
+            key:sum(bool(re.search(r"\+0x%x\]"%offset,args)) for _,args in instructions)
             for key,offset in FIELDS.items()
         }
         summary[name]={
@@ -92,7 +92,7 @@ def main():
     if a.owner_xbe.is_symlink() or not a.owner_xbe.is_file() or a.owner_xbe.stat().st_size>MAX_FILE:
         raise UnsafeImage("Private source missing or invalid")
     r=audit(a.owner_xbe.read_bytes())
-    a.report.write_text(json.dumps(r,sort_keys=True,separators=(",",":"))+"\\n",encoding="utf-8")
+    a.report.write_text(json.dumps(r,sort_keys=True,separators=(",",":"))+"\n",encoding="utf-8")
     for name,v in r["windows"].items():
         print("BO_OWNER_LOOK_XBE %s executable=%d calls=%d returns=%d NO_ABI_NO_ACTOR"%(
             name,int(v["executable_window_mapped"]),
