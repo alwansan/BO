@@ -1400,7 +1400,20 @@
       "selectedMissionValueProven": false,
       "sceneLoadedHookFound": false,
       "refinementFailedRun": 44973072176,
-      "refinementFix": "7fd43b5e"
+      "refinementFix": "7fd43b5e",
+      "refinementStatus": "SUCCESS_PINNED_PRIVATE_LINEAR_FIRST_RET_READ_WRITE_HINTS_NOT_MISSION_PROOF",
+      "refinementPassedRun": 44973230408,
+      "refinementSafeArtifact": 14734137820,
+      "candidateReadLevelChoice": [
+        "0x002D0D60"
+      ],
+      "candidateWriteMissionLaunch": [
+        "0x002D0D68",
+        "0x002D12DC"
+      ],
+      "candidateWriteLevelChoice": [
+        "0x002EC598"
+      ]
     }
   },
   "pending": {
@@ -1574,7 +1587,7 @@
     "deviceTested": true,
     "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "SESSION52: owner allows ANY original enemy/friendly BOT look; real same-host shared story FIRST. TLS v5 HOST WORLD_SNAPSHOT one host+3 guests source CI44972561727 PASS; native original camera eye +0x100 source staging44972768370 PASS, no phone/runtime, camera not actor root. Original pinned XBE mission menu xrefs CI44972978138 PASS, no selected mission field; v2 clipped xref first synthetic failed44973072176, fixed7fd43b5e check live. Windows APK44972799329 check live, room only. Prove real selected mission and guest stage loaded scene epoch before PREPARE/READY/COMMIT, then native root pose/remote bot render/host AI/quest. One major phone test only.",
+  "next": "Session52 v5 world snapshot TLS4 host fanout44972561727 SUCCESS. Native original camera eye source staging44972768370 PASS, not runtime/body root. Owner mission XBE first RET-clipped read/write xref CI44973230408 PASS with candidates level 0x2D0D60 READ, launch 0x2D0D68 WRITE, level tick0x2EC598 WRITE; none proven selected mission, never write to them. Need REAL mission stage loader+guest launch, independent any-bot renderer, shared AI/quests. Full Windows room-only APK44972799329 check live, no owner mini-test. Update RESTORE/STATE always.",
   "latestHandoff": {
     "date": "2026-11-22",
     "session": 52,
@@ -1695,7 +1708,8 @@
     "originalEyeNativeStagingRun": 44972768370,
     "originalMissionXrefRun": 44972978138,
     "originalMissionXrefRefinementFirstFail": 44973072176,
-    "originalMissionXrefRefinementFix": "7fd43b5e"
+    "originalMissionXrefRefinementFix": "7fd43b5e",
+    "missionXrefRefinementPassRun": 44973230408
   },
   "executionStatus": "Session49 owner observed bot ally green reticle + inability shoot/kill. New value-only AllyTargetPolicy source+ASAN44969897865 SUCCESS (not actual game). Read docs/OWNER_ALLY_GREEN_RETICLE_RESEARCH_AR.md and Session49; CL images listed, binary pixels not inspected. Next independently trace original c5 aim target faction tint and damage suppression, map original friendly actor->MODEL->GPU draw/RCB. Real verified game-thread host-selected stage epoch and human fullbody/shared world still missing. One future major two-phone trial only.",
   "ownerClarifications": {
@@ -1848,7 +1862,9 @@
     "originalMissionMenuCi": 44972978138,
     "missionXrefRefineFailed": 44973072176,
     "missionXrefFix": "7fd43b5e",
-    "latestAndroidRoomOnlyRun": 44972799329
+    "latestAndroidRoomOnlyRun": 44972799329,
+    "missionXrefRefinementPass": 44973230408,
+    "missionXrefRefinementArtifact": 14734137820
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
