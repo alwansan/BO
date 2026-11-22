@@ -63,6 +63,8 @@ public final class RoomSession implements AutoCloseable {
         }
     }
     private LocalEye lastEye;
+    private int localEyeTransportSeq,hostEyeWorldTick;
+    private boolean eyeBridgeErrorLogged;
     boolean observeOriginalEyeFromGameThread(int x,int y,int z){
         synchronized(lock){
             if(closed||(phase!=Phase.HOSTING&&phase!=Phase.JOINED)||
@@ -73,6 +75,35 @@ public final class RoomSession implements AutoCloseable {
             if(storyGameThread==null)storyGameThread=Thread.currentThread();
             if(!validStoryThread())return false;
             lastEye=new LocalEye(x,y,z,System.nanoTime());
+            // This is a genuine source-validated original PLAYER CAMERA sample,
+            // not a confirmed body transform, remote game actor or stage proof.
+            // Story still requires a separately verified engine scene-loaded
+            // callback before COMMIT. Never initiate PREPARE/READY here.
+            try{
+                if(phase==Phase.JOINED&&client!=null&&client.storyCommitted()&&
+                   localEyeTransportSeq<Integer.MAX_VALUE){
+                    client.offerOriginalCameraEye(++localEyeTransportSeq,x,y,z);
+                }else if(phase==Phase.HOSTING&&host!=null&&host.storyCommitted()&&
+                         hostEyeWorldTick<Integer.MAX_VALUE){
+                    java.util.List<RoomWorldSnapshotWire.Avatar> avatars=
+                        new java.util.ArrayList<>(4);
+                    avatars.add(new RoomWorldSnapshotWire.Avatar(1,x,y,z,0,0));
+                    for(RoomTls.Server.TrustedEye item:host.latestVerifiedCameraEyes()){
+                        RoomCameraEyeWire.Eye eye=item.camera;
+                        avatars.add(new RoomWorldSnapshotWire.Avatar(item.peerId,
+                             eye.xCm,eye.yCm,eye.zCm,0,0));
+                    }
+                    avatars.sort((a,b)->Integer.compare(a.playerId,b.playerId));
+                    host.offerWorldSnapshot(++hostEyeWorldTick,avatars);
+                }
+            }catch(IOException sourceOrTransportError){
+                // No identity, world coords or private error content in logs.
+                // A single coarse code is sufficient for a later big trial.
+                if(!eyeBridgeErrorLogged){
+                    eyeBridgeErrorLogged=true;
+                    event("ORIGINAL_CAMERA_WORLD_TRANSPORT_REJECTED");
+                }
+            }
             return true;
         }
     }
@@ -209,6 +240,7 @@ public final class RoomSession implements AutoCloseable {
             if(closed)throw new IllegalStateException("RoomSession was destroyed");
             token=++generation;
             storyGameThread=null;lastEye=null;
+            localEyeTransportSeq=0;hostEyeWorldTick=0;eyeBridgeErrorLogged=false;
             oldHost=host;oldClient=client;oldAnnouncer=announcer;
             host=null;client=null;announcer=null;phase=Phase.CONNECTING;
             description="Connecting";fingerprint="";
@@ -344,6 +376,7 @@ public final class RoomSession implements AutoCloseable {
         RoomTls.Client oldClient;
         synchronized(lock){
             ++generation;storyGameThread=null;lastEye=null;
+            localEyeTransportSeq=0;hostEyeWorldTick=0;eyeBridgeErrorLogged=false;
             oldHost=host;oldClient=client;oldAnnouncer=announcer;
             host=null;client=null;announcer=null;phase=Phase.IDLE;description="";fingerprint="";
         }
