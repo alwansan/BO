@@ -11,6 +11,7 @@
 #include "coop/room_original_mission_field_hint.hpp"
 #include "coop/room_original_streaming_stage_contract.hpp"
 #include "coop/room_original_core_phase_witness.hpp"
+#include "coop/room_original_bot_pool_witness.hpp"
 #include "game/layout.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_system.h>
@@ -57,9 +58,28 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
     const auto coreStream=g_originalStreamingStageHints.ForCorrelatedEpisode(coreEpisode);
     const bool paired=g_originalStageFileOpen.BothEssentialFilesOpenedForCandidate();
     static OriginalCoreRunningPhaseWitness corePhase;
-    if(corePhase.Observe(coreEpisode,world,world?kernel::R32(world+0x5AE0u):0,
-                         stable.IsStable(),paired,coreStream.episode==coreEpisode))
+    // A genuine original core pointer is still a HINT; guard all subsequent
+    // source reads with pinned native Xbox guest-page commitment.
+    const uint64_t phaseEnd=static_cast<uint64_t>(world)+0x5AE0u+4u;
+    const bool phaseReadable=world&&phaseEnd<=0x100000000ull&&
+        OriginalGuestSpanCommitted(world+0x5AE0u,4u);
+    const uint32_t phase=phaseReadable?kernel::R32(world+0x5AE0u):0;
+    const bool candidateReady=coreEpisode&&world&&phase==0x1Cu&&
+        stable.IsStable()&&paired&&coreStream.episode==coreEpisode;
+    static uint32_t phaseQualifiedEpisode=0,phaseQualifiedWorld=0;
+    if(!candidateReady){
+        phaseQualifiedEpisode=0;phaseQualifiedWorld=0;
+    }
+    if(corePhase.Observe(coreEpisode,world,phase,
+                         stable.IsStable(),paired,coreStream.episode==coreEpisode)){
+        phaseQualifiedEpisode=coreEpisode;phaseQualifiedWorld=world;
         SendSafeWorldCodeToAndroid(14); // source-gated RUNNING hint, NOT READY
+    }
+    // Additional P0-readiness proof: at most one safe coarse event per
+    // readiness category / launch episode. NO model pointer ever exported,
+    // NO original actor/character writes and NO scene/mission READY.
+    ObserveOriginalBotPoolSourceHint(coreEpisode,candidateReady&&
+        phaseQualifiedEpisode==coreEpisode&&phaseQualifiedWorld==world);
     JNIEnv* env=static_cast<JNIEnv*>(SDL_GetAndroidJNIEnv());
     jobject activity=static_cast<jobject>(SDL_GetAndroidActivity());
     if(!env||!activity)return;

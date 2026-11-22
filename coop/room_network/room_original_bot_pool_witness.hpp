@@ -55,8 +55,10 @@ inline bool ReadOriginalBotPoolAvailability(
             partB!=0u&&OriginalGuestSpanCommitted(partB,0x3C0u)};
         // If the source looks eligible, confirm the original model template
         // itself is committed before even COUNTING it.
+        // Model ownership stays true even if the pointer has gone stale:
+        // invalid original NPC records must never be called FREE.
         if(slots[i].model&&!OriginalGuestSpanCommitted(model,0x60u))
-            slots[i].model=false;
+            slots[i].instanceValid=false;
     }
     // Do not report pointers or model names to network or Android logs.
     uint32_t stillRoot=0;
