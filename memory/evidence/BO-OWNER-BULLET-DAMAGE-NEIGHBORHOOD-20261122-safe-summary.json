@@ -1,0 +1,65 @@
+{
+  "schema": "bo-owner-original-bullet-neighborhood-20261122-verified-safe-summary",
+  "originalXbeSHA1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+  "pinnedOwnerAssetRepo": "alwansan/biso",
+  "pinnedOwnerSourceCommit": "9ceb6a65fb5a4414c106ca3961295a1f8f7e558b",
+  "originalSourceOfHook": "RanggaCasper/Black-Android@f3754d6985a8c35204e7df071546e586b10f1806/src/game/cheats.cpp",
+  "initialCI": {
+    "run": 44970444776,
+    "conclusion": "success",
+    "artifact": 14733636060,
+    "commit": "c7354924e40a152071a63121a8ebcbb7c6039380"
+  },
+  "expandedCI": {
+    "run": 44970558768,
+    "conclusion": "success",
+    "artifact": 14733980020,
+    "commit": "3c55a58b39827b0a6ba0e1deb29edbfc2cf39360"
+  },
+  "derivedCounts": {
+    "soldier_bullet_receiver_256": {
+      "decoded": 66,
+      "conditional": 8,
+      "returns": 0,
+      "knownActorOffsets": {}
+    },
+    "soldier_bullet_receiver_1024": {
+      "decoded": 266,
+      "conditional": 30,
+      "returns": 2,
+      "knownActorOffsets": {
+        "character_kind_source": 2,
+        "character_health_source": 1,
+        "character_dying_source": 1
+      },
+      "kindOrOtherKnownActorComparisons": 1,
+      "directEdgesInsideWindow": 24
+    },
+    "local_player_damage_candidate_a_256": {
+      "decoded": 72,
+      "conditional": 6,
+      "returns": 1,
+      "knownActorOffsets": {
+        "character_dying_source": 1,
+        "character_health_source": 1,
+        "local_player_cheat_invulnerable_source": 1
+      }
+    },
+    "local_player_damage_candidate_b_256": {
+      "decoded": 71,
+      "conditional": 10,
+      "returns": 1,
+      "knownActorOffsets": {
+        "character_dying_source": 2,
+        "character_health_source": 2,
+        "local_player_cheat_invulnerable_source": 1
+      }
+    }
+  },
+  "sourceDataExported": false,
+  "actualOriginalFriendFoeFieldIdentified": false,
+  "originalGreenReticleBranchIdentified": false,
+  "originalFriendlyFireDamageRejectionFound": false,
+  "realGameThreadHookOrRemoteActor": false,
+  "disclaimer": "Disassembler fixed windows may span adjacent functions/data; offsets and conditional branches are static candidates only, not reachability or ally semantics."
+}

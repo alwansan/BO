@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-49-owner-green-friendly-reticle.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-50-owner-bullet-damage-xbe-audit.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -1337,6 +1337,23 @@
       "actualRemoteHumanRendering": false,
       "ownerPhoneTestRequested": false,
       "nextResearch": "docs/OWNER_ALLY_GREEN_RETICLE_RESEARCH_AR.md"
+    },
+    "OWNER_ORIGINAL_BULLET_DAMAGE_STATIC_WINDOW_AUDIT_20261122": {
+      "status": "SUCCESS_PRIVATE_PINNED_ORIGINAL_STATIC_COUNTS_ONLY_NO_FRIENDLY_PROOF",
+      "initialRun": 44970444776,
+      "expandedRun": 44970558768,
+      "initialArtifact": 14733636060,
+      "expandedArtifact": 14733980020,
+      "codeCommits": [
+        "c7354924e40a152071a63121a8ebcbb7c6039380",
+        "3c55a58b39827b0a6ba0e1deb29edbfc2cf39360"
+      ],
+      "safeEvidence": "memory/evidence/BO-OWNER-BULLET-DAMAGE-NEIGHBORHOOD-20261122-safe-summary.json",
+      "originalXbeSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+      "originalFriendlyRelationFound": false,
+      "originalGreenReticleBranchFound": false,
+      "originalFriendlyDamageGuardFound": false,
+      "ownerDeviceTestRequested": false
     }
   },
   "pending": {
@@ -1510,10 +1527,10 @@
     "deviceTested": true,
     "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "Session49 owner observed bot ally green reticle + inability shoot/kill. New value-only AllyTargetPolicy source+ASAN44969897865 SUCCESS (not actual game). Read docs/OWNER_ALLY_GREEN_RETICLE_RESEARCH_AR.md and Session49; CL images listed, binary pixels not inspected. Next independently trace original c5 aim target faction tint and damage suppression, map original friendly actor->MODEL->GPU draw/RCB. Real verified game-thread host-selected stage epoch and human fullbody/shared world still missing. One future major two-phone trial only.",
+  "next": "Read Session50 and safe evidence; owner c5 bullet receiver 1024B 266 instructions 30 conditionals 2 returns, kind refs2 health1 dying1 but no friendly/reticle proof. Next map original friendly affiliation to actual reticle/hit guard without assuming NPC AI; then real original actor/MODEL draw and RCB, true stage loaded epoch, authenticated host world human-controlled remote AllyBody. CI first, no small owner tests.",
   "latestHandoff": {
     "date": "2026-11-22",
-    "session": 49,
+    "session": 50,
     "kind": "owner_CI_only_stage_static_plus_safe_tls_story_diagnostics",
     "plan": "docs/superpowers/plans/2026-11-22-host-story-remote-ally.md",
     "sourceCiRun": 44951425780,
@@ -1543,7 +1560,7 @@
     "engineHookVerified": false,
     "remoteHumanActorRendered": false,
     "ownerV3DeviceAccepted": false,
-    "sessionFile": "memory/sessions/2026-11-22_bo-coop-49-owner-green-friendly-reticle.md",
+    "sessionFile": "memory/sessions/2026-11-22_bo-coop-50-owner-bullet-damage-xbe-audit.md",
     "ownerTestPolicy": "CI_FIRST_MAJOR_TRIAL_ONLY",
     "ownerXbeStaticRun": 44956138064,
     "storyDiagnosticJvmRun": 44956473684,
@@ -1619,7 +1636,8 @@
     "realRemoteHumanFullBodyRendered": false,
     "allyFriendlyPolicySyntheticRun": 44969897865,
     "originalAllyFactionVerified": false,
-    "latestOwnerScreenshotPixelsInspected": false
+    "latestOwnerScreenshotPixelsInspected": false,
+    "bulletPrivateRun": 44970558768
   },
   "executionStatus": "Session49 owner observed bot ally green reticle + inability shoot/kill. New value-only AllyTargetPolicy source+ASAN44969897865 SUCCESS (not actual game). Read docs/OWNER_ALLY_GREEN_RETICLE_RESEARCH_AR.md and Session49; CL images listed, binary pixels not inspected. Next independently trace original c5 aim target faction tint and damage suppression, map original friendly actor->MODEL->GPU draw/RCB. Real verified game-thread host-selected stage epoch and human fullbody/shared world still missing. One future major two-phone trial only.",
   "ownerClarifications": {
@@ -1633,9 +1651,9 @@
   },
   "integrationRoadmap": "docs/COOP_INTEGRATION_ROADMAP_AR.md",
   "currentWork": {
-    "session": 49,
-    "task": "Verify original BLACK ally recognition through owner green reticle and friendly damage exclusion; value-only source CI pass; original engine target/faction/damage hooks NOT found",
-    "status": "Owner ally observation saved. ASAN/UBSAN ally target policy44969897865 SUCCESS; GPU/model provenance, actual friend/foe engine implementation, host scene epoch and playable co-op remain open.",
+    "session": 50,
+    "task": "Pinned c5 XBE soldier bullet/character-kind read-only private CI proved source-known health/dying/type member references, NOT friendly fire or reticle branch",
+    "status": "Initial original 256B and extended 1024B private XBE CI SUCCESS; all dynamic faction damage and human AllyBody/scene loaded goals remain unverified",
     "sourceCi": 44951425780,
     "sourceCode": "9938283748ad1bdb06f15259d7e4fcb791a47574",
     "latestOwnerTestedAndroidApkRun": 44946597973,
@@ -1763,7 +1781,9 @@
     "actualBlackSceneLoadedCallback": false,
     "ownerOriginalSkinningProven": false,
     "originalCandidateEncodedRowsSafeRun": 44968462670,
-    "ownerAllyReference": "docs/OWNER_ALLY_GREEN_RETICLE_RESEARCH_AR.md"
+    "ownerAllyReference": "docs/OWNER_ALLY_GREEN_RETICLE_RESEARCH_AR.md",
+    "privateBulletRun": 44970558768,
+    "ownerGreenReticleClueStillUnverifiedInEngine": true
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
