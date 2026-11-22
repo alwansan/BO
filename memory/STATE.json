@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-59-original-core-running-phase-source.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-60-tls-human-input-game-thread-and-bot-look-plan.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -2117,7 +2117,29 @@
     "originalGuestStageLoaded": false,
     "remoteOriginalBotRendered": false,
     "latestTlsCoreResult": "SUCCESS_REAL_4_PARTY_SYNTHETIC",
-    "latestAndroidKeystoreResult": "SUCCESS_ANDROID29_TLS_PLATFORM"
+    "latestAndroidKeystoreResult": "SUCCESS_ANDROID29_TLS_PLATFORM",
+    "session60PriorRoomOnlyApk": {
+      "run": 44980350821,
+      "result": "SUCCESS_SOURCE_ONLY_NO_GAMEPLAY",
+      "artifact": 14737412732
+    },
+    "session60NativeTrustedInputCode": [
+      "93f4d6dc98c2e580281fe05ddab31f43bd8b3583",
+      "4a4bcddd577cad6d943dcd717626aa3b9261ca60",
+      "2b1edb178c4eeef21f99d7eb7df16f1825edda7f"
+    ],
+    "session60NativeTrustedInputSourcePreflight": 44981621822,
+    "session60NativeTrustedInputSourceResult": "SUCCESS_CPP_NATIVE_TLS_INBOX_JAVA8_40HZ",
+    "session60FourPeerTls": 44981474702,
+    "session60Android29Tls": 44981474706,
+    "session60FullAndroidApkRun": 44981621849,
+    "session60FullAndroidApkStatusAtLastCheck": "IN_PROGRESS_NOT_REAL_GAMEPLAY",
+    "session60BotLookPlanCommit": "7a2a5833a935aa3a0a2514ce80e6b2daf26cc93c",
+    "session60BotLookPlanSanitizerRun": 44981706988,
+    "session60BotLookPlanSanitizerResult": "SUCCESS_ANY_ENEMY_OR_ALLY_LOOK_THREE_EMPTY_SLOTS_NOT_RENDERED",
+    "session60ActualOriginalGuestMissionStart": false,
+    "session60ActualRemoteHumanBotBodyRendered": false,
+    "session60SingleWorldHostAICombatObjectives": false
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
