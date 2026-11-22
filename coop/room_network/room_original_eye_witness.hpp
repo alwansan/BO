@@ -14,6 +14,7 @@
 #include "coop/room_original_core_stage_identity_contract.hpp"
 #include "coop/room_original_bot_pool_witness.hpp"
 #include "coop/room_original_guest_launch_match_witness.hpp"
+#include "coop/room_original_running_scene_source_gate.hpp"
 #include "game/layout.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_system.h>
@@ -108,6 +109,9 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
     const int guestLaunchMatch=GuestOriginalLaunchMatch().ObserveOriginalRunningWorld(
         coreEpisode,world,coreLevel,coreStage,lookSourceMatched);
     if(guestLaunchMatch)SendSafeWorldCodeToAndroid(guestLaunchMatch); // 81
+    static OriginalRunningSceneSourceGate localSceneRun;
+    const bool originalLocalSceneRunning=localSceneRun.Observe(
+        coreEpisode,world,coreLevel,coreStage,lookSourceMatched);
     JNIEnv* env=static_cast<JNIEnv*>(SDL_GetAndroidJNIEnv());
     jobject activity=static_cast<jobject>(SDL_GetAndroidActivity());
     if(!env||!activity)return;
@@ -135,6 +139,31 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
                 static_cast<jint>(coreEpisode),
                 static_cast<jint>(coreLevel),static_cast<jint>(coreStage));
             if(env->ExceptionCheck())env->ExceptionClear();
+        }
+        // 2nd independent 30-sample original level-running gate. Host may
+        // register its LOCAL stage readiness; guest must ALSO have the exact
+        // source-matched original launch and same authenticated TLS ticket.
+        // No game scene-loader, actor creation, NPC AI or guest memory writes.
+        static uint64_t lastReadyAt=0;
+        if(originalLocalSceneRunning&&
+           (!lastReadyAt||at<lastReadyAt||at-lastReadyAt>=1000u)){
+            lastReadyAt=at;
+            OriginalGuestLaunchMatchKey guestKey{};
+            const bool guestLaunch=GuestOriginalLaunchMatch().ReadMatchedKey(guestKey);
+            if(!guestLaunch||guestKey.originalEpisode==coreEpisode){
+                jmethodID readyMethod=env->GetMethodID(
+                    cls,"coopAttestOriginalRunningScene","(IIIIIIII)V");
+                if(env->ExceptionCheck())env->ExceptionClear();
+                else if(readyMethod)env->CallVoidMethod(activity,readyMethod,
+                    static_cast<jint>(coreEpisode),
+                    static_cast<jint>(coreLevel),static_cast<jint>(coreStage),
+                    static_cast<jint>(guestLaunch?guestKey.sceneEpoch:0),
+                    static_cast<jint>(guestLaunch?guestKey.rosterRevision:0),
+                    static_cast<jint>(guestLaunch?guestKey.tokenHi:0),
+                    static_cast<jint>(guestLaunch?guestKey.tokenLo:0),
+                    static_cast<jint>(guestLaunch?guestKey.selfSlot:0));
+                if(env->ExceptionCheck())env->ExceptionClear();
+            }
         }
         int peerMask=0;
         if(lookSourceMatched){

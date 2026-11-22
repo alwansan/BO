@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-72-guest-original-launch-world-match.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-73-original-source-running-scene-ready-tls.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -1786,6 +1786,27 @@
       "initialPreflightRun": 45039511227,
       "initialPreflightOutcome": "unboundlocal_stream_before_assignment",
       "staleEvidenceInvalidation": true
+    },
+    "ORIGINAL_SOURCE_RUNNING_STAGE_TLS_READY": {
+      "status": "CODE_PUSHED_CI_PENDING_NOT_SHARED_WORLD",
+      "sourceMatchedOriginalCoreAndStream": true,
+      "originalCorePhase0x1C": true,
+      "originalLevelFilesPaired": true,
+      "originalPlayerRunning": true,
+      "extraSamples": 30,
+      "guestOriginalFrontendLaunchTicketMatchedRequired": true,
+      "verifiedAuthenticatedSessionTokenRequired": true,
+      "gameThreadOnly": true,
+      "stageReadyOncePerTicket": true,
+      "guestNetworkWriterSeparateThread": true,
+      "guestAutoLaunch": false,
+      "sharedAI": false,
+      "remoteBody": false,
+      "androidSceneLoaderAbiVerified": false,
+      "tests": [
+        "coop/room_network/test_original_running_scene_source_gate.cpp",
+        "coop/lobby/test/SessionTest.java"
+      ]
     }
   },
   "pending": {

@@ -106,6 +106,22 @@ public final class RoomAppRooms {
   return session==null?new int[8]:
       session.guestPreparedStoryFromOriginalFrontend();
  }
+ /** Called only from the stable ORIGINAL first-person player update, not
+  * from lobby UI or network workers. Local level running is NOT a
+  * synchronized SHARED AI world; READY applies to stage loading alone.
+  */
+ public static void originalRunningSceneFromGameThread(int episode,int level,
+   int stage,int epoch,int revision,int tokenHi,int tokenLo,int slot){
+  RoomSession session;
+  synchronized(RoomAppRooms.class){session=active;}
+  if(session==null)return;
+  final int ready=session.attestOriginalRunningSceneFromGameThread(
+      episode,level,stage,epoch,revision,tokenHi,tokenLo,slot);
+  if(ready==1)
+   RoomDiagnostics.event("ORIGINAL_HOST_RUNNING_LOCAL_SCENE_TLS_READY_NO_SHARED_AI");
+  else if(ready==2)
+   RoomDiagnostics.event("ORIGINAL_GUEST_RUNNING_LOCAL_SCENE_TLS_READY_NO_SHARED_AI");
+ }
  public static void originalStageIdentityFromGameThread(int episode,int level,int stage){
   if(episode<=0||level<0||level>8||stage<0||stage>15)return;
   RoomSession session;

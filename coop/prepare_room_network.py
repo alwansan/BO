@@ -85,6 +85,14 @@ def prepare(root: pathlib.Path):
     public int[] coopPollGuestPreparedStoryFromOriginalFrontend() {
         return com.racas.black.coop.RoomAppRooms.guestPreparedStoryFromOriginalFrontend();
     }
+    // An original player running-world source gate independently remains
+    // stable for 30 more ticks; the room validates the ticket/roster before
+    // stage-only READY. NOT a scene loader or a shared AI/world proof.
+    public void coopAttestOriginalRunningScene(int episode,int level,int stage,
+         int sceneEpoch,int rosterRevision,int tokenHi,int tokenLo,int slot) {
+        com.racas.black.coop.RoomAppRooms.originalRunningSceneFromGameThread(
+            episode,level,stage,sceneEpoch,rosterRevision,tokenHi,tokenLo,slot);
+    }
     // Matched original core/stream level and stage as values on the genuine
     // BLACK game thread. NOT a loaded-scene callback, never auto PREPARE.
     public void coopRecordOriginalStageIdentity(int episode,int level,int stage) {
@@ -260,6 +268,7 @@ def prepare(root: pathlib.Path):
     pending['src/coop/room_original_guest_prepared_story_witness.hpp'] = (HERE / 'room_network/room_original_guest_prepared_story_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_guest_launch_match_contract.hpp'] = (HERE / 'room_network/room_original_guest_launch_match_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_guest_launch_match_witness.hpp'] = (HERE / 'room_network/room_original_guest_launch_match_witness.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_running_scene_source_gate.hpp'] = (HERE / 'room_network/room_original_running_scene_source_gate.hpp').read_text(encoding='utf-8')
     pending['src/coop/world_tick_contract.hpp'] = (HERE / 'room_network/world_tick_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/gpu_decl_contract.hpp'] = (HERE / 'room_network/gpu_decl_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/gpu_decl_witness.hpp'] = (HERE / 'room_network/gpu_decl_witness.hpp').read_text(encoding='utf-8')

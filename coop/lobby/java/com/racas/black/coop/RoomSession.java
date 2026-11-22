@@ -80,6 +80,9 @@ public final class RoomSession implements AutoCloseable {
     private long lastSourceStageAtNs;
     private final RoomOriginalHostStagePrepareGate sourceStagePrepare=new RoomOriginalHostStagePrepareGate();
     private Thread originalGuestFrontendThread;
+    // Exact ticket identity for at-most-once local original-running-scene
+    // confirmation; native source cannot authorize an unrelated TLS story.
+    private RoomStoryWire.Ticket originalRunningReadyTicket;
     /** Compact TLS roster positions, NOT long-lived RoomWire.Player IDs.
      * Source-only bot appearance proposal for genuine joined human devices. */
     public int hostAppearancePeerMaskFromGameThread(){
@@ -176,6 +179,74 @@ public final class RoomSession implements AutoCloseable {
             return new int[]{ticket.sceneEpoch,ticket.mission,ticket.stage,
                 (int)ticket.rosterRevision,(int)(ticket.token>>>32),
                 (int)ticket.token,slot,ticket.participants};
+        }
+    }
+    /**
+     * A second 30 stable original BLACK player/world samples (on top of
+     * the native source-matched core/stream/phase/resources) confirm this
+     * phone's ORIGINAL level is RUNNING and equals the pending HOST ticket.
+     *
+     * Host: local scene-ready barrier bit. Guest: enqueue TLS READY only
+     * if SAME authenticated ticket was present BEFORE original guest's
+     * genuine frontend launch, original streaming stage and running-world
+     * witness. NO auto guest level launch or original game memory writes.
+     * Local matching stages do NOT mean synchronized AI, actors or quests.
+     *
+     * Guest tokenHi/tokenLo are bit-exact split of the POSITIVE TLS ticket
+     * token; host ignores them and requires no guest look/selection key.
+     */
+    public int attestOriginalRunningSceneFromGameThread(int episode,
+         int level,int stage,int sceneEpoch,int rosterRevision,
+         int tokenHi,int tokenLo,int guestSlot){
+        synchronized(lock){
+            if(closed||!validStoryThread()||
+               lastSourceStage==null||episode<=0||
+               lastSourceStage.originalEpisode!=episode||
+               lastSourceStage.level!=level||lastSourceStage.stage!=stage||
+               level<0||level>7||stage<0||stage>15||
+               System.nanoTime()-lastSourceStageAtNs>3000000000L)return 0;
+            try{
+                if(phase==Phase.HOSTING&&host!=null&&host.isRunning()){
+                    RoomStoryWire.Ticket ticket=host.storyTicket();
+                    if(ticket==null||ticket.mission!=level||ticket.stage!=stage||
+                       (originalRunningReadyTicket!=null&&
+                        originalRunningReadyTicket.same(ticket)))return 0;
+                    RoomWire.State state=host.snapshot();
+                    if(state.revision!=ticket.rosterRevision||
+                       state.players.size()!=Integer.bitCount(ticket.participants))
+                        return 0;
+                    // The return boolean is COMMIT, not whether the host
+                    // source-scene-ready bit was installed successfully.
+                    host.hostSceneLoaded(level,stage,ticket.sceneEpoch);
+                    originalRunningReadyTicket=ticket;
+                    event("ORIGINAL_HOST_LOCAL_RUNNING_STAGE_READY_NO_SHARED_AI");
+                    return 1;
+                }
+                if(phase==Phase.JOINED&&client!=null&&client.isRunning()){
+                    RoomStoryWire.Ticket ticket=client.storyTicket();
+                    RoomWire.State state=client.snapshot();
+                    if(ticket==null||state==null||client.storyCommitted()||
+                       sceneEpoch<=0||ticket.sceneEpoch!=sceneEpoch||
+                       ticket.mission!=level||ticket.stage!=stage||
+                       ticket.rosterRevision!=(rosterRevision&0xffffffffL)||
+                       ticket.token!=(((long)tokenHi<<32)|(tokenLo&0xffffffffL))||
+                       state.revision!=ticket.rosterRevision||
+                       !java.security.MessageDigest.isEqual(
+                           state.session,ticket.session())||
+                       state.players.size()!=Integer.bitCount(ticket.participants)||
+                       guestSlot<2||guestSlot>4||
+                       RoomWire.storySlot(state,state.self)!=guestSlot||
+                       !ticket.includes(guestSlot)||
+                       (originalRunningReadyTicket!=null&&
+                        originalRunningReadyTicket.same(ticket)))return 0;
+                    if(!client.acknowledgeSceneLoaded(level,stage,sceneEpoch))
+                        return 0;
+                    originalRunningReadyTicket=ticket;
+                    event("ORIGINAL_GUEST_LOCAL_RUNNING_STAGE_READY_NO_SHARED_AI");
+                    return 2;
+                }
+            }catch(IOException unavailable){return 0;}
+            return 0;
         }
     }
     /** Source-only evidence for future launcher verification, not READY. */
@@ -408,6 +479,7 @@ public final class RoomSession implements AutoCloseable {
             lastSourceStage=null;lastSourceStageAtNs=0;
             sourceStagePrepare.reset();
             originalGuestFrontendThread=null;
+            originalRunningReadyTicket=null;
             oldHost=host;oldClient=client;oldAnnouncer=announcer;
             host=null;client=null;announcer=null;phase=Phase.CONNECTING;
             description="Connecting";fingerprint="";
@@ -548,6 +620,7 @@ public final class RoomSession implements AutoCloseable {
             lastSourceStage=null;lastSourceStageAtNs=0;
             sourceStagePrepare.reset();
             originalGuestFrontendThread=null;
+            originalRunningReadyTicket=null;
             oldHost=host;oldClient=client;oldAnnouncer=announcer;
             host=null;client=null;announcer=null;phase=Phase.IDLE;description="";fingerprint="";
         }

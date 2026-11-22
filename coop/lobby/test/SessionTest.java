@@ -198,6 +198,56 @@ public final class SessionTest {
             check(java.util.Arrays.stream(remote.guestPreparedStoryFromOriginalFrontend())
                 .allMatch(x->x==0)); // network disconnect resets frontend signal
         }
+        // SESSION73: real loopback TLS plus SYNTHETIC simulation of verified
+        // ORIGINAL running world callback. No game runtime in JVM; source
+        // proof is independently covered in the C++ 30-sample gate test.
+        try(RoomSession hostReady=RoomSession.create();
+            RoomSession guestReady=RoomSession.create()){
+            hostReady.startHost(source,loop,0,"Source host","Source stage");
+            until(()->hostReady.snapshot().phase==RoomSession.Phase.HOSTING);
+            RoomSession.Status h=hostReady.snapshot();
+            guestReady.join("127.0.0.1:"+h.port,h.fingerprint,"Stage guest");
+            until(()->guestReady.snapshot().phase==RoomSession.Phase.JOINED&&
+                     hostReady.snapshot().roster.players.size()==2);
+            check(hostReady.bindStoryGameThread()&&guestReady.bindStoryGameThread());
+            check(hostReady.attestOriginalRunningSceneFromGameThread(
+                23,0,0,0,0,0,0,0)==0); // no real original stage
+            check(hostReady.observeOriginalStageIdentityFromGameThread(23,0,0));
+            check(hostReady.prepareObservedHostStageFromGameThread());
+            until(()->guestReady.storyStatus().ticket!=null);
+            RoomStoryWire.Ticket ready=hostReady.storyStatus().ticket;
+            check(ready!=null&&ready.mission==0&&ready.stage==0);
+            check(hostReady.attestOriginalRunningSceneFromGameThread(
+                23,1,0,0,0,0,0,0)==0);
+            check(hostReady.attestOriginalRunningSceneFromGameThread(
+                24,0,0,0,0,0,0,0)==0);
+            check(guestReady.attestOriginalRunningSceneFromGameThread(
+                16,0,0,ready.sceneEpoch,(int)ready.rosterRevision,
+                (int)(ready.token>>>32),(int)ready.token,2)==0);
+            check(hostReady.attestOriginalRunningSceneFromGameThread(
+                23,0,0,0,0,0,0,0)==1);
+            check(hostReady.attestOriginalRunningSceneFromGameThread(
+                23,0,0,0,0,0,0,0)==0);
+            check(!hostReady.storyStatus().committed);
+            check(guestReady.observeOriginalStageIdentityFromGameThread(16,0,0));
+            check(guestReady.attestOriginalRunningSceneFromGameThread(
+                16,0,0,ready.sceneEpoch,(int)ready.rosterRevision,
+                (int)(ready.token>>>32),(int)ready.token+1,2)==0);
+            check(guestReady.attestOriginalRunningSceneFromGameThread(
+                16,0,0,ready.sceneEpoch,(int)ready.rosterRevision,
+                (int)(ready.token>>>32),(int)ready.token,3)==0);
+            check(guestReady.attestOriginalRunningSceneFromGameThread(
+                16,0,0,ready.sceneEpoch,(int)ready.rosterRevision,
+                (int)(ready.token>>>32),(int)ready.token,2)==2);
+            check(guestReady.attestOriginalRunningSceneFromGameThread(
+                16,0,0,ready.sceneEpoch,(int)ready.rosterRevision,
+                (int)(ready.token>>>32),(int)ready.token,2)==0);
+            until(()->hostReady.storyStatus().committed&&
+                     guestReady.storyStatus().committed);
+            check(!hostReady.cancelStoryFromGameThread()||
+                !guestReady.storyStatus().committed);
+        }
+        System.out.println("ORIGINAL_STABLE_RUNNING_STAGE_TLS_READY_GATE_PASS: synthetic callback, real TLS ticket+roster+original source identity; no auto guest loader or shared AI");
         System.out.println("STORY_DIAGNOSTICS_PASS: authenticated TLS lifecycle emits only bounded safe codes even without room UI");
         System.out.println("SESSION_STORY_BRIDGE_PASS: authenticated TLS ticket via pinned game-thread facade, no implicit READY, host-only prepare, replay and cancel fences");
         System.out.println("ROOM_SESSION_PASS: real host/join, immutable roster, reject, cancellation, lifecycle");
