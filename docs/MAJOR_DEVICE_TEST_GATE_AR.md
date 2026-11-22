@@ -1,3 +1,8 @@
+## Session46 original skinning research is CI only (NOT a user phone-test trigger)
+Owner original stride36 38,917 sampled indexed vertices/6 lanes verified privately CI `44965837041 SUCCESS`, synthetic rig/4-weight pose contract CI `44966105790 SUCCESS`. The +12 byte-sum≈255 and +20 small-byte hypotheses do NOT prove original skinning nor real remote human body. **No physical owner test now.** During a future substantial joint story/human body test automatically log only fixed categories: true engine game-scene/stage/epoch proof, actual character shader vertex declaration kinds/offset categories, human remote body generation and material/pose status, authenticated input/snapshot, host AI/objectives/combat. Reject logs with raw shader, bytes, positions, PIN, peer addresses, saves or original game assets. Continue CI source tests and static safe owner data checks.
+
+---
+
 ## Session45 additional CI gates, still NOT a phone test trigger
 Owner original RCB `44965062874 SUCCESS` (9 serialized skeleton records but 1 per-file distinct ID across 3 stages), animation bank `44964889359 SUCCESS` (22 bank, 675 clip and 61,615 track boundary checks), MODEL stride36 `44965229133 SUCCESS` (12 bodies, each 3 stride36 buffers). These are offline asset STRUCTURE proofs, **not** fullbody animation/renderer running on phone, actual host story scene or synchronized combat. They add no owner trial. The eventual one major 2-phone acceptance should automatically capture safe fixed codes for host mission attempt, true scene epoch/loaded proof, both client scene state, remote human body generation/visible animation, bounded input/snapshot status and world/combat/objective progress. Do not export raw game model, animation, peer IP, room PIN or save.
 
