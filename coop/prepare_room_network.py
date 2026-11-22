@@ -144,6 +144,7 @@ def prepare(root: pathlib.Path):
         'RoomStoryWire.java': 'lobby/java/com/racas/black/coop/RoomStoryWire.java',
         'RoomHumanInputWire.java': 'lobby/java/com/racas/black/coop/RoomHumanInputWire.java',
         'RoomWorldSnapshotWire.java': 'lobby/java/com/racas/black/coop/RoomWorldSnapshotWire.java',
+        'RoomCameraEyeWire.java': 'lobby/java/com/racas/black/coop/RoomCameraEyeWire.java',
         'RoomTls.java': 'lobby/java/com/racas/black/coop/RoomTls.java',
         'RoomDirect.java': 'lobby/java/com/racas/black/coop/RoomDirect.java',
         'RoomDiscovery.java': 'lobby/java/com/racas/black/coop/RoomDiscovery.java',
