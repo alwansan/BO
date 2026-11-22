@@ -150,6 +150,7 @@ public:
            !body.revision||body.tick==0)return;
         uint32_t root=0;
         if(!read(kPool,root)||!root||
+           static_cast<uint64_t>(root)+kFirst+kStride*32u>0xffffffffull||
            !OriginalGuestSpanCommitted(root+kFirst,kStride*32u))
             return;
         if(replica_&&(!valid(root)||replicaEpoch_!=body.epoch)){

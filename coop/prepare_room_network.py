@@ -167,6 +167,8 @@ def prepare(root: pathlib.Path):
         else if (code == 78) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_GUEST_SELECTED_LEVEL_MATCHES_AUTH_HOST_STAGE_NO_READY");
         else if (code == 79) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_GUEST_SELECTED_LEVEL_CONFLICTS_AUTH_HOST_STAGE_NO_READY");
         else if (code == 81) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_GUEST_RUNNING_LEVEL_MATCHES_HOST_STAGE_NO_SHARED_WORLD");
+        else if (code == 90) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_REMOTE_HUMAN_BOT_VISUAL_SLOT_INITIALIZED_UNTESTED");
+        else if (code == 91) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_REMOTE_HUMAN_BOT_DRAW_CALLED_NOT_VISUAL_PROOF");
         else if (code == 20) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_EASY_NOT_MISSION");
         else if (code == 21) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_NORMAL_NOT_MISSION");
         else if (code == 22) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_HARD_NOT_MISSION");
