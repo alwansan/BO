@@ -535,6 +535,10 @@ public final class RoomTls {
         private volatile RoomWire.State view;
         private volatile RoomStoryWire.Ticket story;
         private volatile RoomWorldSnapshotWire.Snapshot worldSnapshot;
+        private volatile RoomNpcWorldWire.World npcWorld;
+        private RoomNpcWorldWire.Chunk pendingNpc;
+        private int lastNpcTick;
+        private volatile long lastNpcAt;
         private volatile long lastWorldSnapshotAt;
         private int lastWorldSnapshotTick;
         private volatile boolean storyReadySent,storyCommitted;
@@ -582,6 +586,10 @@ public final class RoomTls {
         public RoomWorldSnapshotWire.Snapshot worldSnapshot(){
             return lastWorldSnapshotAt>0&&now()-lastWorldSnapshotAt<=350?
                    worldSnapshot:null;
+        }
+        /** Current signed host NPCs. No guest game-engine mutation. */
+        public RoomNpcWorldWire.World npcWorld(){
+            return lastNpcAt>0&&now()-lastNpcAt<=350?npcWorld:null;
         }
         public boolean storyCommitted(){return story!=null&&storyCommitted;}
         /**
@@ -744,6 +752,7 @@ public final class RoomTls {
                                 lastQueuedInputSequence=0;inputFrames.clear();firstHumanInputSent.set(false);
                                 lastQueuedEyeSequence=0;cameraFrames.clear();firstCameraEyeSent.set(false);
                                 worldSnapshot=null;lastWorldSnapshotTick=0;lastWorldSnapshotAt=0;
+                                npcWorld=null;pendingNpc=null;lastNpcTick=0;lastNpcAt=0;
                                 record("STORY_GUEST_PREPARED");
                             }
                         }
@@ -767,6 +776,7 @@ public final class RoomTls {
                                 lastQueuedInputSequence=0;inputFrames.clear();firstHumanInputSent.set(false);
                                 lastQueuedEyeSequence=0;cameraFrames.clear();firstCameraEyeSent.set(false);
                                 worldSnapshot=null;lastWorldSnapshotTick=0;lastWorldSnapshotAt=0;
+                                npcWorld=null;pendingNpc=null;lastNpcTick=0;lastNpcAt=0;
                                 record("STORY_GUEST_ABORTED");
                             }
                         }
@@ -798,6 +808,31 @@ public final class RoomTls {
                         }
                         continue;
                     }
+                    if(packet.type==RoomWire.NPC_WORLD){
+                        RoomNpcWorldWire.Chunk part=RoomNpcWorldWire.parse(packet);
+                        synchronized(lifecycle){
+                            RoomWire.State current=view;
+                            if(closed.get()||!storyCommitted||story==null||
+                               current==null||
+                               current.revision!=story.rosterRevision||
+                               !part.matches(story))
+                                throw new IOException("Untrusted original host NPC source");
+                            if(part.tick<=lastNpcTick)continue;
+                            if(part.part==0){
+                                pendingNpc=part;
+                                if(part.parts==1){
+                                    npcWorld=RoomNpcWorldWire.complete(part,null);
+                                    lastNpcTick=part.tick;lastNpcAt=now();pendingNpc=null;
+                                }
+                            }else{
+                                if(pendingNpc==null||pendingNpc.tick!=part.tick||
+                                   pendingNpc.parts!=2){pendingNpc=null;continue;}
+                                npcWorld=RoomNpcWorldWire.complete(pendingNpc,part);
+                                lastNpcTick=part.tick;lastNpcAt=now();pendingNpc=null;
+                            }
+                        }
+                        continue;
+                    }
                     if(packet.type!=RoomWire.ROSTER)throw new IOException("Unexpected host message");
                     RoomWire.State next=RoomWire.parseState(packet),old=view;
                     if(old==null||next.self!=old.self||!MessageDigest.isEqual(next.session,old.session)||
@@ -809,6 +844,7 @@ public final class RoomTls {
                             lastQueuedInputSequence=0;inputFrames.clear();firstHumanInputSent.set(false);
                                 lastQueuedEyeSequence=0;cameraFrames.clear();firstCameraEyeSent.set(false);
                                 worldSnapshot=null;lastWorldSnapshotTick=0;lastWorldSnapshotAt=0;
+                                npcWorld=null;pendingNpc=null;lastNpcTick=0;lastNpcAt=0;
                             record("STORY_GUEST_ROSTER_INVALIDATED");
                         }
                     }
@@ -823,6 +859,7 @@ public final class RoomTls {
                 lastQueuedInputSequence=0;inputFrames.clear();firstHumanInputSent.set(false);
                                 lastQueuedEyeSequence=0;cameraFrames.clear();firstCameraEyeSent.set(false);
                                 worldSnapshot=null;lastWorldSnapshotTick=0;lastWorldSnapshotAt=0;
+                                npcWorld=null;pendingNpc=null;lastNpcTick=0;lastNpcAt=0;
             }
             readyWriter.shutdownNow();
             closeSocket(socket);heartbeat.shutdownNow();reader.interrupt();inputWriter.interrupt();
