@@ -72,14 +72,18 @@ public final class RoomFourHumanOriginalStageTlsTest {
             ok(host.bindStoryGameThread());
             for(RoomSession g:guests)ok(g.bindStoryGameThread());
             Set<Integer> wire=new HashSet<>();
+            Set<Integer> compact=new HashSet<>();
+            int[] actualSlots=new int[3];
             for(int i=0;i<3;i++){
                 RoomWire.State state=guests[i].snapshot().roster;
-                ok(RoomWire.storySlot(state,state.self)==i+2);
+                actualSlots[i]=RoomWire.storySlot(state,state.self);
+                ok(actualSlots[i]>=2&&actualSlots[i]<=4);
+                ok(compact.add(actualSlots[i]));
                 ok(wire.add(state.self));
                 ok(Arrays.stream(guests[i].guestPreparedStoryFromOriginalFrontend())
                     .allMatch(n->n==0)); // joining a room NEVER launches a scene
             }
-            ok(wire.size()==3);
+            ok(wire.size()==3&&compact.size()==3);
             // Synthetic source-linked native callback only, not actual BLACK.
             ok(host.observeOriginalStageIdentityFromGameThread(90,2,0));
             ok(host.prepareObservedHostStageFromGameThread());
@@ -90,7 +94,7 @@ public final class RoomFourHumanOriginalStageTlsTest {
                 RoomWire.State state=guests[i].snapshot().roster;
                 int[] frontend=guests[i].guestPreparedStoryFromOriginalFrontend();
                 ok(frontend.length==8&&frontend[0]==ticket.sceneEpoch&&
-                   frontend[1]==2&&frontend[2]==0&&frontend[6]==i+2&&
+                   frontend[1]==2&&frontend[2]==0&&frontend[6]==actualSlots[i]&&
                    frontend[7]==15&&frontend[3]==(int)ticket.rosterRevision&&
                    (((long)frontend[4]<<32)|(frontend[5]&0xffffffffL))==ticket.token);
                 ok(!guests[i].storyStatus().committed);
@@ -102,7 +106,7 @@ public final class RoomFourHumanOriginalStageTlsTest {
                 int episode=120+i;
                 RoomSession g=guests[i];
                 ok(g.observeOriginalStageIdentityFromGameThread(episode,2,0));
-                ok(attest(g,episode,i+2,ticket)==2);
+                ok(attest(g,episode,actualSlots[i],ticket)==2);
                 if(i<2)ok(!host.storyStatus().committed);
             }
             until(()->allCommitted(host,guests));
@@ -151,9 +155,12 @@ public final class RoomFourHumanOriginalStageTlsTest {
                     ticket,world,roster);
                 ok(originalGameFrame[0]==1&&originalGameFrame[3]==4&&
                    originalGameFrame[2]==RoomWire.storySlot(roster,roster.self));
-                ok(world.avatars.get(1).xCm>initial.avatars.get(1).xCm);
-                ok(world.avatars.get(2).zCm>initial.avatars.get(2).zCm);
-                ok(world.avatars.get(3).xCm<initial.avatars.get(3).xCm);
+                ok(world.avatars.get(actualSlots[0]-1).xCm>
+                   initial.avatars.get(actualSlots[0]-1).xCm);
+                ok(world.avatars.get(actualSlots[1]-1).zCm>
+                   initial.avatars.get(actualSlots[1]-1).zCm);
+                ok(world.avatars.get(actualSlots[2]-1).xCm<
+                   initial.avatars.get(actualSlots[2]-1).xCm);
             }
             int priorWireId=fourth.snapshot().roster.self;
             fourth.stop(); // network leave must ABORT all committed worlds

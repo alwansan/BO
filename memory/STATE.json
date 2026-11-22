@@ -1829,7 +1829,7 @@
       "realBotBodies": false
     },
     "FOUR_HUMAN_SOURCE_ATTESTED_REAL_TLS": {
-      "status": "CODE_PUSHED_CI_PENDING",
+      "status": "FIXED_REAL_TLS_ACCEPT_ORDER_TEST_EXPECT_CI",
       "realTlsLoopback": true,
       "participants": 4,
       "hostAndThreeGuests": true,
@@ -1847,7 +1847,10 @@
       "javaTest": "coop/lobby/test/RoomFourHumanOriginalStageTlsTest.java",
       "workflow": ".github/workflows/black-coop-real-lobby-core.yml",
       "previousSuccessfulApkRun": 45040138903,
-      "previousSuccessfulApkArtifact": 14761312848
+      "previousSuccessfulApkArtifact": 14761312848,
+      "firstTlsRun": 45041715329,
+      "firstTlsConclusion": "failure_test_assumed_async_join_order",
+      "actualSlotDynamic": true
     }
   },
   "pending": {
