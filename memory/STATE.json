@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-73-original-source-running-scene-ready-tls.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-74-four-human-source-attested-real-tls.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -1827,6 +1827,27 @@
       "guestInputAfterCommitSyntheticPassed": true,
       "realStoryHostAuthority": false,
       "realBotBodies": false
+    },
+    "FOUR_HUMAN_SOURCE_ATTESTED_REAL_TLS": {
+      "status": "CODE_PUSHED_CI_PENDING",
+      "realTlsLoopback": true,
+      "participants": 4,
+      "hostAndThreeGuests": true,
+      "syntheticNativeOriginalSourceCallbacks": true,
+      "allGuestsRequiredBeforeCommit": true,
+      "hostOriginalFeetReference": true,
+      "threeTrustedHumanInputs": true,
+      "fourAvatarHostSnapshots": true,
+      "rejoinWireIdIncreases": true,
+      "rejoinCompactSlotReused": true,
+      "rejoinSceneEpochIncrements": true,
+      "guestAutoLaunch": false,
+      "realGameWorldShared": false,
+      "remoteBodiesRendered": false,
+      "javaTest": "coop/lobby/test/RoomFourHumanOriginalStageTlsTest.java",
+      "workflow": ".github/workflows/black-coop-real-lobby-core.yml",
+      "previousSuccessfulApkRun": 45040138903,
+      "previousSuccessfulApkArtifact": 14761312848
     }
   },
   "pending": {
