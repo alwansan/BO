@@ -188,6 +188,22 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('kDrawPacked12And20SameStream',gpu_guard)
             self.assertNotIn('reportSceneLoadedFromGameThread',gpu_guard+gpu_reporter)
             self.assertNotIn('acknowledgeSceneLoaded',gpu_guard+gpu_reporter)
+    def test_pinned_original_difficulty_crlf_on_windows(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=pathlib.Path(directory)
+            self.source(root)
+            target=root/'src/game/difficulty.cpp'
+            original=target.read_bytes().replace(b'\\r\\n',b'\\n')
+            target.write_bytes(original.replace(b'\\n',b'\\r\\n'))
+            changed=prepare(root)
+            self.assertIn('src/game/difficulty.cpp',changed)
+            fixed=target.read_text(encoding='utf-8')
+            self.assertIn('X86_FUNC(sub_001EDC90)',fixed)
+            self.assertIn('blackcoop::ObserveOriginalStreamingStageEntry()',fixed)
+            self.assertIn('blackcoop::ObserveOriginalLaunchReturn(originalLaunchEpisode)',fixed)
+            self.assertEqual(fixed.count('__imp__sub_001EDC90(ctx, base)'),1)
+            self.assertNotIn('reportSceneLoadedFromGameThread',fixed)
+
     def test_fail_closed_on_changed_anchor(self):
         with tempfile.TemporaryDirectory() as directory:
             root=pathlib.Path(directory)
