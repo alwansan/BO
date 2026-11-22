@@ -40,6 +40,19 @@ public final class RoomAppRooms {
    finally{if(candidate!=null)candidate.close();synchronized(RoomAppRooms.class){if(token==epoch)starting=false;}}
   },"bo-presence-init");worker.setDaemon(true);worker.start();
  }
+ private static final java.util.concurrent.atomic.AtomicBoolean localEyeLogged=
+     new java.util.concurrent.atomic.AtomicBoolean();
+ /**
+  * Native simulation-thread hook only. Do not log coordinates or create
+  * remote players. This is original local CAMERA eye, not actor body root.
+  */
+ public static void originalPlayerEyeFromGameThread(int x,int y,int z){
+  RoomSession session;
+  synchronized(RoomAppRooms.class){session=active;}
+  if(session!=null&&session.observeOriginalEyeFromGameThread(x,y,z)&&
+     localEyeLogged.compareAndSet(false,true))
+   RoomDiagnostics.event("ORIGINAL_LOCAL_CAMERA_EYE_VALIDATED");
+ }
  public static void shutdown(){
   RoomSession old;RoomPresence.Service beacon;
   synchronized(RoomAppRooms.class){epoch++;starting=false;old=active;beacon=presence;active=null;presence=null;}

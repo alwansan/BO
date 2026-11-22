@@ -59,6 +59,11 @@ def prepare(root: pathlib.Path):
     public String coopRoomStatusLine(int row) {
         return com.racas.black.coop.RoomAppRooms.statusLine(row);
     }
+    // Called by genuine original local player update, NOT by Android UI,
+    // NOT proof of loaded scene; safe, bounded camera eye coordinates only.
+    public void coopRecordOriginalPlayerEye(int xCm,int yCm,int zCm) {
+        com.racas.black.coop.RoomAppRooms.originalPlayerEyeFromGameThread(xCm,yCm,zCm);
+    }
 ''', java)
     text = once(text, '    @Override\n    protected void onPause() {',
                 '''    @Override
@@ -158,6 +163,8 @@ def prepare(root: pathlib.Path):
 
     pending['src/coop/room_net_ui.hpp'] = (HERE / 'room_network/room_net_ui.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_world_tick.hpp'] = (HERE / 'room_network/room_world_tick.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_eye_contract.hpp'] = (HERE / 'room_network/room_original_eye_contract.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_eye_witness.hpp'] = (HERE / 'room_network/room_original_eye_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/world_tick_contract.hpp'] = (HERE / 'room_network/world_tick_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/gpu_decl_contract.hpp'] = (HERE / 'room_network/gpu_decl_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/gpu_decl_witness.hpp'] = (HERE / 'room_network/gpu_decl_witness.hpp').read_text(encoding='utf-8')
@@ -168,12 +175,16 @@ def prepare(root: pathlib.Path):
     cheat='src/game/cheats.cpp'
     game=pending.get(cheat,originals[cheat].decode('utf-8'))
     game=once(game,'#include "game/layout.h"',
-              '#include "game/layout.h"\n#include "coop/room_world_tick.hpp"',cheat)
+              '#include "game/layout.h"\n#include "coop/room_world_tick.hpp"\n#include "coop/room_original_eye_witness.hpp"',cheat)
     game=once(game,'    __imp__sub_001E5FA0(ctx, base);',
         '''    // Candidate only: first original-player update in this world is
     // NOT proof that host-selected mission/stage loaded on both phones.
-    if (me && me == Player() && R32(me + kCharKind) == kPlayerKind)
+    if (me && me == Player() && R32(me + kCharKind) == kPlayerKind) {
         blackcoop::ObserveLocalWorldTick(R32(kWorld));
+        // Original BLACK eye vector known from pinned upstream hooks.cpp;
+        // sample only, never a proxy actor or fabricated scene READY.
+        blackcoop::ObserveOriginalPlayerEye(me);
+    }
     __imp__sub_001E5FA0(ctx, base);''',cheat)
     pending[cheat]=game
 

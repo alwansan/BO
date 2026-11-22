@@ -54,6 +54,35 @@ public final class RoomSession implements AutoCloseable {
     // the story APIs once the real game thread is bound. It is not proof of
     // a real game hook, scene loader, or shared simulation.
     private Thread storyGameThread;
+    // Read-only original first-person CAMERA EYE; never a remote actor root.
+    public static final class LocalEye {
+        public final int xCm,yCm,zCm;
+        private final long atNs;
+        private LocalEye(int x,int y,int z,long at){
+            xCm=x;yCm=y;zCm=z;atNs=at;
+        }
+    }
+    private LocalEye lastEye;
+    boolean observeOriginalEyeFromGameThread(int x,int y,int z){
+        synchronized(lock){
+            if(closed||(phase!=Phase.HOSTING&&phase!=Phase.JOINED)||
+               x< -20000000||x>20000000||y< -20000000||y>20000000||
+               z< -20000000||z>20000000)return false;
+            // This original player's native update is an actual game-thread
+            // entry point, but does NOT prove a mission scene has loaded.
+            if(storyGameThread==null)storyGameThread=Thread.currentThread();
+            if(!validStoryThread())return false;
+            lastEye=new LocalEye(x,y,z,System.nanoTime());
+            return true;
+        }
+    }
+    /** Only the bound original game thread may see recent camera samples. */
+    public LocalEye localCameraEyeFromGameThread(){
+        synchronized(lock){
+            return validStoryThread()&&lastEye!=null&&
+                System.nanoTime()-lastEye.atNs<=350000000L?lastEye:null;
+        }
+    }
     private long generation;
     private boolean closed;
 
@@ -179,7 +208,7 @@ public final class RoomSession implements AutoCloseable {
         synchronized(lock) {
             if(closed)throw new IllegalStateException("RoomSession was destroyed");
             token=++generation;
-            storyGameThread=null;
+            storyGameThread=null;lastEye=null;
             oldHost=host;oldClient=client;oldAnnouncer=announcer;
             host=null;client=null;announcer=null;phase=Phase.CONNECTING;
             description="Connecting";fingerprint="";
@@ -314,7 +343,7 @@ public final class RoomSession implements AutoCloseable {
         RoomDiscovery.Host oldAnnouncer;
         RoomTls.Client oldClient;
         synchronized(lock){
-            ++generation;storyGameThread=null;
+            ++generation;storyGameThread=null;lastEye=null;
             oldHost=host;oldClient=client;oldAnnouncer=announcer;
             host=null;client=null;announcer=null;phase=Phase.IDLE;description="";fingerprint="";
         }

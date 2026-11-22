@@ -37,6 +37,12 @@ jobs:
           python3 -m unittest discover -s bo/coop -p room_network_prepare_checks.py -v
           python3 -m unittest discover -s bo/coop -p room_ui_prepare_checks.py -v
           echo 'ROOM_NET_STAGE_PASS: in-game Flash -> Android source transformation is atomic; NO game APK/gameplay claimed'
+      - name: Native original first-person camera eye quantization guards
+        shell: bash
+        run: |
+          set -euo pipefail
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -fsanitize=undefined             bo/coop/room_network/test_room_original_eye_contract.cpp -o "$RUNNER_TEMP/test_original_eye"
+          "$RUNNER_TEMP/test_original_eye"
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
