@@ -1568,7 +1568,7 @@
       "android29LastObserved": "completed_success"
     },
     "ORIGINAL_HUMAN_BOT_LOOK_ROSTER_PLANNER": {
-      "status": "SOURCE_STAGED_CI_PENDING_NO_ACTOR",
+      "status": "HEADER_FIX_PUSHED_AWAIT_CI",
       "source": "OriginalHumanLookPlanner",
       "guestReadsOnly": true,
       "hostSourceOrdinalMaskOnly": true,
@@ -1582,7 +1582,10 @@
       "noActorCreation": true,
       "noSceneReady": true,
       "preflight": "black-coop-room-network-preflight.yml",
-      "actorABIUnverified": true
+      "actorABIUnverified": true,
+      "firstSourcePreflightRun": 45032641407,
+      "firstSourcePreflightConclusion": "failure_missing_cstddef",
+      "fix": "add <cstddef> include"
     }
   },
   "pending": {

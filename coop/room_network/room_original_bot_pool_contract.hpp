@@ -7,6 +7,7 @@
 #pragma once
 #include <array>
 #include <cstdint>
+#include <cstddef>
 namespace blackcoop {
 struct OriginalBotPoolSlotEvidence{
     bool model=false,controller=false;

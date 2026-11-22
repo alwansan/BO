@@ -1,3 +1,8 @@
+### CI fix for session67
+[Source preflight 45032641407 FAILED](https://github.com/alwansan/BO/actions/runs/45032641407) at native C++ compile only: `room_original_bot_pool_contract.hpp:113` used unqualified `size_t` but did not explicitly include `<cstddef>`. Python stage/instrumentation source checks and earlier unit tests passed before that compile. Add the missing C++ standard header, push and require rerun; never claim full PASS before result.
+
+---
+
 ## Session67 (2026-11-22) — concrete 1–3 remote-human ORIGINAL bot LOOK planning with live TLS host roster
 - Staged a **read-only** original game-thread `OriginalHumanLookPlanner`: select a real source bot's verified visual template (enemy or ally), then propose 1–3 distinct blank visual rigs (indices from 31 down), strictly matching compact authenticated HOST TLS roster slots 2,3,4. Never use raw long-lived RoomWire.Player.id as the player slot and never borrow NPC-controlled slots. No model pointer/slot index logged.
 - Plans are scoped to the original stream/source-matched CORE episode + world and exact room ordinal roster; all candidate slots reverified every 2s from original committed guest pages; refuse fake masks, missing visual buffers/source. If NPC reclaims a slot, original source disappears or roster changes, **latch invalidation until a new real original level launch**. NO guest writes, CallGuest, spawning, rendering, AI, physics, health, weapon or STORY_READY: room-only code, NOT playable coop.
