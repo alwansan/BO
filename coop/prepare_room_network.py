@@ -151,6 +151,9 @@ def prepare(root: pathlib.Path):
         else if (code == 75) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HUMAN_LOOK_PROPOSAL_INVALIDATED_NO_ACTOR");
         else if (code == 76) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_GUEST_HOST_STAGE_ON_FRONTEND_ENGINE_THREAD_NO_LOADER");
         else if (code == 77) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_GUEST_HOST_STAGE_CHANGED_ON_FRONTEND_THREAD_NO_LOADER");
+        else if (code == 78) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_GUEST_SELECTED_LEVEL_MATCHES_AUTH_HOST_STAGE_NO_READY");
+        else if (code == 79) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_GUEST_SELECTED_LEVEL_CONFLICTS_AUTH_HOST_STAGE_NO_READY");
+        else if (code == 81) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_GUEST_RUNNING_LEVEL_MATCHES_HOST_STAGE_NO_SHARED_WORLD");
         else if (code == 20) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_EASY_NOT_MISSION");
         else if (code == 21) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_NORMAL_NOT_MISSION");
         else if (code == 22) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_HARD_NOT_MISSION");
@@ -255,6 +258,8 @@ def prepare(root: pathlib.Path):
     pending['src/coop/room_original_guest_host_world_witness.hpp'] = (HERE / 'room_network/room_original_guest_host_world_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_guest_prepared_story_contract.hpp'] = (HERE / 'room_network/room_original_guest_prepared_story_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_guest_prepared_story_witness.hpp'] = (HERE / 'room_network/room_original_guest_prepared_story_witness.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_guest_launch_match_contract.hpp'] = (HERE / 'room_network/room_original_guest_launch_match_contract.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_guest_launch_match_witness.hpp'] = (HERE / 'room_network/room_original_guest_launch_match_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/world_tick_contract.hpp'] = (HERE / 'room_network/world_tick_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/gpu_decl_contract.hpp'] = (HERE / 'room_network/gpu_decl_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/gpu_decl_witness.hpp'] = (HERE / 'room_network/gpu_decl_witness.hpp').read_text(encoding='utf-8')

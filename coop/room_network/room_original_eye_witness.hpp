@@ -13,6 +13,7 @@
 #include "coop/room_original_core_phase_witness.hpp"
 #include "coop/room_original_core_stage_identity_contract.hpp"
 #include "coop/room_original_bot_pool_witness.hpp"
+#include "coop/room_original_guest_launch_match_witness.hpp"
 #include "game/layout.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_system.h>
@@ -102,6 +103,11 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
     // The source-match class is a stronger read-only identity than file
     // opens alone. No engine scene-ready callback is inferred from it.
     const bool lookSourceMatched=coreStageIdentity.Matched(coreEpisode,world);
+    // Independent original launch+selected stage+original stable world
+    // correlation. Diagnostic only: NO READY and NO guest loader call.
+    const int guestLaunchMatch=GuestOriginalLaunchMatch().ObserveOriginalRunningWorld(
+        coreEpisode,world,coreLevel,coreStage,lookSourceMatched);
+    if(guestLaunchMatch)SendSafeWorldCodeToAndroid(guestLaunchMatch); // 81
     JNIEnv* env=static_cast<JNIEnv*>(SDL_GetAndroidJNIEnv());
     jobject activity=static_cast<jobject>(SDL_GetAndroidActivity());
     if(!env||!activity)return;

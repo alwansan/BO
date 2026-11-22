@@ -6,6 +6,8 @@
 // host mission selection or game world ready. NEVER write guest memory.
 #pragma once
 #include "coop/room_original_streaming_stage_contract.hpp"
+#include "coop/room_original_guest_prepared_story_witness.hpp"
+#include "coop/room_original_guest_launch_match_witness.hpp"
 #include "kernel/coop_stage_resource_contract.hpp"
 #include "game/layout.h"
 #include "xdk/hle.h"
@@ -21,6 +23,18 @@ inline void ObserveOriginalStreamingStageEntry() noexcept {
     // Read only; subsequent source resource-pair+player gates are separate.
     const uint32_t level=kernel::G<uint8_t>(game+0x2020C);
     const uint32_t stage=kernel::G<uint8_t>(game+0x2020E);
-    g_originalStreamingStageHints.CaptureAtStreamingEntry(episode,level,stage);
+    const bool first=g_originalStreamingStageHints.CaptureAtStreamingEntry(
+        episode,level,stage);
+    if(first){
+        // Only the original game chooses to enter this loader. A host PREPARE
+        // cannot invoke this function or change the selected source bytes.
+        OriginalGuestPreparedStory prepared{};
+        if(GuestOriginalFrontendPrepare().Fresh(
+                static_cast<uint64_t>(SDL_GetTicks()),prepared)){
+            const int event=GuestOriginalLaunchMatch().ObserveOriginalStreamingEntry(
+                episode,static_cast<int>(level),static_cast<int>(stage),&prepared);
+            if(event)SendSafeWorldCodeToAndroid(event); // 78/79 fixed coarse
+        }
+    }
 }
 } // namespace blackcoop

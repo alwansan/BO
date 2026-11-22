@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-71-guest-loader-xbe-private-abi-survey.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-72-guest-original-launch-world-match.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -1761,6 +1761,28 @@
       "udpRun": 45036959367,
       "roomOnlyApkRun": 45036440579,
       "roomOnlyApkLastChecked": "in_progress"
+    },
+    "ORIGINAL_GUEST_LAUNCH_STAGE_WORLD_MATCH": {
+      "status": "CODE_PUSHED_CI_PENDING_NO_READY",
+      "nativeOriginalMenuLaunch": "sub_00124CF0",
+      "nativeOriginalStageEntry": "sub_001EDC90",
+      "authenticatedHostTicket": true,
+      "firstEntryOnly": true,
+      "streamStageMatchCodes": [
+        78,
+        79
+      ],
+      "stableRunningSameOriginalWorldCode": 81,
+      "extraOriginalSamples": 30,
+      "originalMemoryWrites": false,
+      "guestAutoLaunch": false,
+      "realSharedWorld": false,
+      "storyReady": false,
+      "rendererBody": false,
+      "cppTest": "coop/room_network/test_room_original_guest_launch_match_contract.cpp",
+      "priorRoomOnlyApkRun": 45036440579,
+      "priorRoomOnlyApkConclusion": "success",
+      "priorRoomOnlyApkArtifact": 14759533773
     }
   },
   "pending": {
