@@ -4,6 +4,7 @@
 // A source-verified local player update is the sole caller of this adapter.
 #pragma once
 #include "coop/room_original_trusted_input_contract.hpp"
+#include "coop/room_original_guest_host_world_witness.hpp"
 #include "coop/room_world_tick.hpp"
 #include <jni.h>
 #include <SDL3/SDL.h>
@@ -73,6 +74,7 @@ inline void ObserveOriginalHostInputTick()noexcept{
     jclass cls=env->GetObjectClass(activity);
     if(cls){
         PollOriginalHostHumanInputs(env,activity,cls);
+        PollOriginalGuestHostWorld(env,activity,cls);
         env->DeleteLocalRef(cls);
     }else if(env->ExceptionCheck())env->ExceptionClear();
     env->DeleteLocalRef(activity);

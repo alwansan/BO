@@ -144,6 +144,29 @@ public final class RoomAppRooms {
   }
   return frame;
  }
+ /**
+  * GUEST only: authenticated HOST world -> original BLACK game thread.
+  * Strict story COMMIT, identity, roster and source tick agreement. Returns
+  * [0,0,0,0] to purge native poses on scene/connection loss.
+  * No app UI, network thread, original NPC/actor pointer or game write here.
+  */
+ public static int[] pollHostWorldSnapshotFromGameThread(){
+  final int[] empty=new int[]{0,0,0,0};
+  RoomSession session;
+  synchronized(RoomAppRooms.class){session=active;}
+  if(session==null)return empty;
+  RoomSession.StoryStatus before=session.storyStatus();
+  if(!before.committed||before.ticket==null)return empty;
+  RoomWorldSnapshotWire.Snapshot source=session.readHostWorldFromGameThread();
+  RoomSession.Status status=session.snapshot();
+  RoomSession.StoryStatus after=session.storyStatus();
+  if(!after.committed||after.ticket==null||
+     !before.ticket.same(after.ticket)||source==null||
+     status.phase!=RoomSession.Phase.JOINED||status.roster==null)
+   return empty;
+  try{return RoomGuestHostWorldSource.pack(after.ticket,source,status.roster);}
+  catch(java.io.IOException invalidHostWorld){return empty;}
+ }
  public static void shutdown(){
   RoomSession old;RoomPresence.Service beacon;
   synchronized(RoomAppRooms.class){epoch++;starting=false;old=active;beacon=presence;active=null;presence=null;}

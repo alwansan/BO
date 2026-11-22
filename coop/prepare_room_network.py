@@ -70,6 +70,11 @@ def prepare(root: pathlib.Path):
     public int[] coopPollTrustedHumanInputsFromGameThread() {
         return com.racas.black.coop.RoomAppRooms.pollTrustedHumanInputsFromGameThread();
     }
+    // Guest reads the current TLS-authenticated HOST canonical world on the
+    // actual original BLACK game thread, never from a UI/network callback.
+    public int[] coopPollHostWorldSnapshotFromGameThread() {
+        return com.racas.black.coop.RoomAppRooms.pollHostWorldSnapshotFromGameThread();
+    }
 ''', java)
     text = once(text, '    @Override\n    protected void onPause() {',
                 '''    @Override
@@ -104,6 +109,7 @@ def prepare(root: pathlib.Path):
         else if (code == 13) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_NON_FRONTEND_PLAYER_STABLE_UNVERIFIED_MISSION");
         else if (code == 14) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_CORE_PHASE_1C_RESOURCE_STREAM_STABLE_SOURCE_HINT_NOT_READY");
         else if (code == 15) com.racas.black.coop.RoomDiagnostics.event("FIRST_AUTHENTICATED_HUMAN_INPUT_ON_ORIGINAL_GAME_THREAD_NO_ACTOR");
+        else if (code == 16) com.racas.black.coop.RoomDiagnostics.event("FIRST_AUTHENTICATED_HOST_WORLD_ON_ORIGINAL_GUEST_GAME_THREAD_NO_RENDERER");
         else if (code == 20) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_EASY_NOT_MISSION");
         else if (code == 21) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_NORMAL_NOT_MISSION");
         else if (code == 22) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_HARD_NOT_MISSION");
@@ -170,6 +176,7 @@ def prepare(root: pathlib.Path):
         'RoomDiscovery.java': 'lobby/java/com/racas/black/coop/RoomDiscovery.java',
         'RoomSession.java': 'lobby/java/com/racas/black/coop/RoomSession.java',
         'RoomHostHumanKinematics.java': 'lobby/java/com/racas/black/coop/RoomHostHumanKinematics.java',
+        'RoomGuestHostWorldSource.java': 'lobby/java/com/racas/black/coop/RoomGuestHostWorldSource.java',
         'RoomScanGate.java': 'lobby/java/com/racas/black/coop/RoomScanGate.java',
         'RoomPeerTrust.java': 'lobby/java/com/racas/black/coop/RoomPeerTrust.java',
         'RoomPresence.java': 'lobby/java/com/racas/black/coop/RoomPresence.java',
@@ -196,6 +203,8 @@ def prepare(root: pathlib.Path):
     pending['src/coop/room_original_core_phase_witness.hpp'] = (HERE / 'room_network/room_original_core_phase_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_trusted_input_contract.hpp'] = (HERE / 'room_network/room_original_trusted_input_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_trusted_input_witness.hpp'] = (HERE / 'room_network/room_original_trusted_input_witness.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_guest_host_world_contract.hpp'] = (HERE / 'room_network/room_original_guest_host_world_contract.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_guest_host_world_witness.hpp'] = (HERE / 'room_network/room_original_guest_host_world_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/world_tick_contract.hpp'] = (HERE / 'room_network/world_tick_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/gpu_decl_contract.hpp'] = (HERE / 'room_network/gpu_decl_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/gpu_decl_witness.hpp'] = (HERE / 'room_network/gpu_decl_witness.hpp').read_text(encoding='utf-8')
