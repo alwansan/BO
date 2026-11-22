@@ -1650,7 +1650,7 @@
       "roomOnlyApkLastObserved": "in_progress"
     },
     "ORIGINAL_HOST_SOURCE_STAGE_TLS_PREPARE": {
-      "status": "CODE_PUSHED_CI_PENDING_NOT_SCENE_READY",
+      "status": "STAGE_TRANSITION_CI_PENDING",
       "sourceMatchedRealGameThread": true,
       "hostStageSourceRefreshSeconds": 2,
       "stageRange": "0..15",
@@ -1665,7 +1665,16 @@
       "storyReady": false,
       "storyCommit": false,
       "realRemoteBotBody": false,
-      "tests": "RoomOriginalHostStagePrepareGateTest.java"
+      "tests": "RoomOriginalHostStagePrepareGateTest.java",
+      "sourcePreflightRun": 45034956912,
+      "sourcePreflightConclusion": "success",
+      "realTlsCoreRun": 45034956938,
+      "realTlsCoreConclusion": "success",
+      "android29Run": 45034956993,
+      "android29Conclusion": "success",
+      "hostSourceNewStageAbortsOldTlsTicket": true,
+      "hostReturnedRosterRevision": true,
+      "sourceTransitionTlsTest": "SessionTest.java"
     }
   },
   "pending": {

@@ -159,6 +159,16 @@ public final class SessionTest {
                   after.mission==0&&after.stage==0&&after.participants==3&&
                   !after.same(original));
             check(!remote.storyStatus().committed);
+            // Host original stage transition must revoke old PREPARE and
+            // announce the newer source-matched original campaign stage.
+            check(owner.observeOriginalStageIdentityFromGameThread(12,1,0));
+            check(owner.prepareObservedHostStageFromGameThread());
+            until(()->remote.storyStatus().ticket!=null&&
+                remote.storyStatus().ticket.mission==1);
+            RoomStoryWire.Ticket advanced=owner.storyStatus().ticket;
+            check(advanced!=null&&advanced.sceneEpoch==3&&advanced.mission==1&&
+                  advanced.stage==0&&!advanced.same(after));
+            check(!owner.storyStatus().committed&&!remote.storyStatus().committed);
         }
         System.out.println("STORY_DIAGNOSTICS_PASS: authenticated TLS lifecycle emits only bounded safe codes even without room UI");
         System.out.println("SESSION_STORY_BRIDGE_PASS: authenticated TLS ticket via pinned game-thread facade, no implicit READY, host-only prepare, replay and cancel fences");

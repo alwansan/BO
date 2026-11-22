@@ -111,6 +111,13 @@ public final class RoomSession implements AutoCloseable {
                 if(phase==Phase.HOSTING)sourceStagePrepare.observe(episode,level,stage,now);
                 return false;
             }
+            // A NEW source-matched ORIGINAL campaign stage supersedes any
+            // old host ticket. Abort old host input/poses/peer READY before
+            // sending PREPARE for the next stage; no engine writes/loader.
+            if(phase==Phase.HOSTING&&host!=null&&
+               lastSourceStage!=null&&episode>lastSourceStage.originalEpisode&&
+               host.storyTicket()!=null)
+                host.cancelStory();
             lastSourceStage=new OriginalStageCandidate(episode,level,stage);
             lastSourceStageAtNs=now;
             if(phase==Phase.HOSTING)sourceStagePrepare.observe(episode,level,stage,now);
@@ -134,7 +141,10 @@ public final class RoomSession implements AutoCloseable {
                 if(epoch==0)return false;
                 RoomStoryWire.Ticket ticket=host.prepareStory(
                     sourceStagePrepare.level(),sourceStagePrepare.stage(),epoch);
-                return ticket!=null&&sourceStagePrepare.markOffered(state.revision,epoch);
+                // The server may have accepted a new peer between roster
+                // snapshot and prepare. Mark the ACTUAL ticket revision.
+                return ticket!=null&&sourceStagePrepare.markOffered(
+                    ticket.rosterRevision,epoch);
             }catch(IOException ignored){return false;}
         }
     }
