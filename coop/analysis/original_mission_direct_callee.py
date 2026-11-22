@@ -14,6 +14,7 @@ from story_entry_static import OWNER_SHA1,MAX_FILE,UnsafeImage,executable_sectio
 
 LAUNCH=0x00124CF0
 DIRECT_TARGET_CANDIDATE=0x0011C3C0
+DIRECT_CHILD_CANDIDATES=(0x0011BC00,0x001B6EB0)
 def audit(data,pinned=OWNER_SHA1):
     if not isinstance(data,(bytes,bytearray)) or not 0<len(data)<=MAX_FILE:
         raise UnsafeImage("Wrong owner image")
@@ -25,9 +26,24 @@ def audit(data,pinned=OWNER_SHA1):
                for c in launch["direct_call_target_candidates"]):
         raise UnsafeImage("Pinned original launch direct call source edge absent")
     callee=inspect(data,sections,DIRECT_TARGET_CANDIDATE)
+    parent_calls={int(x["address"],16) for x in callee["direct_call_target_candidates"]}
+    if not set(DIRECT_CHILD_CANDIDATES).issubset(parent_calls):
+        raise UnsafeImage("Pinned callee child call hints were absent")
+    children={}
+    for candidate in DIRECT_CHILD_CANDIDATES:
+        found=inspect(data,sections,candidate)
+        children["%08X"%candidate]={
+            "decoded_instruction_candidates":found["decoded_instruction_candidates"],
+            "first_linear_ret_offset":found["first_linear_ret_offset"],
+            "instruction_families":found["instruction_families"],
+            "direct_call_hints":found["direct_call_target_candidates"][:4],
+            "bounded_global_hints":found["bounded_global_address_hints"][:5],
+            "original_loader_or_mission_role_proven":False,
+            "runtime_abi_or_game_state_proven":False
+        }
     # Strictly bounded source-derived topology; NOT binary or disassembly.
     result={
-        "schema":"bo-private-original-launch-direct-callee-candidate-v1",
+        "schema":"bo-private-original-launch-direct-callee-candidate-v2",
         "owner_xbe_pinned_sha1_checked":True,
         "launch_source_address":"%08X"%LAUNCH,
         "direct_callee_candidate_address":"%08X"%DIRECT_TARGET_CANDIDATE,
@@ -36,6 +52,7 @@ def audit(data,pinned=OWNER_SHA1):
         "callee_first_linear_ret_offset":callee["first_linear_ret_offset"],
         "callee_direct_target_hints":callee["direct_call_target_candidates"][:6],
         "callee_global_ref_hints":callee["bounded_global_address_hints"][:8],
+        "children_strict_first_ret_hints":children,
         "original_loader_abi_proven":False,
         "actual_selected_mission_index_proven":False,
         "original_guest_stage_load_supported":False,

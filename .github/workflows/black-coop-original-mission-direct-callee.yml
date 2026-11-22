@@ -58,7 +58,9 @@ jobs:
           import os,json,pathlib
           f=pathlib.Path(os.environ["RUNNER_TEMP"])/"bo-original-launch-callee-safe.json"
           d=json.loads(f.read_text())
-          assert d["schema"]=="bo-private-original-launch-direct-callee-candidate-v1"
+          assert d["schema"]=="bo-private-original-launch-direct-callee-candidate-v2"
+          assert set(d["children_strict_first_ret_hints"])=={"0011BC00","001B6EB0"}
+          assert all(not v["original_loader_or_mission_role_proven"] for v in d["children_strict_first_ret_hints"].values())
           assert d["source_launch_direct_edge_appears_before_first_linear_ret"]
           assert not d["original_loader_abi_proven"]
           assert not d["actual_selected_mission_index_proven"]
