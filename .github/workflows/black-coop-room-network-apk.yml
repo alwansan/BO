@@ -2,7 +2,7 @@ name: BO-COOP title REAL TLS lobby Android APK (NO GAMEPLAY)
 on:
   push:
     branches: [experiment/black-coop]
-    paths: ['.github/workflows/black-coop-room-network-apk.yml', 'coop/prepare_room_network.py', 'coop/room_network_prepare_checks.py', 'coop/room_network/**', 'coop/lobby/**']
+    paths: ['.github/workflows/black-coop-room-network-apk.yml', 'coop/prepare_room_network.py', 'coop/room_network_prepare_checks.py', 'coop/room_network/**', 'coop/lobby/**', 'coop/prepare_stage_resource_watch.py', 'coop/stage_resources/**']
   workflow_dispatch:
 permissions:
   contents: read
@@ -127,8 +127,24 @@ jobs:
           report = json.loads(p.read_text())
           report.update(package=PACKAGE, changed_packaging=changed, observer_hook_source_allowlist_verified=True, read_only_room_menu=False, authenticated_lobby_network=True, no_game_actor_or_gameplay_sync=True, top_level_coop_entry=True, direct_room_route=True, iso_modified=False,
                         shared_download_export=True, guest_memory_writes_added=False, probe_off_by_default=True,
+                         original_level_resource_open_witness_source_only=True, verified_game_scene_loaded=False,
                         pool_snapshot_max_kernel_copies=300, pool_snapshot_max_hz=1, reset_hook_successful_AL1_only=True, instance_graph_max_npc_per_sample=4, instance_graph_local_sample=True)
           p.write_text(json.dumps(report, indent=2))
+      - name: Source-observe successful ORIGINAL Xbox level resource opens (read-only)
+        shell: python
+        run: |
+          import pathlib,subprocess,sys
+          sys.path.insert(0,str(pathlib.Path("bo/coop").resolve()))
+          from prepare_stage_resource_watch import prepare
+          changed=prepare(pathlib.Path("reference/sdk"))
+          assert changed==["runtime/kernel/files.cpp","runtime/kernel/coop_stage_resource_contract.hpp"]
+          tracked=subprocess.check_output(["git","-C","reference/sdk","diff","--name-only"],
+                                          text=True).splitlines()
+          if tracked != ["runtime/kernel/files.cpp"]:
+              raise SystemExit("Xbox SDK write outside pinned original file-open witness")
+          if not pathlib.Path("reference/sdk/runtime/kernel/coop_stage_resource_contract.hpp").is_file():
+              raise SystemExit("Missing isolated Xbox source witness header")
+          print("BO_PINNED_STAGE_RESOURCE_FILE_OPEN_SOURCE_STAGED: no game saves/assets or actor writes")
       - name: Regenerate candidate guest code in runner only
         shell: python
         run: |

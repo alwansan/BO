@@ -1,0 +1,100 @@
+name: BO-COOP pinned original Xbox stage-file-open source witness (NO SCENE PROOF)
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/stage_resources/**'
+      - 'coop/prepare_stage_resource_watch.py'
+      - '.github/workflows/black-coop-stage-resource-watch.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: bo-stage-resource-watch
+  cancel-in-progress: true
+jobs:
+  exact-xbox-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: bo
+          sparse-checkout: coop
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - uses: actions/checkout@v4
+        with:
+          repository: TGP482/XboxXBERecomp
+          ref: 99078b119b5d5e0d1d6afb1390e29437c0c984c0
+          path: sdk
+          persist-credentials: false
+          sparse-checkout: runtime/kernel
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Fuzz exact case/path whitelist and atomic unique Xbox file-open source contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread \
+            -fsanitize=undefined -fno-omit-frame-pointer \
+            bo/coop/stage_resources/test_level_file_open_contract.cpp \
+            -o "$RUNNER_TEMP/bo-resource-open-test"
+          "$RUNNER_TEMP/bo-resource-open-test"
+      - name: Patch ONLY pinned SDK file-open exports in disposable checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import pathlib,sys,subprocess,tempfile
+          sys.path.insert(0,"bo/coop")
+          from prepare_stage_resource_watch import patched,prepare
+          src=pathlib.Path("sdk/runtime/kernel/files.cpp")
+          original=src.read_text(encoding="utf-8")
+          patched_text=patched(original)
+          assert patched_text.count("BO_STAGE_RESOURCE_OPEN_LEVEL_")==3
+          assert "return kSuccess;" in patched_text
+          assert "KERNEL_EXPORT(190, NtCreateFile, 9)" in patched_text
+          assert "KERNEL_EXPORT(202, NtOpenFile, 6)" in patched_text
+          assert "LOGR(" in patched_text
+          assert "STORY_READY" not in patched_text
+          assert "SCENE_LOADED" not in patched_text
+          assert "original bytes" not in patched_text
+          with tempfile.TemporaryDirectory() as temp:
+              root=pathlib.Path(temp)/"sdk"
+              dst=root/"runtime/kernel/files.cpp"
+              dst.parent.mkdir(parents=True)
+              dst.write_text(original)
+              changed=prepare(root)
+              assert changed==["runtime/kernel/files.cpp","runtime/kernel/coop_stage_resource_contract.hpp"]
+              assert dst.read_text()==patched_text
+              before=dst.read_bytes()
+              try:prepare(root)
+              except ValueError:pass
+              else:raise AssertionError("Second staging allowed")
+              assert dst.read_bytes()==before
+              dst.write_text(original.replace("KERNEL_EXPORT(202, NtOpenFile, 6)", "KERNEL_EXPORT(999, NtOpenFile, 6)"))
+              # Ensure only planned anchors are applied and never a modified original.
+              try:patched(dst.read_text())
+              except ValueError:pass
+              else:raise AssertionError("Unpinned SDK changed but staging succeeded")
+          print("STAGE_OPEN_SDK_PIN_FAIL_CLOSED: 3 exact successful opens; not loaded scene")
+          PY
+      - name: Validate staged C++20 header under original SDK include layout (no game assets)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 bo/coop/prepare_stage_resource_watch.py --sdk sdk
+          git -C sdk diff --name-only | grep -Fx 'runtime/kernel/files.cpp'
+          test -f sdk/runtime/kernel/coop_stage_resource_contract.hpp
+          g++ -std=c++20 -Wall -Wextra -Werror -pedantic -fsyntax-only \
+            -x c++ -I sdk/runtime \
+            - <<'CPP'
+          #include "kernel/coop_stage_resource_contract.hpp"
+          int main(){
+              blackcoop::OriginalStageResource candidate{};
+              blackcoop::OriginalStageFileOpenOnce witness;
+              return witness.ObserveSuccessfulOpen("D:\\levels\\level_03\\LevelDat.bin",candidate)?0:1;
+          }
+          CPP
+          echo 'ORIGINAL_STAGE_RESOURCE_SOURCE_PASS: Xbox level resource file-open evidence only, NO GAME stage loaded'
