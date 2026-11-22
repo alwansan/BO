@@ -215,7 +215,7 @@ def prepare(root: pathlib.Path):
     # The following stage-source anchor contains an LF before the function's
     # closing brace; normalize ONLY this disposable staged source FIRST.
     # Original upstream files remain untouched and output stays LF.
-    launch=pending.get(difficulty,originals[difficulty].decode('utf-8')).replace('\\r\\n','\\n')
+        launch=pending.get(difficulty,originals[difficulty].decode('utf-8')).replace('\r\n','\n')
     launch=once(launch,'#include "xdk/hle.h"',
                 '#include "xdk/hle.h"\n#include "coop/room_world_tick.hpp"\n#include "coop/room_original_launch_difficulty_witness.hpp"\n#include "coop/room_original_streaming_stage_witness.hpp"',difficulty)
     launch=once(launch,'    __imp__sub_00124CF0(ctx, base);',

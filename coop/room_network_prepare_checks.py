@@ -193,8 +193,8 @@ class RoomNetPrepareTests(unittest.TestCase):
             root=pathlib.Path(directory)
             self.source(root)
             target=root/'src/game/difficulty.cpp'
-            original=target.read_bytes().replace(b'\\r\\n',b'\\n')
-            target.write_bytes(original.replace(b'\\n',b'\\r\\n'))
+            original=target.read_bytes().replace(b'\r\n',b'\n')
+            target.write_bytes(original.replace(b'\n',b'\r\n'))
             changed=prepare(root)
             self.assertIn('src/game/difficulty.cpp',changed)
             fixed=target.read_text(encoding='utf-8')
