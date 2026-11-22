@@ -14,8 +14,9 @@ namespace blackcoop {
 inline void OfferOriginalGuestController(JNIEnv* env,jobject activity,
                                          jclass cls)noexcept{
     if(!env||!activity||!cls)return;
-    // This is the original Xbox SDK's own device report, not remote data or
-    // synthetic animation. Its Poll(0) is a thread-safe local INPUT read.
+    // Original Xbox SDK input::Poll also invokes the normal game's pad
+    // callback; this is a duplicate local sample, NEVER a remote NPC write.
+    // Must stay pinned to the source-verified ORIGINAL BLACK game thread.
     const input::Pad report=input::Poll(0);
     if(!report.connected)return;
     const auto command=QuantizeOriginalGuestPad(report.connected,report.lx,

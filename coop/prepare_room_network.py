@@ -75,6 +75,13 @@ def prepare(root: pathlib.Path):
     public int[] coopPollHostWorldSnapshotFromGameThread() {
         return com.racas.black.coop.RoomAppRooms.pollHostWorldSnapshotFromGameThread();
     }
+    // Only the pinned original Xbox SDL gamepad report from the ORIGINAL
+    // player callback is eligible; Java sends only after story COMMIT.
+    public boolean coopOfferOriginalGuestController(int x,int y,int yaw,
+                                                      boolean fire,boolean jump) {
+        return com.racas.black.coop.RoomAppRooms.offerOriginalGuestControllerFromGameThread(
+            x,y,yaw,fire,jump);
+    }
 ''', java)
     text = once(text, '    @Override\n    protected void onPause() {',
                 '''    @Override
@@ -115,6 +122,7 @@ def prepare(root: pathlib.Path):
         else if (code == 62) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_POOL_BOT_LOOK_ONE_BLANK_RIG_SLOT_NOT_READY");
         else if (code == 63) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_POOL_BOT_LOOK_TWO_BLANK_RIG_SLOTS_NOT_READY");
         else if (code == 64) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_POOL_BOT_LOOK_THREE_OR_MORE_BLANK_RIG_SLOTS_NOT_READY");
+        else if (code == 65) com.racas.black.coop.RoomDiagnostics.event("FIRST_SOURCE_ORIGINAL_GUEST_SDL_GAMEPAD_INPUT_QUEUED_NOT_GAMEPLAY");
         else if (code == 20) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_EASY_NOT_MISSION");
         else if (code == 21) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_NORMAL_NOT_MISSION");
         else if (code == 22) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_HARD_NOT_MISSION");
@@ -208,6 +216,8 @@ def prepare(root: pathlib.Path):
     pending['src/coop/room_original_core_phase_witness.hpp'] = (HERE / 'room_network/room_original_core_phase_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_bot_pool_contract.hpp'] = (HERE / 'room_network/room_original_bot_pool_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_bot_pool_witness.hpp'] = (HERE / 'room_network/room_original_bot_pool_witness.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_guest_pad_contract.hpp'] = (HERE / 'room_network/room_original_guest_pad_contract.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_guest_pad_witness.hpp'] = (HERE / 'room_network/room_original_guest_pad_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_trusted_input_contract.hpp'] = (HERE / 'room_network/room_original_trusted_input_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_trusted_input_witness.hpp'] = (HERE / 'room_network/room_original_trusted_input_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_guest_host_world_contract.hpp'] = (HERE / 'room_network/room_original_guest_host_world_contract.hpp').read_text(encoding='utf-8')

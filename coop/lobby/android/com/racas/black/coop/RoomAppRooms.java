@@ -167,9 +167,45 @@ public final class RoomAppRooms {
   try{return RoomGuestHostWorldSource.pack(after.ticket,source,status.roster);}
   catch(java.io.IOException invalidHostWorld){return empty;}
  }
+ // Source-only native gamepad -> authenticated GUEST TLS inputs.
+ // Exact COMMITTED ticket scope resets the per-story sequence.
+ // Not a loaded scene, NPC input, remote actor controller or physics.
+ private static RoomSession padSession;
+ private static RoomStoryWire.Ticket padTicket;
+ private static int padSequence;
+ private static final java.util.concurrent.atomic.AtomicBoolean padErrorLogged=
+     new java.util.concurrent.atomic.AtomicBoolean();
+ public static boolean offerOriginalGuestControllerFromGameThread(
+    int x,int y,int yaw,boolean fire,boolean jump){
+  if(x< -1000||x>1000||y< -1000||y>1000||
+     yaw< -18000||yaw>18000)return false;
+  final RoomSession session;
+  final int sequence;
+  synchronized(RoomAppRooms.class){
+   session=active;
+   if(session==null)return false;
+   RoomSession.Status roster=session.snapshot();
+   if(roster.phase!=RoomSession.Phase.JOINED)return false;
+   RoomSession.StoryStatus story=session.storyStatus();
+   if(!story.committed||story.ticket==null)return false;
+   if(padSession!=session||padTicket==null||!padTicket.same(story.ticket)){
+    padSession=session;padTicket=story.ticket;padSequence=0;
+    padErrorLogged.set(false);
+   }
+   if(padSequence==Integer.MAX_VALUE)return false;
+   sequence=++padSequence;
+  }
+  try {
+   return session.offerHumanInputFromGameThread(sequence,x,y,yaw,fire,jump);
+  }catch(java.io.IOException rejected){
+   if(padErrorLogged.compareAndSet(false,true))
+    RoomDiagnostics.event("ORIGINAL_GUEST_GAMEPAD_TLS_SEND_REJECTED");
+   return false;
+  }
+ }
  public static void shutdown(){
   RoomSession old;RoomPresence.Service beacon;
-  synchronized(RoomAppRooms.class){epoch++;starting=false;old=active;beacon=presence;active=null;presence=null;}
+  synchronized(RoomAppRooms.class){epoch++;starting=false;old=active;beacon=presence;active=null;presence=null;padSession=null;padTicket=null;padSequence=0;}
   if(beacon!=null)beacon.close();if(old!=null)old.close();
  }
  public static String statusLine(int row){
