@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-62-original-npc-visual-source-readonly-live-bridge.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-63-source-original-gamepad-to-guest-tls.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -2182,7 +2182,25 @@
     "session62ActualRemoteHumanModelCreated": false,
     "session62ActualGuestMissionLaunched": false,
     "session62RealStoryReadyCallback": false,
-    "session62CrossDeviceCombatSync": false
+    "session62CrossDeviceCombatSync": false,
+    "session63OwnerRestoreContinuous": true,
+    "session63SourceGamepadContractCommit": "7d8160c429abe6b372e76c82378dd7456a311fe0",
+    "session63OriginalSdkInputSource": "TGP482/XboxXBERecomp@99078b119b5d5e0d1d6afb1390e29437c0c984c0/runtime/core/input.h",
+    "session63NativeGuestPadBridgeCommit": "44f0439c8712ded26bcb68415ad4b7a56638df3f",
+    "session63OriginalGamepadGuestTlsProducerWired": true,
+    "session63OriginalGuestInputSource": "SDL_INPUT_POLL_PORT0_ONLY_CONNECTED_GAMEPAD",
+    "session63OriginalGuestYawProven": false,
+    "session63MobileTouchMappedIntoSamePadProven": false,
+    "session63RealSceneCommittedToStory": false,
+    "session63RoomNetworkStagePreflightRun": 44983537405,
+    "session63RoomNetworkStagePreflightResult": "SUCCESS_CPP_GUEST_CONTROLLER_AND_POOL_STAGING_JAVA8",
+    "session63UdpProbeRun": 44983537422,
+    "session63UdpProbeResult": "SUCCESS",
+    "session63WindowsAndroidApkRun": 44983537312,
+    "session63WindowsAndroidApkResultAtCheck": "IN_PROGRESS_NO_ACTUAL_GAMEPLAY",
+    "session63OriginalGuestMissionAutoLaunch": false,
+    "session63RenderedHumanBotActor": false,
+    "session63EnginePhysicsCombatShared": false
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
