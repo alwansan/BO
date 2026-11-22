@@ -37,7 +37,8 @@ jobs:
               coop/bridge/test_host_human_input_gate.cpp \
               coop/bridge/test_synthetic_ally_skin_contract.cpp \
               coop/bridge/test_ally_target_policy.cpp \
-              coop/bridge/test_temporary_bot_visual.cpp; do
+              coop/bridge/test_temporary_bot_visual.cpp \
+              coop/bridge/test_original_bot_puppet_pose_contract.cpp; do
             binary="$RUNNER_TEMP/$(basename "$file" .cpp)"
             g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic \
               -fno-omit-frame-pointer -pthread \
