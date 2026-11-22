@@ -1,12 +1,12 @@
 // Copyright 2026 BO-COOP contributors. SPDX-License-Identifier: MIT
-// Experimental original BLACK soldier LOOK (NOT NPC brain) for the OTHER
-// authenticated human on 2-phone original level_00/stg_0001.
+// Experimental original BLACK soldier LOOK (NOT NPC brain) for EACH OTHER
+// authenticated human in a 2–4 person original story level.
 // Pinned MIT PC source: portingpete/Black-2006-Recomp@b2512fafd,
 // src/recomp_manual.c black_puppet_make/follow/sub_000D1500.
 // Owner XBE SHA1 c5bf... matches SAME PC source supported XBE SHA256,
 // verified privately BO CI #45067068552. Runtime ABI/visual remains UNTESTED.
 // FAIL-CLOSED: source-matched original scene, COMMITTED TLS owner, exact
-// two-human frame, native same thread, valid unused original slot;
+// 2–4 human source frame, native same thread, valid unused original slot;
 // no NPC controller, AI, quest, collision list, enemy/weapon ownership.
 #pragma once
 #include "coop/room_other_human_body_source_witness.hpp"
@@ -32,6 +32,7 @@ class OriginalHumanBotVisual {
     std::thread::id gameThread_{};
     bool owner_=false;
     bool attempted_=false;
+    uint64_t nextCreateTryMs_=0;
     bool logged_=false;
     uint8_t assignedPeer_=0;
     static uint32_t fp(float v)noexcept{
@@ -39,7 +40,7 @@ class OriginalHumanBotVisual {
     }
     void purgeEvidence()noexcept{
         sourceWorld_=sourceEpisode_=replica_=replicaTemplate_=replicaInstance_=replicaEpoch_=0;
-        sourceAtMs_=0;attempted_=logged_=false;
+        sourceAtMs_=nextCreateTryMs_=0;attempted_=logged_=false;
     }
     static bool read(uint32_t at,uint32_t& out)noexcept{
         if(!OriginalGuestSpanCommitted(at,4))return false;
@@ -60,8 +61,14 @@ class OriginalHumanBotVisual {
     // Makes exactly ONE appearance-only character, in a vacant original slot,
     // and never inserts that slot into original world AI/collision lists.
     bool create(X86Context& ctx,uint32_t root,uint32_t epoch)noexcept{
+        // Pool/model/part buffers may load after the first stable scene
+        // sample. Retry read-only eligibility at MOST once per 2s. Once any
+        // engine character memory is touched, NEVER silently retry a failed
+        // partial clone into a second slot.
         if(attempted_)return false;
-        attempted_=true;
+        const uint64_t now=static_cast<uint64_t>(SDL_GetTicks());
+        if(nextCreateTryMs_&&now<nextCreateTryMs_)return false;
+        nextCreateTryMs_=now+2000u;
         OriginalBotPoolAvailability result{};
         std::array<OriginalBotPoolSlotEvidence,32> slots{};
         if(!ReadOriginalBotPoolAvailability(result,&slots)||
@@ -99,6 +106,7 @@ class OriginalHumanBotVisual {
         if(!read(blank+0x320,currentModel)||currentModel||
            !read(blank+0x324,controller)||controller||
            !read(blank+0x328,currentInst)||currentInst!=dstInst)return false;
+        attempted_=true; // irreversible original guest-memory mutation below
         // Do not copy list/proxy/weapon/buffers that the blank slot owns.
         for(uint32_t off=0;off<kStride;off+=4u){
             const bool own=(off>=0x20u&&off<0x58u)||
