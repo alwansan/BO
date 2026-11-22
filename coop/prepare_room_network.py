@@ -180,6 +180,12 @@ def prepare(root: pathlib.Path):
         else if (code == 91) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_REMOTE_HUMAN_BOT_DRAW_CALLED_NOT_VISUAL_PROOF");
         else if (code == 92) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_TWO_PHONE_AUTO_MENU_DIFFICULTY_PAGE_REQUESTED");
         else if (code == 93) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_TWO_PHONE_AUTO_MENU_CONFIRM_SENT");
+        else if (code == 89) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_AI_TARGET_LOCAL_PLAYER_RECORD_BOUND_READ_ONLY");
+        else if (code == 95) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_AI_TARGET_POOL_UNREADABLE_NO_ACTOR");
+        else if (code == 96) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_AI_TARGET_POOL_ZERO_FREE_SLOTS_NO_ACTOR");
+        else if (code == 97) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_AI_TARGET_POOL_ONE_FREE_SLOT_NO_ACTOR");
+        else if (code == 98) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_AI_TARGET_POOL_TWO_FREE_SLOTS_NO_ACTOR");
+        else if (code == 99) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_AI_TARGET_POOL_THREE_OR_MORE_FREE_SLOTS_NO_ACTOR");
         else if (code == 20) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_EASY_NOT_MISSION");
         else if (code == 21) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_NORMAL_NOT_MISSION");
         else if (code == 22) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_HARD_NOT_MISSION");
@@ -273,6 +279,8 @@ def prepare(root: pathlib.Path):
     pending['src/coop/original_all_other_humans_contract.hpp'] = (HERE / 'room_network/original_all_other_humans_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_other_human_body_source_witness.hpp'] = (HERE / 'room_network/room_other_human_body_source_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_live_remote_bot.hpp'] = (HERE / 'room_network/room_original_live_remote_bot.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_ai_target_contract.hpp'] = (HERE / 'room_network/room_original_ai_target_contract.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_ai_target_witness.hpp'] = (HERE / 'room_network/room_original_ai_target_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/original_first_stage_auto_menu_contract.hpp'] = (HERE / 'room_network/original_first_stage_auto_menu_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_first_stage_auto_menu_witness.hpp'] = (HERE / 'room_network/room_original_first_stage_auto_menu_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_streaming_stage_contract.hpp'] = (HERE / 'room_network/room_original_streaming_stage_contract.hpp').read_text(encoding='utf-8')

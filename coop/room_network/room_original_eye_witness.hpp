@@ -17,6 +17,7 @@
 #include "coop/room_original_running_scene_source_gate.hpp"
 #include "coop/room_other_human_body_source_witness.hpp"
 #include "coop/room_original_live_remote_bot.hpp"
+#include "coop/room_original_ai_target_witness.hpp"
 #include "game/layout.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_system.h>
@@ -119,6 +120,10 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
     for(uint8_t peer=1;peer<=4;peer++)
         OriginalRemoteHumanBotVisual(peer).ObserveScene(coreEpisode,world,
             originalLocalSceneRunning&&lookSourceMatched);
+    // P0: Are real ORIGINAL AI-target slots available for later REAL
+    // host-owned humans? Strict read-only; no actor insertion or AI change.
+    ObserveOriginalAiTargetPoolSourceHint(coreEpisode,world,
+        originalLocalSceneRunning&&lookSourceMatched);
     JNIEnv* env=static_cast<JNIEnv*>(SDL_GetAndroidJNIEnv());
     jobject activity=static_cast<jobject>(SDL_GetAndroidActivity());
     if(!env||!activity)return;
