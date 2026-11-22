@@ -1568,7 +1568,7 @@
       "android29LastObserved": "completed_success"
     },
     "ORIGINAL_HUMAN_BOT_LOOK_ROSTER_PLANNER": {
-      "status": "SOURCE_CI_PASS_ROOM_ONLY_APK_PENDING_NO_ACTOR",
+      "status": "SOURCE_CI_TLS_ANDROID29_SUCCESS_ROOM_APK_PENDING_NO_ACTOR",
       "source": "OriginalHumanLookPlanner",
       "guestReadsOnly": true,
       "hostSourceOrdinalMaskOnly": true,
@@ -1587,17 +1587,45 @@
       "firstSourcePreflightConclusion": "failure_missing_cstddef",
       "fix": "add <cstddef> include",
       "sourcePreflightFixedRun": 45032729987,
-      "sourcePreflightFixedConclusion": "success"
+      "sourcePreflightFixedConclusion": "success",
+      "realTlsRun": 45032641442,
+      "android29Run": 45032641361,
+      "androidRoomApkRun": 45032729971,
+      "androidRoomApkLastObserved": "in_progress_compile_isolated_baseline"
     },
     "OWNER_PRIVATE_HUMAN_LOOK_ABI_SURVEY": {
-      "status": "SOURCE_PUSHED_CI_PENDING_NO_GUEST_CALL",
+      "status": "PINNED_XBE_PRIVATE_SYNTHETIC_AND_OWNER_CI_SUCCESS_ABI_NOT_PROVEN",
       "source": "coop/analysis/original_human_look_xbe.py",
       "windowBytesEach": 768,
       "targetFunctionCount": 3,
       "sourceOwnerXbePinnedSHA1": "c5bfed25449c8212d7a976f15246e87ead57713f",
       "originalCodeExported": false,
       "originalEngineABIProven": false,
-      "noActorCreation": true
+      "noActorCreation": true,
+      "workflowRun": 45032934537,
+      "conclusion": "success",
+      "windows": {
+        "soldier_visual_init": {
+          "address": "0x0017E420",
+          "executableWindowMapped": true,
+          "callCandidateCount": 1,
+          "returnCandidateCount": 0
+        },
+        "soldier_animation_request": {
+          "address": "0x0017E130",
+          "executableWindowMapped": true,
+          "callCandidateCount": 14,
+          "returnCandidateCount": 3
+        },
+        "soldier_pose_update": {
+          "address": "0x001801B0",
+          "executableWindowMapped": true,
+          "callCandidateCount": 16,
+          "returnCandidateCount": 3
+        }
+      },
+      "functionBoundaryProven": false,
+      "safeGuestCallProven": false
     }
   },
   "pending": {

@@ -1,3 +1,11 @@
+### Session67 verified owner-native XBE lookup candidates / separate Android APK still pending
+- Original pinned owner c5 SHA-1 `c5bfed25449c8212d7a976f15246e87ead57713f` private XBE [45032934537 SUCCESS](https://github.com/alwansan/BO/actions/runs/45032934537): synthetic positive/negative and owner-private jobs both succeeded. Direct numeric source logs in bounded 768-byte windows: PC name `soldier_visual_init@0x0017E420` executable=1 calls=1 returns=0; `soldier_animation_request@0x0017E130` executable=1 calls=14 returns=3; `soldier_pose_update@0x001801B0` executable=1 calls=16 returns=3. **Caution:** windows may include adjacent functions, and 0 returns in first window means zero *observed* only; none of these counts proves entry ABI/valid call function boundary, animation or rendering. No callable guest API, original asset bytes or disassembly exported. No remote actor created.
+- The source-only bot rig plan preflight [45032729987 SUCCESS](https://github.com/alwansan/BO/actions/runs/45032729987); real TLS [45032641442 SUCCESS](https://github.com/alwansan/BO/actions/runs/45032641442), Android29 platform [45032641361 SUCCESS](https://github.com/alwansan/BO/actions/runs/45032641361), UDP [45032729950 SUCCESS](https://github.com/alwansan/BO/actions/runs/45032729950).
+- Room-only separate Android build [45032729971](https://github.com/alwansan/BO/actions/runs/45032729971) last checked still IN_PROGRESS in `Compile isolated Android baseline with bounded parallelism`; DO NOT CLAIM APK SUCCESS. It has no shared story even if success.
+- Next P0 engineering: actual host-selected stage/game-scene loader, true guest auto-launch, authenticated actual scene loaded epoch, and body from any live original BOT LOOK in own visual slot with engine-safe lifetime/renderer, then combat/AI/mission synchronization. Keep local FIRST PERSON, no NPC brain copied, no small phone tests; one major real-coop owner validation later.
+
+---
+
 # الجلسة 67 — اقتراح مجسمات أصلية منفصلة للبشر على Host
 بعد التأكد من نوع المرحلة الأصلية ومطابقة حقول التحميل والمحرك من نفس حلقة التشغيل، يقرأ خيط اللعبة قائمة البشر الموثَّقين في غرفة TLS. نحول ترتيبهم داخل الغرفة إلى الأقنعة 0x02 للاعب 2، 0x06 للاعبين 2 و3، و0x0E للاعبين 2 و3 و4، ولا نعتمد على أرقام RoomWire.Player.id القديمة التي قد لا تتكرر.
 
