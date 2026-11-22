@@ -7,6 +7,7 @@ bones, coordinates, animation clips or raw asset bytes leave CI.
 Reference: Black-2006-Recomp@b2512f... animation.md (RCB fixups, 65599 hash).
 """
 import argparse
+import hashlib
 import json
 import math
 import pathlib
@@ -103,6 +104,7 @@ def read_skeleton(data, base, limit):
     previous=-1
     hashes=set()
     indices=set()
+    lookup_pairs=[]
     for i in range(joints):
         at=lookups+i*20
         value=u32(data,at)
@@ -112,11 +114,17 @@ def read_skeleton(data, base, limit):
         previous=value
         hashes.add(value)
         indices.add(index)
+        lookup_pairs.append((value,index))
     if len(indices)!=joints:
         raise ValueError("Incomplete RCB lookup")
+    # Private signatures are ONLY compared within the CI process; NEVER
+    # serialize their values (IDs, hash list, hierarchy, bind matrices).
     return {
         "joints":joints, "roots":roots, "max_parent_depth":longest,
-        "fixups":len(fixups), "_hashes":hashes
+        "fixups":len(fixups), "_hashes":hashes,
+        "_id":u32(data,base+8),
+        "_hierarchy_signature":(tuple(p),tuple(lookup_pairs)),
+        "_matrix_digest":hashlib.sha256(matrices_data).digest(),
     }
 
 def rcb_dictionary(data):
@@ -165,11 +173,25 @@ def inspect_stage(data,relative):
     records=rcb_dictionary(data)
     valid=[]
     invalid=0
+    identities={}
+    conflicts=set()
+    matrix_variants={}
     for _,base in records:
         try:
-            valid.append(read_skeleton(data,base,len(data)))
+            sk=read_skeleton(data,base,len(data))
+            valid.append(sk)
+            ident=sk["_id"]
+            current=identities.get(ident)
+            if current is None:
+                identities[ident]=sk
+            elif current["_hierarchy_signature"]!=sk["_hierarchy_signature"] or current["joints"]!=sk["joints"]:
+                conflicts.add(ident)
+            matrix_variants.setdefault(ident,set()).add(sk["_matrix_digest"])
         except (ValueError,struct.error):
             invalid+=1
+    # Deduplicate repeated serialized RCB occurrences by their actual
+    # skeleton identifier, but NEVER conflate conflicting lookup/parents.
+    distinct=[sk for ident,sk in identities.items() if ident not in conflicts]
     pairs=[]
     model_count=0
     # Only full-body bone-tag candidates from validated MODEL dictionary scans.
@@ -185,6 +207,11 @@ def inspect_stage(data,relative):
         best_hits,best_idx=rankings[0] if rankings else (0,-1)
         second_hits=rankings[1][0] if len(rankings)>1 else 0
         best=valid[best_idx] if best_idx>=0 else None
+        identity_ranks=sorted(
+            (len(hashes&sk["_hashes"]),idx) for idx,sk in enumerate(distinct)
+        )
+        identity_top=identity_ranks[-1][0] if identity_ranks else 0
+        identity_second=identity_ranks[-2][0] if len(identity_ranks)>1 else 0
         # Enough matching hashed names to warrant a *candidate* association,
         # but no proven bone influences/animation connection.
         sufficient=bool(best and best_hits>=8 and
@@ -196,17 +223,27 @@ def inspect_stage(data,relative):
                 "model_key":safe_key,
                 "model_name_count":details["bone_names"],
                 "same_file_rcb_candidates":len(valid),
+                "same_file_distinct_rcb_ids":len(identities),
                 "best_rcb_joint_count":best["joints"] if best else 0,
                 "best_matching_joint_name_hashes":best_hits,
                 "runner_up_match_count":second_hits,
                 "best_rcb_parent_hierarchy_validated":best is not None,
                 "strong_same_file_name_overlap_candidate":sufficient,
                 "unique_best_match":bool(sufficient and best_hits>second_hits),
+                # Distinct verified RCB identities, not repeated dict entries.
+                "unique_best_distinct_rcb_id":bool(
+                    sufficient and identity_top==best_hits and
+                    identity_top>identity_second and not conflicts
+                ),
                 "skin_weights_and_animation_binding_proven":False,
             })
     return {
         "file":relative, "rcb_dictionary_entries":len(records),
         "rcb_hierarchy_validated":len(valid),"rcb_invalid":invalid,
+        "rcb_distinct_ids":len(identities),
+        "rcb_repeated_id_records":len(valid)-len(identities),
+        "rcb_ids_with_conflicting_parents_or_lookup":len(conflicts),
+        "rcb_ids_with_multiple_matrix_payloads":sum(len(v)>1 for v in matrix_variants.values()),
         "max_validated_rcb_joint_count":max((x["joints"] for x in valid),default=0),
         "full_body_model_records_scanned":model_count,
         "model_rcb_pair_candidate_records":len(pairs),
@@ -229,6 +266,11 @@ def audit(root):
         "rcb_entries_total":sum(s["rcb_dictionary_entries"] for s in stages),
         "rcb_hierarchies_validated":sum(s["rcb_hierarchy_validated"] for s in stages),
         "rcb_invalid_entries":sum(s["rcb_invalid"] for s in stages),
+        "rcb_distinct_ids_total_per_file":sum(s["rcb_distinct_ids"] for s in stages),
+        "rcb_ids_with_conflicting_parents_or_lookup":sum(s["rcb_ids_with_conflicting_parents_or_lookup"] for s in stages),
+        "rcb_ids_with_multiple_matrix_payloads":sum(s["rcb_ids_with_multiple_matrix_payloads"] for s in stages),
+        "unique_best_distinct_rcb_id_candidate_records":sum(
+            p["unique_best_distinct_rcb_id"] for s in stages for p in s["pairs"]),
         "strong_same_file_name_overlap_candidates":sum(
             p["strong_same_file_name_overlap_candidate"]
             for s in stages for p in s["pairs"]),
