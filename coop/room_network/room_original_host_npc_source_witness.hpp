@@ -43,9 +43,17 @@ inline void PublishOriginalHostNpcValues(JNIEnv* env,jobject activity,jclass cls
               hp=kernel::G<float>(npc+0x2F0u);
   OriginalBodyFeetCm feet{};
   if(!QuantizeOriginalBodyFeet(x,y,z,feet)||
-     !std::isfinite(hp)||hp<0.0f||hp>10000.0f)continue;
-  const uint32_t dead=kernel::G<uint8_t>(npc+0x3ADu)?1u:0u;
-  const int health=static_cast<int>(std::round(static_cast<double>(hp)*100.0));
+     !std::isfinite(hp)||hp< -10000.0f||hp>10000.0f)continue;
+  // The original BLACK bullet receiver checks +0x384 (dying) while the
+  // character state also contains +0x3AD. A killed soldier can retain an
+  // AI-owned model/controller even after its health falls below zero.
+  // Do not silently drop it from the HOST canonical NPC snapshot.
+  const bool dying=kernel::R32(npc+0x384u)!=0u;
+  const uint32_t dead=(dying||kernel::G<uint8_t>(npc+0x3ADu)!=0u||
+                       hp<=0.0f)?1u:0u;
+  const float clampedHealth=hp<0.0f?0.0f:hp;
+  const int health=static_cast<int>(
+      std::round(static_cast<double>(clampedHealth)*100.0));
   const size_t at=2u+static_cast<size_t>(count)*6u;
   data[at]=static_cast<jint>(i);data[at+1]=feet.x;data[at+2]=feet.y;
   data[at+3]=feet.z;data[at+4]=health;data[at+5]=static_cast<jint>(dead);
