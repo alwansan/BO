@@ -13,7 +13,7 @@ from prepare_room_ui import prepare as prepare_room_ui
 
 HERE = pathlib.Path(__file__).resolve().parent
 PACKAGE = 'org.bocoop.black.roomnet'
-INPUTS = BASE_FILES + GAME_FILES + ('src/game/exit_menu.cpp','src/game/difficulty.cpp')
+INPUTS = BASE_FILES + GAME_FILES + ('src/game/exit_menu.cpp','src/game/difficulty.cpp','src/d3d/d3d8.cpp')
 
 
 def prepare(root: pathlib.Path):
@@ -81,6 +81,12 @@ def prepare(root: pathlib.Path):
         if (code == 1) com.racas.black.coop.RoomDiagnostics.event("WORLD_LOCAL_PLAYER_UPDATE_SEEN");
         else if (code == 2) com.racas.black.coop.RoomDiagnostics.event("WORLD_POINTER_CHANGED_UNVERIFIED");
         else if (code == 3) com.racas.black.coop.RoomDiagnostics.event("WORLD_MISSION_LAUNCH_ATTEMPT");
+        else if (code == 4) com.racas.black.coop.RoomDiagnostics.event("GPU_V36_DECL_CANDIDATE");
+        else if (code == 5) com.racas.black.coop.RoomDiagnostics.event("GPU_V36_SLOT12_PACKED_DECL");
+        else if (code == 6) com.racas.black.coop.RoomDiagnostics.event("GPU_V36_SLOT16_PACKED_DECL");
+        else if (code == 7) com.racas.black.coop.RoomDiagnostics.event("GPU_V36_SLOT20_PACKED_DECL");
+        else if (code == 8) com.racas.black.coop.RoomDiagnostics.event("GPU_V36_SLOT24_NORMPACK_DECL");
+        else if (code == 9) com.racas.black.coop.RoomDiagnostics.event("GPU_V36_SLOT28_FLOAT2_DECL");
     }
     public String coopRoomStatusLine(int row) {''', java)
     pending[java] = text
@@ -148,6 +154,8 @@ def prepare(root: pathlib.Path):
     pending['src/coop/room_net_ui.hpp'] = (HERE / 'room_network/room_net_ui.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_world_tick.hpp'] = (HERE / 'room_network/room_world_tick.hpp').read_text(encoding='utf-8')
     pending['src/coop/world_tick_contract.hpp'] = (HERE / 'room_network/world_tick_contract.hpp').read_text(encoding='utf-8')
+    pending['src/coop/gpu_decl_contract.hpp'] = (HERE / 'room_network/gpu_decl_contract.hpp').read_text(encoding='utf-8')
+    pending['src/coop/gpu_decl_witness.hpp'] = (HERE / 'room_network/gpu_decl_witness.hpp').read_text(encoding='utf-8')
 
     # Staging-only extension of the EXISTING original local-player X86 wrapper.
     # It samples R32(kWorld) only when the original character kind and identity
@@ -175,6 +183,18 @@ def prepare(root: pathlib.Path):
         '''    blackcoop::ObserveMissionLaunchCandidate(); // attempt, NOT loaded scene
     __imp__sub_00124CF0(ctx, base);''',difficulty)
     pending[difficulty]=launch
+
+    # Read-only observation of the ORIGINAL title's actual parsed Xbox
+    # D3D8 vertex declaration. This is not model skinning proof or a GPU draw.
+    # Six fixed-code categories, each emitted ONCE; never record shader bytes,
+    # shader registers/constants, guest addresses or vertex payloads.
+    d3d='src/d3d/d3d8.cpp'
+    shader=pending.get(d3d,originals[d3d].decode('utf-8'))
+    shader=once(shader,'#include "gpu/vertex.h"',
+                '#include "gpu/vertex.h"\n#include "coop/gpu_decl_witness.hpp"',d3d)
+    shader=once(shader,'    gpu::ParseDeclaration(*vs);',
+                 '    gpu::ParseDeclaration(*vs);\n    blackcoop::ObserveOriginalGpuDecl(*vs); // fixed event categories only',d3d)
+    pending[d3d]=shader
     for name in pending:
         if name not in originals and (root / name).exists():
             raise ValueError('Refusing preexisting addition: ' + name)
