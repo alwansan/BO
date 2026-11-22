@@ -47,7 +47,7 @@ inline OriginalFirstStageMenuPage OriginalUiPage(const char* p)noexcept{
  if(prefix("Difficulty"))return OriginalFirstStageMenuPage::Difficulty;
  return OriginalFirstStageMenuPage::Untrusted;
 }
-inline void ObserveOriginalFirstStageAutoMenu(X86Context& ctx)noexcept{
+inline void ObserveOriginalFirstStageAutoMenu(X86Context&)noexcept{
  static uint64_t lastPoll=0;
  const uint64_t now=static_cast<uint64_t>(SDL_GetTicks());
  if(lastPoll&&now>=lastPoll&&now-lastPoll<150)return;
@@ -108,7 +108,12 @@ inline void ObserveOriginalFirstStageAutoMenu(X86Context& ctx)noexcept{
    kernel::R32(layout::kUi):0u;
  const bool originalFront=OriginalUiSpan(game+layout::kGameState,4u)&&
     kernel::R32(game+layout::kGameState)==game+layout::kFrontEnd;
- if(!originalFront||!ui||ctx.ebp!=ui||
+ // sub_00115030 is an ORIGINAL frontend tick, but unlike the original
+ // sub_00124330 menu callback its EBP is not guaranteed to be UI.
+ // Trust the ORIGINAL global UI manager pointer [0x2D199C], only while
+ // the ORIGINAL game state is confirmed to be the frontend and its page
+ // is in the active stable running state.
+ if(!originalFront||!ui||
     static_cast<uint64_t>(ui)+layout::kUiReady>0xffffffffull||
     !OriginalUiSpan(ui+layout::kPageReady,4u)||
     !OriginalUiSpan(ui+layout::kPageName,0x54u)||
