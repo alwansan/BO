@@ -47,21 +47,21 @@ public final class RoomCameraEyeTlsTest {
             int ia=a.snapshot().self,ib=b.snapshot().self,ic=c.snapshot().self;
             ok(ia!=ib&&ia!=ic&&ib!=ic);
             // No original local eye leaks before story commit.
-            ok(!a.offerOriginalCameraEye(1,100,0,0));
+            ok(!a.offerOriginalCameraEye(1,100,0,0,101,0,0));
             ok(host.latestVerifiedCameraEyes().isEmpty());
             var story=host.prepareStory(0,0,7);
             until(()->a.storyTicket()!=null&&b.storyTicket()!=null&&c.storyTicket()!=null);
-            ok(!a.offerOriginalCameraEye(1,100,0,0));
+            ok(!a.offerOriginalCameraEye(1,100,0,0,101,0,0));
             ok(!host.hostSceneLoaded(0,0,7));
             ok(a.acknowledgeSceneLoaded(0,0,7));
             ok(b.acknowledgeSceneLoaded(0,0,7));
             ok(c.acknowledgeSceneLoaded(0,0,7));
             until(()->host.storyCommitted()&&a.storyCommitted()&&
                     b.storyCommitted()&&c.storyCommitted());
-            ok(a.offerOriginalCameraEye(1,111,112,113));
-            ok(b.offerOriginalCameraEye(1,211,212,213));
-            ok(c.offerOriginalCameraEye(1,311,312,313));
-            ok(!a.offerOriginalCameraEye(1,900,900,900));
+            ok(a.offerOriginalCameraEye(1,111,112,113,11,12,13));
+            ok(b.offerOriginalCameraEye(1,211,212,213,21,22,23));
+            ok(c.offerOriginalCameraEye(1,311,312,313,31,32,33));
+            ok(!a.offerOriginalCameraEye(1,900,900,900,90,90,90));
             Map<Integer,RoomCameraEyeWire.Eye> seen=new HashMap<>();
             until(()->{
                 for(RoomTls.Server.TrustedEye trusted:host.latestVerifiedCameraEyes())
@@ -69,11 +69,12 @@ public final class RoomCameraEyeTlsTest {
                 return seen.size()==3;
             });
             ok(seen.get(ia).xCm==111&&seen.get(ib).yCm==212&&seen.get(ic).zCm==313);
+            ok(seen.get(ia).bodyXcm==11&&seen.get(ib).bodyYcm==22&&seen.get(ic).bodyZcm==33);
             for(RoomCameraEyeWire.Eye eye:seen.values())ok(eye.matches(story));
             List<RoomWorldSnapshotWire.Avatar> avatars=new ArrayList<>();
             avatars.add(avatar(1,0));
             int[] ids={ia,ib,ic};Arrays.sort(ids);
-            for(int id:ids)avatars.add(avatar(id,seen.get(id).xCm));
+            for(int id:ids)avatars.add(avatar(id,seen.get(id).bodyXcm));
             ok(host.offerWorldSnapshot(1,avatars));
             until(()->hasStoryTick(a,1,story,4)&&hasStoryTick(b,1,story,4)&&
                     hasStoryTick(c,1,story,4));
@@ -82,7 +83,7 @@ public final class RoomCameraEyeTlsTest {
             ok(host.latestVerifiedCameraEyes().isEmpty());
             ok(host.cancelStory());
             until(()->a.storyTicket()==null&&b.storyTicket()==null&&c.storyTicket()==null);
-            ok(!a.offerOriginalCameraEye(2,999,999,999));
+            ok(!a.offerOriginalCameraEye(2,999,999,999,99,99,99));
             ok(host.latestVerifiedCameraEyes().isEmpty());
             var newStory=host.prepareStory(1,0,8);
             until(()->a.storyTicket()!=null&&b.storyTicket()!=null&&c.storyTicket()!=null);
@@ -94,12 +95,12 @@ public final class RoomCameraEyeTlsTest {
                     b.storyCommitted()&&c.storyCommitted());
             ok(!story.same(newStory));
             ok(host.latestVerifiedCameraEyes().isEmpty());
-            ok(a.offerOriginalCameraEye(1,-111,0,0));
+            ok(a.offerOriginalCameraEye(1,-111,0,0,-11,0,0));
             until(()->host.latestVerifiedCameraEyes().size()==1);
             ok(host.latestVerifiedCameraEyes().get(0).camera.matches(newStory));
             ok(!host.latestVerifiedCameraEyes().get(0).camera.matches(story));
         }
-        System.out.println("ORIGINAL_EYE_TLS_PASS: host+3 guests source-eye wire, authenticated socket IDs, story/roster/epoch, stale expiry, fanout, abort+restart");
+        System.out.println("ORIGINAL_EYE_AND_BODY_FEET_TLS_PASS: host+3 guests source-eye wire, authenticated socket IDs, story/roster/epoch, stale expiry, fanout, abort+restart");
         System.out.println("This test's xyz are SYNTHETIC; original BLACK sampled-eye JNI is source-staged, no actual stage/actor gameplay verified");
     }
 }

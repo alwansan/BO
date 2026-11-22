@@ -34,6 +34,12 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
                             kernel::G<float>(original_player+0x104),
                             kernel::G<float>(original_player+0x108),result))
         return;
+    // The original actor BODY FEET are independently at +0xA0 (source-known
+    // from the pinned MIT PC recomp's black_puppet_follow).
+    OriginalBodyFeetCm body{};
+    if(!QuantizeOriginalBodyFeet(kernel::G<float>(original_player+0xA0),
+                                  kernel::G<float>(original_player+0xA4),
+                                  kernel::G<float>(original_player+0xA8),body))return;
     // Same frontend state predicate as pinned original exit_menu.cpp.
     // A stable non-frontend original player is a diagnostic candidate only.
     // DO NOT send STORY_READY, PREPARE, COMMIT or modify original game state.
@@ -59,10 +65,11 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
     if(!env||!activity)return;
     jclass cls=env->GetObjectClass(activity);
     if(cls){
-        jmethodID method=env->GetMethodID(cls,"coopRecordOriginalPlayerEye","(III)V");
+        jmethodID method=env->GetMethodID(cls,"coopRecordOriginalPlayerEye","(IIIIII)V");
         if(method)env->CallVoidMethod(activity,method,
             static_cast<jint>(result.x),static_cast<jint>(result.y),
-            static_cast<jint>(result.z));
+            static_cast<jint>(result.z),static_cast<jint>(body.x),
+            static_cast<jint>(body.y),static_cast<jint>(body.z));
         if(env->ExceptionCheck())env->ExceptionClear();
         env->DeleteLocalRef(cls);
     }else if(env->ExceptionCheck())env->ExceptionClear();

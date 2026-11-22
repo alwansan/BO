@@ -1,13 +1,17 @@
 // Copyright 2026 BO-COOP contributors. SPDX-License-Identifier: MIT
 // Original BLACK local-player eye vector from pinned upstream hooks.cpp:
-// player+0x100, floating XYZ (camera eye). This is NOT actor root transform,
-// scene-load proof, quest state or a rendered remote bot.
+// player+0x100, floating XYZ (camera eye). Separate original body-feet
+// source +0xA0 is from MIT PC port black_puppet_follow (pinned b2512fafd).
+// Neither indicates engine-loaded scene, quest or rendered remote actor.
 #pragma once
 #include <cmath>
 #include <cstdint>
 
 namespace blackcoop {
 struct OriginalEyeCm {
+    int32_t x=0,y=0,z=0;
+};
+struct OriginalBodyFeetCm {
     int32_t x=0,y=0,z=0;
 };
 inline bool QuantizeOriginalEye(float x,float y,float z,
@@ -24,5 +28,10 @@ inline bool QuantizeOriginalEye(float x,float y,float z,
     result={static_cast<int32_t>(cx),static_cast<int32_t>(cy),
             static_cast<int32_t>(cz)};
     return true;
+}
+inline bool QuantizeOriginalBodyFeet(float x,float y,float z,OriginalBodyFeetCm& result)noexcept{
+    OriginalEyeCm valid{};
+    if(!QuantizeOriginalEye(x,y,z,valid))return false;
+    result={valid.x,valid.y,valid.z};return true;
 }
 } // namespace blackcoop

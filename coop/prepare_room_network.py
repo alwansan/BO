@@ -61,8 +61,9 @@ def prepare(root: pathlib.Path):
     }
     // Called by genuine original local player update, NOT by Android UI,
     // NOT proof of loaded scene; safe, bounded camera eye coordinates only.
-    public void coopRecordOriginalPlayerEye(int xCm,int yCm,int zCm) {
-        com.racas.black.coop.RoomAppRooms.originalPlayerEyeFromGameThread(xCm,yCm,zCm);
+    public void coopRecordOriginalPlayerEye(int xCm,int yCm,int zCm,
+                                            int bx,int by,int bz) {
+        com.racas.black.coop.RoomAppRooms.originalPlayerEyeFromGameThread(xCm,yCm,zCm,bx,by,bz);
     }
     // Bounded <=20-int read-only ingress: actual TLS authenticated room peer
     // commands are consumed on the genuine BLACK game thread, NEVER UI.

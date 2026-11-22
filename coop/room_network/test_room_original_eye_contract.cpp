@@ -18,5 +18,11 @@ int main(){
     assert(!blackcoop::QuantizeOriginalEye(0,0,-200001.f,out));
     assert(blackcoop::QuantizeOriginalEye(200000.f,-200000.f,0.f,out));
     assert(out.x==20000000&&out.y==-20000000);
-    std::cout<<"ORIGINAL_PLAYER_EYE_CONTRACT_PASS: finite bounded camera-eye quantization; no mission, actor root, scene or gameplay claims\n";
+    blackcoop::OriginalBodyFeetCm feet{};
+    assert(blackcoop::QuantizeOriginalBodyFeet(-1.234f,3.f,.005f,feet));
+    assert(feet.x==-123&&feet.y==300&&feet.z==0);
+    assert(!blackcoop::QuantizeOriginalBodyFeet(nan,0.f,0.f,feet));
+    assert(!blackcoop::QuantizeOriginalBodyFeet(0.f,inf,0.f,feet));
+    assert(!blackcoop::QuantizeOriginalBodyFeet(0.f,0.f,200001.f,feet));
+    std::cout<<"ORIGINAL_PLAYER_EYE_AND_BODY_FEET_CONTRACT_PASS: actor +0xA0 body feet not camera root, no renderer or scene READY\n";
 }

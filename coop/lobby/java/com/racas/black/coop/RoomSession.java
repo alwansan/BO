@@ -89,11 +89,13 @@ public final class RoomSession implements AutoCloseable {
             return lastStageResourceFolder;
         }
     }
-    boolean observeOriginalEyeFromGameThread(int x,int y,int z){
+    boolean observeOriginalEyeFromGameThread(int x,int y,int z,int bx,int by,int bz){
         synchronized(lock){
             if(closed||(phase!=Phase.HOSTING&&phase!=Phase.JOINED)||
                x< -20000000||x>20000000||y< -20000000||y>20000000||
-               z< -20000000||z>20000000)return false;
+               z< -20000000||z>20000000||
+               bx< -20000000||bx>20000000||by< -20000000||by>20000000||
+               bz< -20000000||bz>20000000)return false;
             // This original player's native update is an actual game-thread
             // entry point, but does NOT prove a mission scene has loaded.
             if(storyGameThread==null)storyGameThread=Thread.currentThread();
@@ -106,16 +108,17 @@ public final class RoomSession implements AutoCloseable {
             try{
                 if(phase==Phase.JOINED&&client!=null&&client.storyCommitted()&&
                    localEyeTransportSeq<Integer.MAX_VALUE){
-                    client.offerOriginalCameraEye(++localEyeTransportSeq,x,y,z);
+                    client.offerOriginalCameraEye(++localEyeTransportSeq,x,y,z,bx,by,bz);
                 }else if(phase==Phase.HOSTING&&host!=null&&host.storyCommitted()&&
                          hostEyeWorldTick<Integer.MAX_VALUE){
                     java.util.List<RoomWorldSnapshotWire.Avatar> avatars=
                         new java.util.ArrayList<>(4);
-                    avatars.add(new RoomWorldSnapshotWire.Avatar(1,x,y,z,0,0));
+                    // The real original actor's +0xA0 BODY FEET, not eye +0x100.
+                    avatars.add(new RoomWorldSnapshotWire.Avatar(1,bx,by,bz,0,0));
                     for(RoomTls.Server.TrustedEye item:host.latestVerifiedCameraEyes()){
                         RoomCameraEyeWire.Eye eye=item.camera;
                         avatars.add(new RoomWorldSnapshotWire.Avatar(item.peerId,
-                             eye.xCm,eye.yCm,eye.zCm,0,0));
+                             eye.bodyXcm,eye.bodyYcm,eye.bodyZcm,0,0));
                     }
                     avatars.sort((a,b)->Integer.compare(a.playerId,b.playerId));
                     host.offerWorldSnapshot(++hostEyeWorldTick,avatars);
@@ -125,7 +128,7 @@ public final class RoomSession implements AutoCloseable {
                 // A single coarse code is sufficient for a later big trial.
                 if(!eyeBridgeErrorLogged){
                     eyeBridgeErrorLogged=true;
-                    event("ORIGINAL_CAMERA_WORLD_TRANSPORT_REJECTED");
+                    event("ORIGINAL_CAMERA_AND_BODY_WORLD_TRANSPORT_REJECTED");
                 }
             }
             return true;

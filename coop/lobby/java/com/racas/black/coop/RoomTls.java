@@ -577,7 +577,7 @@ public final class RoomTls {
             }
         }
         /** Original native camera update, no socket I/O on caller thread. */
-        public boolean offerOriginalCameraEye(int sequence,int x,int y,int z)
+        public boolean offerOriginalCameraEye(int sequence,int x,int y,int z,int bx,int by,int bz)
             throws IOException{
             synchronized(lifecycle){
                 RoomStoryWire.Ticket ticket=story;
@@ -586,7 +586,7 @@ public final class RoomTls {
                    state.revision!=ticket.rosterRevision||
                    !MessageDigest.isEqual(state.session,ticket.session())||
                    sequence<=lastQueuedEyeSequence)return false;
-                byte[] frame=RoomCameraEyeWire.encode(ticket,sequence,x,y,z);
+                byte[] frame=RoomCameraEyeWire.encode(ticket,sequence,x,y,z,bx,by,bz);
                 lastQueuedEyeSequence=sequence;
                 cameraFrames.clear();
                 return cameraFrames.offer(frame);

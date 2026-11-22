@@ -46,12 +46,13 @@ public final class RoomAppRooms {
   * Native simulation-thread hook only. Do not log coordinates or create
   * remote players. This is original local CAMERA eye, not actor body root.
   */
- public static void originalPlayerEyeFromGameThread(int x,int y,int z){
+ public static void originalPlayerEyeFromGameThread(int x,int y,int z,
+                                                     int bx,int by,int bz){
   RoomSession session;
   synchronized(RoomAppRooms.class){session=active;}
-  if(session!=null&&session.observeOriginalEyeFromGameThread(x,y,z)&&
+  if(session!=null&&session.observeOriginalEyeFromGameThread(x,y,z,bx,by,bz)&&
      localEyeLogged.compareAndSet(false,true))
-   RoomDiagnostics.event("ORIGINAL_LOCAL_CAMERA_EYE_VALIDATED");
+   RoomDiagnostics.event("ORIGINAL_LOCAL_CAMERA_EYE_AND_BODY_FEET_VALIDATED");
  }
  /** Only called from real original player hook after two known file opens. */
  public static void originalLevelResourceHintFromGameThread(int folder){
