@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-67-original-human-look-roster-planner.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-68-tls-wire-rejoin-story-slot.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -1626,6 +1626,18 @@
       },
       "functionBoundaryProven": false,
       "safeGuestCallProven": false
+    },
+    "TLS_WIRE_ID_TO_STORY_SLOT_REJOIN": {
+      "status": "SOURCE_PUSHED_CI_PENDING",
+      "rawAuthenticatedWireIdPreserved": true,
+      "compactGameActorSlot": true,
+      "realTlsReconnectTest": "coop/lobby/test/RoomStoryTlsTest.java",
+      "nativeHumanInputsCompact": true,
+      "guestWorldSelfCompact": true,
+      "hostWorldValidationCompact": true,
+      "noRealSceneLoaded": true,
+      "noRealActorCreated": true,
+      "priorRoomOnlyApkRun": 45032729971
     }
   },
   "pending": {

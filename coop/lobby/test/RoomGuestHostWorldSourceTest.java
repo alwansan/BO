@@ -33,6 +33,27 @@ public final class RoomGuestHostWorldSourceTest {
         bad(()->RoomGuestHostWorldSource.pack(ticket,null,view));
         bad(()->RoomGuestHostWorldSource.pack(ticket,snap,null));
         bad(()->RoomGuestHostWorldSource.pack(ticket,snap,state(session,1,9)));
+        // Rejoined authenticated wire IDs 5 and 9 still map to slots 2/3.
+        List<RoomWire.Player> rejoined=Arrays.asList(
+            new RoomWire.Player(1,"Host"),new RoomWire.Player(5,"Later"),
+            new RoomWire.Player(9,"Later again"));
+        RoomWire.State rejoinedView=RoomWire.parseState(RoomWire.decode(
+            RoomWire.state(RoomWire.ROSTER,session,session,9,9,"Campaign",rejoined)));
+        ok(RoomWire.storySlot(rejoinedView,9)==3);
+        ok(RoomWire.storySlot(rejoinedView,5)==2);
+        ok(RoomWire.storySlot(rejoinedView,2)==0);
+        int[] afterRejoin=RoomGuestHostWorldSource.pack(ticket,snap,rejoinedView);
+        ok(afterRejoin[2]==3&&afterRejoin[16]==3);
+        RoomWire.State hostNotFirst=RoomWire.parseState(RoomWire.decode(
+            RoomWire.state(RoomWire.ROSTER,session,session,9,9,"Campaign",
+                Arrays.asList(new RoomWire.Player(5,"Other"),
+                    new RoomWire.Player(1,"Host"),new RoomWire.Player(9,"Guest")))));
+        bad(()->RoomGuestHostWorldSource.pack(ticket,snap,hostNotFirst));
+        RoomWire.State missingStoryPeer=RoomWire.parseState(RoomWire.decode(
+            RoomWire.state(RoomWire.ROSTER,session,session,9,9,"Campaign",
+                Arrays.asList(new RoomWire.Player(1,"Host"),
+                    new RoomWire.Player(9,"Guest")))));
+        bad(()->RoomGuestHostWorldSource.pack(ticket,snap,missingStoryPeer));
         bad(()->RoomGuestHostWorldSource.pack(ticket,snap,state(session,3,10)));
         byte[] otherSession=new byte[16];Arrays.fill(otherSession,(byte)4);
         bad(()->RoomGuestHostWorldSource.pack(ticket,snap,state(otherSession,3,9)));

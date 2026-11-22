@@ -140,7 +140,7 @@ public final class RoomAppRooms {
      source.size()>3)return new int[]{0,0};
   java.util.ArrayList<RoomTls.Server.TrustedInput> items=
       new java.util.ArrayList<>(source);
-  items.sort((a,b)->Integer.compare(a.peerId,b.peerId));
+  items.sort((a,b)->Integer.compare(a.playerSlot,b.playerSlot));
   int[] frame=new int[2+items.size()*6];
   frame[0]=after.ticket.sceneEpoch;
   frame[1]=items.size();
@@ -148,14 +148,14 @@ public final class RoomAppRooms {
   for(int i=0;i<items.size();i++){
    RoomTls.Server.TrustedInput trusted=items.get(i);
    RoomHumanInputWire.Input input=trusted.value;
-   if(trusted.peerId<=last||trusted.peerId>4||input==null||
+   if(trusted.playerSlot<=last||trusted.playerSlot>4||input==null||
       !input.matches(after.ticket)||input.sequence<=0)return new int[]{0,0};
    int at=2+i*6;
-   frame[at]=trusted.peerId;frame[at+1]=input.sequence;
+   frame[at]=trusted.playerSlot;frame[at+1]=input.sequence;
    frame[at+2]=input.moveX;frame[at+3]=input.moveY;
    frame[at+4]=input.yaw;
    frame[at+5]=(input.fire?1:0)|(input.jump?2:0);
-   last=trusted.peerId;
+   last=trusted.playerSlot;
   }
   return frame;
  }

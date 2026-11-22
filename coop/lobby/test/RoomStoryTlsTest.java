@@ -94,6 +94,31 @@ public final class RoomStoryTlsTest {
                 ok(!host.hostSceneLoaded(7,0,33));
                 ok(later.acknowledgeSceneLoaded(7,0,33));
                 until(()->host.storyCommitted()&&later.storyCommitted());
+                // REAL rejoin regression: physical TLS peer is ID 3+, but
+                // authenticated original-game world and input use slot 2.
+                int longWireId=later.snapshot().self;
+                ok(RoomWire.storySlot(later.snapshot(),longWireId)==2);
+                java.util.List<RoomWorldSnapshotWire.Avatar> poses=
+                    java.util.Arrays.asList(
+                        new RoomWorldSnapshotWire.Avatar(1,100,200,300,0,0),
+                        new RoomWorldSnapshotWire.Avatar(2,175,200,300,0,0));
+                ok(host.offerWorldSnapshot(1,poses));
+                until(()->later.worldSnapshot()!=null&&
+                          later.worldSnapshot().tick==1);
+                int[] nativeWorld=RoomGuestHostWorldSource.pack(
+                    ticket,later.worldSnapshot(),later.snapshot());
+                ok(nativeWorld[2]==2&&nativeWorld[3]==2&&
+                   nativeWorld[10]==2&&nativeWorld[11]==175);
+                ok(later.offerHumanInput(1,350,-120,200,false,true));
+                java.util.concurrent.atomic.AtomicBoolean receivedSlot=
+                    new java.util.concurrent.atomic.AtomicBoolean();
+                until(()->{
+                    for(RoomTls.Server.TrustedInput sample:
+                        host.drainLatestTrustedInputs())
+                        if(sample.peerId==longWireId&&sample.playerSlot==2&&
+                           sample.value.jump)receivedSlot.set(true);
+                    return receivedSlot.get();
+                });
             }
         }
         // Owner CL reported ERROR_BINDEXCEPTION on rapid Host -> Leave -> Host.

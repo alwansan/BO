@@ -49,6 +49,16 @@ public final class RoomWire {
     public static State copy(State value){
         return new State(value.session,value.nonce,value.self,value.revision,value.room,value.players);
     }
+    // Permanent TLS wire ID can increase after reconnect; story/game slots
+    // remain compact 1..4. Never index native characters by state.self.
+    static int storySlot(State state,int wireId){
+        if(state==null||wireId<1||state.players.isEmpty()||
+           state.players.size()>MAX_PLAYERS||
+           state.players.get(0).id!=1)return 0;
+        for(int i=0;i<state.players.size();i++)
+            if(state.players.get(i).id==wireId)return i+1;
+        return 0;
+    }
     static byte[] image(){return IMAGE.clone();}
     static byte[] hex(String s){
         byte[] b=new byte[s.length()/2];

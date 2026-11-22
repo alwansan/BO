@@ -51,12 +51,17 @@ public final class RoomHumanInputTlsTest {
             ok(guest4.offerHumanInput(1,-200,-200,9000,true,true));
             ok(!guest2.offerHumanInput(1,0,0,0,false,false));
             Map<Integer,RoomHumanInputWire.Input> received=new HashMap<>();
+            Map<Integer,Integer> compactSlots=new HashMap<>();
             until(()->{
                 for(RoomTls.Server.TrustedInput input:host.drainLatestTrustedInputs())
-                    received.put(input.peerId,input.value);
+                    {received.put(input.peerId,input.value);
+                     compactSlots.put(input.peerId,input.playerSlot);}
                 return received.size()==3;
             });
             ok(received.containsKey(id2)&&received.containsKey(id3)&&received.containsKey(id4));
+            ok(compactSlots.get(id2)==RoomWire.storySlot(guest2.snapshot(),id2));
+            ok(compactSlots.get(id3)==RoomWire.storySlot(guest3.snapshot(),id3));
+            ok(compactSlots.get(id4)==RoomWire.storySlot(guest4.snapshot(),id4));
             ok(received.get(id2).matches(story)&&received.get(id3).matches(story)&&received.get(id4).matches(story));
             ok(received.get(id2).moveX==-500&&received.get(id2).fire);
             ok(received.get(id3).moveX==1000&&received.get(id3).jump);

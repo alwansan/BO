@@ -283,7 +283,7 @@ public final class RoomSession implements AutoCloseable {
                 if(exact!=null){
                     final long now=System.nanoTime();
                     for(RoomTls.Server.TrustedInput sample:accepted)
-                        hostHumanPoses.acceptAuthenticated(exact,sample.peerId,
+                        hostHumanPoses.acceptAuthenticated(exact,sample.playerSlot,
                                                            sample.value,now);
                 }
             }

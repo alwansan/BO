@@ -19,8 +19,10 @@ public final class RoomGuestHostWorldSource {
     public static int[] pack(RoomStoryWire.Ticket ticket,
                              RoomWorldSnapshotWire.Snapshot snap,
                              RoomWire.State state)throws IOException{
-        if(ticket==null||snap==null||state==null||state.self<2||state.self>4||
-           !ticket.includes(state.self)||!snap.matches(ticket)||
+        final int selfSlot=RoomWire.storySlot(state,state==null?0:state.self);
+        if(ticket==null||snap==null||state==null||selfSlot<2||selfSlot>4||
+           !ticket.includes(selfSlot)||!snap.matches(ticket)||
+           state.players.size()!=Integer.bitCount(ticket.participants)||
            state.revision!=ticket.rosterRevision||
            !MessageDigest.isEqual(state.session,ticket.session())||
            snap.tick<=0||snap.avatars.size()<2||snap.avatars.size()>4)
@@ -29,17 +31,16 @@ public final class RoomGuestHostWorldSource {
         int participants=0;
         int[] numbers=new int[4+avatars.size()*6];
         numbers[0]=ticket.sceneEpoch;numbers[1]=snap.tick;
-        numbers[2]=state.self;numbers[3]=avatars.size();
+        numbers[2]=selfSlot;numbers[3]=avatars.size();
         for(int i=0;i<avatars.size();i++){
             RoomWorldSnapshotWire.Avatar avatar=avatars.get(i);
             if(avatar.playerId<1||avatar.playerId>4||
                !ticket.includes(avatar.playerId)||
                (participants&(1<<(avatar.playerId-1)))!=0)
                 throw new IOException("Host world includes a nonparticipant");
-            boolean rosterMember=false;
-            for(RoomWire.Player p:state.players)
-                if(p.id==avatar.playerId){rosterMember=true;break;}
-            if(!rosterMember)throw new IOException("Host world includes a non-room peer");
+            if(avatar.playerId>state.players.size()||
+               state.players.get(avatar.playerId-1).id<1)
+                throw new IOException("Host world includes a non-room story slot");
             participants|=1<<(avatar.playerId-1);
             int at=4+i*6;
             numbers[at]=avatar.playerId;

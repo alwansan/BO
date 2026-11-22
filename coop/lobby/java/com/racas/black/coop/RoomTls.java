@@ -80,17 +80,19 @@ public final class RoomTls {
         public String handshakeFailureKind(){return handshakeFailureKind;}
         // Every identity comes from the TLS socket, never a network payload.
         public static final class TrustedInput {
-            public final int peerId;
+            public final int peerId; // authenticated socket's raw wire ID
+            public final int playerSlot; // story roster ordinal 2..4
             public final RoomHumanInputWire.Input value;
-            private TrustedInput(int id,RoomHumanInputWire.Input value){
-                this.peerId=id;this.value=value;
+            private TrustedInput(int wireId,int slot,RoomHumanInputWire.Input value){
+                peerId=wireId;playerSlot=slot;this.value=value;
             }
         }
         public static final class TrustedEye {
             public final int peerId;
+            public final int playerSlot;
             public final RoomCameraEyeWire.Eye camera;
-            private TrustedEye(int id,RoomCameraEyeWire.Eye value){
-                peerId=id;camera=value;
+            private TrustedEye(int wireId,int slot,RoomCameraEyeWire.Eye value){
+                peerId=wireId;playerSlot=slot;camera=value;
             }
         }
         /** Non-consuming, fresh source-origin samples from authenticated TLS sockets. */
@@ -105,7 +107,7 @@ public final class RoomTls {
                     if(eye!=null&&!p.dead.get()&&eye.matches(story)&&
                        storySlots.containsKey(p.id)&&
                        at>=p.latestEyeAt&&at-p.latestEyeAt<=300)
-                        result.add(new TrustedEye(p.id,eye));
+                        result.add(new TrustedEye(p.id,storySlots.get(p.id),eye));
                 }
                 return result;
             }
@@ -122,11 +124,17 @@ public final class RoomTls {
                     return false;
                 RoomWorldSnapshotWire.Snapshot snap=
                     RoomWorldSnapshotWire.create(story,tick,avatars);
-                Set<Integer> present=new HashSet<>();
-                for(RoomWire.Player p:players())present.add(p.id);
-                for(RoomWorldSnapshotWire.Avatar a:snap.avatars)
-                    if(!present.contains(a.playerId))
-                        throw new IOException("Non-room player in host snapshot");
+                // Avatar IDs belong to exact compact story slots, unlike
+                // increasing TLS wire IDs after a peer disconnects.
+                int seen=0;
+                for(RoomWorldSnapshotWire.Avatar a:snap.avatars){
+                    if(a.playerId<1||a.playerId>4||
+                       !story.includes(a.playerId))
+                        throw new IOException("Non-story player in host snapshot");
+                    seen|=1<<(a.playerId-1);
+                }
+                if(seen!=story.participants)
+                    throw new IOException("Incomplete compact story snapshot");
                 byte[] wire=RoomWorldSnapshotWire.encode(snap);
                 lastWorldSnapshotTick=tick;
                 for(Peer peer:peers.values())
@@ -146,7 +154,7 @@ public final class RoomTls {
                     if(input!=null&&!peer.dead.get()&&input.matches(story)&&
                        at>=peer.latestInputAt&&at-peer.latestInputAt<=250&&
                        storySlots.containsKey(peer.id))
-                        result.add(new TrustedInput(peer.id,input));
+                        result.add(new TrustedInput(peer.id,storySlots.get(peer.id),input));
                 }
                 return result;
             }
@@ -721,11 +729,18 @@ public final class RoomTls {
                                current==null||current.revision!=story.rosterRevision||
                                !sample.matches(story)||sample.tick<=lastWorldSnapshotTick)
                                 throw new IOException("Uncommitted or replayed host snapshot");
-                            Set<Integer> present=new HashSet<>();
-                            for(RoomWire.Player p:current.players)present.add(p.id);
-                            for(RoomWorldSnapshotWire.Avatar a:sample.avatars)
-                                if(!present.contains(a.playerId))
-                                    throw new IOException("Snapshot contains unknown player");
+                            if(current.players.size()<2||current.players.size()>4||
+                               RoomWire.storySlot(current,current.self)<2)
+                                throw new IOException("Invalid snapshot roster");
+                            int seen=0;
+                            for(RoomWorldSnapshotWire.Avatar a:sample.avatars){
+                                if(a.playerId<1||a.playerId>current.players.size()||
+                                   !story.includes(a.playerId))
+                                    throw new IOException("Snapshot contains unknown slot");
+                                seen|=1<<(a.playerId-1);
+                            }
+                            if(seen!=story.participants)
+                                throw new IOException("Incomplete snapshot roster");
                             lastWorldSnapshotTick=sample.tick;
                             worldSnapshot=sample;lastWorldSnapshotAt=now();
                         }
