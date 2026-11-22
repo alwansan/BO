@@ -1788,7 +1788,7 @@
       "staleEvidenceInvalidation": true
     },
     "ORIGINAL_SOURCE_RUNNING_STAGE_TLS_READY": {
-      "status": "TLS_POST_COMMIT_ABORT_RACE_TEST_FIXED_RECHECK_PENDING",
+      "status": "SOURCE_TLS_UDP_GREEN_ANDROID29_AND_APK_RUNNING_NOT_SHARED_WORLD",
       "sourceMatchedOriginalCoreAndStream": true,
       "originalCorePhase0x1C": true,
       "originalLevelFilesPaired": true,
@@ -1812,7 +1812,21 @@
       "initialTlsRun": 45039959321,
       "initialTlsFailure": "test_asserted_immediate_guest_abort",
       "newEndToEndTlsWorldAndHumanInputTest": true,
-      "hostReadyTicketRaceGuard": true
+      "hostReadyTicketRaceGuard": true,
+      "sourcePreflightRun": 45040138899,
+      "sourcePreflightConclusion": "success",
+      "tlsRun": 45040138872,
+      "tlsConclusion": "success",
+      "udpRun": 45040138924,
+      "udpConclusion": "success",
+      "android29Run": 45040138900,
+      "android29LastObserved": "in_progress",
+      "roomOnlyApkRun": 45040138903,
+      "roomOnlyApkLastObserved": "in_progress",
+      "hostWorldFanoutAfterCommitSyntheticPassed": true,
+      "guestInputAfterCommitSyntheticPassed": true,
+      "realStoryHostAuthority": false,
+      "realBotBodies": false
     }
   },
   "pending": {

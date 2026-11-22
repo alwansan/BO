@@ -1,3 +1,11 @@
+### Session73 CI confirmation — 2026-11-22 (verified live)
+- [Real four-peer TLS core #45040138872 SUCCESS](https://github.com/alwansan/BO/actions/runs/45040138872): session-level synthetic native source attestation now exercises authenticated HOST+GUEST stage READY/COMMIT over REAL TLS, then host-owned canonical world pose fanout, authenticated compact slot2 guest human input, and asynchronous story ABORT/pose purge. This is a **network integration test with simulated native source inputs**, not an Android phone game runtime or shared AI.
+- [Original native source/preflight #45040138899 SUCCESS](https://github.com/alwansan/BO/actions/runs/45040138899): C++ UBSAN original independent 30 extra world samples, strict pinned Android source transformation and Java8 stage bridge. [UDP #45040138924 SUCCESS](https://github.com/alwansan/BO/actions/runs/45040138924).
+- [Android29 platform #45040138900](https://github.com/alwansan/BO/actions/runs/45040138900) and [Windows room-only ARM64 APK #45040138903](https://github.com/alwansan/BO/actions/runs/45040138903) still IN_PROGRESS at last check; do not claim an updated APK available. Previous NO-GAMEPLAY APK [#45036440579 SUCCESS](https://github.com/alwansan/BO/actions/runs/45036440579), artifact #14759533773. Next: verify platform/APK; owner trial only after guest auto start, real enemy/bot human model and host authority.
+- **No actual shared story exists yet.** Source-qualified local stage READY means each phone has independently started/running the same original level, while original enemy AI/mission worlds are currently separate and invisible humans are not rendered. MUST implement host authoritative world, remote bot visible bodies and guest automatic launcher before concluding playable co-op.
+
+---
+
 # BLACK Co-op — الجلسة 73: جاهزية المرحلة المحلية من أدلة المحرك الأصلية
 
 لا يجوز أن ترسل غرفة TLS جاهزية لمجرد دخول لاعب إلى الغرفة أو استلام تذكرة المرحلة. أضفنا تحققاً مستقلاً يقوم على بيانات اللعبة الأصلية: تحديث الشخصية الحقيقية في عالم غير القائمة، حالة المحرك 0x1C، فتح ملفَي المرحلة الأصليين، وتطابق المرحلة الأساسية مع قيمة التحميل لمدة 30 عينة؛ وبعدها يستمر نفس العالم والمستوى **30 عينة إضافية** قبل قبول جاهزية المرحلة المحلية.
