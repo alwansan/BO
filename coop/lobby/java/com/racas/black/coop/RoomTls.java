@@ -429,6 +429,7 @@ public final class RoomTls {
         private volatile RoomWire.State view;
         private volatile RoomStoryWire.Ticket story;
         private volatile RoomWorldSnapshotWire.Snapshot worldSnapshot;
+        private volatile long lastWorldSnapshotAt;
         private int lastWorldSnapshotTick;
         private volatile boolean storyReadySent,storyCommitted;
         private volatile String failure="";
@@ -472,7 +473,10 @@ public final class RoomTls {
         public RoomWire.State snapshot(){RoomWire.State value=view;return value==null?null:RoomWire.copy(value);}
         public RoomStoryWire.Ticket storyTicket(){return story;}
         /** Host-origin, validated roster/epoch only. No game actor pointer. */
-        public RoomWorldSnapshotWire.Snapshot worldSnapshot(){return worldSnapshot;}
+        public RoomWorldSnapshotWire.Snapshot worldSnapshot(){
+            return lastWorldSnapshotAt>0&&now()-lastWorldSnapshotAt<=350?
+                   worldSnapshot:null;
+        }
         public boolean storyCommitted(){return story!=null&&storyCommitted;}
         /**
          * Must be called ONLY after this phone's actual BLACK game scene
@@ -603,7 +607,7 @@ public final class RoomTls {
                             if(!closed.get()){
                                 story=incoming;storyReadySent=false;storyCommitted=false;
                                 lastQueuedInputSequence=0;inputFrames.clear();firstHumanInputSent.set(false);
-                                worldSnapshot=null;lastWorldSnapshotTick=0;
+                                worldSnapshot=null;lastWorldSnapshotTick=0;lastWorldSnapshotAt=0;
                                 record("STORY_GUEST_PREPARED");
                             }
                         }
@@ -625,7 +629,7 @@ public final class RoomTls {
                             if(story!=null&&story.same(incoming)){
                                 story=null;storyReadySent=false;storyCommitted=false;
                                 lastQueuedInputSequence=0;inputFrames.clear();firstHumanInputSent.set(false);
-                                worldSnapshot=null;lastWorldSnapshotTick=0;
+                                worldSnapshot=null;lastWorldSnapshotTick=0;lastWorldSnapshotAt=0;
                                 record("STORY_GUEST_ABORTED");
                             }
                         }
@@ -646,7 +650,7 @@ public final class RoomTls {
                                 if(!present.contains(a.playerId))
                                     throw new IOException("Snapshot contains unknown player");
                             lastWorldSnapshotTick=sample.tick;
-                            worldSnapshot=sample;
+                            worldSnapshot=sample;lastWorldSnapshotAt=now();
                         }
                         continue;
                     }
@@ -659,7 +663,7 @@ public final class RoomTls {
                         if(story!=null&&story.rosterRevision!=next.revision){
                             story=null;storyReadySent=false;storyCommitted=false;
                             lastQueuedInputSequence=0;inputFrames.clear();firstHumanInputSent.set(false);
-                                worldSnapshot=null;lastWorldSnapshotTick=0;
+                                worldSnapshot=null;lastWorldSnapshotTick=0;lastWorldSnapshotAt=0;
                             record("STORY_GUEST_ROSTER_INVALIDATED");
                         }
                     }
@@ -672,7 +676,7 @@ public final class RoomTls {
                 if(!closed.compareAndSet(false,true))return;
                 view=null;story=null;storyReadySent=false;storyCommitted=false;
                 lastQueuedInputSequence=0;inputFrames.clear();firstHumanInputSent.set(false);
-                                worldSnapshot=null;lastWorldSnapshotTick=0;
+                                worldSnapshot=null;lastWorldSnapshotTick=0;lastWorldSnapshotAt=0;
             }
             readyWriter.shutdownNow();
             closeSocket(socket);heartbeat.shutdownNow();reader.interrupt();inputWriter.interrupt();
