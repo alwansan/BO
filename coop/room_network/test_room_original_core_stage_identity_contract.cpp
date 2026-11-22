@@ -27,5 +27,12 @@ int main(){
     w.Reset();
     for(int i=0;i<30;i++)
         assert(w.Observe(9,0x20000,true,0,1,true,255,1)==(i==29?69:0));
+    // UNKNOWN at startup must not hide the later matching source state.
+    w.Reset();
+    for(int i=0;i<30;i++)
+        assert(w.Observe(11,0x30000,true,0,0,false,-1,-1)==(i==29?69:0));
+    for(int i=0;i<30;i++)
+        assert(w.Observe(11,0x30000,true,0,0,true,0,0)==(i==29?67:0));
+    assert(w.Observe(11,0x30000,true,0,0,true,0,0)==0);
     std::puts("ORIGINAL_CORE_STAGE_IDENTITY_SOURCE_ONLY_PASS");
 }

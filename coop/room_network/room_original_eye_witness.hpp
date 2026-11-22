@@ -110,6 +110,17 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
             static_cast<jint>(result.z),static_cast<jint>(body.x),
             static_cast<jint>(body.y),static_cast<jint>(body.z));
         if(env->ExceptionCheck())env->ExceptionClear();
+        // Only a source-matched ORIGINAL stage may become a value-only hint
+        // for the room, never a scene-loaded report or STORY_READY.
+        if(identityCode==67&&coreEpisode>0){
+            jmethodID stageMethod=env->GetMethodID(
+                cls,"coopRecordOriginalStageIdentity","(III)V");
+            if(env->ExceptionCheck())env->ExceptionClear();
+            else if(stageMethod)env->CallVoidMethod(activity,stageMethod,
+                static_cast<jint>(coreEpisode),
+                static_cast<jint>(coreLevel),static_cast<jint>(coreStage));
+            if(env->ExceptionCheck())env->ExceptionClear();
+        }
         env->DeleteLocalRef(cls);
     }else if(env->ExceptionCheck())env->ExceptionClear();
     env->DeleteLocalRef(activity);

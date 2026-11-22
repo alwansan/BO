@@ -11,7 +11,7 @@ class OriginalCoreStageIdentityWitness final {
     uint32_t episode_=0, world_=0;
     int level_=-2, stage_=-2, signal_=0;
     unsigned samples_=0;
-    bool emitted_=false;
+    unsigned emittedMask_=0;
 public:
     // Return safe diagnostic 67 MATCH / 68 CONFLICT / 69 UNKNOWN.
     // Unknown is expected if either original source field is not readable.
@@ -32,13 +32,15 @@ public:
             level_=coreLevel;stage_=coreStage;signal_=next;samples_=0;
         }
         if(samples_<30)++samples_;
-        if(samples_<30||emitted_)return 0;
-        emitted_=true;
+        if(samples_<30)return 0;
+        const unsigned bit=1u<<static_cast<unsigned>(next-67);
+        if((emittedMask_&bit)!=0)return 0;
+        emittedMask_|=bit;
         return next;
     }
     void Reset()noexcept{
         episode_=0;world_=0;level_=-2;stage_=-2;signal_=0;
-        samples_=0;emitted_=false;
+        samples_=0;emittedMask_=0;
     }
 };
 } // namespace blackcoop

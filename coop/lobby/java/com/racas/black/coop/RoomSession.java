@@ -69,6 +69,36 @@ public final class RoomSession implements AutoCloseable {
     // Source: real BLACK actor feet; inputs: authenticated TLS socket peers.
     // This is not a real BLACK character, AI, collision or weapon simulation.
     private final RoomHostHumanKinematics hostHumanPoses=new RoomHostHumanKinematics();
+    // ORIGINAL local stage candidate, NOT the host-owned TLS scene epoch.
+    public static final class OriginalStageCandidate {
+        public final int originalEpisode,level,stage;
+        private OriginalStageCandidate(int e,int l,int s){
+            originalEpisode=e;level=l;stage=s;
+        }
+    }
+    private OriginalStageCandidate lastSourceStage;
+    private long lastSourceStageAtNs;
+    boolean observeOriginalStageIdentityFromGameThread(int episode,int level,int stage){
+        synchronized(lock){
+            if(closed||!validStoryThread()||
+               (phase!=Phase.HOSTING&&phase!=Phase.JOINED)||
+               episode<=0||level<0||level>8||stage<0||stage>15||
+               (lastSourceStage!=null&&episode<=lastSourceStage.originalEpisode))
+                return false;
+            lastSourceStage=new OriginalStageCandidate(episode,level,stage);
+            lastSourceStageAtNs=System.nanoTime();
+            return true;
+        }
+    }
+    /** Source-only evidence for future launcher verification, not READY. */
+    public OriginalStageCandidate originalStageCandidateFromGameThread(){
+        synchronized(lock){
+            if(!validStoryThread()||lastSourceStage==null||
+               System.nanoTime()-lastSourceStageAtNs>60000000000L)return null;
+            OriginalStageCandidate value=lastSourceStage;
+            return new OriginalStageCandidate(value.originalEpisode,value.level,value.stage);
+        }
+    }
     private int lastStageResourceFolder=-1;
     private long lastStageResourceObservedAt;
     /** Two exact original Xbox level file OPENs + original game-thread player
@@ -287,6 +317,7 @@ public final class RoomSession implements AutoCloseable {
             hostHumanPoses.resetForNewRoom();
             localEyeTransportSeq=0;hostEyeWorldTick=0;eyeBridgeErrorLogged=false;
             lastStageResourceFolder=-1;lastStageResourceObservedAt=0;
+            lastSourceStage=null;lastSourceStageAtNs=0;
             oldHost=host;oldClient=client;oldAnnouncer=announcer;
             host=null;client=null;announcer=null;phase=Phase.CONNECTING;
             description="Connecting";fingerprint="";
@@ -424,6 +455,7 @@ public final class RoomSession implements AutoCloseable {
             ++generation;storyGameThread=null;lastEye=null;
             localEyeTransportSeq=0;hostEyeWorldTick=0;eyeBridgeErrorLogged=false;
             lastStageResourceFolder=-1;lastStageResourceObservedAt=0;
+            lastSourceStage=null;lastSourceStageAtNs=0;
             oldHost=host;oldClient=client;oldAnnouncer=announcer;
             host=null;client=null;announcer=null;phase=Phase.IDLE;description="";fingerprint="";
         }

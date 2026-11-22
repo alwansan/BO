@@ -75,6 +75,12 @@ def prepare(root: pathlib.Path):
     public int[] coopPollHostWorldSnapshotFromGameThread() {
         return com.racas.black.coop.RoomAppRooms.pollHostWorldSnapshotFromGameThread();
     }
+    // Matched original core/stream level and stage as values on the genuine
+    // BLACK game thread. NOT a loaded-scene callback, never auto PREPARE.
+    public void coopRecordOriginalStageIdentity(int episode,int level,int stage) {
+        com.racas.black.coop.RoomAppRooms.originalStageIdentityFromGameThread(
+            episode,level,stage);
+    }
     // Only the pinned original Xbox SDL gamepad report from the ORIGINAL
     // player callback is eligible; Java sends only after story COMMIT.
     public boolean coopOfferOriginalGuestController(int x,int y,int yaw,

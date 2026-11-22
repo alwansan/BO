@@ -89,6 +89,14 @@ public final class RoomAppRooms {
   * values; only after matching original level file pair and stable game-thread
   * original player. NOT scene loaded or mission/ticket identity.
   */
+ // Matched original core/stream identity only; cannot assert scene READY.
+ public static void originalStageIdentityFromGameThread(int episode,int level,int stage){
+  if(episode<=0||level<0||level>8||stage<0||stage>15)return;
+  RoomSession session;
+  synchronized(RoomAppRooms.class){session=active;}
+  if(session!=null&&session.observeOriginalStageIdentityFromGameThread(episode,level,stage))
+   RoomDiagnostics.event("ORIGINAL_CORE_STREAM_STAGE_IDENTITY_CACHED_NOT_SCENE_READY");
+ }
  public static void originalStreamingStageFromGameThread(int code){
   if(code<500||code>2029)return;
   final int encoded=code-500, pair=encoded/9, folder=encoded%9;

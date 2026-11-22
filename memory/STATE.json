@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-65-original-core-stage-identity.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-66-original-stage-identity-session-bridge.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -1544,6 +1544,18 @@
       },
       "originalGuestStageLauncher": false,
       "windowsRebuildRun": 45031007275
+    },
+    "ORIGINAL_STAGE_ROOM_CANDIDATE_BRIDGE": {
+      "status": "SOURCE_PUSHED_CI_PENDING_NOT_SCENE_READY",
+      "nativeMethod": "coopRecordOriginalStageIdentity(III)V",
+      "javaMethod": "observeOriginalStageIdentityFromGameThread",
+      "sourceOriginalXbeRun": 45030934728,
+      "sourceTests": "coop/room_network/test_room_original_core_stage_identity_contract.cpp",
+      "onlyLocalEpisode": true,
+      "ttlSeconds": 60,
+      "automaticGuestLaunch": false,
+      "engineSceneLoadedProof": false,
+      "remoteHumanBody": false
     }
   },
   "pending": {
