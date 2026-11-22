@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-74-four-human-source-attested-real-tls.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-75-original-bot-puppet-appearance-source.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -1855,6 +1855,24 @@
       "secondTlsConclusion": "failure_rejoin_test_assumed_stale_guest_slot",
       "rejoinRequiresNewOriginalSceneEntry": true,
       "seamlessMidMissionRejoinImplemented": false
+    },
+    "ORIGINAL_BOT_PUPPET_DRAW_SOURCE": {
+      "status": "SOURCE_PUSHED_PRIVATE_CI_PENDING_NO_ACTOR",
+      "reference": "portingpete/Black-2006-Recomp@b2512fafd/src/recomp_manual.c:2009-2130,2481-2490",
+      "sourceNativeWorldDraw": "0x000D1500",
+      "sourceNativeCharacterDraw": "0x001B7440",
+      "sourceNativeAnimate": "0x0017E130",
+      "sourceNativePose": "0x001801B0",
+      "sourceModelOffset": "0x320",
+      "sourceNPCControllerOffset": "0x324",
+      "sourceModelInstanceOffset": "0x328",
+      "prototypeVirtualDrawSlot": 5,
+      "proposedRemoteHumans": 3,
+      "originalPuppetRuntimeAdded": false,
+      "engineABIVerified": false,
+      "visibleGameAvatarVerified": false,
+      "sourceTest": "coop/analysis/test_original_bot_puppet_draw_xbe.py",
+      "workflow": ".github/workflows/black-coop-original-puppet-draw-source.yml"
     }
   },
   "pending": {
