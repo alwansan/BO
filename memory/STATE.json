@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-79-actual-two-phone-stage-auto-menu-remote-original-bot.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-80-four-human-room-start-multi-original-bot.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -2818,5 +2818,24 @@
     "windowsApkRun": 45068110154,
     "windowsApkResult": "pending",
     "nextTrialOnlyWhen": "real host-authoritative second actor, shared enemy/quest world, auto original first stage, remote on-screen soldier validated"
+  },
+  "session80": {
+    "base": "d9b9f4d6867319309a705617254b79a7af2a0ac8",
+    "lastNative": "3b99e615daa75381ce59fae95ea7e0ab26cabe43",
+    "gameplaySharedOriginalHostWorld": false,
+    "originalAutoMissionStartPhoneVerified": false,
+    "visualSoldierRuntimePhoneVerified": false,
+    "realOriginalRemoteHumanActors": false,
+    "originalEnemyAggroAllHumans": false,
+    "sharedQuestAndDamageAuthority": false,
+    "hostOneClickFirstStageForHumans": 4,
+    "hostStartJVMFourPeerTlsCi": 45070918389,
+    "hostAllBodyTlsCi": 45071151487,
+    "nativeAllBodySanitizerCi": 45071316506,
+    "androidFullBuildRun": 45071574359,
+    "androidFullBuildStatus": "queued_at_handoff",
+    "ciLastCompileFailureFixed": "room_original_live_remote_bot.hpp:160 undefined g_originalStageFileOpen (39df2567)",
+    "autoMenuUiRootFix": "ba34d965 + 4c131fca",
+    "ownerNextMajorTrial": "Only when the host has actual other original physics player actors, enemy AI, weapons and objectives truly one host authoritative original game world."
   }
 }
