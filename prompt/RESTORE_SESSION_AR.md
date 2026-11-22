@@ -1,3 +1,9 @@
+### Session65 owner original XBE source result verified — CI 45030934728 SUCCESS
+- Original pinned c5 XBE private bounded 2,048-byte instruction scan (not runtime): in candidate `sub_001EDC90` **12 direct byte-field mentions at core+0x5AEC (level)** and **5 at core+0x5AED (stage)**; in scanned `sub_001F1080` update and `sub_0020BC40` spawn windows 0 of each. [Private GitHub Actions 45030934728](https://github.com/alwansan/BO/actions/runs/45030934728) both synthetic and owner-private SUCCESS; no raw XBE, ISO, instruction dump or original assets exported. These are source-level evidence of fields in original code, NOT verified call-flow/readiness or loaded-game semantics.
+- [Windows APK attempt 45030706282](https://github.com/alwansan/BO/actions/runs/45030706282) FAILED only source file allowlist (before native regeneration/compiler); fixed in commit `2f0d5dfa` and [rebuild 45031007275](https://github.com/alwansan/BO/actions/runs/45031007275) started; check live, no gameplay claim.
+
+---
+
 ### Session65 CI packaging correction, 2026-11-22
 - New core stage contract source preflight [45030706269 SUCCESS](https://github.com/alwansan/BO/actions/runs/45030706269) and UDP [45030706264 SUCCESS](https://github.com/alwansan/BO/actions/runs/45030706264).
 - Full APK [45030706282 FAILED](https://github.com/alwansan/BO/actions/runs/45030706282) at runner **before regeneration/build**, due to static exact `reference/src/coop` file allowlist missing the newly staged `room_original_core_stage_identity_contract.hpp`. Logs show all prior source preparer tests PASS; this is packaging manifest only, **not** original BLACK game crash. Added exact new file to Windows APK CI allowlist; keep all other allowlisted source names unchanged. A new build must be checked and not called successful until completion.
