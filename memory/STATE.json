@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-75-original-bot-puppet-appearance-source.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-76-original-host-canonical-remote-puppet-pose-gate.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -2740,5 +2740,18 @@
   },
   "nextActorSourceDoc": "docs/ORIGINAL_REMOTE_HUMAN_BODY_ADAPTER_NEXT_AR.md",
   "externalReference": "docs/BLACK_WINDOWS_TDM_REFERENCE_SCOPE_AR.md",
-  "externalWindowsTdmSourceRepoAccessible": false
+  "externalWindowsTdmSourceRepoAccessible": false,
+  "session76": {
+    "scope": "source_only_value_guard_no_real_engine_render",
+    "sourceCommit": "18adb7882468f9c083d0795148e2c873ae6b3975",
+    "roomOnlyAndroidRun": 45042108516,
+    "roomOnlyArtifact": 14762361067,
+    "fourHumanSourceAttestedTlsRun": 45042108523,
+    "asanRun": 45053142029,
+    "asanStatus": "pending_check",
+    "actualGuestAutoLaunch": false,
+    "actualRemoteOriginalBody": false,
+    "hostSharedAi": false,
+    "ownerPhoneTestRequiredNow": false
+  }
 }
