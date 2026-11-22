@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-50-owner-bullet-damage-xbe-audit.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-51-fast-four-player-any-bot.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -1354,6 +1354,24 @@
       "originalGreenReticleBranchFound": false,
       "originalFriendlyDamageGuardFound": false,
       "ownerDeviceTestRequested": false
+    },
+    "HUMAN_INPUT_TLS_V4_FOUR_PLAYER_SOURCE_20261122": {
+      "status": "SUCCESS_REAL_TLS_LOOPBACK_ONLY_NOT_ORIGINAL_BLACK_GAMEPLAY",
+      "ciRun": 44971688698,
+      "participantCount": 4,
+      "wireVersion": 4,
+      "profile": 4,
+      "hostAuthenticatedPeerInputs": 3,
+      "actualBlackSceneLoaded": false,
+      "realRemoteActorRendered": false
+    },
+    "ANY_BOT_TEMP_VISUAL_SOURCE_GATE_20261122": {
+      "status": "SUCCESS_CPP_SANITIZERS_VALUE_ONLY_NO_RENDER",
+      "ciRun": 44971624673,
+      "originalFriendlyModelRequired": false,
+      "originalEnemyModelAllowed": true,
+      "npcAiCopied": false,
+      "actualBlackRendererConnected": false
     }
   },
   "pending": {
@@ -1527,10 +1545,10 @@
     "deviceTested": true,
     "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "Read Session50 and safe evidence; owner c5 bullet receiver 1024B 266 instructions 30 conditionals 2 returns, kind refs2 health1 dying1 but no friendly/reticle proof. Next map original friendly affiliation to actual reticle/hit guard without assuming NPC AI; then real original actor/MODEL draw and RCB, true stage loaded epoch, authenticated host world human-controlled remote AllyBody. CI first, no small owner tests.",
+  "next": "Session51: skip original ally identification and exact skin/rig; any original BOT enemy/friendly look okay. TLS v4 host+3 input source CI44971688698 SUCCESS and bot placeholder source44971624673 PASS, NO game. Prioritize true host original mission scene load + guests same stage/epoch, independent remote human actor with any bot look and game input/snapshots, AI/quest shared host world. Check APK44971762426 live, no small owner trial. Update RESTORE always.",
   "latestHandoff": {
     "date": "2026-11-22",
-    "session": 50,
+    "session": 51,
     "kind": "owner_CI_only_stage_static_plus_safe_tls_story_diagnostics",
     "plan": "docs/superpowers/plans/2026-11-22-host-story-remote-ally.md",
     "sourceCiRun": 44951425780,
@@ -1560,7 +1578,7 @@
     "engineHookVerified": false,
     "remoteHumanActorRendered": false,
     "ownerV3DeviceAccepted": false,
-    "sessionFile": "memory/sessions/2026-11-22_bo-coop-50-owner-bullet-damage-xbe-audit.md",
+    "sessionFile": "memory/sessions/2026-11-22_bo-coop-51-fast-four-player-any-bot.md",
     "ownerTestPolicy": "CI_FIRST_MAJOR_TRIAL_ONLY",
     "ownerXbeStaticRun": 44956138064,
     "storyDiagnosticJvmRun": 44956473684,
@@ -1587,10 +1605,10 @@
     "engineActualSharedStory": false,
     "ownerWriterFlowRun": 44961768279,
     "nativeWorldWitnessRun": 44962215874,
-    "latestRoomApkRun": 44967448414,
+    "latestRoomApkRun": 44971762426,
     "realSceneLoadedHook": false,
     "ownerPhoneTestRequested": false,
-    "latestRoomApkStatus": "SUCCESS_NO_GAMEPLAY",
+    "latestRoomApkStatus": "CHECK_LIVE_NO_GAMEPLAY",
     "previousRoomApkFailure": 44962275637,
     "ciAllowlistRepaired": true,
     "externalTdmReferenceReviewed": true,
@@ -1637,7 +1655,12 @@
     "allyFriendlyPolicySyntheticRun": 44969897865,
     "originalAllyFactionVerified": false,
     "latestOwnerScreenshotPixelsInspected": false,
-    "bulletPrivateRun": 44970558768
+    "bulletPrivateRun": 44970558768,
+    "fastTrialPlan": "docs/FAST_SHARED_STORY_TRIAL_AR.md",
+    "ownerPriority": "ANY_BOT_PLACEHOLDER_SHARED_STORY_FIRST",
+    "fourPlayerTlsSourceRun": 44971688698,
+    "anyBotVisualSourceRun": 44971624673,
+    "roomWireVersion": 4
   },
   "executionStatus": "Session49 owner observed bot ally green reticle + inability shoot/kill. New value-only AllyTargetPolicy source+ASAN44969897865 SUCCESS (not actual game). Read docs/OWNER_ALLY_GREEN_RETICLE_RESEARCH_AR.md and Session49; CL images listed, binary pixels not inspected. Next independently trace original c5 aim target faction tint and damage suppression, map original friendly actor->MODEL->GPU draw/RCB. Real verified game-thread host-selected stage epoch and human fullbody/shared world still missing. One future major two-phone trial only.",
   "ownerClarifications": {
@@ -1651,9 +1674,9 @@
   },
   "integrationRoadmap": "docs/COOP_INTEGRATION_ROADMAP_AR.md",
   "currentWork": {
-    "session": 50,
-    "task": "Pinned c5 XBE soldier bullet/character-kind read-only private CI proved source-known health/dying/type member references, NOT friendly fire or reticle branch",
-    "status": "Initial original 256B and extended 1024B private XBE CI SUCCESS; all dynamic faction damage and human AllyBody/scene loaded goals remain unverified",
+    "session": 51,
+    "task": "Owner pivot: any bot body allowed; prioritize real host-selected shared story, 4-player true TLS input stream and independent remote controls.",
+    "status": "RoomWire v4 and real 4-party TLS source tests passed, bot-appearance selection source tests passed; no actual original game scene or remote drawable/movement yet.",
     "sourceCi": 44951425780,
     "sourceCode": "9938283748ad1bdb06f15259d7e4fcb791a47574",
     "latestOwnerTestedAndroidApkRun": 44946597973,
@@ -1783,7 +1806,8 @@
     "originalCandidateEncodedRowsSafeRun": 44968462670,
     "ownerAllyReference": "docs/OWNER_ALLY_GREEN_RETICLE_RESEARCH_AR.md",
     "privateBulletRun": 44970558768,
-    "ownerGreenReticleClueStillUnverifiedInEngine": true
+    "ownerGreenReticleClueStillUnverifiedInEngine": true,
+    "gameplayCriticalBlocker": "Actual BLACK scene-loaded host/guest stage callback and actor/snapshot render integration"
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
@@ -1814,7 +1838,7 @@
   "ownerSteering": {
     "localOriginalFirstPerson": true,
     "localOriginalHandsCameraWeaponHud": true,
-    "remoteHumanVisual": "ALLY_FULL_BODY_LOOK_ONLY",
+    "remoteHumanVisual": "ANY_ORIGINAL_BLACK_BOT_MODEL_ENEMY_OR_ALLY_TEMPORARY",
     "remoteAllyVisualAllowed": true,
     "remoteNpcAiActorAllowed": false,
     "borrowingLiveNpcBrainAllowed": false,
@@ -1828,7 +1852,14 @@
     "doNotReuseBotAIForRemoteHumans": true,
     "reuseOnlyVerifiedOriginalAllyVisualAndFriendlyBehavior": true,
     "ownerImagesClBlackLog": "https://github.com/alwansan/CL/tree/main/black%20log/img",
-    "ownerDataBisoReadOnly": "https://github.com/alwansan/biso"
+    "ownerDataBisoReadOnly": "https://github.com/alwansan/biso",
+    "ownerAllowsEnemyBotLookForRemoteHumans": true,
+    "ownerAllowsSameBotLookForAllRemoteHumans": true,
+    "blockCorrectAllySearchForFirstTrial": false,
+    "correctAllyRigSkinShaderReticleDeferred": true,
+    "focus": "PLAYABLE_HOST_SHARED_STORY_AND_REMOTE_HUMAN_MOVEMENT_FIRST",
+    "ownerWantsOneMajorTrialAsSoonAsActuallyPlayable": true,
+    "minorTestsOnlyAutoSafeLogs": true
   },
   "originalPlayerDiagnostic": {
     "package": "org.bocoop.black.defaultplayer",
