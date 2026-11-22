@@ -33,13 +33,13 @@ final class RoomOriginalHostStagePrepareGate {
         preparedEpisode=sourceEpisode;preparedRevision=revision;nextEpoch=epoch;
         return true;
     }
-    // A HOST pressing START in a room of exactly 2 humans may create an
+    // A HOST pressing START in a room of 2–4 humans may create an
     // authenticated first-original-stage (level_00/stg_0001) PREPARE
     // before the real original level begins.
     // Does NOT launch the original game or imply any scene was loaded.
     int nextTwoPhoneFirstStageEpoch(long revision,int remoteHumans,
                                     boolean hasTicket){
-        if(revision<=0||remoteHumans!=1||hasTicket||
+        if(revision<=0||(remoteHumans<1||remoteHumans>3)||hasTicket||
            nextEpoch==Integer.MAX_VALUE)return 0;
         return nextEpoch+1;
     }

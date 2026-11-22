@@ -61,7 +61,7 @@ public final class RoomOverlay {
             if(!phase.equals(lastPhase)){lastPhase=phase;RoomDiagnostics.event("ROOM_"+phase);}
             RoomSession.StoryStatus story=session.storyStatus();
             boolean startPossible=state.phase==RoomSession.Phase.HOSTING&&
-                state.roster!=null&&state.roster.players.size()==2&&
+                state.roster!=null&&state.roster.players.size()>=2&&state.roster.players.size()<=4&&
                 story.ticket==null;
             if(twoPhoneStart!=null&&twoPhoneStart.isEnabled()!=startPossible)
                 twoPhoneStart.setEnabled(startPossible);
@@ -159,12 +159,12 @@ public final class RoomOverlay {
         status=label(statusPanel,"OFFLINE",14,FG);
         notice=label(statusPanel,"اختر الاستضافة أو جهازاً من القائمة.",12,MUTED);
         twoPhoneStart=button(statusPanel,
-            "START • المستوى 0 / المرحلة 1 — هاتفان",
+            "START • المرحلة الأولى — 2 إلى 4 لاعبين",
             this::startTwoPhoneFirstStage);
-        twoPhoneStart.setTag("room_story_start_first_two");
+        twoPhoneStart.setTag("room_story_start_first_room");
         twoPhoneStart.setEnabled(false);
         label(statusPanel,
-            "يرسل START طلب المرحلة الأولى للطرف الثاني. اختيار القصة من قائمة BLACK ما زال يدوياً على الهاتفين إلى أن يثبت المشغّل التلقائي؛ ظهور أجسام اللاعبين لم يُفعّل بعد.",
+            "يرسل START طلب المرحلة الأولى لجميع الموجودين بالغرفة. يبدأ المحرك بمحاولة تشغيل القصة الأصلية تلقائياً؛ اشتراك الأعداء والضرر والأهداف ما زال قيد التطوير.",
             11,MUTED);
         button(statusPanel,"مغادرة الغرفة والرجوع",()->{
             cancelScan.set(true);session.stop();RoomDiagnostics.event("ROOM_LEFT");dialog.dismiss();
@@ -259,14 +259,14 @@ public final class RoomOverlay {
     }
     private void startTwoPhoneFirstStage(){
         if(!session.requestTwoPhoneFirstStageFromLobby()){
-            RoomDiagnostics.event("TWO_PHONE_START_BLOCKED");
-            notice.setText("START يحتاج هوست مع لاعب ثاني واحد متصل، ولا توجد مرحلة جارية.");
+            RoomDiagnostics.event("ROOM_FIRST_STAGE_START_BLOCKED");
+            notice.setText("START يحتاج هوست و2–4 لاعبين متصلين، ولا توجد مرحلة جارية.");
             return;
         }
-        RoomDiagnostics.event("TWO_PHONE_START_FIRST_STAGE_REQUESTED");
-        notice.setText("أُرسل START للمستوى 0/المرحلة 1. ما يزال دخول قائمة BLACK يدوياً على الهاتفين، والعالم المشترك قيد التطوير.");
+        RoomDiagnostics.event("ROOM_FIRST_STAGE_START_REQUESTED");
+        notice.setText("أُرسل START للمستوى 0/المرحلة 1 لجميع اللاعبين؛ العالم التعاوني الكامل قيد التطوير.");
         android.widget.Toast.makeText(activity,
-            "START وصل للغرفة. افتح المرحلة الأولى داخل BLACK على الهاتفين.",
+            "أُرسل START لجميع اللاعبين في الغرفة.",
             android.widget.Toast.LENGTH_LONG).show();
         dialog.dismiss();
     }
@@ -345,7 +345,7 @@ public final class RoomOverlay {
                 out.append(story.committed?
                     "\nSTORY TLS COMMIT: المرحلة متطابقة، لكن لا يوجد عالم قتال مشترك بعد.":
                     "\nSTORY PREPARE: طلب بدء المرحلة وصل؛ ينتظر تحميل BLACK الأصلي على الهاتفين.");
-            }else out.append("\nSTART: متاح للهوست عند اتصال هاتفين، المرحلة الأولى افتراضياً.");
+            }else out.append("\nSTART: متاح للهوست عند اتصال 2–4 لاعبين، المرحلة الأولى افتراضياً.");
         }
         return out.toString();
     }

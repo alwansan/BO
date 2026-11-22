@@ -1,5 +1,5 @@
 // Copyright 2026 BO-COOP contributors. SPDX-License-Identifier: MIT
-// Host-authenticated 2-phone mission0/stage1 START -> genuine BLACK
+// Host-authenticated 2–4 human mission0/stage1 START -> genuine BLACK
 // frontend page/confirm actions. Never fakes game-loaded or AI sync.
 #pragma once
 #include <cstdint>
@@ -9,7 +9,7 @@ struct OriginalFirstStageMenuIntent {
  uint32_t epoch=0,revision=0,tokenHi=0,tokenLo=0;
  uint8_t self=0;
  bool valid()const noexcept{
-  return epoch&&revision&&(tokenHi||tokenLo)&&(self==1||self==2);
+  return epoch&&revision&&(tokenHi||tokenLo)&&(self>=1&&self<=4);
  }
  bool same(const OriginalFirstStageMenuIntent& x)const noexcept{
   return epoch==x.epoch&&revision==x.revision&&

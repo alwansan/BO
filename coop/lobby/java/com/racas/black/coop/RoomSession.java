@@ -137,9 +137,9 @@ public final class RoomSession implements AutoCloseable {
         }
     }
     /**
-     * Host-owned TWO-PHONE FIRST STAGE START from the Android lobby.
-     * Sends a genuine TLS STORY_PREPARE for level 0/stage 1 to the one
-     * connected phone. The original game stage is NOT started here.
+     * Host-owned 2-4 HUMAN FIRST STAGE START from the Android lobby.
+     * Sends a genuine TLS STORY_PREPARE for level 0/stage 1 to all authenticated
+     * connected peers in the room. The original game stage is NOT started here.
      * Original game-thread source stage matching and independent scene
      * readiness remain necessary for READY/COMMIT, with no fake actors.
      */
@@ -149,23 +149,23 @@ public final class RoomSession implements AutoCloseable {
                !host.isRunning()||host.storyTicket()!=null)return false;
             try{
                 RoomWire.State current=host.snapshot();
-                if(current==null||current.players.size()!=2||
+                if(current==null||(current.players.size()<2||current.players.size()>4)||
                    current.players.get(0).id!=1||
                    (lastSourceStage!=null&&
                     (lastSourceStage.level!=0||lastSourceStage.stage!=1)))
                     return false;
                 int epoch=sourceStagePrepare.nextTwoPhoneFirstStageEpoch(
-                    current.revision,1,false);
+                    current.revision,current.players.size()-1,false);
                 if(epoch==0)return false;
                 RoomStoryWire.Ticket ticket=host.prepareStory(0,1,epoch);
                 if(ticket==null||ticket.mission!=0||ticket.stage!=1||
-                   ticket.participants!=3||
+                   ticket.participants!=((1<<current.players.size())-1)||
                    ticket.rosterRevision!=current.revision||
                    !sourceStagePrepare.markTwoPhoneFirstStageOffered(
                        ticket.rosterRevision,epoch)){
                     host.cancelStory();return false;
                 }
-                event("TWO_PHONE_FIRST_STAGE_PREPARED_NEEDS_ORIGINAL_LAUNCH");
+                event("ROOM_FIRST_STAGE_PREPARED_NEEDS_ORIGINAL_LAUNCH");
                 return true;
             }catch(IOException unavailable){return false;}
         }
@@ -211,18 +211,22 @@ public final class RoomSession implements AutoCloseable {
             RoomStoryWire.Ticket ticket=phase==Phase.HOSTING?
                 host.storyTicket():client.storyTicket();
             if(ticket==null||ticket.mission!=0||ticket.stage!=1||
-               ticket.participants!=3||ticket.sceneEpoch<=0||
+               (ticket.participants!=3&&ticket.participants!=7&&ticket.participants!=15)||
+               ticket.sceneEpoch<=0||
                (phase==Phase.HOSTING?host.storyCommitted():client.storyCommitted()))
                 return empty;
             try{
                 RoomWire.State roster=phase==Phase.HOSTING?
                     host.snapshot():client.snapshot();
-                if(roster==null||roster.players.size()!=2||
+                if(roster==null||(roster.players.size()<2||roster.players.size()>4)||
+                   roster.players.size()!=Integer.bitCount(ticket.participants)||
                    roster.revision!=ticket.rosterRevision||
                    !java.security.MessageDigest.isEqual(
                        roster.session,ticket.session()))return empty;
                 int self=RoomWire.storySlot(roster,roster.self);
-                if(self!=(phase==Phase.HOSTING?1:2)||!ticket.includes(self))
+                if((self<1||self>4)||
+                   (phase==Phase.HOSTING&&self!=1)||
+                   (phase==Phase.JOINED&&self==1)||!ticket.includes(self))
                     return empty;
                 return new int[]{ticket.sceneEpoch,0,1,
                     (int)ticket.rosterRevision,(int)(ticket.token>>>32),

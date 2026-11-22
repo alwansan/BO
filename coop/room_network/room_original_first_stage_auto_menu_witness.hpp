@@ -84,7 +84,9 @@ inline void ObserveOriginalFirstStageAutoMenu(X86Context& ctx)noexcept{
  OriginalFirstStageMenuIntent plan{};
  if(frame[0]>0&&frame[1]==0&&frame[2]==1&&frame[3]>0&&
     (frame[4]!=0||frame[5]!=0)&&
-    (frame[6]==1||frame[6]==2)&&frame[7]==3)
+    (frame[6]>=1&&frame[6]<=4)&&
+    (frame[7]==3||frame[7]==7||frame[7]==15)&&
+    (frame[7]&(1<<(frame[6]-1))))
   plan={static_cast<uint32_t>(frame[0]),
         static_cast<uint32_t>(frame[3]),
         static_cast<uint32_t>(frame[4]),
