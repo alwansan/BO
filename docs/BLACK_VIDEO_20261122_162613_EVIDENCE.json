@@ -1,0 +1,141 @@
+{
+  "schema": "bo-coop/user-video-evidence/v1",
+  "recordedDateLocal": "2026-11-22",
+  "timezone": "Asia/Baghdad",
+  "userAttachment": "1006546724.mp4",
+  "originalName": "Screenrecorder-2026-11-22-16-26-13-469.mp4",
+  "originalRepo": "alwansan/CL",
+  "originalDirectory": "black log/vid/Screenrecorder-2026-11-22-16-26-13-469.mp4",
+  "videoUrl": "https://github.com/alwansan/CL/tree/main/black%20log/vid/Screenrecorder-2026-11-22-16-26-13-469.mp4",
+  "sha256": "b8cf29b0ad9c3dba12468dace342847c2017ff7ff8c4724da1acd583be72c454",
+  "sha256MatchesClReadme": true,
+  "sizeBytes": 187060734,
+  "durationSeconds": 162.887937,
+  "width": 2400,
+  "height": 1080,
+  "framesPerSecond": 30,
+  "videoCodec": "hevc",
+  "audioCodec": "aac",
+  "videoTimeline": [
+    {
+      "from": 0,
+      "to": 8,
+      "observed": "Initial black/loading display; BLACK title appears",
+      "certainty": "visible"
+    },
+    {
+      "from": 8,
+      "to": 14,
+      "observed": "Main BLACK menu, CO-OP option selected, room submenu",
+      "certainty": "visible"
+    },
+    {
+      "from": 15,
+      "to": 20,
+      "observed": "Android room form IDLE; hosting starts; hosting roster 1/4 with local phone only",
+      "certainty": "visible"
+    },
+    {
+      "from": 20,
+      "to": 25,
+      "observed": "Overlay prints STORY START unavailable until real remote actors and story synchronization exist; room HOSTING shown",
+      "certainty": "visible"
+    },
+    {
+      "from": 25,
+      "to": 33,
+      "observed": "Return to original BLACK game menu; choose original campaign and difficulty; no guest shown",
+      "certainty": "visible"
+    },
+    {
+      "from": 33,
+      "to": 43,
+      "observed": "Original LEVEL_00 mission briefing/loading and secondary objectives",
+      "certainty": "visible+engine_log"
+    },
+    {
+      "from": 43,
+      "to": 68,
+      "observed": "Playable urban first-person mission; native touch joystick/buttons; gunfire, reload, scenery, bot targets; combat UI",
+      "certainty": "visible"
+    },
+    {
+      "from": 68,
+      "to": 112,
+      "observed": "Walk/run and shoot through destroyed city; fire/explosion/smoke and bots/weapon reload",
+      "certainty": "visible"
+    },
+    {
+      "from": 112,
+      "to": 145,
+      "observed": "Original first-person firefight; enemies on street/buildings, moving/damage effects, weapon reload",
+      "certainty": "visible"
+    },
+    {
+      "from": 145,
+      "to": 162.887937,
+      "observed": "Several visible armed soldiers close and farther away; original NPC firefight continues; no overlay or confirmed remote human",
+      "certainty": "visible"
+    }
+  ],
+  "roomObserved": {
+    "hostVisibleAtS": 20,
+    "roomPlayers": 1,
+    "capacity": 4,
+    "storyStartBlockedText": "STORY START: unavailable until real remote actors and story sync exist.",
+    "realGuestObserved": false,
+    "hostSessionAfterDismiss": "unverified"
+  },
+  "logs": {
+    "base": "black log/logs/BLACK-Probe-20261122-162556-906",
+    "engineLogUrl": "https://github.com/alwansan/CL/blob/main/black%20log/logs/BLACK-Probe-20261122-162556-906/black_log.txt",
+    "probeLogUrl": "https://github.com/alwansan/CL/blob/main/black%20log/logs/BLACK-Probe-20261122-162556-906/coop_probe.txt",
+    "ownerXbeSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+    "resourceLevel00Types": [
+      0,
+      1
+    ],
+    "events": {
+      "start": 1,
+      "player": 130,
+      "pool": 134,
+      "lod": 142,
+      "animation": 128
+    },
+    "worldEpochs": [
+      1
+    ],
+    "poolResetSequences": [
+      1
+    ],
+    "poolAllValid": true,
+    "poolAllRejectedZero": true,
+    "playerLocalSamples": 130,
+    "playerBodyValidSamples": 130,
+    "playerVisualValidSamples": 0,
+    "playerHealthRange": [
+      628,
+      1200
+    ],
+    "npcLodSamples": 142,
+    "npcLodResourceValidSamples": 142,
+    "npcLodRenderValidSamples": 142,
+    "npcUniqueEphemeralProbeActorIds": 19,
+    "npcIdsNotNetworkPeers": true,
+    "topOriginalClipCounts": {
+      "SH_AR_S_001": 28,
+      "SH_AR_S_MOV": 20,
+      "TM_AR_S_001": 11,
+      "TM_AR_S_MOV": 6
+    }
+  },
+  "technicalFixes": {
+    "tapHeaderCommit": "e75e843a8afc287e0d573fbc09f50c7f837a7db1",
+    "nativeInputBridgeCommit": "88fa8ea7d06f5e78d4d08428435c953886078cff",
+    "preflightRun": 45029723932,
+    "preflightSuccess": true,
+    "fullAndroidApkRun": 45029723927,
+    "fullAndroidApkUnverified": true
+  },
+  "noMultiplayerGameplayProven": true
+}

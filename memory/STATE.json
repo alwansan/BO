@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-63-source-original-gamepad-to-guest-tls.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-64-black-video-visual-proof-and-touch-pad-merge.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -2200,7 +2200,43 @@
     "session63WindowsAndroidApkResultAtCheck": "IN_PROGRESS_NO_ACTUAL_GAMEPLAY",
     "session63OriginalGuestMissionAutoLaunch": false,
     "session63RenderedHumanBotActor": false,
-    "session63EnginePhysicsCombatShared": false
+    "session63EnginePhysicsCombatShared": false,
+    "session64UserVideoReviewed": true,
+    "session64VideoOriginalName": "Screenrecorder-2026-11-22-16-26-13-469.mp4",
+    "session64VideoClDirectory": "black log/vid/Screenrecorder-2026-11-22-16-26-13-469.mp4",
+    "session64VideoUrl": "https://github.com/alwansan/CL/tree/main/black%20log/vid/Screenrecorder-2026-11-22-16-26-13-469.mp4",
+    "session64VideoSha256": "b8cf29b0ad9c3dba12468dace342847c2017ff7ff8c4724da1acd583be72c454",
+    "session64VideoDurationSeconds": 162.887937,
+    "session64VideoResolution": "2400x1080_HEVC_30fps_AAC",
+    "session64VideoForensicDoc": "docs/BLACK_VIDEO_20261122_162613_FORENSIC_AR.md",
+    "session64VideoRealHostRoomOneOfFourShown": true,
+    "session64VideoRoomStoryStartExplicitlyUnavailable": true,
+    "session64VideoOriginalSinglePlayerGameplayProven": true,
+    "session64VideoRemoteHumanCoopProven": false,
+    "session64VideoDoesNotProveHostSessionSurvivedReturn": true,
+    "session64OriginalProbePath": "black log/logs/BLACK-Probe-20261122-162556-906/coop_probe.txt",
+    "session64OriginalProbeRecords": 535,
+    "session64OriginalProbeLocalPlayerSamples": 130,
+    "session64OriginalProbeNpcRenderSamplesValid": 142,
+    "session64OriginalProbeNpcActorUniqueEphemeralIds": 19,
+    "session64OriginalProbeAnimationSamples": 128,
+    "session64OriginalProbePoolSamples": 134,
+    "session64OriginalProbeObservedWorldEpochs": [
+      1
+    ],
+    "session64OriginalProbeSourceVisualModelNpcViable": true,
+    "session64OriginalProbeNoFreeRigProof": true,
+    "session64NativeAndroidMergedTouchSource": "RanggaCasper/Black-Android@f3754d6985a8c35204e7df071546e586b10f1806/native/input.cpp+native/touch.cpp",
+    "session64TouchPadTapContractCommit": "e75e843a8afc287e0d573fbc09f50c7f837a7db1",
+    "session64TouchPadTapIntegratedCommit": "88fa8ea7d06f5e78d4d08428435c953886078cff",
+    "session64TouchPadNativeStageCiRun": 45029723932,
+    "session64TouchPadNativeStageCiResult": "SUCCESS",
+    "session64TouchPadFullApkRun": 45029723927,
+    "session64TouchPadFullApkVerifiedSuccess": false,
+    "session64RoomEventsForRecordedVideoInCl": false,
+    "session64OriginalMissionGuestLaunchVerified": false,
+    "session64RemoteVisibleHumanActorVerified": false,
+    "session64OwnerRestoreAlwaysUpdate": true
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
