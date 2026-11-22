@@ -196,10 +196,10 @@ def prepare(root: pathlib.Path):
     shader=once(shader,'#include "gpu/vertex.h"',
                 '#include "gpu/vertex.h"\n#include "coop/gpu_decl_witness.hpp"',d3d)
     shader=once(shader,'    gpu::ParseDeclaration(*vs);',
-                 '    gpu::ParseDeclaration(*vs);\n    blackcoop::ObserveOriginalGpuDecl(*vs); // fixed event categories only
-    // Original D3D8 draw is a stronger witness than shader *creation*:
-    // require a real bound vertex buffer and 36-byte declared/active strides.
-    // These calls do NOT inspect the MODEL resource or alter the backend draw.',d3d)
+                 '    gpu::ParseDeclaration(*vs);\n    blackcoop::ObserveOriginalGpuDecl(*vs); // fixed event categories only',d3d)
+    # Original D3D8 draw is a stronger witness than shader *creation*:
+    # require a real bound vertex buffer and 36-byte declared/active strides.
+    # These calls do NOT inspect the MODEL resource or alter the backend draw.
     shader=once(shader,
         '    if (g_backend) g_backend->Draw(g_state, a[0], a[1], a[2], nullptr);',
         '''    if (g_backend && a[2] != 0)
