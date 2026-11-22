@@ -1650,7 +1650,7 @@
       "roomOnlyApkLastObserved": "in_progress"
     },
     "ORIGINAL_HOST_SOURCE_STAGE_TLS_PREPARE": {
-      "status": "REAL_TLS_SOURCE_PREFLIGHT_SUCCESS_ANDROID29_APK_PENDING_GUEST_NOT_LOADED",
+      "status": "TLS_SOURCE_ANDROID29_SUCCESS_APK_STILL_RUNNING_GUEST_NOT_LOADED",
       "sourceMatchedRealGameThread": true,
       "hostStageSourceRefreshSeconds": 2,
       "stageRange": "0..15",
@@ -1679,7 +1679,7 @@
       "storyTlsConclusion": "success",
       "udpRun": 45035225078,
       "udpConclusion": "success",
-      "android29LastObserved": "in_progress",
+      "android29LastObserved": "completed_success",
       "roomOnlyApkRun": 45035225062,
       "roomOnlyApkLastObserved": "in_progress"
     }

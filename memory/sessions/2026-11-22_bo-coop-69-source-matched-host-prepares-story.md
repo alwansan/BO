@@ -1,3 +1,8 @@
+### Session69 final Android29 platform check
+[Android29 Keystore and real TLS platform #45035224995 SUCCESS](https://github.com/alwansan/BO/actions/runs/45035224995). Source preflight #45035225001 SUCCESS, real TLS #45035225007 SUCCESS and UDP #45035225078 SUCCESS. Last separate Windows ARM64 room-only Android APK [#45035225062](https://github.com/alwansan/BO/actions/runs/45035225062) remains IN_PROGRESS; cannot claim an updated APK artifact yet. Even a successful APK is title+TLS lobby NO actual original shared campaign.
+
+---
+
 ### Session69 final engineering review / original Windows TDM repository distinction
 - CI after source stage transition+TLS replay fix: [real TLS #45035225007 SUCCESS](https://github.com/alwansan/BO/actions/runs/45035225007), [native/source/java stage #45035225001 SUCCESS](https://github.com/alwansan/BO/actions/runs/45035225001), [UDP #45035225078 SUCCESS](https://github.com/alwansan/BO/actions/runs/45035225078). Android29 [#45035224995](https://github.com/alwansan/BO/actions/runs/45035224995) and Windows Android room-only APK [#45035225062](https://github.com/alwansan/BO/actions/runs/45035225062) still IN_PROGRESS at last verification, do not claim success.
 - Original host game-thread source match now emits real TLS PREPARE, including late join after 2s source refresh. When next original stage reaches source match, old TLS ticket is ABORTED before the next source mission's PREPARE; returned server roster revision is recorded to resist join races. Synthetic code+real TLS room test covers wire-ID 3+ reconnect, stage original episode11/level0 stage0 → new episode12/level1 stage0 with increasing host scene epoch; never sends READY/COMMIT.
