@@ -65,6 +65,10 @@ public final class RoomSession implements AutoCloseable {
     private LocalEye lastEye;
     private int localEyeTransportSeq,hostEyeWorldTick;
     private boolean eyeBridgeErrorLogged;
+    // HOST game-thread value-only remote HUMAN movement proxy.
+    // Source: real BLACK actor feet; inputs: authenticated TLS socket peers.
+    // This is not a real BLACK character, AI, collision or weapon simulation.
+    private final RoomHostHumanKinematics hostHumanPoses=new RoomHostHumanKinematics();
     private int lastStageResourceFolder=-1;
     private long lastStageResourceObservedAt;
     /** Two exact original Xbox level file OPENs + original game-thread player
@@ -115,11 +119,13 @@ public final class RoomSession implements AutoCloseable {
                         new java.util.ArrayList<>(4);
                     // The real original actor's +0xA0 BODY FEET, not eye +0x100.
                     avatars.add(new RoomWorldSnapshotWire.Avatar(1,bx,by,bz,0,0));
-                    for(RoomTls.Server.TrustedEye item:host.latestVerifiedCameraEyes()){
-                        RoomCameraEyeWire.Eye eye=item.camera;
-                        avatars.add(new RoomWorldSnapshotWire.Avatar(item.peerId,
-                             eye.bodyXcm,eye.bodyYcm,eye.bodyZcm,0,0));
-                    }
+                    // Never trust guest-reported body coordinates as a HOST
+                    // world transform. Only bounded commands from an actual
+                    // authenticated TLS peer may move a host-owned placeholder.
+                    RoomStoryWire.Ticket exact=host.storyTicket();
+                    if(exact!=null&&hostHumanPoses.observeHostSourceFeet(
+                           exact,bx,by,bz))
+                        avatars.addAll(hostHumanPoses.remotePoses(exact));
                     avatars.sort((a,b)->Integer.compare(a.playerId,b.playerId));
                     host.offerWorldSnapshot(++hostEyeWorldTick,avatars);
                 }
@@ -222,7 +228,18 @@ public final class RoomSession implements AutoCloseable {
         synchronized(lock){
             if(!validStoryThread()||phase!=Phase.HOSTING||host==null)
                 return java.util.Collections.emptyList();
-            return host.drainLatestTrustedInputs();
+            java.util.List<RoomTls.Server.TrustedInput> accepted=
+                host.drainLatestTrustedInputs();
+            if(host.storyCommitted()){
+                RoomStoryWire.Ticket exact=host.storyTicket();
+                if(exact!=null){
+                    final long now=System.nanoTime();
+                    for(RoomTls.Server.TrustedInput sample:accepted)
+                        hostHumanPoses.acceptAuthenticated(exact,sample.peerId,
+                                                           sample.value,now);
+                }
+            }
+            return accepted;
         }
     }
     /** Publish original HOST game-derived locations after verified COMMIT. */
@@ -267,6 +284,7 @@ public final class RoomSession implements AutoCloseable {
             if(closed)throw new IllegalStateException("RoomSession was destroyed");
             token=++generation;
             storyGameThread=null;lastEye=null;
+            hostHumanPoses.resetForNewRoom();
             localEyeTransportSeq=0;hostEyeWorldTick=0;eyeBridgeErrorLogged=false;
             lastStageResourceFolder=-1;lastStageResourceObservedAt=0;
             oldHost=host;oldClient=client;oldAnnouncer=announcer;

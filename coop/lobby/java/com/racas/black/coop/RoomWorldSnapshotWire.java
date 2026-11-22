@@ -8,9 +8,11 @@ import java.util.*;
 /**
  * Host -> guests, value-only state extracted from a REAL BLACK host game
  * callback (future integration). No synthetic game world is implemented here.
- * This preserves one host-authoritative canonical state on all recipients.
- * Every avatar is an independently human-controlled remote actor; the host's
- * own local original first-person actor remains first-person on that device.
+ * This preserves one host-origin canonical VALUE state on all recipients.
+ * Host player position comes from original BLACK actor feet; remote HUMAN
+ * preview positions come from HOST kinematic integration of authenticated
+ * peer commands, NOT guest-submitted camera/feet coordinates. No BLACK remote
+ * renderer, collision/AI/weapon simulation or synchronized mission yet.
  */
 public final class RoomWorldSnapshotWire {
     private RoomWorldSnapshotWire(){}
