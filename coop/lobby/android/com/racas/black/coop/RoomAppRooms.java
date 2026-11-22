@@ -102,6 +102,47 @@ public final class RoomAppRooms {
   RoomDiagnostics.event("ORIGINAL_STREAM_LEVEL_"+level+"_STAGE_"+stage+
                         "_FOLDER_"+folder+"_UNPROVEN");
  }
+ /**
+  * TRUE TLS peer-identity-validated HUMAN INPUT drained on the actual BLACK
+  * original game thread only, after a real story COMMIT.
+  * Shape: [sceneEpoch, count, [trustedPeer,sequence,moveX,moveY,yaw,fire|jump]*].
+  * The TLS server enforces identity, ticket, revision, sequence and 250ms
+  * freshness before creating TrustedInput. The native side ALSO validates.
+  * Returns [0,0] to immediately purge native state when story is not live.
+  * This is NOT a BLACK actor controller, renderer or NPC AI.
+  */
+ public static int[] pollTrustedHumanInputsFromGameThread(){
+  RoomSession session;
+  synchronized(RoomAppRooms.class){session=active;}
+  if(session==null)return new int[]{0,0};
+  RoomSession.StoryStatus before=session.storyStatus();
+  if(!before.committed||before.ticket==null)return new int[]{0,0};
+  java.util.List<RoomTls.Server.TrustedInput> source=
+      session.drainHumanInputsFromGameThread();
+  RoomSession.StoryStatus after=session.storyStatus();
+  if(!after.committed||after.ticket==null||!before.ticket.same(after.ticket)||
+     source.size()>3)return new int[]{0,0};
+  java.util.ArrayList<RoomTls.Server.TrustedInput> items=
+      new java.util.ArrayList<>(source);
+  items.sort((a,b)->Integer.compare(a.peerId,b.peerId));
+  int[] frame=new int[2+items.size()*6];
+  frame[0]=after.ticket.sceneEpoch;
+  frame[1]=items.size();
+  int last=1;
+  for(int i=0;i<items.size();i++){
+   RoomTls.Server.TrustedInput trusted=items.get(i);
+   RoomHumanInputWire.Input input=trusted.value;
+   if(trusted.peerId<=last||trusted.peerId>4||input==null||
+      !input.matches(after.ticket)||input.sequence<=0)return new int[]{0,0};
+   int at=2+i*6;
+   frame[at]=trusted.peerId;frame[at+1]=input.sequence;
+   frame[at+2]=input.moveX;frame[at+3]=input.moveY;
+   frame[at+4]=input.yaw;
+   frame[at+5]=(input.fire?1:0)|(input.jump?2:0);
+   last=trusted.peerId;
+  }
+  return frame;
+ }
  public static void shutdown(){
   RoomSession old;RoomPresence.Service beacon;
   synchronized(RoomAppRooms.class){epoch++;starting=false;old=active;beacon=presence;active=null;presence=null;}

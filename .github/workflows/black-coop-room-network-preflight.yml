@@ -56,6 +56,9 @@ jobs:
           g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -fsanitize=undefined \
             bo/coop/room_network/test_room_original_core_phase_witness.cpp -o "$RUNNER_TEMP/test_core_phase"
           "$RUNNER_TEMP/test_core_phase"
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread -fsanitize=undefined \
+            bo/coop/room_network/test_room_original_trusted_input_contract.cpp -o "$RUNNER_TEMP/test_tls_human_inbox"
+          "$RUNNER_TEMP/test_tls_human_inbox"
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
