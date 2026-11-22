@@ -3,6 +3,7 @@
 // authenticated TLS->JNI. Values ONLY; never edits guest NPC AI or health.
 #pragma once
 #include "coop/room_original_guest_host_npc_contract.hpp"
+#include "coop/room_world_tick.hpp"
 #include <jni.h>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_system.h>

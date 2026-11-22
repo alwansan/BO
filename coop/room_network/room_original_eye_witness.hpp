@@ -18,6 +18,8 @@
 #include "coop/room_other_human_body_source_witness.hpp"
 #include "coop/room_original_live_remote_bot.hpp"
 #include "coop/room_original_ai_target_witness.hpp"
+#include "coop/room_original_host_npc_source_witness.hpp"
+#include "coop/room_original_guest_host_npc_witness.hpp"
 #include "game/layout.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_system.h>
@@ -194,6 +196,13 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
         // Actually fetch the other REAL human's HOST-owned feet for a future
         // independent original-bot draw. Still NO original actor memory write.
         PollOriginalOtherHumanBodySource(env,activity,cls,
+            originalLocalSceneRunning&&lookSourceMatched);
+        // Host is SOLE producer of original AI-owned character source
+        // values. Guests see them via signed TLS. Neither action mutates a
+        // guest NPC, objective, weapon, damage or scripted scene.
+        PublishOriginalHostNpcValues(env,activity,cls,coreEpisode,
+            originalLocalSceneRunning&&lookSourceMatched&&peerMask!=0);
+        PollHostNpcValuesOnOriginalGuestThread(env,activity,cls,
             originalLocalSceneRunning&&lookSourceMatched);
         env->DeleteLocalRef(cls);
     }else if(env->ExceptionCheck())env->ExceptionClear();
