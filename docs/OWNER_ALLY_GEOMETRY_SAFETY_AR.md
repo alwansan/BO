@@ -1,3 +1,12 @@
+## تحديث جلسة 45 — RCB وanimation banks وvertex layout تحققوا لاحقاً
+القسم الأصلي أدناه يصف بوابة الهندسة **كما كانت في جلسة44**. تقدم البحث اللاحق ولا ينبغي التعامل معه وكأن ملفات RCB لم تُفحص: اقرأ `docs/OWNER_RCB_ANIMATION_LINK_AUDIT_AR.md`.
+- RCB v21: CI `44965062874 SUCCESS`، 9 RCB entries في 3 ملفات لكن **هوية واحدة في كل ملف** (3 هويات حسب سياق الملف) مع parent/lookup/matrix variants = 0، و24/25 hashes من MODEL.
+- BNKS v8 + encoding4: CI `44964889359 SUCCESS`، 22 بنكاً/675 clip/61,615 track record مرّ بالتحقق من البيانات الأصليّة من دون تشغيل renderer.
+- Vertex metadata: CI `44965229133 SUCCESS`، **12/12 نموذجاً** كل واحد 3 buffers وكل buffers الـ36 stride36، نمط flags خام ثلاثة لكل نموذج وخانة texture name واحدة؛ **لم تُفسَّر flags أو أوزان الجلد أو ربط الخامات**.
+- جميعها فحوص Actions على أصول المالك فقط وليست اختبار تشغيل حليف عن بعد أو القصة المشتركة. أولوية العمل المتبقية skin weights/rig matrices/sampling ثم actor renderer المستقل وgame-thread true scene loaded.
+
+---
+
 # BLACK CO-OP — أول إثبات هندسة لمجسمات الجسم المرشحة من أصول المالك
 التاريخ: 2026-11-22. العمل ضمن `alwansan/BO:experiment/black-coop` فقط.
 
