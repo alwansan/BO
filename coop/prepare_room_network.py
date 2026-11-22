@@ -89,6 +89,14 @@ def prepare(root: pathlib.Path):
     public int[] coopPollAllOtherHumanBodiesFromGameThread() {
         return com.racas.black.coop.RoomAppRooms.pollAllOtherHumanBodiesFromGameThread();
     }
+    // Genuine original NPC pool read-only sample from HOST game-thread;
+    // guest gets bounded signed canonical NPC values after TLS COMMIT.
+    public void coopRecordOriginalHostNpcSampleFromGameThread(int[] sample) {
+        com.racas.black.coop.RoomAppRooms.originalHostNpcSampleFromGameThread(sample);
+    }
+    public int[] coopPollHostOriginalNpcWorldFromGameThread() {
+        return com.racas.black.coop.RoomAppRooms.pollHostOriginalNpcWorldFromGameThread();
+    }
     // Obtain HOST-owned authenticated room roster ordinal slots only.
     // No guest coordinates, no actor pointers and no game scene READY.
     public int coopHostAppearancePeerMaskFromGameThread() {

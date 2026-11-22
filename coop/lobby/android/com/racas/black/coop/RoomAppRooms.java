@@ -236,6 +236,56 @@ public final class RoomAppRooms {
   synchronized(RoomAppRooms.class){s=active;}
   return s==null?new int[5]:s.allOtherHumanBodiesFromGameThread();
  }
+ /**
+  * ORIGINAL host scene, actual character-pool read-only values, 5Hz max.
+  * Native supplies [originalEpisode,count,(hostSlot,xyzCm,hpCenti,dead)*].
+  * NEVER accepts NPC positions from the remote player or menu UI.
+  */
+ public static void originalHostNpcSampleFromGameThread(int[] sample){
+  if(sample==null||sample.length<2||sample.length>194||
+     sample[0]<=0||sample[1]<0||sample[1]>32||
+     sample.length!=2+6*sample[1])return;
+  RoomSession s;
+  synchronized(RoomAppRooms.class){s=active;}
+  if(s==null)return;
+  java.util.ArrayList<RoomNpcWorldWire.Npc> actors=
+      new java.util.ArrayList<>(sample[1]);
+  int last=-1;
+  try{
+   for(int i=0;i<sample[1];i++){
+    int at=2+i*6,slot=sample[at];
+    if(slot<=last)return;
+    actors.add(new RoomNpcWorldWire.Npc(slot,sample[at+1],
+      sample[at+2],sample[at+3],sample[at+4],sample[at+5]));
+    last=slot;
+   }
+  }catch(java.io.IOException invalid){return;}
+  if(s.publishOriginalHostNpcWorldFromGameThread(sample[0],actors)&&
+     npcFirstSent.compareAndSet(false,true))
+   RoomDiagnostics.event("ORIGINAL_HOST_NPC_VALUES_FIRST_TLS_QUEUED_NO_SHARED_AI");
+ }
+ private static final java.util.concurrent.atomic.AtomicBoolean npcFirstSent=
+     new java.util.concurrent.atomic.AtomicBoolean();
+ /**
+  * Guest reads HOST-owned canonical NPC VALUES, never local game memory.
+  * Does not freeze or overwrite guest NPC AI: that engine bridge is P0.
+  */
+ public static int[] pollHostOriginalNpcWorldFromGameThread(){
+  RoomSession s;
+  synchronized(RoomAppRooms.class){s=active;}
+  if(s==null)return new int[3];
+  RoomNpcWorldWire.World w=s.readOriginalHostNpcWorldFromGameThread();
+  if(w==null)return new int[3];
+  int[] answer=new int[3+w.npcs.size()*6];
+  answer[0]=w.epoch;answer[1]=w.tick;answer[2]=w.npcs.size();
+  for(int i=0;i<w.npcs.size();i++){
+   RoomNpcWorldWire.Npc n=w.npcs.get(i);int at=3+i*6;
+   answer[at]=n.slot;answer[at+1]=n.xCm;answer[at+2]=n.yCm;
+   answer[at+3]=n.zCm;answer[at+4]=n.healthCenti;
+   answer[at+5]=n.flags;
+  }
+  return answer;
+ }
  // Source-only native gamepad -> authenticated GUEST TLS inputs.
  // Exact COMMITTED ticket scope resets the per-story sequence.
  // Not a loaded scene, NPC input, remote actor controller or physics.
