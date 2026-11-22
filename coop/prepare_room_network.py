@@ -258,6 +258,7 @@ def prepare(root: pathlib.Path):
     pending['src/coop/room_original_eye_witness.hpp'] = (HERE / 'room_network/room_original_eye_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/original_other_human_body_source.hpp'] = (HERE / 'room_network/original_other_human_body_source.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_other_human_body_source_witness.hpp'] = (HERE / 'room_network/room_other_human_body_source_witness.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_live_remote_bot.hpp'] = (HERE / 'room_network/room_original_live_remote_bot.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_streaming_stage_contract.hpp'] = (HERE / 'room_network/room_original_streaming_stage_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_streaming_stage_witness.hpp'] = (HERE / 'room_network/room_original_streaming_stage_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_core_phase_witness.hpp'] = (HERE / 'room_network/room_original_core_phase_witness.hpp').read_text(encoding='utf-8')
@@ -308,6 +309,25 @@ def prepare(root: pathlib.Path):
     }
     if (app::kGame.pad) app::kGame.pad(port, p);''',pad_file)
     pending[pad_file]=pad
+
+    # Exact original world draw hook. The source-validated original character
+    # renderer may draw one independent appearance-only remote HUMAN body
+    # under authenticated 2-human COMMIT. No NPC AI/world ownership transfer.
+    draw='src/game/hooks.cpp'
+    visual=pending.get(draw,originals[draw].decode('utf-8').replace('\r\n','\n'))
+    visual=once(visual,'#include "game/layout.h"',
+        '#include "game/layout.h"\n#include "coop/room_original_live_remote_bot.hpp"',draw)
+    visual += '''
+// Original level grid drawing. After vanilla draw, one remote-human original
+// soldier LOOK may be drawn; never suppress or alter original NPC drawing.
+X86_EXTERN_FUNC(__imp__sub_000D1500);
+X86_FUNC(sub_000D1500) {
+    const uint32_t originalGrid=ctx.edi;
+    __imp__sub_000D1500(ctx,base);
+    blackcoop::OriginalRemoteHumanBotVisual().Draw(ctx,originalGrid);
+}
+'''
+    pending[draw]=visual
 
     # Staging-only extension of the EXISTING original local-player X86 wrapper.
     # It samples R32(kWorld) only when the original character kind and identity

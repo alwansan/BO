@@ -16,6 +16,7 @@
 #include "coop/room_original_guest_launch_match_witness.hpp"
 #include "coop/room_original_running_scene_source_gate.hpp"
 #include "coop/room_other_human_body_source_witness.hpp"
+#include "coop/room_original_live_remote_bot.hpp"
 #include "game/layout.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_system.h>
@@ -113,6 +114,10 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
     static OriginalRunningSceneSourceGate localSceneRun;
     const bool originalLocalSceneRunning=localSceneRun.Observe(
         coreEpisode,world,coreLevel,coreStage,lookSourceMatched);
+    // Same genuine original game thread and independently stable loaded level.
+    // The actual other-human BODY source is checked again at DRAW time.
+    OriginalRemoteHumanBotVisual().ObserveScene(coreEpisode,world,
+        originalLocalSceneRunning&&lookSourceMatched);
     JNIEnv* env=static_cast<JNIEnv*>(SDL_GetAndroidJNIEnv());
     jobject activity=static_cast<jobject>(SDL_GetAndroidActivity());
     if(!env||!activity)return;
