@@ -2786,10 +2786,11 @@
     "sourcePreflightRun": 45054921402,
     "android29Run": 45054921375,
     "androidApkRun": 45054921483,
-    "ciStatus": "pending",
+    "ciStatus": "real_TLS_source_Android29_success_full_APK_in_progress",
     "autoOriginalGuestMissionLaunch": false,
     "remoteCharacterOriginalDraw": false,
     "hostSharedOriginalEnemySimulation": false,
-    "requiresPhoneTrialNow": false
+    "requiresPhoneTrialNow": false,
+    "testPlan": "docs/OWNER_TWO_PHONE_START_TRIAL_AR.md"
   }
 }

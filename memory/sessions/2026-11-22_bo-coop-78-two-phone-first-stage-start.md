@@ -1,3 +1,10 @@
+### Session78 trial package and CI gate (2026-11-22)
+- User explicitly accepts one **meaningful integrated 2-phone trial** to accelerate. Documented precise host/guest setup, START first mission, manual original mission loading, combined video+safe logs for both phones in `docs/OWNER_TWO_PHONE_START_TRIAL_AR.md`. Do not claim remote bot body visible or guest auto launch.
+- Stage 0 host START code fbfeedff: network real TLS + native preflight + Android29 all SUCCESS (#45054921382, #45054921402, #45054921375). Full Android room-only build #45054921483 was still compiling original engine at last observation; check live before download/test.
+- Read `docs/OWNER_TWO_PHONE_START_TRIAL_AR.md` and latest Action before asking for trial; do NOT ask owner for repeated tiny tests.
+
+---
+
 # BO-COOP Session78 — User accelerated two-phone Start trial focus
 
 Date: 2026-11-22. Only write alwansan/BO:experiment/black-coop. Do not write main, CL, biso or original saved assets.

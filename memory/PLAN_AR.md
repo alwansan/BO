@@ -1,3 +1,10 @@
+### Session78 trial package and CI gate (2026-11-22)
+- User explicitly accepts one **meaningful integrated 2-phone trial** to accelerate. Documented precise host/guest setup, START first mission, manual original mission loading, combined video+safe logs for both phones in `docs/OWNER_TWO_PHONE_START_TRIAL_AR.md`. Do not claim remote bot body visible or guest auto launch.
+- Stage 0 host START code fbfeedff: network real TLS + native preflight + Android29 all SUCCESS (#45054921382, #45054921402, #45054921375). Full Android room-only build #45054921483 was still compiling original engine at last observation; check live before download/test.
+- Read `docs/OWNER_TWO_PHONE_START_TRIAL_AR.md` and latest Action before asking for trial; do NOT ask owner for repeated tiny tests.
+
+---
+
 ## Session78 — two-phone FIRST STAGE START now present in real Android lobby (2026-11-22)
 - OWNER OVERRIDE: prioritize one practical **2-phone** first playable test: HOST creates TLS room, SECOND phone joins, host presses visible START, both launch mission 0/stage 0, see each other as any original BOT LOOK (original local FPS remains unchanged). Push hard; owner permits high-value integrated phone tests. Do not waste cycles on cosmetic/ally appearance.
 - [Code commit fbfeedff](https://github.com/alwansan/BO/commit/fbfeedffcc9c85dad6eb44084e58797c723ca2d0) adds actual HOST **START • stage 1** Android lobby button, enabled only when exactly 2 humans are authenticated. \`RoomSession.requestTwoPhoneFirstStageFromLobby\` sends actual authenticated TLS \`STORY_PREPARE\` mission=0/stage=0 to guest *before* original game starts, keeps all existing original game source gates for independent READY/COMMIT. It rejects one-phone click, repeated Start, stale roster, wrong original stage; source-stage mismatch ABORTS the pending ticket. After button closes lobby, currently BOTH humans must still manually choose mission 1 in the original BLACK game frontend; **no actual automatic guest level navigation, no NPC body rendering or shared enemy AI/combat/mission**. UI openly explains this and logs fixed safe start/abort evidence codes.
