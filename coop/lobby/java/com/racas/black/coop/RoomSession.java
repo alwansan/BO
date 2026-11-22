@@ -419,6 +419,7 @@ public final class RoomSession implements AutoCloseable {
                 System.nanoTime()-lastEye.atNs<=350000000L?lastEye:null;
         }
     }
+    private int hostNpcTick;
     private long generation;
     private boolean closed;
 
@@ -654,6 +655,42 @@ public final class RoomSession implements AutoCloseable {
             }catch(IOException invalid){return empty;}
         }
     }
+    /**
+     * Original host BLACK NPC source only, after the genuine player/world
+     * running ticket gate. This publishes actual original NPC VALUES to TLS
+     * clients, not fake NPCs and never guest NPC game-memory writes.
+     */
+    public boolean publishOriginalHostNpcWorldFromGameThread(int originalEpisode,
+              java.util.List<RoomNpcWorldWire.Npc> npcs){
+        synchronized(lock){
+            if(closed||!validStoryThread()||phase!=Phase.HOSTING||
+               host==null||!host.isRunning()||!host.storyCommitted()||
+               originalEpisode<=0||lastSourceStage==null||
+               lastSourceStage.originalEpisode!=originalEpisode||
+               System.nanoTime()-lastSourceStageAtNs>3000000000L||
+               originalRunningReadyTicket==null||hostNpcTick==Integer.MAX_VALUE)
+                return false;
+            RoomStoryWire.Ticket t=host.storyTicket();
+            if(t==null||!t.same(originalRunningReadyTicket)||
+               t.mission!=lastSourceStage.level||
+               t.stage!=lastSourceStage.stage)return false;
+            try {
+                if(!host.offerNpcWorld(hostNpcTick+1,npcs))return false;
+                hostNpcTick++;return true;
+            }catch(IOException unavailable){return false;}
+        }
+    }
+    /** Exact authenticated host NPC world (values only) on GUEST game thread. */
+    public RoomNpcWorldWire.World readOriginalHostNpcWorldFromGameThread(){
+        synchronized(lock){
+            if(closed||!validStoryThread()||phase!=Phase.JOINED||
+               client==null||!client.isRunning()||!client.storyCommitted())
+                return null;
+            RoomStoryWire.Ticket t=client.storyTicket();
+            RoomNpcWorldWire.World world=client.npcWorld();
+            return t!=null&&world!=null&&world.matches(t)?world:null;
+        }
+    }
     /** Host scene unload/cancel invalidates its prepared ticket. */
     public boolean cancelStoryFromGameThread(){
         synchronized(lock){
@@ -681,7 +718,7 @@ public final class RoomSession implements AutoCloseable {
             token=++generation;
             storyGameThread=null;lastEye=null;
             hostHumanPoses.resetForNewRoom();
-            localEyeTransportSeq=0;hostEyeWorldTick=0;eyeBridgeErrorLogged=false;
+            localEyeTransportSeq=0;hostEyeWorldTick=0;hostNpcTick=0;eyeBridgeErrorLogged=false;
             lastStageResourceFolder=-1;lastStageResourceObservedAt=0;
             lastSourceStage=null;lastSourceStageAtNs=0;
             sourceStagePrepare.reset();
@@ -822,7 +859,7 @@ public final class RoomSession implements AutoCloseable {
         RoomTls.Client oldClient;
         synchronized(lock){
             ++generation;storyGameThread=null;lastEye=null;
-            localEyeTransportSeq=0;hostEyeWorldTick=0;eyeBridgeErrorLogged=false;
+            localEyeTransportSeq=0;hostEyeWorldTick=0;hostNpcTick=0;eyeBridgeErrorLogged=false;
             lastStageResourceFolder=-1;lastStageResourceObservedAt=0;
             lastSourceStage=null;lastSourceStageAtNs=0;
             sourceStagePrepare.reset();
