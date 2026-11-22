@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-80-four-human-room-start-multi-original-bot.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-81-original-host-npc-tls-v8.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -2843,5 +2843,25 @@
     "aiTargetNativeCiSuccess": 45071908485,
     "aiTargetSourcePreflightSuccess": 45071908413,
     "finalNativePoseAntiFlickerCommit": "8b5d11ce9f089d898d1ad77cf7d74a2765235caf"
+  },
+  "session81": {
+    "goal": "Real original BLACK one host authoritative 2-4 human first-person mission",
+    "isTrueSharedWorld": false,
+    "actualOriginalHostRemoteActors": false,
+    "originalEnemiesAttackOtherHumans": false,
+    "guestNativeNpcStateApplied": false,
+    "hostOriginalNpcWorldTransport": true,
+    "wireVersion": 8,
+    "transportCommit": "bdf2cc39c090c8fb813cc3c59808fd5e9d793ad0",
+    "androidStagingFix": "f15cf764b5d013cea8f0534b1d03e7465eb3b731",
+    "realTlsCiSuccess": 45073596530,
+    "nativeTestsCiSuccess": 45073596490,
+    "android29CiSuccess": 45073596581,
+    "sourcePreflightSuccess": 45073732884,
+    "newWindowsApkRun": 45073732872,
+    "newWindowsApkState": "in_progress_at_last_check",
+    "previousV7ApkSuccess": 45072167791,
+    "hostNpcSlotsAreGuestActors": false,
+    "nextBigTrial": "Only after real original host-owned physics actors AI combat quest and client reconciliation"
   }
 }
