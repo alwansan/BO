@@ -1,0 +1,82 @@
+name: BO-COOP original mission one-hop direct callee private XBE source proof (NO GAMEPLAY)
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/analysis/original_mission_direct_callee.py'
+      - 'coop/analysis/test_original_mission_direct_callee.py'
+      - '.github/workflows/black-coop-original-mission-direct-callee.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: bo-original-mission-direct-callee
+  cancel-in-progress: true
+jobs:
+  synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Synthetic direct-call mapping, wrong edge/identity and report schema
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s coop/analysis -p test_original_mission_direct_callee.py -v
+  owner-private:
+    needs: synthetic
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: bo
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - uses: actions/checkout@v4
+        with:
+          repository: alwansan/biso
+          ref: 9ceb6a65fb5a4414c106ca3961295a1f8f7e558b
+          path: owner-biso
+          sparse-checkout: Black_Xbox_Extracted/default.xbe
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+          lfs: false
+      - name: Source verify ONLY original launch direct edge and bounded callee
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          set -euo pipefail
+          python3 bo/coop/analysis/original_mission_direct_callee.py \
+            --owner-xbe owner-biso/Black_Xbox_Extracted/default.xbe \
+            --report "$RUNNER_TEMP/bo-original-launch-callee-safe.json"
+          python3 - <<'PY'
+          import os,json,pathlib
+          f=pathlib.Path(os.environ["RUNNER_TEMP"])/"bo-original-launch-callee-safe.json"
+          d=json.loads(f.read_text())
+          assert d["schema"]=="bo-private-original-launch-direct-callee-candidate-v1"
+          assert d["source_launch_direct_edge_appears_before_first_linear_ret"]
+          assert not d["original_loader_abi_proven"]
+          assert not d["actual_selected_mission_index_proven"]
+          assert not d["original_guest_stage_load_supported"]
+          assert not d["stage_loaded_callback_proven"]
+          assert not d["raw_proprietary_instructions_or_bytes_exported"]
+          assert f.stat().st_size<=5500
+          print("BO_DIRECT_ORIGINAL_CALLEE_PRIVATE_PASS: no raw game code or loader ABI claimed")
+          PY
+      - name: Upload derived numeric call edges ONLY
+        uses: actions/upload-artifact@v4
+        with:
+          name: bo-original-mission-direct-callee-safe
+          path: ${{ runner.temp }}/bo-original-launch-callee-safe.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Delete owner XBE and derived data from ephemeral runner
+        if: always()
+        run: |
+          rm -rf owner-biso
+          rm -f "$RUNNER_TEMP/bo-original-launch-callee-safe.json"
