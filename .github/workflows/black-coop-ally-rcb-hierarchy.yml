@@ -1,0 +1,86 @@
+name: BO-COOP private original RCB skeleton and MODEL bone overlap audit
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/analysis/ally_rcb_hierarchy_gate.py'
+      - 'coop/analysis/test_ally_rcb_hierarchy_gate.py'
+      - '.github/workflows/black-coop-ally-rcb-hierarchy.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: bo-coop-private-ally-rcb-hierarchy
+  cancel-in-progress: true
+jobs:
+  synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Assert model/skeleton hierarchy and name overlap using synthetic fixtures
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s coop/analysis -p test_ally_rcb_hierarchy_gate.py -v
+          echo 'BO_RCB_HIERARCHY_SYNTHETIC_PASS: no owner game files'
+  private-owner:
+    needs: synthetic
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: bo
+          sparse-checkout: |
+            coop/analysis/model_inventory.py
+            coop/analysis/ally_model_geometry_gate.py
+            coop/analysis/ally_rcb_hierarchy_gate.py
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - uses: actions/checkout@v4
+        with:
+          repository: alwansan/biso
+          ref: 9ceb6a65fb5a4414c106ca3961295a1f8f7e558b
+          persist-credentials: false
+          path: owner-biso
+          sparse-checkout: |
+            Black_Xbox_Extracted/levels/level_00/stg_0001/StLevel.bin
+            Black_Xbox_Extracted/levels/level_07/stg_0001/StLevel.bin
+            Black_Xbox_Extracted/levels/level_08/stg_0001/StLevel.bin
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Audit RCB v21 hierarchy and model-hash overlap from pinned owner resources
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          set -euo pipefail
+          python3 bo/coop/analysis/ally_rcb_hierarchy_gate.py \
+            --owner-root owner-biso/Black_Xbox_Extracted \
+            --report "$RUNNER_TEMP/bo-ally-rcb-hierarchy-safe.json"
+          python3 - <<'PY'
+          import json,os,pathlib
+          p=pathlib.Path(os.environ['RUNNER_TEMP'])/'bo-ally-rcb-hierarchy-safe.json'
+          r=json.loads(p.read_text())
+          assert r['schema']=='BO-COOP-owned-stlevel-rcb-hierarchy-v1'
+          assert r['files_checked']==3
+          assert not r['raw_assets_bones_hashes_matrices_or_vertices_exported']
+          assert not r['actual_animation_pose_player_verified']
+          assert not r['renderable_remote_human_body_verified']
+          print('BO_OWNER_RCB_HIERARCHY_META_PASS: safe derived counts only, NO renderer or animation claim')
+          PY
+      - name: Upload bounded summary only (NEVER RCB/MODEL bytes)
+        uses: actions/upload-artifact@v4
+        with:
+          name: bo-ally-rcb-hierarchy-safe-metadata
+          path: ${{ runner.temp }}/bo-ally-rcb-hierarchy-safe.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Erase original game resource checkout
+        if: always()
+        run: |
+          rm -rf owner-biso
+          rm -f "$RUNNER_TEMP/bo-ally-rcb-hierarchy-safe.json"
