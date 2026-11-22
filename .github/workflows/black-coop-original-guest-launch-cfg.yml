@@ -1,0 +1,74 @@
+name: BO-COOP owner BLACK guest original menu CFG (NO GAMEPLAY)
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/analysis/original_guest_launch_cfg.py'
+      - 'coop/analysis/test_original_guest_launch_cfg.py'
+      - '.github/workflows/black-coop-original-guest-launch-cfg.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: bo-original-guest-launch-cfg
+  cancel-in-progress: true
+jobs:
+  synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Check reachability versus unreachable CALL and owner identity
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s coop/analysis -p test_original_guest_launch_cfg.py -v
+  owner-private:
+    needs: synthetic
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: bo
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - uses: actions/checkout@v4
+        with:
+          repository: alwansan/biso
+          ref: 9ceb6a65fb5a4414c106ca3961295a1f8f7e558b
+          path: owner-biso
+          sparse-checkout: Black_Xbox_Extracted/default.xbe
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+          lfs: false
+      - name: Validate bounded owner original entry-rooted branch graph privately
+        run: |
+          set -euo pipefail
+          python3 bo/coop/analysis/original_guest_launch_cfg.py \
+            --owner-xbe owner-biso/Black_Xbox_Extracted/default.xbe \
+            --report "$RUNNER_TEMP/bo-guest-menu-cfg-safe.json"
+          python3 - <<'PY'
+          import os,json,pathlib
+          p=pathlib.Path(os.environ["RUNNER_TEMP"])/"bo-guest-menu-cfg-safe.json"
+          result=json.loads(p.read_text())
+          assert result["schema"]=="bo-original-guest-start-cfg-candidates-v1"
+          assert result["pinned_owner_original_xbe"]
+          assert len(result["control_flow_candidate_graphs"])==4
+          assert not result["guest_mission_auto_start_implemented"]
+          assert not result["real_engine_callable_abi_proven"]
+          assert not result["private_code_or_disassembly_exported"]
+          assert all(not row["original_abi_verified"]
+                     for row in result["control_flow_candidate_graphs"].values())
+          assert p.stat().st_size<=3500
+          print("BO_ORIGINAL_GUEST_MENU_CFG_PRIVATE_CHECK_PASS_NO_REAL_LOADER")
+          PY
+      - name: Delete source input and private summary from runner
+        if: always()
+        run: |
+          rm -rf owner-biso
+          rm -f "$RUNNER_TEMP/bo-guest-menu-cfg-safe.json"
