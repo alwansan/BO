@@ -71,6 +71,37 @@ class TestRcbStrict(unittest.TestCase):
         safe=json.dumps(report)
         for private in ("head","spine","foot","aabbccdd","12345678","0x1880"):
             self.assertNotIn(private,safe.lower())
+    def test_repeated_skeleton_id_is_not_a_second_distinct_rig(self):
+        b=synthetic_stage()
+        # Duplicate a valid serialized RCB with identical ID/parent/lookup.
+        # Keep different dictionary entries; these are occurrences, not
+        # unique animation identities.
+        b[0x2000:0x2614]=b[0x1880:0x1E94]
+        put32(b,0x1800+8,2)
+        struct.pack_into("<QII",b,0x1800+0x20,0x9876543200000000,0x800,0)
+        result=inspect_stage(b,"synthetic")
+        self.assertEqual(result["rcb_dictionary_entries"],2)
+        self.assertEqual(result["rcb_hierarchy_validated"],2)
+        self.assertEqual(result["rcb_distinct_ids"],1)
+        self.assertEqual(result["rcb_repeated_id_records"],1)
+        self.assertEqual(result["rcb_ids_with_conflicting_parents_or_lookup"],0)
+        self.assertEqual(result["rcb_ids_with_multiple_matrix_payloads"],0)
+        self.assertEqual(result["pairs"][0]["same_file_distinct_rcb_ids"],1)
+        # Distinct bind matrix payload does not create a new skeleton ID.
+        struct.pack_into("<f",b,0x2000+0x140,2.0)
+        matrix_variant=inspect_stage(b,"synthetic")
+        self.assertEqual(matrix_variant["rcb_ids_with_multiple_matrix_payloads"],1)
+        self.assertEqual(matrix_variant["rcb_ids_with_conflicting_parents_or_lookup"],0)
+        # Same ID but a *different valid hierarchy* must be treated as
+        # conflicting, not merged just because it has 25 identical names.
+        struct.pack_into("<i",b,0x2000+0x100+2*8,0)
+        conflicting=inspect_stage(b,"synthetic")
+        self.assertEqual(conflicting["rcb_ids_with_conflicting_parents_or_lookup"],1)
+        self.assertFalse(conflicting["pairs"][0]["unique_best_distinct_rcb_id"])
+        safe=json.dumps(conflicting)
+        for private in ("aabbccdd","98765432","head\\0","spine\\0"):
+            self.assertNotIn(private,safe.lower())
+
     def test_corruption_and_cycles_rejected(self):
         base=0x1880
         def fails(change):
