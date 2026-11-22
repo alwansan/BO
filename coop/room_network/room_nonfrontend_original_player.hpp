@@ -12,6 +12,9 @@ class NonFrontendOriginalPlayerWitness final {
     uint8_t consecutive_=0;
     bool reported_=false;
 public:
+    bool IsStable()const noexcept{
+        return consecutive_>=30&&world_!=0&&state_!=0;
+    }
     bool Observe(uint32_t game,uint32_t gameState,uint32_t frontEndOffset,
                  uint32_t world,bool knownOriginalLocalPlayer)noexcept{
         const bool candidate=knownOriginalLocalPlayer&&game!=0&&world!=0&&

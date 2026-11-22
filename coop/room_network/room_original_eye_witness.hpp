@@ -53,16 +53,15 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
         env->DeleteLocalRef(cls);
     }else if(env->ExceptionCheck())env->ExceptionClear();
     env->DeleteLocalRef(activity);
-    // Two genuine file opens in the original Xbox kernel plus the original
-    // player update are useful evidence; still NOT scene-loaded or mission-ID.
-    const auto& opened=g_originalStageFileOpen;
-    const int folder=opened.LastResourceFolderHint();
-    if(opened.BothEssentialFilesOpenedForCandidate()&&folder>=0&&folder<=8&&folder!=2){
-        static std::atomic<int> lastReported{-1};
-        int was=lastReported.load(std::memory_order_relaxed);
-        if(was!=folder&&lastReported.compare_exchange_strong(was,folder,
-                                             std::memory_order_acq_rel))
+    // Only a STABLE original non-frontend player and fresh file-open pair
+    // from the SAME original launch episode. No stale previous mission files.
+    // This STILL DOES NOT prove selected mission, scene loaded or safe READY.
+    if(stable.IsStable()){
+        int folder=-1;uint32_t episode=0;
+        if(g_originalStageFileOpen.TakeCandidateFromOriginalPlayer(folder,episode)){
+            (void)episode; // strictly private, no epoch value in logs
             SendSafeWorldCodeToAndroid(30+folder);
+        }
     }
 }
 } // namespace blackcoop

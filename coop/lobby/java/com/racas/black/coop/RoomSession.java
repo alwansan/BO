@@ -74,10 +74,11 @@ public final class RoomSession implements AutoCloseable {
             if(closed||!validStoryThread()||
                (phase!=Phase.HOSTING&&phase!=Phase.JOINED)||
                (folder!=0&&folder!=1&&(folder<3||folder>8)))return false;
-            boolean changed=lastStageResourceFolder!=folder;
+            // Native episode gate guarantees one callback per valid launch.
+            // A new launch may reopen the SAME folder, so report again.
             lastStageResourceFolder=folder;
             lastStageResourceObservedAt=System.nanoTime();
-            return changed;
+            return true;
         }
     }
     /** Diagnostic, never used to trigger READY/COMMIT. */
