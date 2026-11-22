@@ -1,3 +1,8 @@
+## Session46 verified weak vertex-lane patterns and blockers
+`44965837041 SUCCESS` on pinned owned MODEL vertex36 metadata, 12 candidates/38917 bounded samples: +12 four bytes often sum approximately255 (83.63%), +20 four bytes often below 25 (90.85%). **These are not semantic proofs of skinning**: unknown vertex shader declaration, joint indices and weights, original RCB-to-MODEL matrix transform, normalization, materials and animation pose. Initial run44965770507 failed owner private due unlabeled ValueError (possible report size bound); fixed 256KiB derived report budget + safe reasons, 44965837041 PASS. C++ synthetic pose/skin gate `44966105790 SUCCESS` verifies only toy skeleton and weights, not rendered game actor. Original c5 actual game-thread stage loaded, same host world, independent human remote ally, authenticated input and AI/quest/combat remain blockers. Do not ask owner phone for a few data bytes; instrument safely as auto log for one future large real game test. Report docs/OWNER_VERTEX36_SKIN_RESEARCH_AR.md.
+
+---
+
 ## Session45 resolved metadata / remaining critical gaps
 - RESOLVED owner source hierarchy ambiguity: 9 serialized RCB records in 3 StLevel files correspond to 1 distinct RCB ID per file with consistent parent/lookup/matrix data; `44965062874 SUCCESS` artifact14731331749. All 12 body-model candidate records match 24/25 local skeleton hashes. **This does not prove vertex skinning or unique actual human ally model**.
 - RESOLVED offline clip span validation: `44964889359 SUCCESS` 22 RCB-linked bank v8 resources, 675 clips and 61,615 encoding4 track records bounded; no runtime animation/player/pose. Asset metadata only.
