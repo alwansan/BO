@@ -10,6 +10,7 @@
 #include "kernel/coop_stage_resource_contract.hpp"
 #include "coop/room_original_mission_field_hint.hpp"
 #include "coop/room_original_streaming_stage_contract.hpp"
+#include "coop/room_original_core_phase_witness.hpp"
 #include "game/layout.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_system.h>
@@ -42,6 +43,17 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
     static NonFrontendOriginalPlayerWitness stable;
     if(stable.Observe(game,state,layout::kFrontEnd,world,true))
         SendSafeWorldCodeToAndroid(13); // coarse fixed event, NOT scene proof
+    // A separate read-only source-linked ORIGINAL mission-core PHASE hint.
+    // Pinned PC reference uses core+0x5AE0=0x1C to detect a running level;
+    // owner original XBE CI44980186959 finds direct uses of +0x5AE0.
+    // These facts do NOT yet verify game load completion or remote READY.
+    const uint32_t coreEpisode=g_originalStageFileOpen.ActiveEpisode();
+    const auto coreStream=g_originalStreamingStageHints.ForCorrelatedEpisode(coreEpisode);
+    const bool paired=g_originalStageFileOpen.BothEssentialFilesOpenedForCandidate();
+    static OriginalCoreRunningPhaseWitness corePhase;
+    if(corePhase.Observe(coreEpisode,world,world?kernel::R32(world+0x5AE0u):0,
+                         stable.IsStable(),paired,coreStream.episode==coreEpisode))
+        SendSafeWorldCodeToAndroid(14); // source-gated RUNNING hint, NOT READY
     JNIEnv* env=static_cast<JNIEnv*>(SDL_GetAndroidJNIEnv());
     jobject activity=static_cast<jobject>(SDL_GetAndroidActivity());
     if(!env||!activity)return;
