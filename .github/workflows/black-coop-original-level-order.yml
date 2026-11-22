@@ -1,0 +1,82 @@
+name: BO-COOP original XBE private level-order string pointer candidates (NOT mission map)
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/analysis/original_level_name_order.py'
+      - 'coop/analysis/test_original_level_name_order.py'
+      - '.github/workflows/black-coop-original-level-order.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: bo-original-xbe-level-order-static
+  cancel-in-progress: true
+jobs:
+  synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Synthetic XBE level label order pointer detection and malformed metadata refusal
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s coop/analysis -p test_original_level_name_order.py -v
+  owner-private:
+    needs: synthetic
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: bo
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - uses: actions/checkout@v4
+        with:
+          repository: alwansan/biso
+          ref: 9ceb6a65fb5a4414c106ca3961295a1f8f7e558b
+          path: owner-biso
+          sparse-checkout: Black_Xbox_Extracted/default.xbe
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+          lfs: false
+      - name: Owner XBE private pointer-order scan and safe counts only
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          set -euo pipefail
+          python3 bo/coop/analysis/original_level_name_order.py \
+            --owner-xbe owner-biso/Black_Xbox_Extracted/default.xbe \
+            --report "$RUNNER_TEMP/bo-original-level-order-derived.json"
+          python3 - <<'PY'
+          import json,os,pathlib
+          f=pathlib.Path(os.environ["RUNNER_TEMP"])/"bo-original-level-order-derived.json"
+          d=json.loads(f.read_text())
+          assert d["schema"]=="bo-owner-xbe-original-level-name-order-hints-v1"
+          assert d["pinned_original_identity_checked"]
+          assert len(d["level_name_match_counts"])==8
+          assert not d["level_index_and_original_menu_mission_mapping_proven"]
+          assert not d["real_host_scene_loader_proven"]
+          assert not d["actual_guest_auto_launch_proven"]
+          assert not d["raw_XBE_strings_and_bytes_exported"]
+          assert f.stat().st_size<=4096
+          print("BO_PRIVATE_LEVEL_POINTERS_SAFE_PASS: candidate-only metadata; no original strings/bytes")
+          PY
+      - name: Upload short derived metadata only (NEVER owner XBE)
+        uses: actions/upload-artifact@v4
+        with:
+          name: bo-original-level-pointer-order-hints
+          path: ${{ runner.temp }}/bo-original-level-order-derived.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Remove original owner input from ephemeral runner
+        if: always()
+        run: |
+          rm -rf owner-biso
+          rm -f "$RUNNER_TEMP/bo-original-level-order-derived.json"
