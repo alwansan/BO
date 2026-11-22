@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-44-android-build-human-input-generation-gate.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-45-original-rcb-animation-stride36.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -1104,6 +1104,89 @@
       "liveRemoteActorRendered": false,
       "noOriginalGameAssetsExported": true,
       "details": "docs/OWNER_ALLY_GEOMETRY_SAFETY_AR.md"
+    },
+    "OWNER_RCB_HIERARCHY_DEDUP_20261122": {
+      "status": "SUCCESS_OWNER_PINNED_RCB_V21_HIERARCHY_LOOKUP_BIND_MATRIX_DUPLICATES_COMPARED",
+      "ownerBisoRef": "9ceb6a65fb5a4414c106ca3961295a1f8f7e558b",
+      "syntheticAndOwnerRun": 44964651599,
+      "identityDedupRun": 44965062874,
+      "safeIdentityDedupArtifactId": 14731331749,
+      "stageFiles": 3,
+      "serializedRcbEntries": 9,
+      "hierarchyValidated": 9,
+      "uniqueRcbIdentitiesCountedPerFile": 3,
+      "uniqueRcbIdentitiesPerStage": [
+        1,
+        1,
+        1
+      ],
+      "duplicateIdParentOrHashLookupConflicts": 0,
+      "duplicateIdMatrixContentVariants": 0,
+      "modelCandidatesWithStrongOverlap": 12,
+      "modelNamesPerFirstStageCandidate": 25,
+      "bestNameMatchesPerFirstStageCandidate": 24,
+      "uniqueBestDistinctRcbIdentityForModelRecords": 12,
+      "humanAllySkinningVerified": false,
+      "actualGameSceneLoadedHook": false,
+      "actualRemoteActorRendered": false,
+      "safeDocument": "docs/OWNER_RCB_ANIMATION_LINK_AUDIT_AR.md",
+      "noOwnerAssetsExported": true
+    },
+    "OWNER_RCB_BANK_CLIP_BOUNDARY_20261122": {
+      "status": "SUCCESS_OWNER_PINNED_BANK_V8_ENCODING4_TRACK_BOUNDARY_ONLY",
+      "workflowRun": 44964889359,
+      "safeArtifactId": 14730623154,
+      "ownerBisoRef": "9ceb6a65fb5a4414c106ca3961295a1f8f7e558b",
+      "stageFiles": 3,
+      "validatedBanks": 22,
+      "unvalidatedBanks": 0,
+      "validatedClipOccurrences": 675,
+      "validatedTrackRecordsIncludingSegments": 61615,
+      "perStage": [
+        {
+          "stage": "level_00",
+          "banks": 6,
+          "clips": 202,
+          "tracks": 19030
+        },
+        {
+          "stage": "level_07",
+          "banks": 8,
+          "clips": 239,
+          "tracks": 21507
+        },
+        {
+          "stage": "level_08",
+          "banks": 8,
+          "clips": 234,
+          "tracks": 21078
+        }
+      ],
+      "sampleCountRange": [
+        2,
+        321
+      ],
+      "encoding4BoundsValidated": true,
+      "animationInterpolationImplemented": false,
+      "gamePosePlayerImplemented": false,
+      "verifiedFriendlyHumanActor": false,
+      "noOriginalClipBytesExported": true,
+      "safeDocument": "docs/OWNER_RCB_ANIMATION_LINK_AUDIT_AR.md"
+    },
+    "OWNER_BODY_VERTEX_STRIDE_LAYOUT_20261122": {
+      "status": "SUCCESS_OWNER_PINNED_DERIVED_FORMAT_METADATA_ONLY",
+      "workflowRun": 44965229133,
+      "safeArtifactId": 14731006958,
+      "modelCandidateRecords": 12,
+      "bufferRecordsTotal": 36,
+      "bufferStrideBytesAll": 36,
+      "flagsDistinctPerModel": 3,
+      "textureNameSlotsPerModel": 1,
+      "boneWeightsDecoded": false,
+      "skinBoneIndicesDecoded": false,
+      "textureBindingsValidated": false,
+      "rawFlagsNamesOrVerticesExported": false,
+      "safeDocument": "docs/OWNER_RCB_ANIMATION_LINK_AUDIT_AR.md"
     }
   },
   "pending": {
@@ -1277,10 +1360,10 @@
     "deviceTested": true,
     "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "Session44 validated owner original full-body MODEL surface metadata 44964028143 SUCCESS (safe artifact14730578388): 12 context records/0 rejected across level_00, level_07, level_08, first-mission BC1_MAT/BC1_TOM/LRG/SOL. Next inspect original RCB skeleton hierarchy, MODEL skin weights/materials/animations and lifetime to select real independent human remote AllyBody; ALSO prove actual c5 game-thread scene loaded callback/mission identity before any STORY_READY or actual actor binding. Host human-input scope/generation gate C++44963681576 PASS but not wired to live TLS/game. Room-only APK44962611024 PASS. No fragmented owner phone test.",
+  "next": "Session45: original owner 3 StLevel files RCB v21 hierarchy CI44965062874 SUCCESS (9 occurrences=one distinct RCB identity per file, 3 across file contexts, 0 conflicts, 12 models 24/25 bone hashes matched), animation bank v8/encoding4 CI44964889359 SUCCESS (22 bank/675 clip/61615 track records), original MODEL vertex-stream metadata44965229133 SUCCESS (all 36 buffers stride36, 3 patterns per model, one texture slot). NEXT reverse engineer stride36 bone indices/weights and verified MODEL matrices/RCB pose synthesis, then isolate human remote AllyBody renderer. Also independently prove owner c5 host stage actually loaded/scene epoch/game thread before STORY_READY. No phone trial until REAL host shared story and remote body/inputs ready.",
   "latestHandoff": {
     "date": "2026-11-22",
-    "session": 44,
+    "session": 45,
     "kind": "owner_CI_only_stage_static_plus_safe_tls_story_diagnostics",
     "plan": "docs/superpowers/plans/2026-11-22-host-story-remote-ally.md",
     "sourceCiRun": 44951425780,
@@ -1310,7 +1393,7 @@
     "engineHookVerified": false,
     "remoteHumanActorRendered": false,
     "ownerV3DeviceAccepted": false,
-    "sessionFile": "memory/sessions/2026-11-22_bo-coop-44-android-build-human-input-generation-gate.md",
+    "sessionFile": "memory/sessions/2026-11-22_bo-coop-45-original-rcb-animation-stride36.md",
     "ownerTestPolicy": "CI_FIRST_MAJOR_TRIAL_ONLY",
     "ownerXbeStaticRun": 44956138064,
     "storyDiagnosticJvmRun": 44956473684,
@@ -1360,9 +1443,17 @@
       "BC1_TOM",
       "LRG",
       "SOL"
-    ]
+    ],
+    "ownerRcbDedupRun": 44965062874,
+    "ownerRcbDedupSafeArtifact": 14731331749,
+    "ownerBankRun": 44964889359,
+    "ownerBankSafeArtifact": 14730623154,
+    "ownerVertexStrideRun": 44965229133,
+    "ownerVertexStrideArtifact": 14731006958,
+    "bodyGeometryProvenOnly": true,
+    "bodySkinningAndInterpolationUnproven": true
   },
-  "executionStatus": "Session44: complete Android room-only native observer APK44962611024 SUCCESS artifact14730766256, host human input gate ASAN/UBSAN44963681576 SUCCESS including scene/peer callback invalidation. Original pinned owner StLevel MODEL indexed geometry scan44964028143 SUCCESS safe artifact14730578388: 12 candidate records/0 errors, first mission four models with 25 bone names/3 buffers but no proven skinning/friendly identity/rendering. Genuine host campaign loaded stage and remote human AllyBody/world/AI/quest synchronisation remain unimplemented; no phone test required.",
+  "executionStatus": "Session45 complete three private owner asset CI success gates: RCB dedup 44965062874, bank/encoding4 44964889359, stride36 metadata 44965229133. Nine original RCB serialized entries across 3 files represent one nonconflicting identity per file, 12 MODEL candidates 24/25 name hash overlaps. 22 banks 675 clip occurrences 61615 track records structurally valid. All body MODEL vertex buffers 36-byte stride, 1 texture slot/model. No actual skin weights, pose interpolation, scene loader or human remote renderer; no owner phone test.",
   "ownerClarifications": {
     "session": 28,
     "previousPhoneTests": "Solo gameplay and two-phone real LAN lobby now confirmed, but no two-phone SAME WORLD gameplay",
@@ -1374,9 +1465,9 @@
   },
   "integrationRoadmap": "docs/COOP_INTEGRATION_ROADMAP_AR.md",
   "currentWork": {
-    "session": 44,
-    "task": "successfully compile complete native-witness room-only Android APK; add host-exclusive scene/roster/reconnect generation-fenced, capped remote human input handoff",
-    "status": "Native room-only Android APK SUCCESS44962611024; host human-input gate CI PASS44963681576; owner 3-stage MODEL indexed geometry CI PASS44964028143 with 12/12 candidate records but skinning/rig and actual game scene still OPEN",
+    "session": 45,
+    "task": "decode and validate pinned owner RCB joint hierarchy/identity, animation v8 encoding4 clip boundaries and body vertex stride metadata; avoid actual game body claims",
+    "status": "Owner RCB hierarchy/duplicate identity CI44965062874 PASS; owner animation banks CI44964889359 PASS; owner MODEL vertex stride36 metadata CI44965229133 PASS. Still NO interpreted skin weights/rig pose playback/game scene hook/remote human actor.",
     "sourceCi": 44951425780,
     "sourceCode": "9938283748ad1bdb06f15259d7e4fcb791a47574",
     "latestOwnerTestedAndroidApkRun": 44946597973,
@@ -1478,7 +1569,14 @@
     "latestOwnerGeometrySafeArtifact": 14730578388,
     "currentOwnerModelProof": "INDEXED_SURFACE_FINITE_ONLY",
     "liveFriendlyAllyRendererVerified": false,
-    "realSceneLoadedEngineHookProven": false
+    "realSceneLoadedEngineHookProven": false,
+    "latestOwnerRcbDedupRun": 44965062874,
+    "latestOwnerRcbDedupResult": "SUCCESS_9_SERIALIZED_RCB_3_DISTINCT_IDS_PER_FILE_CONTEXT_0_HIERARCHY_OR_MATRIX_CONFLICTS",
+    "latestOwnerBankAnimationRun": 44964889359,
+    "latestOwnerBankAnimationResult": "SUCCESS_22_BANKS_675_CLIPS_61615_TRACK_RECORDS_BOUNDS_ONLY",
+    "latestOwnerVertexStrideRun": 44965229133,
+    "latestOwnerVertexStrideResult": "SUCCESS_12_MODELS_ALL_THREE_STRIDE36_BUFFERS_ONE_TEXTURE_SLOT_PER_MODEL",
+    "actualSceneLoadedGameThreadHook": false
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
