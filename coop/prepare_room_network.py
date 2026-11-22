@@ -399,13 +399,13 @@ X86_FUNC(sub_000D1500) {
     # Original upstream files remain untouched and output stays LF.
     launch=pending.get(difficulty,originals[difficulty].decode('utf-8')).replace('\r\n','\n')
     launch=once(launch,'#include "xdk/hle.h"',
-                '#include "xdk/hle.h"\n#include "coop/room_world_tick.hpp"\n#include "coop/room_original_launch_difficulty_witness.hpp"\n#include "coop/room_original_streaming_stage_witness.hpp"\n#include "coop/room_original_guest_prepared_story_witness.hpp"\n#include "coop/room_original_first_stage_auto_menu_witness.hpp"',difficulty)
+                '#include "xdk/hle.h"\n#include "coop/room_world_tick.hpp"\n#include "coop/room_original_launch_difficulty_witness.hpp"\n#include "coop/room_original_streaming_stage_witness.hpp"\n#include "coop/room_original_guest_prepared_story_witness.hpp"',difficulty)
     # Pinned upstream original FRONTEND frame wrapper. In PREPARE phase the
     # guest has no body, so original player-update hooks never run. Poll
     # only the verified TLS ticket on this actual original frontend tick.
     launch=once(launch,
         '    Unlock();\n    __imp__sub_00115030(ctx, base);\n    OfferBlackOps();',
-        '    Unlock();\n    blackcoop::ObserveOriginalGuestPreparedStoryFrontend();\n    blackcoop::ObserveOriginalFirstStageAutoMenu(ctx);\n    __imp__sub_00115030(ctx, base);\n    OfferBlackOps();',difficulty)
+        '    Unlock();\n    blackcoop::ObserveOriginalGuestPreparedStoryFrontend();\n    __imp__sub_00115030(ctx, base);\n    OfferBlackOps();',difficulty)
     launch=once(launch,'    __imp__sub_00124CF0(ctx, base);',
         '''    blackcoop::ObserveMissionLaunchCandidate(); // attempt, NOT loaded scene
     const uint32_t originalLaunchEpisode=blackcoop::ObserveOriginalLaunchDifficulty();
@@ -426,6 +426,23 @@ X86_FUNC(sub_001EDC90) {
     __imp__sub_001EDC90(ctx, base); // unchanged original game function
 }''',difficulty)
     pending[difficulty]=launch
+
+    # ORIGINAL frontend's source-verified per-frame cursor hook is at
+    # pinned config/game.toml:0x124374, *after* menu cursor input and
+    # *before* the Flash page script consumes the confirm event.
+    # sub_00115030 is NOT guaranteed to be after cursor input; writing
+    # its menu input too early can get overwritten on the same frame.
+    # Use the already wired original game::ExitMenu callback rather than
+    # inventing an ABI to the mission loader. The callback's EBP is the
+    # actual UI manager; guard it against [0x2D199C] before any writes.
+    exit_menu='src/game/exit_menu.cpp'
+    menu=pending.get(exit_menu,originals[exit_menu].decode('utf-8')).replace('\r\n','\n')
+    menu=once(menu,'#include "game/layout.h"',
+        '#include "game/layout.h"\n#include "coop/room_original_first_stage_auto_menu_witness.hpp"',exit_menu)
+    menu=once(menu,
+        'void ExitMenu(X86Context& ctx, uint8_t*) {\n    X86Context saved = ctx;\n    Tick(ctx, ctx.ebp);',
+        'void ExitMenu(X86Context& ctx, uint8_t*) {\n    X86Context saved = ctx;\n    blackcoop::ObserveOriginalFirstStageAutoMenu(ctx);\n    Tick(ctx, ctx.ebp);',exit_menu)
+    pending[exit_menu]=menu
 
     # Read-only observation of the ORIGINAL title's actual parsed Xbox
     # D3D8 vertex declaration. This is not model skinning proof or a GPU draw.
