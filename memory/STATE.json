@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-78-two-phone-first-stage-start.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-79-actual-two-phone-stage-auto-menu-remote-original-bot.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -2797,5 +2797,26 @@
     "apkBytes": 21955695,
     "apkSha256": "29cd05eedb36af77646c6004a2546c9156c6dde97a9c1511a078f40b03113d7e",
     "phoneTrialPurpose": "one integrated two-phone START/TLS/native-scene diagnostics; no visible actor or shared AI yet"
+  },
+  "session79": {
+    "ownerPhonesExperimentSource": "alwansan/CL main: black log host+second phone 2026-11-22 23:12",
+    "foundFirstStage": "level_00/stg_0001",
+    "oldStartStageMismatchFixed": true,
+    "realWorldShared": false,
+    "realPhoneAutoStageStartTested": false,
+    "realPhoneVisualRemoteBotTested": false,
+    "hostEngineSecondActor": false,
+    "hostEnemyAIAndCombatReplication": false,
+    "ownerXbeMatchesMitPcPrototype": true,
+    "xbeIdentityCiSuccess": 45067068552,
+    "stageFixCommit": "5161e8177292678bbcb44819998e14b544a3a2ab",
+    "nativeBodySourceCommit": "45e37699255076174d4731627c034999189ba035",
+    "originalBotPrototypeCommit": "0c2e8a04b17ea94eefb1e5f78910b4af3d659374",
+    "autoMenuCommit": "e2f00dd0eccac5fcfb0e66f768a17b29dc249bb9",
+    "autoMenuCppContractRun": 45068110223,
+    "sourcePreflightRun": 45068110178,
+    "windowsApkRun": 45068110154,
+    "windowsApkResult": "pending",
+    "nextTrialOnlyWhen": "real host-authoritative second actor, shared enemy/quest world, auto original first stage, remote on-screen soldier validated"
   }
 }
