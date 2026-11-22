@@ -74,7 +74,7 @@ public final class RoomTls {
         private final Map<Integer,Integer> storySlots=new HashMap<>();
         private int storyReadyMask;
         private boolean storyCommitted;
-        private int lastWorldSnapshotTick;
+        private int lastWorldSnapshotTick,lastNpcSnapshotTick;
         // Pre-JOIN handshake diagnostics only; never store PINs or peer identities.
         private volatile String handshakeFailureKind="none";
         public String handshakeFailureKind(){return handshakeFailureKind;}
@@ -142,6 +142,27 @@ public final class RoomTls {
                 return true;
             }
         }
+        // A real ORIGINAL host-source sample: <=32 NPC values, one or
+        // two latest-only TLS chunks. Socket writes stay off game thread.
+        public boolean offerNpcWorld(int tick,List<RoomNpcWorldWire.Npc> npcs)
+                throws IOException {
+            synchronized(lock){
+                if(closed||story==null||!storyCommitted||
+                   revision!=story.rosterRevision||tick<=lastNpcSnapshotTick)
+                    return false;
+                List<RoomNpcWorldWire.Chunk> chunks=
+                    RoomNpcWorldWire.split(story,tick,npcs);
+                byte[] first=RoomNpcWorldWire.encode(chunks.get(0));
+                byte[] second=chunks.size()==2?
+                    RoomNpcWorldWire.encode(chunks.get(1)):null;
+                lastNpcSnapshotTick=tick;
+                for(Peer p:peers.values())if(!p.dead.get()){
+                    p.latestNpcFirst.set(first);
+                    p.latestNpcSecond.set(second);
+                }
+                return true;
+            }
+        }
         public List<TrustedInput> drainLatestTrustedInputs(){
             synchronized(lock){
                 if(closed||story==null||!storyCommitted||revision!=story.rosterRevision)
@@ -165,6 +186,8 @@ public final class RoomTls {
             volatile long lastSeen=now();
             volatile Thread writer;
             final AtomicReference<byte[]> latestWorldFrame=new AtomicReference<>();
+            final AtomicReference<byte[]> latestNpcFirst=new AtomicReference<>();
+            final AtomicReference<byte[]> latestNpcSecond=new AtomicReference<>();
             int lastInputSequence;
             int lastEyeSequence;
             RoomCameraEyeWire.Eye latestEye;
@@ -250,9 +273,9 @@ public final class RoomTls {
                         throw new IOException("Peer story prepare queue unexpectedly filled");
                 }
                 story=ticket;storyReadyMask=0;storyCommitted=false;
-                lastWorldSnapshotTick=0;
+                lastWorldSnapshotTick=lastNpcSnapshotTick=0;
                 for(Peer p:peers.values()){
-                    p.lastInputSequence=0;p.latestInput=null;p.latestWorldFrame.set(null);
+                    p.lastInputSequence=0;p.latestInput=null;p.latestWorldFrame.set(null);p.latestNpcFirst.set(null);p.latestNpcSecond.set(null);
                     p.lastEyeSequence=0;p.latestEye=null;p.latestEyeAt=0;
                 }
                 storySlots.clear();storySlots.putAll(slots);
@@ -296,9 +319,9 @@ public final class RoomTls {
         private void abortStoryLocked(){
             RoomStoryWire.Ticket old=story;
             story=null;storyReadyMask=0;storyCommitted=false;storySlots.clear();
-            lastWorldSnapshotTick=0;
+            lastWorldSnapshotTick=lastNpcSnapshotTick=0;
             for(Peer p:peers.values()){
-                p.lastInputSequence=0;p.latestInput=null;p.latestWorldFrame.set(null);
+                p.lastInputSequence=0;p.latestInput=null;p.latestWorldFrame.set(null);p.latestNpcFirst.set(null);p.latestNpcSecond.set(null);
                     p.lastEyeSequence=0;p.latestEye=null;p.latestEyeAt=0;
             }
             if(old!=null)record("STORY_HOST_ABORTED");
@@ -364,16 +387,34 @@ public final class RoomTls {
                             byte[] control=owned.outbound.poll(20,TimeUnit.MILLISECONDS);
                             if(control!=null){RoomWire.write(out,control);continue;}
                             byte[] frame=owned.latestWorldFrame.getAndSet(null);
-                            if(frame==null)continue;
-                            RoomWorldSnapshotWire.Snapshot sample=
-                                RoomWorldSnapshotWire.parse(RoomWire.decode(frame));
-                            synchronized(lock){
-                                if(closed||story==null||!storyCommitted||
-                                   revision!=story.rosterRevision||
-                                   !sample.matches(story)||owned.dead.get())
-                                    continue;
+                            if(frame!=null){
+                                RoomWorldSnapshotWire.Snapshot sample=
+                                    RoomWorldSnapshotWire.parse(RoomWire.decode(frame));
+                                synchronized(lock){
+                                    if(closed||story==null||!storyCommitted||
+                                       revision!=story.rosterRevision||
+                                       !sample.matches(story)||owned.dead.get())
+                                        continue;
+                                }
+                                RoomWire.write(out,frame);
+                                continue;
                             }
-                            RoomWire.write(out,frame);
+                            // First world/room roster; then original NPC chunks,
+                            // all source-pinned to the SAME current story.
+                            byte[] a=owned.latestNpcFirst.getAndSet(null);
+                            byte[] b=owned.latestNpcSecond.getAndSet(null);
+                            for(byte[] chunk:new byte[][]{a,b}){
+                                if(chunk==null)continue;
+                                RoomNpcWorldWire.Chunk npc=
+                                    RoomNpcWorldWire.parse(RoomWire.decode(chunk));
+                                synchronized(lock){
+                                    if(closed||story==null||!storyCommitted||
+                                       revision!=story.rosterRevision||
+                                       !npc.matches(story)||owned.dead.get())
+                                        continue;
+                                }
+                                RoomWire.write(out,chunk);
+                            }
                         }
                     }catch(IOException e){owned.stop();}
                     catch(InterruptedException e){
