@@ -97,13 +97,22 @@ inline void ObserveOriginalFirstStageAutoMenu(X86Context& ctx)noexcept{
                 layout::kUiReady>0xffffffffull){
   FirstStageAutoMenu().Reset();return;
  }
- const uint32_t ui=game+layout::kFrontEnd;
+ // BLACK's game + kFrontEnd identifies the GAME STATE, not the menu
+ // manager. The real frontend manager is *[layout::kUi]=0x2D199C
+ // (the same object passed in EBP to the original menu hook).
+ // Comparing ctx.ebp to game+kFrontEnd made ALL auto-start requests
+ // silently fail even while the authenticated room was live.
+ const uint32_t ui=OriginalUiSpan(layout::kUi,4u)?
+   kernel::R32(layout::kUi):0u;
  const bool originalFront=OriginalUiSpan(game+layout::kGameState,4u)&&
-    kernel::R32(game+layout::kGameState)==ui;
- // ctx.ebp is the actual original FRONTEND on this wrapper.
- if(!originalFront||ctx.ebp!=ui||
+    kernel::R32(game+layout::kGameState)==game+layout::kFrontEnd;
+ if(!originalFront||!ui||ctx.ebp!=ui||
+    static_cast<uint64_t>(ui)+layout::kUiReady>0xffffffffull||
+    !OriginalUiSpan(ui+layout::kPageReady,4u)||
     !OriginalUiSpan(ui+layout::kPageName,0x54u)||
+    !OriginalUiSpan(ui+layout::kPageLeaving,4u)||
     !OriginalUiSpan(ui+layout::kUiReady,1u)||
+    !OriginalUiSpan(ui+layout::kInputOn,2u)||
     !OriginalUiSpan(ui+layout::kMenuInput,4u)){
   FirstStageAutoMenu().Reset();return;
  }
