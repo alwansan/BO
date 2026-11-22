@@ -21,6 +21,13 @@ class Hypotheses(unittest.TestCase):
         self.assertEqual(c["at_least_one_active_index_out_of_range"],1)
         for n in (1,2,3):self.assertEqual(c["nonzero_weight_slots_"+str(n)],1)
         self.assertEqual(c["active_duplicate_indices"],0)
+        self.assertEqual(c["active_indices_below_32"],2)
+        self.assertEqual(c["active_indices_below_64"],3)
+        self.assertEqual(c["active_indices_below_96"],3)
+        self.assertEqual(c["active_indices_tripled_rows_25"],1)
+        self.assertEqual(c["active_indices_quad_rows_25"],0)
+        self.assertEqual(c["active_index_25_to_63"],1)
+        self.assertEqual(c["active_index_high_byte_128"],0)
         wrong=pair_counts(data,0,[0,1,2],25,12,24)
         self.assertNotEqual(wrong["near_255_and_active_indices_in_range"],
                             c["near_255_and_active_indices_in_range"])

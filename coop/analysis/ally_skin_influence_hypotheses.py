@@ -37,6 +37,18 @@ def pair_counts(data,base,indices,joints,weights_at,indices_at):
         c["invalid_only_in_zero_weight_slots"]+=active_ok and not all_ok
         c["at_least_one_active_index_out_of_range"]+=bool(active) and not active_ok
         c["active_duplicate_indices"]+=len({ids[i] for i in active})<len(active)
+        # Alternative *index encoding* checks, still unverified even if they fit.
+        # A bone palette may differ from MODEL bone-name count, and shader
+        # constants can use multiplied row-register indices. Report only totals.
+        for cap in (32,64,96):
+            c["active_indices_below_"+str(cap)]+=bool(active) and all(ids[i]<cap for i in active)
+        c["active_indices_tripled_rows_25"]+=bool(active) and all(
+            ids[i]%3==0 and ids[i]//3<joints for i in active)
+        c["active_indices_quad_rows_25"]+=bool(active) and all(
+            ids[i]%4==0 and ids[i]//4<joints for i in active)
+        c["active_index_high_byte_128"]+=any(ids[i]>=128 for i in active)
+        c["active_index_25_to_63"]+=any(25<=ids[i]<64 for i in active)
+        # Additional tests are NOT proof of the layout or a functioning GPU.
     return dict(sorted(c.items()))
 
 def stage_scan(data,stage_ordinal):
