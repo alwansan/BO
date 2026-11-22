@@ -46,6 +46,11 @@ class GeometryTests(unittest.TestCase):
         self.assertEqual(geometry["index_references_checked"],3)
         self.assertEqual(geometry["nonrepeat_strip_triangle_candidates"],1)
         self.assertEqual(geometry["distinct_buffer_vertex_references"],3)
+        self.assertEqual(geometry["vertex_buffer_stride_distribution"],{"24":1})
+        self.assertEqual(geometry["distinct_raw_vertex_format_pattern_count"],1)
+        self.assertEqual(geometry["model_texture_name_slots"],0)
+        self.assertFalse(geometry["skin_attribute_layout_decoded"])
+        self.assertFalse(geometry["material_texture_bindings_proven"])
         values,failures,seen=analyze_file(buf,"levels/level_00/stg_0001/StLevel.bin")
         self.assertEqual(failures,0)
         self.assertEqual(seen,1)
@@ -66,6 +71,9 @@ class GeometryTests(unittest.TestCase):
         invalid(lambda b:struct.pack_into("<I",b,0x100+0x28,0xFFFFFFFF))
         invalid(lambda b:struct.pack_into("<3H",b,0x140,0,0,0))
         invalid(lambda b:struct.pack_into("<f",b,0x480,float("nan")))
+        invalid(lambda b:struct.pack_into("<I",b,0x40+0x50,65))
+        invalid(lambda b:(struct.pack_into("<I",b,0x40+0x50,1),
+                          struct.pack_into("<I",b,0x40+0x4C,0xFFFFFFFE)))
     def test_three_explicit_files_only_and_no_raw_assets_exported(self):
         with tempfile.TemporaryDirectory() as root:
             root=Path(root)
