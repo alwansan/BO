@@ -66,6 +66,9 @@ jobs:
             bo/coop/room_network/test_room_original_guest_pad_contract.cpp -o "$RUNNER_TEMP/test_guest_pad"
           "$RUNNER_TEMP/test_guest_pad"
           g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread -fsanitize=undefined \
+            bo/coop/room_network/test_room_original_local_pad_tap.cpp -o "$RUNNER_TEMP/test_touch_pad_tap"
+          "$RUNNER_TEMP/test_touch_pad_tap"
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread -fsanitize=undefined \
             bo/coop/room_network/test_room_original_guest_host_world_contract.cpp -o "$RUNNER_TEMP/test_guest_host_world"
           "$RUNNER_TEMP/test_guest_host_world"
       - uses: actions/setup-java@v4

@@ -13,7 +13,7 @@ from prepare_room_ui import prepare as prepare_room_ui
 
 HERE = pathlib.Path(__file__).resolve().parent
 PACKAGE = 'org.bocoop.black.roomnet'
-INPUTS = BASE_FILES + GAME_FILES + ('src/game/exit_menu.cpp','src/game/difficulty.cpp','src/d3d/d3d8.cpp')
+INPUTS = BASE_FILES + GAME_FILES + ('src/game/exit_menu.cpp','src/game/difficulty.cpp','src/d3d/d3d8.cpp','native/input.cpp')
 
 
 def prepare(root: pathlib.Path):
@@ -122,7 +122,8 @@ def prepare(root: pathlib.Path):
         else if (code == 62) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_POOL_BOT_LOOK_ONE_BLANK_RIG_SLOT_NOT_READY");
         else if (code == 63) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_POOL_BOT_LOOK_TWO_BLANK_RIG_SLOTS_NOT_READY");
         else if (code == 64) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_POOL_BOT_LOOK_THREE_OR_MORE_BLANK_RIG_SLOTS_NOT_READY");
-        else if (code == 65) com.racas.black.coop.RoomDiagnostics.event("FIRST_SOURCE_ORIGINAL_GUEST_SDL_GAMEPAD_INPUT_QUEUED_NOT_GAMEPLAY");
+        else if (code == 65) com.racas.black.coop.RoomDiagnostics.event("FIRST_SOURCE_ORIGINAL_GUEST_MERGED_INPUT_QUEUED_NOT_GAMEPLAY");
+        else if (code == 66) com.racas.black.coop.RoomDiagnostics.event("FIRST_ORIGINAL_GUEST_TOUCH_INPUT_QUEUED_NOT_GAMEPLAY");
         else if (code == 20) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_EASY_NOT_MISSION");
         else if (code == 21) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_NORMAL_NOT_MISSION");
         else if (code == 22) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_HARD_NOT_MISSION");
@@ -216,6 +217,7 @@ def prepare(root: pathlib.Path):
     pending['src/coop/room_original_core_phase_witness.hpp'] = (HERE / 'room_network/room_original_core_phase_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_bot_pool_contract.hpp'] = (HERE / 'room_network/room_original_bot_pool_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_bot_pool_witness.hpp'] = (HERE / 'room_network/room_original_bot_pool_witness.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_local_pad_tap.hpp'] = (HERE / 'room_network/room_original_local_pad_tap.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_guest_pad_contract.hpp'] = (HERE / 'room_network/room_original_guest_pad_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_guest_pad_witness.hpp'] = (HERE / 'room_network/room_original_guest_pad_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_trusted_input_contract.hpp'] = (HERE / 'room_network/room_original_trusted_input_contract.hpp').read_text(encoding='utf-8')
@@ -225,6 +227,35 @@ def prepare(root: pathlib.Path):
     pending['src/coop/world_tick_contract.hpp'] = (HERE / 'room_network/world_tick_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/gpu_decl_contract.hpp'] = (HERE / 'room_network/gpu_decl_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/gpu_decl_witness.hpp'] = (HERE / 'room_network/gpu_decl_witness.hpp').read_text(encoding='utf-8')
+
+    # HOOK001/video 2026-11-22 proves the owner drives the ORIGINAL game
+    # through the native touchscreen. Original Android src/native/input.cpp
+    # applies touch::Apply(port,p) to the REAL merged port-0 Xbox report.
+    # Capture that report ONCE at its actual source without any second Poll(0):
+    # a second call also invokes app::kGame.pad and can alter input semantics.
+    pad_file='native/input.cpp'
+    pad=originals[pad_file].decode('utf-8').replace('\r\n','\n')
+    pad=once(pad,'#include "host.h"',
+             '#include "host.h"\n#include "coop/room_original_local_pad_tap.hpp"',pad_file)
+    pad=once(pad,'''    touch::Apply(port, p);
+    if (app::kGame.pad) app::kGame.pad(port, p);''',
+    '''    // Original local input delivered unchanged; one read-only snapshot
+    // AFTER the upstream merges SDL, Android loose controller and TOUCH.
+    // No second input::Poll(0), no gamepad callback duplication.
+    const Pad beforeTouch=p;
+    touch::Apply(port, p);
+    if (port==0) {
+        const bool addedTouch=beforeTouch.connected!=p.connected ||
+            beforeTouch.buttons!=p.buttons ||
+            beforeTouch.lx!=p.lx || beforeTouch.ly!=p.ly ||
+            beforeTouch.analog[0]!=p.analog[0] ||
+            beforeTouch.analog[7]!=p.analog[7];
+        blackcoop::LocalPadTap().Capture({
+            p.connected,addedTouch,p.lx,p.ly,p.analog[0],p.analog[7]},
+            static_cast<uint64_t>(SDL_GetTicks()));
+    }
+    if (app::kGame.pad) app::kGame.pad(port, p);''',pad_file)
+    pending[pad_file]=pad
 
     # Staging-only extension of the EXISTING original local-player X86 wrapper.
     # It samples R32(kWorld) only when the original character kind and identity
