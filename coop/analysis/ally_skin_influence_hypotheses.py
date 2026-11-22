@@ -12,7 +12,7 @@ from ally_vertex36_layout_probe import MAX_BUFFERS,MAX_DRAW_PER_BUFFER,MAX_INDIC
 from model_inventory import span,u32
 
 HYPOTHESES=((12,20),(12,16),(12,24),(16,20),(20,16),(24,32))
-MAX_REPORT=131072
+MAX_REPORT=196608
 
 def pair_counts(data,base,indices,joints,weights_at,indices_at):
     if not 1<=joints<=64 or not 0<=weights_at<=32 or not 0<=indices_at<=32 or weights_at%4 or indices_at%4 or weights_at==indices_at:

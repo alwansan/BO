@@ -73,7 +73,7 @@ jobs:
           assert x['original_bone_indices_exported'] is False
           assert x['actual_shader_binding_proven'] is False
           assert x['real_bone_weights_decoded'] is False
-          assert p.stat().st_size<131072
+          assert p.stat().st_size<196608
           print('BO_OWNER_SKIN_HYPOTHESES_PRIVATE_PASS: anonymous comparisons only')
           PY
       - uses: actions/upload-artifact@v4
