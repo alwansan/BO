@@ -1829,7 +1829,7 @@
       "realBotBodies": false
     },
     "FOUR_HUMAN_SOURCE_ATTESTED_REAL_TLS": {
-      "status": "FIXED_REAL_TLS_ACCEPT_ORDER_TEST_EXPECT_CI",
+      "status": "REJOIN_DYNAMIC_SLOT_FRESH_NATIVE_SCENE_PROOF_TEST_RECHECK_PENDING",
       "realTlsLoopback": true,
       "participants": 4,
       "hostAndThreeGuests": true,
@@ -1850,7 +1850,11 @@
       "previousSuccessfulApkArtifact": 14761312848,
       "firstTlsRun": 45041715329,
       "firstTlsConclusion": "failure_test_assumed_async_join_order",
-      "actualSlotDynamic": true
+      "actualSlotDynamic": true,
+      "secondTlsRun": 45041901894,
+      "secondTlsConclusion": "failure_rejoin_test_assumed_stale_guest_slot",
+      "rejoinRequiresNewOriginalSceneEntry": true,
+      "seamlessMidMissionRejoinImplemented": false
     }
   },
   "pending": {

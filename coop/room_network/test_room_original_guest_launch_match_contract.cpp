@@ -60,6 +60,16 @@ int main(){
     assert(!g.ReadMatchedKey(result)); // source disagreed, no stale ready proof
     assert(g.ObserveOriginalStreamingEntry(5,7,15,nullptr)==0);
     assert(!g.ReadMatchedKey(result)); // new source launch without TLS ticket
+    auto renewed=p(103,7,15);
+    assert(g.ObserveOriginalStreamingEntry(5,7,15,&renewed)==78);
+    // A reconnected room may NOT overwrite first streaming evidence of
+    // the same original episode even if its TLS scene epoch changed.
+    auto tooLate=p(104,7,15);
+    assert(g.ObserveOriginalStreamingEntry(5,7,15,&tooLate)==0);
+    for(int i=0;i<29;i++)
+        assert(g.ObserveOriginalRunningWorld(5,0x3d0000,7,15,true)==0);
+    assert(g.ObserveOriginalRunningWorld(5,0x3d0000,7,15,true)==81);
+    assert(g.ReadMatchedKey(result)&&result.sceneEpoch==103);
     assert(g.ObserveOriginalStreamingEntry(3,7,15,&stale)==0);
     std::cout<<"ORIGINAL_GUEST_LAUNCH_STAGE_CORRELATION_PASS: source stage, real local original world 30 samples, mismatches and resets; NO READY\n";
 }

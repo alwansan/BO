@@ -193,13 +193,20 @@ public final class RoomFourHumanOriginalStageTlsTest {
             ok(host.attestOriginalRunningSceneFromGameThread(
                 90,2,0,0,0,0,0,0)==1);
             for(int i=0;i<3;i++){
-                // same actual original guest episode: reauthenticated room
-                // ticket doesn't fake a NEW game launch, but the original
-                // local running level may re-attest the replacement ticket.
-                int episode=120+i;
-                ok(!guests[i].observeOriginalStageIdentityFromGameThread(
-                    episode,2,0));
-                ok(attest(guests[i],episode,i+2,next)==2);
+                // Reconnection alone NEVER attests the new host ticket.
+                // Synthetic NEW ORIGINAL loading episodes model three
+                // genuinely reloaded local campaign stages. The JNI/native
+                // OriginalGuestLaunchMatchGate requires exactly this new
+                // source entry, not the old ticket's original stage proof.
+                int freshOriginalEpisode=220+i;
+                RoomSession g=guests[i];
+                int currentCompactSlot=RoomWire.storySlot(
+                    g.snapshot().roster,g.snapshot().roster.self);
+                ok(currentCompactSlot>=2&&currentCompactSlot<=4);
+                ok(g.observeOriginalStageIdentityFromGameThread(
+                    freshOriginalEpisode,2,0));
+                ok(attest(g,freshOriginalEpisode,currentCompactSlot,ticket)==0);
+                ok(attest(g,freshOriginalEpisode,currentCompactSlot,next)==2);
             }
             until(()->allCommitted(host,guests));
             ok(host.cancelStoryFromGameThread());
