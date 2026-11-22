@@ -82,7 +82,7 @@ class TestRcbStrict(unittest.TestCase):
         fails(lambda b:put32(b,base+0x600+4,0x700)) # outside table
         fails(lambda b:put32(b,base+0x1c,0x601)) # pointer outside table
         fails(lambda b:put32(b,base+0x80+0x4,0x700)) # parent location outside
-        fails(lambda b:struct.pack_into("<i",b,base+0x100+4*8,2)) # cycle 1->2->1
+        fails(lambda b:struct.pack_into("<i",b,base+0x100+1*8,2)) # cycle 1->2->1
         fails(lambda b:struct.pack_into("<i",b,base+0x100+1*8,1)) # self-cycle
         fails(lambda b:put32(b,base+0x240+0x14+0x10,0)) # duplicate index
         fails(lambda b:struct.pack_into("<f",b,base+0x140,float("inf")))
