@@ -204,7 +204,7 @@ def prepare(root: pathlib.Path):
     cheat='src/game/cheats.cpp'
     game=pending.get(cheat,originals[cheat].decode('utf-8'))
     game=once(game,'#include "game/layout.h"',
-              '#include "game/layout.h"\n#include "coop/room_world_tick.hpp"\n#include "coop/room_original_eye_witness.hpp"',cheat)
+              '#include "game/layout.h"\n#include "coop/room_world_tick.hpp"\n#include "coop/room_original_eye_witness.hpp"\n#include "coop/room_original_trusted_input_witness.hpp"',cheat)
     game=once(game,'    __imp__sub_001E5FA0(ctx, base);',
         '''    // Candidate only: first original-player update in this world is
     // NOT proof that host-selected mission/stage loaded on both phones.
@@ -213,6 +213,9 @@ def prepare(root: pathlib.Path):
         // Original BLACK eye vector known from pinned upstream hooks.cpp;
         // sample only, never a proxy actor or fabricated scene READY.
         blackcoop::ObserveOriginalPlayerEye(me);
+        // Authenticated commands are polled at 40Hz on original game thread.
+        // This does NOT dispatch commands to bots or create an actor.
+        blackcoop::ObserveOriginalHostInputTick();
     }
     __imp__sub_001E5FA0(ctx, base);''',cheat)
     pending[cheat]=game

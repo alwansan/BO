@@ -11,7 +11,6 @@
 #include "coop/room_original_mission_field_hint.hpp"
 #include "coop/room_original_streaming_stage_contract.hpp"
 #include "coop/room_original_core_phase_witness.hpp"
-#include "coop/room_original_trusted_input_witness.hpp"
 #include "game/layout.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_system.h>
@@ -65,9 +64,6 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
             static_cast<jint>(result.x),static_cast<jint>(result.y),
             static_cast<jint>(result.z));
         if(env->ExceptionCheck())env->ExceptionClear();
-        // Genuine ORIGINAL player callback only. Java returns trusted socket
-        // peer-ID input after real story COMMIT; no NPC or game memory write.
-        PollOriginalHostHumanInputs(env,activity,cls);
         env->DeleteLocalRef(cls);
     }else if(env->ExceptionCheck())env->ExceptionClear();
     env->DeleteLocalRef(activity);
