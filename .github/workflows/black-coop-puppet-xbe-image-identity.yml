@@ -1,0 +1,41 @@
+name: BO-COOP same owner XBE as MIT original bot puppet source? (PRIVATE)
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/analysis/verify_pc_puppet_source_image_identity.py'
+      - 'coop/analysis/test_pc_puppet_source_image_identity.py'
+      - '.github/workflows/black-coop-puppet-xbe-image-identity.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compare-original-images:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: bo
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Synthetic identity rejection only
+        run: python3 -m unittest discover -s bo/coop/analysis -p test_pc_puppet_source_image_identity.py -v
+      - uses: actions/checkout@v4
+        with:
+          repository: alwansan/biso
+          ref: 9ceb6a65fb5a4414c106ca3961295a1f8f7e558b
+          path: owner-biso
+          sparse-checkout: Black_Xbox_Extracted/default.xbe
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+          lfs: false
+      - name: Compare exact private image against published MIT project supported XBE
+        run: |
+          set -euo pipefail
+          python3 bo/coop/analysis/verify_pc_puppet_source_image_identity.py \
+            --owner-xbe owner-biso/Black_Xbox_Extracted/default.xbe
+      - name: Remove private owner input from runner
+        if: always()
+        run: rm -rf owner-biso
