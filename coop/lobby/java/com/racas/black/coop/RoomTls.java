@@ -86,6 +86,30 @@ public final class RoomTls {
                 this.peerId=id;this.value=value;
             }
         }
+        public static final class TrustedEye {
+            public final int peerId;
+            public final RoomCameraEyeWire.Eye camera;
+            private TrustedEye(int id,RoomCameraEyeWire.Eye value){
+                peerId=id;camera=value;
+            }
+        }
+        /** Non-consuming, fresh source-origin samples from authenticated TLS sockets. */
+        public List<TrustedEye> latestVerifiedCameraEyes(){
+            synchronized(lock){
+                if(closed||story==null||!storyCommitted||
+                   revision!=story.rosterRevision)return Collections.emptyList();
+                List<TrustedEye> result=new ArrayList<>(3);
+                long at=now();
+                for(Peer p:peers.values()){
+                    RoomCameraEyeWire.Eye eye=p.latestEye;
+                    if(eye!=null&&!p.dead.get()&&eye.matches(story)&&
+                       storySlots.containsKey(p.id)&&
+                       at>=p.latestEyeAt&&at-p.latestEyeAt<=300)
+                        result.add(new TrustedEye(p.id,eye));
+                }
+                return result;
+            }
+        }
         /**
          * Only a VERIFIED host BLACK game-thread callback can supply real
          * original actor positions. Game thread never writes to a socket.
@@ -134,6 +158,9 @@ public final class RoomTls {
             volatile Thread writer;
             final AtomicReference<byte[]> latestWorldFrame=new AtomicReference<>();
             int lastInputSequence;
+            int lastEyeSequence;
+            RoomCameraEyeWire.Eye latestEye;
+            long latestEyeAt;
             RoomHumanInputWire.Input latestInput;
             long latestInputAt;
             final AtomicBoolean dead=new AtomicBoolean();
@@ -207,6 +234,7 @@ public final class RoomTls {
                 lastWorldSnapshotTick=0;
                 for(Peer p:peers.values()){
                     p.lastInputSequence=0;p.latestInput=null;p.latestWorldFrame.set(null);
+                    p.lastEyeSequence=0;p.latestEye=null;p.latestEyeAt=0;
                 }
                 storySlots.clear();storySlots.putAll(slots);
                 record("STORY_HOST_PREPARED");
@@ -252,6 +280,7 @@ public final class RoomTls {
             lastWorldSnapshotTick=0;
             for(Peer p:peers.values()){
                 p.lastInputSequence=0;p.latestInput=null;p.latestWorldFrame.set(null);
+                    p.lastEyeSequence=0;p.latestEye=null;p.latestEyeAt=0;
             }
             if(old!=null)record("STORY_HOST_ABORTED");
             if(old!=null)try{
@@ -332,11 +361,11 @@ public final class RoomTls {
                         Thread.currentThread().interrupt();owned.stop();
                     }
                 });owned.writer.start();broadcast();socket.setSoTimeout(5000);
-                long lastSequence=0,window=now()/1000;int packets=0,inputPackets=0;
+                long lastSequence=0,window=now()/1000;int packets=0,inputPackets=0,eyePackets=0;
                 while(!closed&&!owned.dead.get()){
                     RoomWire.Packet p=RoomWire.decode(RoomWire.read(in));
                     long current=now()/1000;
-                    if(current!=window){window=current;packets=0;inputPackets=0;}
+                    if(current!=window){window=current;packets=0;inputPackets=0;eyePackets=0;}
                     if(p.type==RoomWire.HUMAN_INPUT){
                         if(++inputPackets>60)throw new IOException("Input rate exceeded");
                         RoomHumanInputWire.Input input=RoomHumanInputWire.parse(p);
@@ -348,6 +377,20 @@ public final class RoomTls {
                                 throw new IOException("Input before story commit or invalid sequence");
                             owned.lastInputSequence=input.sequence;
                             owned.latestInput=input;owned.latestInputAt=now();
+                        }
+                        continue;
+                    }
+                    if(p.type==RoomWire.HUMAN_CAMERA_EYE){
+                        if(++eyePackets>15)throw new IOException("Peer camera sample rate exceeded");
+                        RoomCameraEyeWire.Eye eye=RoomCameraEyeWire.parse(p);
+                        synchronized(lock){
+                            if(closed||story==null||!storyCommitted||
+                               revision!=story.rosterRevision||
+                               !storySlots.containsKey(owned.id)||!eye.matches(story)||
+                               eye.sequence<=owned.lastEyeSequence)
+                                throw new IOException("Stale or uncommitted original eye");
+                            owned.lastEyeSequence=eye.sequence;
+                            owned.latestEye=eye;owned.latestEyeAt=now();
                         }
                         continue;
                     }
@@ -417,8 +460,11 @@ public final class RoomTls {
         // Heartbeat uses its existing dedicated background scheduler.
         // Conflated newest-input queue, one dedicated TLS output worker.
         private final ArrayBlockingQueue<byte[]> inputFrames=new ArrayBlockingQueue<>(1);
+        private final ArrayBlockingQueue<byte[]> cameraFrames=new ArrayBlockingQueue<>(1);
         private final Thread inputWriter;
         private int lastQueuedInputSequence;
+        private int lastQueuedEyeSequence;
+        private final AtomicBoolean firstCameraEyeSent=new AtomicBoolean();
         private final AtomicBoolean firstHumanInputSent=new AtomicBoolean();
         private final ThreadPoolExecutor readyWriter=new ThreadPoolExecutor(
             1,1,0L,TimeUnit.MILLISECONDS,new ArrayBlockingQueue<>(1),
@@ -530,6 +576,22 @@ public final class RoomTls {
                 close();
             }
         }
+        /** Original native camera update, no socket I/O on caller thread. */
+        public boolean offerOriginalCameraEye(int sequence,int x,int y,int z)
+            throws IOException{
+            synchronized(lifecycle){
+                RoomStoryWire.Ticket ticket=story;
+                RoomWire.State state=view;
+                if(closed.get()||!storyCommitted||ticket==null||state==null||
+                   state.revision!=ticket.rosterRevision||
+                   !MessageDigest.isEqual(state.session,ticket.session())||
+                   sequence<=lastQueuedEyeSequence)return false;
+                byte[] frame=RoomCameraEyeWire.encode(ticket,sequence,x,y,z);
+                lastQueuedEyeSequence=sequence;
+                cameraFrames.clear();
+                return cameraFrames.offer(frame);
+            }
+        }
         /** Only the RoomSession verified game-thread adapter should call. */
         public boolean offerHumanInput(int seq,int x,int y,int yaw,
                                        boolean fire,boolean jump)throws IOException {
@@ -549,20 +611,33 @@ public final class RoomTls {
         private void writeInputs(){
             try{
                 while(!closed.get()){
-                    byte[] frame=inputFrames.take();
-                    RoomHumanInputWire.Input parsed=
-                        RoomHumanInputWire.parse(RoomWire.decode(frame));
+                    // Camera gets priority at 10Hz; movement retains its own
+                    // independent one-slot coalesced queue.
+                    byte[] frame=cameraFrames.poll();
+                    if(frame==null)frame=inputFrames.poll(10,TimeUnit.MILLISECONDS);
+                    if(frame==null)continue;
+                    RoomWire.Packet packet=RoomWire.decode(frame);
+                    boolean camera=packet.type==RoomWire.HUMAN_CAMERA_EYE;
+                    RoomStoryWire.Ticket ticket;
                     synchronized(lifecycle){
-                        if(closed.get()||!storyCommitted||story==null||
-                           !parsed.matches(story))continue;
+                        ticket=story;
+                        if(closed.get()||!storyCommitted||ticket==null)continue;
+                        if(camera){
+                            if(!RoomCameraEyeWire.parse(packet).matches(ticket))continue;
+                        }else if(packet.type==RoomWire.HUMAN_INPUT){
+                            if(!RoomHumanInputWire.parse(packet).matches(ticket))continue;
+                        }else throw new IOException("Invalid local movement packet");
                     }
                     synchronized(out){
                         if(closed.get())return;
                         RoomWire.write(out,frame);
                     }
-                    // Fixed code emitted ONCE per story, not every frame.
-                    if(firstHumanInputSent.compareAndSet(false,true))
+                    if(camera){
+                        if(firstCameraEyeSent.compareAndSet(false,true))
+                            record("ORIGINAL_EYE_TLS_FIRST_SENT");
+                    }else if(firstHumanInputSent.compareAndSet(false,true)){
                         record("HUMAN_INPUT_TLS_FIRST_SENT");
+                    }
                 }
             }catch(InterruptedException done){
                 Thread.currentThread().interrupt();
@@ -607,6 +682,7 @@ public final class RoomTls {
                             if(!closed.get()){
                                 story=incoming;storyReadySent=false;storyCommitted=false;
                                 lastQueuedInputSequence=0;inputFrames.clear();firstHumanInputSent.set(false);
+                                lastQueuedEyeSequence=0;cameraFrames.clear();firstCameraEyeSent.set(false);
                                 worldSnapshot=null;lastWorldSnapshotTick=0;lastWorldSnapshotAt=0;
                                 record("STORY_GUEST_PREPARED");
                             }
@@ -629,6 +705,7 @@ public final class RoomTls {
                             if(story!=null&&story.same(incoming)){
                                 story=null;storyReadySent=false;storyCommitted=false;
                                 lastQueuedInputSequence=0;inputFrames.clear();firstHumanInputSent.set(false);
+                                lastQueuedEyeSequence=0;cameraFrames.clear();firstCameraEyeSent.set(false);
                                 worldSnapshot=null;lastWorldSnapshotTick=0;lastWorldSnapshotAt=0;
                                 record("STORY_GUEST_ABORTED");
                             }
@@ -663,6 +740,7 @@ public final class RoomTls {
                         if(story!=null&&story.rosterRevision!=next.revision){
                             story=null;storyReadySent=false;storyCommitted=false;
                             lastQueuedInputSequence=0;inputFrames.clear();firstHumanInputSent.set(false);
+                                lastQueuedEyeSequence=0;cameraFrames.clear();firstCameraEyeSent.set(false);
                                 worldSnapshot=null;lastWorldSnapshotTick=0;lastWorldSnapshotAt=0;
                             record("STORY_GUEST_ROSTER_INVALIDATED");
                         }
@@ -676,6 +754,7 @@ public final class RoomTls {
                 if(!closed.compareAndSet(false,true))return;
                 view=null;story=null;storyReadySent=false;storyCommitted=false;
                 lastQueuedInputSequence=0;inputFrames.clear();firstHumanInputSent.set(false);
+                                lastQueuedEyeSequence=0;cameraFrames.clear();firstCameraEyeSent.set(false);
                                 worldSnapshot=null;lastWorldSnapshotTick=0;lastWorldSnapshotAt=0;
             }
             readyWriter.shutdownNow();
