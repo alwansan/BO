@@ -369,6 +369,7 @@ public final class RoomTls {
         private final ArrayBlockingQueue<byte[]> inputFrames=new ArrayBlockingQueue<>(1);
         private final Thread inputWriter;
         private int lastQueuedInputSequence;
+        private final AtomicBoolean firstHumanInputSent=new AtomicBoolean();
         private final ThreadPoolExecutor readyWriter=new ThreadPoolExecutor(
             1,1,0L,TimeUnit.MILLISECONDS,new ArrayBlockingQueue<>(1),
             RoomTls::thread,new ThreadPoolExecutor.AbortPolicy());
@@ -501,7 +502,9 @@ public final class RoomTls {
                         if(closed.get())return;
                         RoomWire.write(out,frame);
                     }
-                    record("HUMAN_INPUT_TLS_SENT");
+                    // Fixed code emitted ONCE per story, not every frame.
+                    if(firstHumanInputSent.compareAndSet(false,true))
+                        record("HUMAN_INPUT_TLS_FIRST_SENT");
                 }
             }catch(InterruptedException done){
                 Thread.currentThread().interrupt();
@@ -545,7 +548,7 @@ public final class RoomTls {
                         synchronized(lifecycle){
                             if(!closed.get()){
                                 story=incoming;storyReadySent=false;storyCommitted=false;
-                                lastQueuedInputSequence=0;inputFrames.clear();
+                                lastQueuedInputSequence=0;inputFrames.clear();firstHumanInputSent.set(false);
                                 record("STORY_GUEST_PREPARED");
                             }
                         }
@@ -566,7 +569,7 @@ public final class RoomTls {
                         synchronized(lifecycle){
                             if(story!=null&&story.same(incoming)){
                                 story=null;storyReadySent=false;storyCommitted=false;
-                                lastQueuedInputSequence=0;inputFrames.clear();
+                                lastQueuedInputSequence=0;inputFrames.clear();firstHumanInputSent.set(false);
                                 record("STORY_GUEST_ABORTED");
                             }
                         }
@@ -580,7 +583,7 @@ public final class RoomTls {
                     synchronized(lifecycle){
                         if(story!=null&&story.rosterRevision!=next.revision){
                             story=null;storyReadySent=false;storyCommitted=false;
-                            lastQueuedInputSequence=0;inputFrames.clear();
+                            lastQueuedInputSequence=0;inputFrames.clear();firstHumanInputSent.set(false);
                             record("STORY_GUEST_ROSTER_INVALIDATED");
                         }
                     }
@@ -592,7 +595,7 @@ public final class RoomTls {
             synchronized(lifecycle){
                 if(!closed.compareAndSet(false,true))return;
                 view=null;story=null;storyReadySent=false;storyCommitted=false;
-                lastQueuedInputSequence=0;inputFrames.clear();
+                lastQueuedInputSequence=0;inputFrames.clear();firstHumanInputSent.set(false);
             }
             readyWriter.shutdownNow();
             closeSocket(socket);heartbeat.shutdownNow();reader.interrupt();inputWriter.interrupt();
