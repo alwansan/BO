@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-55-original-mission-epoch-and-field-hints.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-56-verified-xbe-word-width-and-native-source-fix.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -1486,6 +1486,25 @@
       ],
       "prior4PartyTlsRun": 44976311799,
       "sessionFile": "memory/sessions/2026-11-22_bo-coop-55-original-mission-epoch-and-field-hints.md"
+    },
+    "ORIGINAL_XBE_WORD_WIDTH_CORRECTION_SOURCE_20261122": {
+      "status": "SUCCESS_SOURCE_ONLY_NOT_GAMEPLAY",
+      "branch": "experiment/black-coop",
+      "sourceCommit": "12e7f2fc54d4fb9c35e92b1dfb19835f7189ea72",
+      "pinnedXbeSourceRun": 44977857722,
+      "sourceArtifact": 14736427004,
+      "nativeStagingAndJavaSourceRun": 44978058718,
+      "originalMissionFieldAWord": true,
+      "originalMissionFieldBWord": true,
+      "originalMissionFieldCWord": true,
+      "previousR32OverReadFixedWithKernelR16": true,
+      "threeCandidateSanitizedLog": true,
+      "episodeScopedEvidence": true,
+      "selectedMissionIndexProven": false,
+      "originalSceneLoadedProof": false,
+      "actualGuestAutoLaunch": false,
+      "sourceReport": "docs/ORIGINAL_MISSION_WORD_WIDTHS_AND_CALL_CHAIN_AR.md",
+      "sessionFile": "memory/sessions/2026-11-22_bo-coop-56-verified-xbe-word-width-and-native-source-fix.md"
     }
   },
   "pending": {
@@ -1659,10 +1678,10 @@
     "deviceTested": true,
     "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "Static pinned owner original XBE 0x00124CF0 mission-launch candidate has direct source call to 0x0011C3C0 in first-linear-RET bounded excerpt; latter calls 0x0011BC00 and 0x001B6EB0. PRIVATE CI44976902032 and44977028006 SUCCESS, artifacts14735709038/14736088372 numeric only. NEXT targeted inspect 0x001B6EB0 and0x0011BC00 to identify verified ORIGINAL mission loader ABI and selected mission (source no proven loader yet); wire actual guest load+real scene READY; independent any-BOT remote human body and host AI/quest. No tiny owner tests. Windows room-only APK44976590182 IN PROGRESS NO GAMEPLAY.",
+  "next": "Session56 first verify CI44978058696 real TLS,44978058836 Android29 TLS,44978058766 Windows room-only APK for source commit 12e7f2fc. Original XBE private second-hop CI44977623118 showed 0x11BC00 calls 0x0A23A4/0x11A4A0 and0x1B6EB0 no direct calls. Source XBE width CI44977857722 proved mission candidate globals0x2D0D60/68 and0x2EC598 WORD, fixed native observer R32->R16 and added C, CI44978058718 PASS. STILL NO selected original mission index/loader ABI/guest stage scene READY/remote human any-bot body/host AI. Next P0 prove real original mission loader and native matching scene completion then render independent bot avatar and replicate host AI/quest. Avoid tiny phone test, one major trial. Update RESTORE and state.",
   "latestHandoff": {
     "date": "2026-11-22",
-    "session": 55,
+    "session": 56,
     "kind": "owner_CI_only_stage_static_plus_safe_tls_story_diagnostics",
     "plan": "docs/superpowers/plans/2026-11-22-host-story-remote-ally.md",
     "sourceCiRun": 44951425780,
@@ -1692,7 +1711,7 @@
     "engineHookVerified": false,
     "remoteHumanActorRendered": false,
     "ownerV3DeviceAccepted": false,
-    "sessionFile": "memory/sessions/2026-11-22_bo-coop-55-original-mission-epoch-and-field-hints.md",
+    "sessionFile": "memory/sessions/2026-11-22_bo-coop-56-verified-xbe-word-width-and-native-source-fix.md",
     "ownerTestPolicy": "CI_FIRST_MAJOR_TRIAL_ONLY",
     "ownerXbeStaticRun": 44956138064,
     "storyDiagnosticJvmRun": 44956473684,
@@ -1719,7 +1738,7 @@
     "engineActualSharedStory": false,
     "ownerWriterFlowRun": 44961768279,
     "nativeWorldWitnessRun": 44962215874,
-    "latestRoomApkRun": 44976590182,
+    "latestRoomApkRun": 44978058766,
     "realSceneLoadedHook": false,
     "ownerPhoneTestRequested": false,
     "latestRoomApkStatus": "IN_PROGRESS_NO_GAMEPLAY",
@@ -1806,7 +1825,19 @@
       "0x0011BC00",
       "0x001B6EB0"
     ],
-    "originalLoaderAbiProven": false
+    "originalLoaderAbiProven": false,
+    "originalXbeWordWidthRun": 44977857722,
+    "originalXbeWordWidthArtifact": 14736427004,
+    "originalXbeSecondHopRun": 44977623118,
+    "originalXbeSecondHopArtifact": 14736535888,
+    "correctedNativeWordWidthCommit": "12e7f2fc54d4fb9c35e92b1dfb19835f7189ea72",
+    "androidNativeStageSourceCi": 44978058718,
+    "roomOnlyAndroidSuccessRun": 44976590182,
+    "roomOnlyAndroidSuccessArtifact": 14736331674,
+    "latestTlsCoreRun": 44978058696,
+    "latestTlsCoreResult": "SUCCESS_SOURCE_SYNTHETIC",
+    "latestAndroidKeystoreRun": 44978058836,
+    "latestAndroidKeystoreResult": "SUCCESS"
   },
   "executionStatus": "Session49 owner observed bot ally green reticle + inability shoot/kill. New value-only AllyTargetPolicy source+ASAN44969897865 SUCCESS (not actual game). Read docs/OWNER_ALLY_GREEN_RETICLE_RESEARCH_AR.md and Session49; CL images listed, binary pixels not inspected. Next independently trace original c5 aim target faction tint and damage suppression, map original friendly actor->MODEL->GPU draw/RCB. Real verified game-thread host-selected stage epoch and human fullbody/shared world still missing. One future major two-phone trial only.",
   "ownerClarifications": {
@@ -1820,9 +1851,9 @@
   },
   "integrationRoadmap": "docs/COOP_INTEGRATION_ROADMAP_AR.md",
   "currentWork": {
-    "session": 55,
-    "task": "Original mission launch attempt episode-scope resource-open witness, rejects stale/mixed/replayed evidence; passive unverified mission field A/B candidates from original XBE with same epoch in sanitized logs; next prove actual host mission and guest stage loader.",
-    "status": "Original launch epoch+real file-open safe source tests PASS; source-selected mission global candidates LOGGED ONLY; original pinned XBE first-RET direct call edge 0x124CF0->0x11C3C0 -> 0x11BC00/0x1B6EB0 extracted in private CI44976902032 and 44977028006 SUCCESS; target ABI/actual scene loader NOT proven; no original shared game yet.",
+    "session": 56,
+    "task": "Pinned original BLACK XBE second-hop mission-launch static call graph + source-proven WORD-width mission field correction in native game observer; real guest stage loader not yet found.",
+    "status": "Window Android ROOM-ONLY APK44976590182 SUCCESS (not co-op); pinned owner XBE source widths44977857722 PASS, corrected native 16-bit A/B + third C in12e7f2fc; full Android source preflight44978058718 SUCCESS; synthetic four-peer TLS44978058696 SUCCESS; Android29 TLS44978058836 SUCCESS. Current Android full diagnostic build44978058766 IN_PROGRESS (no gameplay). Original host selected mission/guest same-stage engine loader/remote bot still not proven.",
     "sourceCi": 44951425780,
     "sourceCode": "9938283748ad1bdb06f15259d7e4fcb791a47574",
     "latestOwnerTestedAndroidApkRun": 44946597973,
@@ -2013,7 +2044,31 @@
     "sourceXbeDirectCallScanArtifact": 14735709038,
     "sourceXbeOneHopCalleeRun": 44977028006,
     "sourceXbeOneHopCalleeArtifact": 14736088372,
-    "originalLaunchCallTreeProof": "SOURCE_ONLY_FIRST_LINEAR_RET_NOT_CFG_NO_LOADER_ABI"
+    "originalLaunchCallTreeProof": "SOURCE_ONLY_FIRST_LINEAR_RET_NOT_CFG_NO_LOADER_ABI",
+    "lastSourceCommit": "12e7f2fc54d4fb9c35e92b1dfb19835f7189ea72",
+    "secondHopOriginalXbeRun": 44977623118,
+    "secondHopOriginalXbeArtifact": 14736535888,
+    "originalFieldWidthXbeRun": 44977857722,
+    "originalFieldWidthXbeArtifact": 14736427004,
+    "originalFieldWidthProof": {
+      "address_002D0D60": "WORD_16_BIT_ORIGINAL_LEVEL_CHOICE_READ",
+      "address_002D0D68": "WORD_16_BIT_ORIGINAL_LAUNCH_WRITE",
+      "address_002EC598": "WORD_16_BIT_ORIGINAL_LEVEL_CHOICE_DIFFICULTY_WRITE",
+      "address_002D12DC": "BYTE_8_BIT_ORIGINAL_LAUNCH_WRITE",
+      "selectedMissionIndexProven": false
+    },
+    "originalMissionReadOversizeCorrected": true,
+    "missionFieldCSourceAdded": true,
+    "nativeAndroidSourcePreflight": 44978058718,
+    "nativeAndroidSourcePreflightResult": "SUCCESS",
+    "latestRoomOnlyAndroidApkBuild": 44978058766,
+    "latestRoomOnlyAndroidApkResult": "CHECK_LIVE_NO_GAMEPLAY",
+    "latestTlsCoreRun": 44978058696,
+    "latestAndroidKeystoreRun": 44978058836,
+    "originalGuestStageLoaded": false,
+    "remoteOriginalBotRendered": false,
+    "latestTlsCoreResult": "SUCCESS_REAL_4_PARTY_SYNTHETIC",
+    "latestAndroidKeystoreResult": "SUCCESS_ANDROID29_TLS_PLATFORM"
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",

@@ -1,3 +1,11 @@
+## Session56 (2026-11-22) — mission source WORD widths corrected; original loader still P0
+- [Windows room-only APK44976590182 SUCCESS](https://github.com/alwansan/BO/actions/runs/44976590182), original XBE identity ARM64, not gameplay, no original assets.
+- [Pinned XBE second-hop44977623118 PASS](https://github.com/alwansan/BO/actions/runs/44977623118): 0x11BC00 calls 0x0A23A4 and0x11A4A0 (also level choice); 0x1B6EB0 no direct calls within first-RET excerpt. Not loader ABI.
+- [Owner XBE source-width44977857722 PASS](https://github.com/alwansan/BO/actions/runs/44977857722): 0x2D0D60,0x2D0D68,0x2EC598 are WORD 16-bit, 0x2D12DC BYTE 8-bit in candidate functions. Native previous R32 was wrong for A/B; corrected R16+third C in commit 12e7f2fc, [native preflight44978058718 SUCCESS](https://github.com/alwansan/BO/actions/runs/44978058718), latest Android build44978058766 check live.
+- Main P0: prove original selected host mission and engine guest scene loader/actual game-thread completion→READY, independent any-bot remote human body, host AI/quests/combat. Source width/call chain only, no actual scene ready. No owner small phone trials.
+
+---
+
 ## Session55 source-CALL research result, not a proven loader
 - [Pinned original XBE direct edge CI44976902032 SUCCESS](https://github.com/alwansan/BO/actions/runs/44976902032): 0x00124CF0 → 0x0011C3C0 one direct-call candidate in first-linear-RET-clipped excerpt.
 - [One-hop callee CI44977028006 SUCCESS](https://github.com/alwansan/BO/actions/runs/44977028006): 0x0011C3C0 references 0x0011BC00 and 0x001B6EB0. Numeric source pointers only; NOT proof of real loader/ABI/missions.
