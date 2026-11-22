@@ -31,7 +31,7 @@ inline OriginalStageResource ClassifyOriginalStageResource(std::string_view raw)
         }
     // Require EXACT relative path; don't accept another drive, user-save
     // path, traversal, extra suffix, or unrelated substring containing level.
-    if(tail.size()<std::string_view("LEVELS\\LEVEL_00\\LEVELDAT.BIN").size()||
+    if(tail.size()<std::string_view("LEVELS\\LEVEL_00\\UNIT_01.BIN").size()||
        tail.compare(0,13,"LEVELS\\LEVEL_")!=0)return {};
     auto digit=[&](size_t i)->int{
         if(i>=tail.size()||tail[i]<'0'||tail[i]>'9')return -1;
