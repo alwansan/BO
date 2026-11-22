@@ -51,7 +51,7 @@ class BankBoundaryTests(unittest.TestCase):
         self.assertEqual(report["validated_clip_headers_and_tracks"],1)
         self.assertEqual(report["validated_track_records"],6)
         safe=json.dumps(report).lower()
-        for bad in ("aabbccdd","11223344","head","spine","foot","identity rotation"):
+        for bad in ("aabbccdd","11223344",'"head"','"spine"','"foot"',"identity rotation"):
             self.assertNotIn(bad,safe)
     def test_rejects_fake_clip_and_wrong_rcb_identity(self):
         def fails(change):
