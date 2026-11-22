@@ -2748,10 +2748,14 @@
     "roomOnlyArtifact": 14762361067,
     "fourHumanSourceAttestedTlsRun": 45042108523,
     "asanRun": 45053142029,
-    "asanStatus": "pending_check",
+    "asanStatus": "success",
     "actualGuestAutoLaunch": false,
     "actualRemoteOriginalBody": false,
     "hostSharedAi": false,
-    "ownerPhoneTestRequiredNow": false
+    "ownerPhoneTestRequiredNow": false,
+    "bridgePreflightRun": 45053142151,
+    "bridgePreflightStatus": "success",
+    "udpRun": 45053142039,
+    "udpStatus": "success"
   }
 }
