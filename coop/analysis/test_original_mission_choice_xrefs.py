@@ -24,6 +24,8 @@ class MissionChoices(unittest.TestCase):
         for entry in report["entries"].values():
             self.assertGreater(entry["absolute_global_xref_count"],0)
             self.assertTrue(entry["known_original_mission_unlock_table_referenced"])
+            self.assertTrue(entry["conservatively_clipped_at_first_linear_return"])
+            self.assertTrue(any(x["access"]["read_candidate"] for x in entry["bounded_global_address_hints"]))
             self.assertFalse(entry["selected_mission_field_proven"])
         for word in ["XBEH","private.bin","a1 9e 0d 2d","mov eax,ds:"]:
             self.assertNotIn(word,json.dumps(report))

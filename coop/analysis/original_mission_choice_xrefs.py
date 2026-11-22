@@ -22,27 +22,47 @@ def inspect(data,sections,address):
         except subprocess.TimeoutExpired as e:raise UnsafeImage("Decoder budget") from e
         if r.returncode:raise UnsafeImage("Mission decoder error")
     regs=Counter();families=Counter();first_ret=None;count=0
+    access={}  # per target only derived read/write/other aggregate
     for line in r.stdout.splitlines():
         m=OP_LINE.match(line)
         if not m:continue
         pc=int(m.group(1),16)
         if not address<=pc<address+WINDOW:continue
+        # Conservative linear first-RET fence, no adjacent unrelated code.
+        # This is NOT a real control-flow graph or proof of reachability.
+        if first_ret is not None and pc>address+first_ret:continue
         op,args=m.group(2).lower(),m.group(3).lower();count+=1
         if count>WINDOW:raise UnsafeImage("Instruction budget")
         families[instruction_family(op)]+=1
         if first_ret is None and op.startswith("ret"):first_ret=pc-address
         for ref in MEM.finditer(args):
             addr=int(ref.group(1) or ref.group(2),16)
-            if 0x200000<=addr<=0x3fffff:regs[addr]+=1
+            if 0x200000<=addr<=0x3fffff:
+                regs[addr]+=1
+                counts=access.setdefault(addr,{"read_candidate":0,"write_candidate":0,"other":0})
+                first_operand=args.split(",",1)[0]
+                # Only explicit original absolute memory destination could
+                # be write; do not call it a mission selection field.
+                matched=(ref.group(0) in first_operand)
+                if matched and (op.startswith("mov") or op in ("inc","dec","add","sub","xor","and","or")):
+                    counts["write_candidate"]+=1
+                elif not matched and op!="lea":
+                    counts["read_candidate"]+=1
+                else:
+                    counts["other"]+=1
     if count<4:raise UnsafeImage("Mission window unmapped")
     return {
        "window_bytes":WINDOW,"decoded_instruction_candidates":count,
        "instruction_families":dict(sorted(families.items())),
        "first_linear_ret_offset":first_ret,"absolute_global_xref_count":sum(regs.values()),
        "bounded_global_address_hints":[
-           {"address":"%08X"%addr,"references":n}
+           {"address":"%08X"%addr,"references":n,"access":access[addr]}
            for addr,n in sorted(regs.items(),key=lambda x:(-x[1],x[0]))[:16]],
        "known_original_mission_unlock_table_referenced":KNOWN_OPEN_TABLE in regs,
+       "known_difficulty_selection_count_source_address_seen":0x2EC560 in regs,
+       "known_game_object_global_seen":0x2D45F0 in regs,
+       "known_ui_object_global_seen":0x2D199C in regs,
+       "conservatively_clipped_at_first_linear_return":first_ret is not None,
        "selected_mission_field_proven":False,"scene_loaded_callback_proven":False
     }
 def audit(data,pinned=OWNER_SHA1):
@@ -55,13 +75,13 @@ def audit(data,pinned=OWNER_SHA1):
     if sum(n for _,n,_ in sections)>8*1024*1024:raise UnsafeImage("Budget")
     entries={name:inspect(data,sections,at) for name,at in TARGETS.items()}
     result={
-        "schema":"bo-private-original-mission-choice-global-hints-v1",
+        "schema":"bo-private-original-mission-choice-global-hints-v2",
         "owner_image_pinned_sha1_verified":True,
         "entries":entries,
         "original_mission_id_proven":False,"guest_story_launch_supported":False,
         "original_scene_loaded_stage_epoch_verified":False,
         "raw_proprietary_bytes_or_disassembly_exported":False,
-        "caveat":"Linear 768B disassembly crosses function boundaries; global xrefs are NOT selected mission, level loader, or game-thread proof."
+        "caveat":"Conservative first-RET clip is NOT a CFG; other jump paths/function boundaries may differ. Data references and read/write candidates are NOT selected mission field, stage loader or game-thread proof."
     }
     if len(json.dumps(result))>9500:raise UnsafeImage("Metadata privacy budget")
     return result

@@ -58,7 +58,7 @@ jobs:
           import json,os,pathlib
           p=pathlib.Path(os.environ['RUNNER_TEMP'])/'bo-original-mission-hints-safe.json'
           data=json.loads(p.read_text())
-          assert data['schema']=='bo-private-original-mission-choice-global-hints-v1'
+          assert data['schema']=='bo-private-original-mission-choice-global-hints-v2'
           assert len(data['entries'])==3
           assert not data['original_mission_id_proven']
           assert not data['original_scene_loaded_stage_epoch_verified']
