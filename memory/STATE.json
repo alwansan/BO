@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-70-guest-original-frontend-tls-stage-plan.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-71-guest-loader-xbe-private-abi-survey.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -1714,6 +1714,21 @@
       "roomOnlyApkRun": 45036440579,
       "roomOnlyApkLastObserved": "in_progress_install_pinned_android_build_tools",
       "originalPcOverrideRoute": "portingpete/Black-2006-Recomp b2512fafd scripts/generate.py:391-398 -- lab-only, no Android verified call ABI"
+    },
+    "ORIGINAL_GUEST_LAUNCH_XBE_SOURCE_SURVEY": {
+      "status": "SOURCE_PUSHED_PRIVATE_CI_PENDING_NO_ABI",
+      "ownerSHA1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+      "targets": [
+        "0x00115030",
+        "0x00124CF0",
+        "0x001EDC90"
+      ],
+      "windowBytesEach": 1536,
+      "tokenOrXbeByteExported": false,
+      "autoLaunch": false,
+      "engineABIProven": false,
+      "actualLoadedSceneProven": false,
+      "safeWhileOtherApkBuildRuns": true
     }
   },
   "pending": {

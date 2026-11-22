@@ -1,0 +1,81 @@
+name: BO-COOP pinned owner XBE original guest frontend/launch/stream survey (NO LOADER ABI)
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/analysis/original_guest_loader_xbe.py'
+      - 'coop/analysis/test_original_guest_loader_xbe.py'
+      - '.github/workflows/black-coop-original-guest-loader-source.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: bo-original-guest-loader-pinned
+  cancel-in-progress: true
+jobs:
+  synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Owner identity, source-byte and ABI-negative regression
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s coop/analysis -p test_original_guest_loader_xbe.py -v
+  owner-private:
+    needs: synthetic
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: bo
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - uses: actions/checkout@v4
+        with:
+          repository: alwansan/biso
+          ref: 9ceb6a65fb5a4414c106ca3961295a1f8f7e558b
+          path: owner-biso
+          sparse-checkout: Black_Xbox_Extracted/default.xbe
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+          lfs: false
+      - name: Owner C5 original XBE numeric candidates only
+        run: |
+          set -euo pipefail
+          python3 bo/coop/analysis/original_guest_loader_xbe.py \
+            --owner-xbe owner-biso/Black_Xbox_Extracted/default.xbe \
+            --report "$RUNNER_TEMP/guest-loader-numeric.json"
+          python3 - <<'PY'
+          import json,os,pathlib
+          path=pathlib.Path(os.environ["RUNNER_TEMP"])/"guest-loader-numeric.json"
+          r=json.loads(path.read_text())
+          assert r["schema"]=="bo-owner-guest-loader-bridge-private-v1"
+          assert r["owner_original_xbe_sha1_pinned"]
+          assert len(r["candidates"])==3
+          assert all(v["mapped_original_executable_candidate"] for v in r["candidates"].values())
+          assert not r["original_game_guest_mission_start_verified"]
+          assert not r["true_game_scene_loaded_callback_verified"]
+          assert not r["multiplayer_or_npc_rendering_verified"]
+          assert not r["private_executable_data_exported"]
+          assert path.stat().st_size<=3800
+          print("BO_PRIVATE_ORIGINAL_GUEST_LAUNCH_ABI_UNVERIFIED_SOURCE_MAP_PASS")
+          PY
+      - name: Export source counts only (not game image/disassembly)
+        uses: actions/upload-artifact@v4
+        with:
+          name: bo-original-guest-loader-source-numeric-only
+          path: ${{ runner.temp }}/guest-loader-numeric.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Destroy private owner game input
+        if: always()
+        run: |
+          rm -rf owner-biso
+          rm -f "$RUNNER_TEMP/guest-loader-numeric.json"
