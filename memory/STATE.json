@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-45-original-rcb-animation-stride36.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-46-stride36-lanes-synthetic-ally-skin.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -1187,6 +1187,50 @@
       "textureBindingsValidated": false,
       "rawFlagsNamesOrVerticesExported": false,
       "safeDocument": "docs/OWNER_RCB_ANIMATION_LINK_AUDIT_AR.md"
+    },
+    "OWNER_STRIDE36_ATTRIBUTE_LANES_20261122": {
+      "status": "SUCCESS_ORIGINAL_OWNER_PRIVATE_METADATA_ONLY_NOT_SKIN_DECODE",
+      "workflowRun": 44965837041,
+      "reportArtifactId": 14731657226,
+      "ownerBisoRef": "9ceb6a65fb5a4414c106ca3961295a1f8f7e558b",
+      "filesRead": 3,
+      "modelCandidateRecords": 12,
+      "rejectedModels": 0,
+      "sampledReferencedVertexEntries": 38917,
+      "sampledFourByteOffsets": [
+        12,
+        16,
+        20,
+        24,
+        28,
+        32
+      ],
+      "offset12U8SumNear255Percent": 83.63,
+      "offset16AllU8Below25Percent": 17.68,
+      "offset20AllU8Below25Percent": 90.85,
+      "offsets28FloatIn01Percent": 100,
+      "actualD3DVertexDeclarationObserved": false,
+      "actualSkinWeightsDecoded": false,
+      "actualJointIndicesDecoded": false,
+      "sourceOriginalGameBytesExported": false,
+      "safeDocument": "docs/OWNER_VERTEX36_SKIN_RESEARCH_AR.md",
+      "note": "Statistical candidate heuristics only. Sum of packed bytes near 255 and low byte values cannot establish vertex attribute semantics or exact RCB bind mappings."
+    },
+    "SYNTHETIC_ONLY_ALLY_POSE_SKIN_20261122": {
+      "status": "SUCCESS_ASAN_UBSAN_SYNTHETIC_CONTRACT_ONLY",
+      "workflowRun": 44966105790,
+      "marker": "SYNTHETIC_ALLY_POSE_SKIN_CONTRACT_PASS",
+      "header": "coop/bridge/synthetic_ally_skin_contract.hpp",
+      "tests": "coop/bridge/test_synthetic_ally_skin_contract.cpp",
+      "maximumJointCount": 64,
+      "maxInfluences": 4,
+      "validatesParentHierarchyAndCycle": true,
+      "validatesInverseBindAndWeights": true,
+      "originalRcbMatrixConventionProven": false,
+      "originalVertexSkinAttributesDecoded": false,
+      "realBlackRendererOrActorWired": false,
+      "firstPersonUnchanged": true,
+      "realGameplaySync": false
     }
   },
   "pending": {
@@ -1360,10 +1404,10 @@
     "deviceTested": true,
     "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "Session45: original owner 3 StLevel files RCB v21 hierarchy CI44965062874 SUCCESS (9 occurrences=one distinct RCB identity per file, 3 across file contexts, 0 conflicts, 12 models 24/25 bone hashes matched), animation bank v8/encoding4 CI44964889359 SUCCESS (22 bank/675 clip/61615 track records), original MODEL vertex-stream metadata44965229133 SUCCESS (all 36 buffers stride36, 3 patterns per model, one texture slot). NEXT reverse engineer stride36 bone indices/weights and verified MODEL matrices/RCB pose synthesis, then isolate human remote AllyBody renderer. Also independently prove owner c5 host stage actually loaded/scene epoch/game thread before STORY_READY. No phone trial until REAL host shared story and remote body/inputs ready.",
+  "next": "Session46: pinned original owner MODEL stride36 lane audit44965837041 SUCCESS (12 body models, 38917 referenced sampled vertex entries, six 4-byte lanes), +12 byte4 sum near255 83.63%, +20 all u8 values <25 90.85% = weak heuristics, NOT proven weights or indices. SDK runtime GPU vertex formats support packed attributes generically; need actual title D3D shader vertex declaration and its bound MODEL before decoding. Synthetic CPU parent pose/inverse bind/4 weights ASAN+UBSAN44966105790 PASS, NO actual BLACK skinning. Independently prove c5 actual scene loaded game-thread callback/stage epoch before story READY and human remote AllyBody. Owner phone test deferred until substantial real co-op shared host story and human body.",
   "latestHandoff": {
     "date": "2026-11-22",
-    "session": 45,
+    "session": 46,
     "kind": "owner_CI_only_stage_static_plus_safe_tls_story_diagnostics",
     "plan": "docs/superpowers/plans/2026-11-22-host-story-remote-ally.md",
     "sourceCiRun": 44951425780,
@@ -1393,7 +1437,7 @@
     "engineHookVerified": false,
     "remoteHumanActorRendered": false,
     "ownerV3DeviceAccepted": false,
-    "sessionFile": "memory/sessions/2026-11-22_bo-coop-45-original-rcb-animation-stride36.md",
+    "sessionFile": "memory/sessions/2026-11-22_bo-coop-46-stride36-lanes-synthetic-ally-skin.md",
     "ownerTestPolicy": "CI_FIRST_MAJOR_TRIAL_ONLY",
     "ownerXbeStaticRun": 44956138064,
     "storyDiagnosticJvmRun": 44956473684,
@@ -1451,9 +1495,14 @@
     "ownerVertexStrideRun": 44965229133,
     "ownerVertexStrideArtifact": 14731006958,
     "bodyGeometryProvenOnly": true,
-    "bodySkinningAndInterpolationUnproven": true
+    "bodySkinningAndInterpolationUnproven": true,
+    "originalVertex36LaneAuditRun": 44965837041,
+    "originalVertex36LaneSafeArtifact": 14731657226,
+    "syntheticAllySkinContractRun": 44966105790,
+    "originalShaderDeclarationObserved": false,
+    "originalSkinnedRemoteAllyRunning": false
   },
-  "executionStatus": "Session45 complete three private owner asset CI success gates: RCB dedup 44965062874, bank/encoding4 44964889359, stride36 metadata 44965229133. Nine original RCB serialized entries across 3 files represent one nonconflicting identity per file, 12 MODEL candidates 24/25 name hash overlaps. 22 banks 675 clip occurrences 61615 track records structurally valid. All body MODEL vertex buffers 36-byte stride, 1 texture slot/model. No actual skin weights, pose interpolation, scene loader or human remote renderer; no owner phone test.",
+  "executionStatus": "Session46 GitHub code+CI: owner stride36 metadata-only analysis44965837041 SUCCESS, 12/12 candidates across 3 StLevel files, ~38917 samples × 6 lanes, artifact14731657226. Synthetic CPU skin4 joint hierarchy reference ASAN+UBSAN44966105790 SUCCESS. Original RCB hierarchy and animation bank metadata from Session45 pass; no real vertex input declaration, pose playback, rendered human remote ally, engine scene-loaded callback, host story or gameplay channel. User CI first; no minor phone trial.",
   "ownerClarifications": {
     "session": 28,
     "previousPhoneTests": "Solo gameplay and two-phone real LAN lobby now confirmed, but no two-phone SAME WORLD gameplay",
@@ -1465,9 +1514,9 @@
   },
   "integrationRoadmap": "docs/COOP_INTEGRATION_ROADMAP_AR.md",
   "currentWork": {
-    "session": 45,
-    "task": "decode and validate pinned owner RCB joint hierarchy/identity, animation v8 encoding4 clip boundaries and body vertex stride metadata; avoid actual game body claims",
-    "status": "Owner RCB hierarchy/duplicate identity CI44965062874 PASS; owner animation banks CI44964889359 PASS; owner MODEL vertex stride36 metadata CI44965229133 PASS. Still NO interpreted skin weights/rig pose playback/game scene hook/remote human actor.",
+    "session": 46,
+    "task": "privately sample original stride36 vertex data lanes and validate bounded synthetic skeletal pose/skin reference under ASAN/UBSAN",
+    "status": "Original owner stride36 lane metadata CI44965837041 SUCCESS, 38917 samples × six offsets, no proven weights/indices. C++ synthetic skin reference CI44966105790 SUCCESS. Actual title GPU attribute declaration and game remote actor still missing.",
     "sourceCi": 44951425780,
     "sourceCode": "9938283748ad1bdb06f15259d7e4fcb791a47574",
     "latestOwnerTestedAndroidApkRun": 44946597973,
@@ -1576,7 +1625,16 @@
     "latestOwnerBankAnimationResult": "SUCCESS_22_BANKS_675_CLIPS_61615_TRACK_RECORDS_BOUNDS_ONLY",
     "latestOwnerVertexStrideRun": 44965229133,
     "latestOwnerVertexStrideResult": "SUCCESS_12_MODELS_ALL_THREE_STRIDE36_BUFFERS_ONE_TEXTURE_SLOT_PER_MODEL",
-    "actualSceneLoadedGameThreadHook": false
+    "actualSceneLoadedGameThreadHook": false,
+    "originalVertex36LaneAuditRun": 44965837041,
+    "originalVertex36LaneAuditResult": "SUCCESS_12_MODELS_38917_REFERENCED_SAMPLES_6_LANES_ZERO_REJECTIONS",
+    "originalVertex36LaneSafeArtifact": 14731657226,
+    "syntheticAllyPoseSkinRun": 44966105790,
+    "syntheticAllyPoseSkinStatus": "SUCCESS_ASAN_UBSAN_NOT_GAME_RIG",
+    "actualBlackVertexInputTypeMappingProven": false,
+    "actualRemoteHumanAllyRenderer": false,
+    "actualBlackMissionLoadedCallback": false,
+    "requestedOwnerPhoneTestNow": false
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
