@@ -5,6 +5,8 @@
 // No network writing here, no guest memory writes, no scene READY signal.
 #pragma once
 #include "coop/room_original_eye_contract.hpp"
+#include "coop/room_nonfrontend_original_player.hpp"
+#include "coop/room_world_tick.hpp"
 #include "game/layout.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_system.h>
@@ -28,6 +30,15 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
                             kernel::G<float>(original_player+0x104),
                             kernel::G<float>(original_player+0x108),result))
         return;
+    // Same frontend state predicate as pinned original exit_menu.cpp.
+    // A stable non-frontend original player is a diagnostic candidate only.
+    // DO NOT send STORY_READY, PREPARE, COMMIT or modify original game state.
+    uint32_t game=kernel::R32(layout::kGame);
+    uint32_t world=kernel::R32(layout::kWorld);
+    uint32_t state=game?kernel::R32(game+layout::kGameState):0;
+    static NonFrontendOriginalPlayerWitness stable;
+    if(stable.Observe(game,state,layout::kFrontEnd,world,true))
+        SendSafeWorldCodeToAndroid(13); // coarse fixed event, NOT scene proof
     JNIEnv* env=static_cast<JNIEnv*>(SDL_GetAndroidJNIEnv());
     jobject activity=static_cast<jobject>(SDL_GetAndroidActivity());
     if(!env||!activity)return;

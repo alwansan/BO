@@ -36,6 +36,7 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('WORLD_LOCAL_PLAYER_UPDATE_SEEN',java)
             self.assertIn('WORLD_POINTER_CHANGED_UNVERIFIED',java)
             self.assertIn('WORLD_MISSION_LAUNCH_ATTEMPT',java)
+            self.assertIn('ORIGINAL_NON_FRONTEND_PLAYER_STABLE_UNVERIFIED_MISSION',java)
             for safe in ('GPU_V36_DECL_CANDIDATE',
                          'GPU_V36_SLOT12_PACKED_DECL','GPU_V36_SLOT16_PACKED_DECL',
                          'GPU_V36_SLOT20_PACKED_DECL','GPU_V36_SLOT24_NORMPACK_DECL',
@@ -83,6 +84,13 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('kernel::G<float>(original_player+0x104)',eye)
             self.assertIn('kernel::G<float>(original_player+0x108)',eye)
             self.assertIn('SDL_GetAndroidJNIEnv()',eye)
+            self.assertIn('NonFrontendOriginalPlayerWitness stable;',eye)
+            self.assertIn('SendSafeWorldCodeToAndroid(13)',eye)
+            self.assertIn('kernel::R32(game+layout::kGameState)',eye)
+            self.assertIn('layout::kFrontEnd',eye)
+            non_front=(root/'src/coop/room_nonfrontend_original_player.hpp').read_text(encoding='utf-8')
+            self.assertIn('consecutive_<30',non_front)
+            self.assertNotIn('reportSceneLoadedFromGameThread',non_front)
             self.assertIn('QuantizeOriginalEye',contract)
             self.assertNotIn('reportSceneLoadedFromGameThread',eye+contract)
             difficulty=(root/'src/game/difficulty.cpp').read_text(encoding='utf-8')

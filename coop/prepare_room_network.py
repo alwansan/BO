@@ -95,6 +95,7 @@ def prepare(root: pathlib.Path):
         else if (code == 10) com.racas.black.coop.RoomDiagnostics.event("GPU_V36_BOUND_INDEXED_DRAW");
         else if (code == 11) com.racas.black.coop.RoomDiagnostics.event("GPU_V36_BOUND_ARRAY_DRAW");
         else if (code == 12) com.racas.black.coop.RoomDiagnostics.event("GPU_V36_BOUND_SAME_STREAM_12_20");
+        else if (code == 13) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_NON_FRONTEND_PLAYER_STABLE_UNVERIFIED_MISSION");
     }
     public String coopRoomStatusLine(int row) {''', java)
     pending[java] = text
@@ -165,6 +166,7 @@ def prepare(root: pathlib.Path):
     pending['src/coop/room_net_ui.hpp'] = (HERE / 'room_network/room_net_ui.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_world_tick.hpp'] = (HERE / 'room_network/room_world_tick.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_eye_contract.hpp'] = (HERE / 'room_network/room_original_eye_contract.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_nonfrontend_original_player.hpp'] = (HERE / 'room_network/room_nonfrontend_original_player.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_eye_witness.hpp'] = (HERE / 'room_network/room_original_eye_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/world_tick_contract.hpp'] = (HERE / 'room_network/world_tick_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/gpu_decl_contract.hpp'] = (HERE / 'room_network/gpu_decl_contract.hpp').read_text(encoding='utf-8')
