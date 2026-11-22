@@ -15,3 +15,12 @@ The genuine original first-person player callback samples the source core field 
 
 ## Owner-specific constraints
 Never modify `main`, `biso`, `CL`, original game assets/ISO or saves. Do not overwrite working owner binaries. Do not request a minor second-phone trial: inspect source, XBE, CI and safe logs until real human-controlled bodies share a host-world mission. No claims of gameplay or `STORY_READY` from source witness.
+
+## Second, narrower original XBE source proof and artifact
+## Session59 original c5 XBE core-phase literal write/compare source refinement — 2026-11-22
+[Research commit c74cf031](https://github.com/alwansan/BO/commit/c74cf031e70dbe21bcdc49c6f7fed35ee8c01518) enhanced the same strict SHA1-pinned 2048-byte per-function **private** original XBE analyzer to distinguish read vs direct write vs direct compare with `0x1C`, including positive/negative synthetic tests. [CI44980580671 SUCCESS](https://github.com/alwansan/BO/actions/runs/44980580671); only sanitized numerical output [artifact14738055278](https://github.com/alwansan/BO/actions/runs/44980580671). Exact source counters: original `0x001EDC90` streaming candidate **16 direct mentions of core+0x5AE0, 14 write candidates, 1 direct compare with literal 0x1C at relative +15 (0x001EDC9F), ZERO literal 0x1C writes** in bounded window; original `0x001F1080` update 2 reads, 0 writes, 0 compare; `0x0020BC40` spawn 0. These strong evidence locations still do **NOT** prove full function boundary/control-flow, stage loaded callback, original guest loader ABI, or readiness. DO NOT automatically call any guest game function or publish `STORY_READY`. [Android room-only APK44980350821](https://github.com/alwansan/BO/actions/runs/44980350821) IN_PROGRESS at last inspection; no gameplay APK yet. Next: find source-verifiable original scene load completion and guest stage launcher while independently adapting ANY bot-looking human visual without NPC AI.
+
+---
+
+
+The sanitized owner-derived artifact `14738055278` was downloaded for independent examination: its JSON says `stream.first_direct_1c_compare_offsets=[15]` and `stream.first_write_offsets=[428,457,560,589]`. No owner original instructions, offsets of real-time objects, level content, or assets were exported. This is safe static source metadata. Do not confuse a direct field comparison near function entry with a live loading-complete callback. The literal 0x1C value is not directly stored by any candidate instruction in these 2048-byte windows, so code may set it elsewhere/through a register; unverified.
