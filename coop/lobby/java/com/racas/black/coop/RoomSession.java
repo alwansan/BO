@@ -118,14 +118,56 @@ public final class RoomSession implements AutoCloseable {
             // A NEW source-matched ORIGINAL campaign stage supersedes any
             // old host ticket. Abort old host input/poses/peer READY before
             // sending PREPARE for the next stage; no engine writes/loader.
-            if(phase==Phase.HOSTING&&host!=null&&
-               lastSourceStage!=null&&episode>lastSourceStage.originalEpisode&&
-               host.storyTicket()!=null)
-                host.cancelStory();
+            if(phase==Phase.HOSTING&&host!=null&&host.storyTicket()!=null){
+                RoomStoryWire.Ticket pending=host.storyTicket();
+                // A manually prepared first-stage ticket is invalid if the
+                // actual host original engine loads a different mission.
+                // Previously entered stages also revoke on fresh episode.
+                if(pending.mission!=level||pending.stage!=stage||
+                   (lastSourceStage!=null&&
+                    episode>lastSourceStage.originalEpisode)){
+                    host.cancelStory();
+                    event("ORIGINAL_HOST_STAGE_MISMATCH_ABORTED");
+                }
+            }
             lastSourceStage=new OriginalStageCandidate(episode,level,stage);
             lastSourceStageAtNs=now;
             if(phase==Phase.HOSTING)sourceStagePrepare.observe(episode,level,stage,now);
             return true;
+        }
+    }
+    /**
+     * Host-owned TWO-PHONE FIRST STAGE START from the Android lobby.
+     * Sends a genuine TLS STORY_PREPARE for mission 0/stage 0 to the one
+     * connected phone. The original game stage is NOT started here.
+     * Original game-thread source stage matching and independent scene
+     * readiness remain necessary for READY/COMMIT, with no fake actors.
+     */
+    public boolean requestTwoPhoneFirstStageFromLobby(){
+        synchronized(lock){
+            if(closed||phase!=Phase.HOSTING||host==null||
+               !host.isRunning()||host.storyTicket()!=null)return false;
+            try{
+                RoomWire.State current=host.snapshot();
+                if(current==null||current.players.size()!=2||
+                   current.players.get(0).id!=1||
+                   (lastSourceStage!=null&&
+                    (lastSourceStage.level!=0||lastSourceStage.stage!=0)))
+                    return false;
+                int epoch=sourceStagePrepare.nextTwoPhoneFirstStageEpoch(
+                    current.revision,1,false);
+                if(epoch==0)return false;
+                RoomStoryWire.Ticket ticket=host.prepareStory(0,0,epoch);
+                if(ticket==null||ticket.mission!=0||ticket.stage!=0||
+                   ticket.participants!=3||
+                   ticket.rosterRevision!=current.revision||
+                   !sourceStagePrepare.markTwoPhoneFirstStageOffered(
+                       ticket.rosterRevision,epoch)){
+                    host.cancelStory();return false;
+                }
+                event("TWO_PHONE_FIRST_STAGE_PREPARED_NEEDS_ORIGINAL_LAUNCH");
+                return true;
+            }catch(IOException unavailable){return false;}
         }
     }
     /** Native original core/stream match queues real TLS STORY_PREPARE only.

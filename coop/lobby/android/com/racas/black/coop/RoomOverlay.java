@@ -46,6 +46,7 @@ public final class RoomOverlay {
     private LinearLayout hostPanel,joinPanel,results,manualPanel;
     private EditText hostName,roomName,guestName,ip;
     private TextView status,scanStatus,notice;
+    private Button twoPhoneStart;
     private boolean closed;
     private int tab;
     private String lastPhase="";
@@ -58,6 +59,12 @@ public final class RoomOverlay {
             if(!text.equals(status.getText().toString()))status.setText(text);
             String phase=state.phase.name();
             if(!phase.equals(lastPhase)){lastPhase=phase;RoomDiagnostics.event("ROOM_"+phase);}
+            RoomSession.StoryStatus story=session.storyStatus();
+            boolean startPossible=state.phase==RoomSession.Phase.HOSTING&&
+                state.roster!=null&&state.roster.players.size()==2&&
+                story.ticket==null;
+            if(twoPhoneStart!=null&&twoPhoneStart.isEnabled()!=startPossible)
+                twoPhoneStart.setEnabled(startPossible);
             if(!RoomScanGate.canSearch(state.phase) && !cancelScan.get()){
                 // Stop the previous untrusted discovery task after TLS connects.
                 cancelScan.set(true);
@@ -151,6 +158,14 @@ public final class RoomOverlay {
         label(statusPanel,"حالة الاتصال",15,FG);
         status=label(statusPanel,"OFFLINE",14,FG);
         notice=label(statusPanel,"اختر الاستضافة أو جهازاً من القائمة.",12,MUTED);
+        twoPhoneStart=button(statusPanel,
+            "START • المرحلة الأولى — هاتفان (تجريبي)",
+            this::startTwoPhoneFirstStage);
+        twoPhoneStart.setTag("room_story_start_first_two");
+        twoPhoneStart.setEnabled(false);
+        label(statusPanel,
+            "يرسل START طلب المرحلة الأولى للطرف الثاني. اختيار القصة من قائمة BLACK ما زال يدوياً على الهاتفين إلى أن يثبت المشغّل التلقائي؛ ظهور أجسام اللاعبين لم يُفعّل بعد.",
+            11,MUTED);
         button(statusPanel,"مغادرة الغرفة والرجوع",()->{
             cancelScan.set(true);session.stop();RoomDiagnostics.event("ROOM_LEFT");dialog.dismiss();
         });
@@ -242,6 +257,19 @@ public final class RoomOverlay {
             RoomDiagnostics.event("HOST_REQUEST");notice.setText("جارٍ فتح الغرفة…");
         }catch(Exception error){RoomDiagnostics.event("HOST_INPUT_ERROR");notice.setText("أدخل اسماً قصيراً للاعب والغرفة.");}
     }
+    private void startTwoPhoneFirstStage(){
+        if(!session.requestTwoPhoneFirstStageFromLobby()){
+            RoomDiagnostics.event("TWO_PHONE_START_BLOCKED");
+            notice.setText("START يحتاج هوست مع لاعب ثاني واحد متصل، ولا توجد مرحلة جارية.");
+            return;
+        }
+        RoomDiagnostics.event("TWO_PHONE_START_FIRST_STAGE_REQUESTED");
+        notice.setText("أُرسل START للضيف بنجاح. انتقل الآن إلى BLACK واختر المرحلة الأولى؛ على هاتف الضيف اختر نفس المرحلة. ظهور الأجسام ما زال قيد التطوير.");
+        android.widget.Toast.makeText(activity,
+            "START وصل للغرفة. افتح المرحلة الأولى داخل BLACK على الهاتفين.",
+            android.widget.Toast.LENGTH_LONG).show();
+        dialog.dismiss();
+    }
     private void join(String address){
         if(!RoomScanGate.canStartRoom(session.snapshot().phase)){
             notice.setText("هناك اتصال نشط؛ غادر الغرفة أولاً قبل الانضمام لغيرها.");
@@ -312,7 +340,12 @@ public final class RoomOverlay {
             out.append("\nاللاعبون المتصلون: ").append(state.roster.players.size()).append("/4");
             for(RoomWire.Player player:state.roster.players)
                 out.append("\n").append(player.id).append(" · ").append(player.name);
-            out.append("\nSTORY START: unavailable until real remote actors and story sync exist.");
+            RoomSession.StoryStatus story=session.storyStatus();
+            if(story.ticket!=null){
+                out.append(story.committed?
+                    "\nSTORY TLS COMMIT: المرحلة متطابقة، لكن لا يوجد عالم قتال مشترك بعد.":
+                    "\nSTORY PREPARE: طلب بدء المرحلة وصل؛ ينتظر تحميل BLACK الأصلي على الهاتفين.");
+            }else out.append("\nSTART: متاح للهوست عند اتصال هاتفين، المرحلة الأولى افتراضياً.");
         }
         return out.toString();
     }

@@ -33,6 +33,24 @@ final class RoomOriginalHostStagePrepareGate {
         preparedEpisode=sourceEpisode;preparedRevision=revision;nextEpoch=epoch;
         return true;
     }
+    // A HOST pressing START in a room of exactly 2 humans may create an
+    // authenticated stage-0 PREPARE before the real original level begins.
+    // Does NOT launch the original game or imply any scene was loaded.
+    int nextTwoPhoneFirstStageEpoch(long revision,int remoteHumans,
+                                    boolean hasTicket){
+        if(revision<=0||remoteHumans!=1||hasTicket||
+           nextEpoch==Integer.MAX_VALUE)return 0;
+        return nextEpoch+1;
+    }
+    boolean markTwoPhoneFirstStageOffered(long revision,int epoch){
+        if(revision<=0||epoch<=0||epoch!=nextEpoch+1)return false;
+        nextEpoch=epoch;
+        preparedRevision=revision;
+        // Same original episode cannot be implicitly re-offered at a
+        // different stage by a subsequent normal original source tick.
+        preparedEpisode=sourceEpisode;
+        return true;
+    }
     int level(){return level;}
     int stage(){return stage;}
 }
