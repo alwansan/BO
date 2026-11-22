@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-22_bo-coop-68-tls-wire-rejoin-story-slot.md",
+  "lastSession": "memory/sessions/2026-11-22_bo-coop-69-source-matched-host-prepares-story.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -1628,7 +1628,7 @@
       "safeGuestCallProven": false
     },
     "TLS_WIRE_ID_TO_STORY_SLOT_REJOIN": {
-      "status": "SOURCE_PUSHED_CI_PENDING",
+      "status": "TLS_ANDROID29_NATIVE_STAGE_CI_SUCCESS_APK_PENDING",
       "rawAuthenticatedWireIdPreserved": true,
       "compactGameActorSlot": true,
       "realTlsReconnectTest": "coop/lobby/test/RoomStoryTlsTest.java",
@@ -1637,7 +1637,35 @@
       "hostWorldValidationCompact": true,
       "noRealSceneLoaded": true,
       "noRealActorCreated": true,
-      "priorRoomOnlyApkRun": 45032729971
+      "priorRoomOnlyApkRun": 45032729971,
+      "tlsRun": 45034453332,
+      "tlsConclusion": "success",
+      "android29Run": 45034453398,
+      "android29Conclusion": "success",
+      "sourcePreflightRun": 45034453422,
+      "sourcePreflightConclusion": "success",
+      "udpRun": 45034453426,
+      "udpConclusion": "success",
+      "roomOnlyApkRun": 45034453347,
+      "roomOnlyApkLastObserved": "in_progress"
+    },
+    "ORIGINAL_HOST_SOURCE_STAGE_TLS_PREPARE": {
+      "status": "CODE_PUSHED_CI_PENDING_NOT_SCENE_READY",
+      "sourceMatchedRealGameThread": true,
+      "hostStageSourceRefreshSeconds": 2,
+      "stageRange": "0..15",
+      "knownLevelRange": "0..7",
+      "unknownLevel8FailClosed": true,
+      "lateJoin": true,
+      "rosterRevisionReplayGuard": true,
+      "hostControlledSceneEpoch": true,
+      "realAuthenticatedStoryPrepare": true,
+      "guestAutoLaunch": false,
+      "realSceneLoaded": false,
+      "storyReady": false,
+      "storyCommit": false,
+      "realRemoteBotBody": false,
+      "tests": "RoomOriginalHostStagePrepareGateTest.java"
     }
   },
   "pending": {
