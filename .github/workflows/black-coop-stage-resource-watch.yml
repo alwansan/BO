@@ -73,7 +73,7 @@ jobs:
               except ValueError:pass
               else:raise AssertionError("Second staging allowed")
               assert dst.read_bytes()==before
-              dst.write_text(original.replace("KERNEL_EXPORT(202, NtOpenFile, 6)", "KERNEL_EXPORT(999, NtOpenFile, 6)"))
+              dst.write_text(original.replace("    (void)options;\n    W32(handle_out, NewHandle(f));", "    (void)options;\n    W32(handle_out, NewHandle(f)+1);"))
               # Ensure only planned anchors are applied and never a modified original.
               try:patched(dst.read_text())
               except ValueError:pass
