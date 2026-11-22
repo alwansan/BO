@@ -1636,7 +1636,7 @@
     "deviceTested": true,
     "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "SESSION54 original file-open+player source correlation CI44975377158/44975377204/44975377200 SUCCESS. Verify Windows NO-GAMEPLAY build44975377208 and Android29 TLS44975377221 live. P0 original actual host mission ID, guest same stage auto loader and true game-thread stage-loaded READY, independent remote bot character (any enemy/ally look) and host AI/quest/combat. No owner small phone trial. Keep RESTORE updated.",
+  "next": "Session54 original Xbox stage file OPEN+actual player source witness validated CI44975377158/44975377204/44975377200/44975377221. Additional private original XBE literal-level/pointer order CI44975833014 SUCCESS but ZERO textual level_00/01/03..08 labels and ZERO 8-entry table candidates. DO NOT guess host mission->folder. Actual mission index and safe guest loader, verified scene loaded, independent bot visual/shared AI remain P0. Windows room-only build44975377208 check live. No tiny owner device trials.",
   "latestHandoff": {
     "date": "2026-11-22",
     "session": 54,
@@ -1770,7 +1770,10 @@
     "stageRealTlsCI": 44975377200,
     "androidTlsRun": 44975377221,
     "phoneTestRequiredNow": false,
-    "originalSceneLoaded": false
+    "originalSceneLoaded": false,
+    "originalXbeLevelNameOrderRun": 44975833014,
+    "originalXbeLevelPointerArtifact": 14736120332,
+    "originalXbeLevelNameScan": "SUCCESS_ALL_ZERO_8_LEVELS_NO_ORDER_PROOF"
   },
   "executionStatus": "Session49 owner observed bot ally green reticle + inability shoot/kill. New value-only AllyTargetPolicy source+ASAN44969897865 SUCCESS (not actual game). Read docs/OWNER_ALLY_GREEN_RETICLE_RESEARCH_AR.md and Session49; CL images listed, binary pixels not inspected. Next independently trace original c5 aim target faction tint and damage suppression, map original friendly actor->MODEL->GPU draw/RCB. Real verified game-thread host-selected stage epoch and human fullbody/shared world still missing. One future major two-phone trial only.",
   "ownerClarifications": {
@@ -1947,7 +1950,13 @@
     "latestDiagnosticBuildRun": 44975377208,
     "latestDiagnosticBuildResult": "CHECK_LIVE_NO_GAMEPLAY",
     "latestAndroidTlsRun": 44975377221,
-    "latestAndroidTlsResult": "CHECK_LIVE"
+    "latestAndroidTlsResult": "CHECK_LIVE",
+    "originalXbeLevelNameOrderRun": 44975833014,
+    "originalXbeLevelNameOrderArtifact": 14736120332,
+    "originalXbeLevelNameOrderResult": "SUCCESS_SAFE_STATIC_SCAN_ZERO_LEVEL_STRINGS_NO_POINTER_ORDER_PROOF",
+    "originalXbeLevelLabelsInPinnedXbe": 0,
+    "originalXbeLevelPointerPermutations": 0,
+    "originalMissionMappingStillUnknown": true
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
