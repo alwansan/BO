@@ -1,3 +1,8 @@
+### Session70 CI failure 45036205365 and deterministic fix
+[Source preflight 45036205365 FAILED](https://github.com/alwansan/BO/actions/runs/45036205365) at `prepare_room_network.py:330` with `TypeError: once() missing 1 required positional argument: 'name'`. Cause is an accidental missing comma after `'    __imp__sub_00124CF0(ctx, base);'` when instrumenting the new pinned frontend `sub_00115030`; source transform aborts atomically with no game changes. Fixed punctuation and rerun CI. No claim of a successful new room APK until actual workflow completes.
+
+---
+
 ## Session70 — original BLACK FRONTEND native tick receives authenticated HOST STORY_PREPARE BEFORE player exists
 - Pinned `RanggaCasper/Black-Android@f3754d6985` source `src/game/difficulty.cpp`: `sub_00115030` is an ORIGINAL FRONTEND per-frame game wrapper (pinned source original invocation retained). Unlike original player update `sub_001E5FA0`, it can run BEFORE the guest has entered an original mission. Now patched only to invoke `ObserveOriginalGuestPreparedStoryFrontend()` reading bounded 8-int prepared stage via JNI from verified `RoomTls.Client.storyTicket()`. No code path invokes original guest scene loader or auto selects difficulty.
 - `RoomSession.guestPreparedStoryFromOriginalFrontend` guarded by *separate* original native FRONTEND owning thread (does not steal/bind original gameplay player thread), JOINED live pinned TLS, pending PREPARE only (not committed), exact verified session/roster revision, compact guest 2..4 slot in exact ticket, 0..7 level, 0..15 stage, full committed roster size. Returns `[hostSceneEpoch,mission,stage,revision,tokenHi,tokenLo,selfSlot,participants]` or all zeros on abort/disconnect/invalid.

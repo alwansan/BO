@@ -1684,7 +1684,7 @@
       "roomOnlyApkLastObserved": "in_progress"
     },
     "ORIGINAL_GUEST_FRONTEND_AUTH_TLS_STAGE": {
-      "status": "SOURCE_PUSHED_CI_PENDING_GUEST_LOADER_OFF",
+      "status": "PREPARE_TRANSFORM_COMMA_FIXED_AWAIT_SOURCE_CI",
       "originalFrontendFunction": "sub_00115030",
       "authenticatedTlsTicket": true,
       "frontendSeparateOriginalThread": true,
@@ -1697,7 +1697,9 @@
       "readySent": false,
       "commit": false,
       "remoteBotBody": false,
-      "tests": "test_room_original_guest_prepared_story_contract.cpp"
+      "tests": "test_room_original_guest_prepared_story_contract.cpp",
+      "firstPreflightRun": 45036205365,
+      "firstPreflightOutcome": "failure_missing_comma_source_transform"
     }
   },
   "pending": {

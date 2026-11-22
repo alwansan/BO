@@ -327,7 +327,7 @@ def prepare(root: pathlib.Path):
     launch=once(launch,
         '    Unlock();\n    __imp__sub_00115030(ctx, base);\n    OfferBlackOps();',
         '    Unlock();\n    blackcoop::ObserveOriginalGuestPreparedStoryFrontend();\n    __imp__sub_00115030(ctx, base);\n    OfferBlackOps();',difficulty)
-    launch=once(launch,'    __imp__sub_00124CF0(ctx, base);'
+    launch=once(launch,'    __imp__sub_00124CF0(ctx, base);',
         '''    blackcoop::ObserveMissionLaunchCandidate(); // attempt, NOT loaded scene
     const uint32_t originalLaunchEpisode=blackcoop::ObserveOriginalLaunchDifficulty();
     __imp__sub_00124CF0(ctx, base); // ORIGINAL call unchanged
