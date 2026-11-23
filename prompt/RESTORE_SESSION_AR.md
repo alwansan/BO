@@ -1,3 +1,10 @@
+### Session104 — 2026-11-23 — original P2 physics native-call quarantine
+
+- Implementation commits 913aa472967751d85e73ab95f90baabf8cc89b71 and 1ae169ba5997a7b4cd04707051b27aa30b3df362 prevent unsafe same-adapter retries after partially failed original physics proxy acquire/release. Isolated sanitizer preflight [45195066451](https://github.com/alwansan/BO/actions/runs/45195066451) SUCCESS. No real P2 actor created yet.
+- Quarantine is **per C++ adapter**, not engine-global. A replacement instance must never be used to bypass an unresolved native engine side effect. Actor and proxy may be reused only after independently witnessed original cleanup and a new verified scene lifecycle.
+- Original private Windows lab [45193373405](https://github.com/alwansan/BO/actions/runs/45193373405) still running when checked; earlier 45186010290 exited to firmware after 219ms and FAILED gameplay. Next: verify new safe firmware classification then fix actual boot; complete original player2 camera/animation/independent weapons/audio and actual physics/AI; authoritative host mission/NPC/doors/objectives + guest original apply; only one significant combined phone trial.
+- Only edit experiment/black-coop; preserve all protected repositories and owner assets. Keep documents in sync.
+
 ### Session103 — 2026-11-23 — latest original firmware-exit diagnostic
 - Commit 1fc007e547344daddc15ece5dfe2825372437c36 adds bounded firmware mode markers in private original-engine Windows lab, preserving original exit behavior and filtering raw log data. This is diagnostic only; no original player2 actor or shared mission exists.
 - Last original engine CI 45186010290 built original executable, verified XBE and 574 owner files, then firmware returned at 219ms before frontend/UI or USB polling, and FAILED gameplay acceptance. Prior room-only Android build 45187210283 and bridge 45187210265 succeeded on 10b4ae54, explicitly NO GAMEPLAY CO-OP.
