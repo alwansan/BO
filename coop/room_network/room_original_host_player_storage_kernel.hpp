@@ -2,6 +2,7 @@
 #pragma once
 #include "room_original_host_player_storage.hpp"
 #include "room_original_host_proxy_kernel.hpp"
+#include <cstring>
 namespace blackcoop {
 // One adapter per storage owner. Keep it alive until storage is safely
 // released; its fixed ledger never frees allocations implicitly. Quarantined
@@ -32,6 +33,13 @@ public:
  // Reconcile with real original storage's tracked owner, not committed pages.
  bool OwnsActor(uint32_t address,uint32_t size)const noexcept{
   return size==0x900u&&Owns(address,size);
+ }
+ // Read-only, verified original guest page copy for detached shadow planning.
+ // Staging must NEVER write P1, host NPC/physics or a borrowed source buffer.
+ bool CopyGuest(uint32_t address,void* destination,uint32_t length)const noexcept{
+  if(!destination||!Span(address,length))return false;
+  std::memcpy(destination,kernel::HostPtr(address),length);
+  return true;
  }
  bool Free(uint32_t address){
   for(auto& record:allocations_)if(address&&record.address==address){

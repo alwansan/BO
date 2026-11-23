@@ -119,6 +119,12 @@ class RoomNetPrepareTests(unittest.TestCase):
             # Staging alone is insufficient: compile-only inclusion proves
             # SDK types coexist without invoking an original guest actor.
             self.assertIn('#include "coop/room_original_host_player_storage_kernel.hpp"',native)
+            self.assertIn('#include "coop/room_original_host_player_shadow_plan.hpp"',native)
+            shadow=(root/'src/coop/room_original_host_player_shadow_plan.hpp').read_text(encoding='utf-8')
+            self.assertIn('class OriginalHostPlayerShadowPlan final',shadow)
+            self.assertIn('!io.CopyGuest(',shadow)
+            self.assertNotIn('kernel::W32',shadow)
+            self.assertNotIn('CallGuest(',shadow)
             storage=(root/'src/coop/room_original_host_player_storage_kernel.hpp').read_text(encoding='utf-8')
             proxy=(root/'src/coop/room_original_host_proxy_engine.hpp').read_text(encoding='utf-8')
             kernel=(root/'src/coop/room_original_host_proxy_kernel.hpp').read_text(encoding='utf-8')

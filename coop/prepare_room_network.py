@@ -334,7 +334,8 @@ def prepare(root: pathlib.Path):
     for name in ('room_original_host_proxy_engine.hpp',
                  'room_original_host_proxy_kernel.hpp',
                  'room_original_host_player_storage.hpp',
-                 'room_original_host_player_storage_kernel.hpp'):
+                 'room_original_host_player_storage_kernel.hpp',
+                 'room_original_host_player_shadow_plan.hpp'):
         pending['src/coop/' + name] = (HERE / 'room_network' / name).read_text(encoding='utf-8')
     pending['src/coop/room_original_host_extra_actor_contract.hpp'] = (HERE / 'room_network/room_original_host_extra_actor_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_host_extra_actor_witness.hpp'] = (HERE / 'room_network/room_original_host_extra_actor_witness.hpp').read_text(encoding='utf-8')
@@ -422,7 +423,7 @@ X86_FUNC(sub_000D1500) {
     cheat='src/game/cheats.cpp'
     game=pending.get(cheat,originals[cheat].decode('utf-8'))
     game=once(game,'#include "game/layout.h"',
-              '#include "game/layout.h"\n#include "coop/room_world_tick.hpp"\n#include "coop/room_original_eye_witness.hpp"\n#include "coop/room_original_trusted_input_witness.hpp"\n#include "coop/room_original_host_player_storage_kernel.hpp"',cheat)
+              '#include "game/layout.h"\n#include "coop/room_world_tick.hpp"\n#include "coop/room_original_eye_witness.hpp"\n#include "coop/room_original_trusted_input_witness.hpp"\n#include "coop/room_original_host_player_storage_kernel.hpp"\n#include "coop/room_original_host_player_shadow_plan.hpp"',cheat)
     game=once(game,'    __imp__sub_001E5FA0(ctx, base);',
         '''    // Candidate only: first original-player update in this world is
     // NOT proof that host-selected mission/stage loaded on both phones.
