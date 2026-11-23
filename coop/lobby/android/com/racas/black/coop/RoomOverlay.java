@@ -60,6 +60,15 @@ public final class RoomOverlay {
             String phase=state.phase.name();
             if(!phase.equals(lastPhase)){lastPhase=phase;RoomDiagnostics.event("ROOM_"+phase);}
             RoomSession.StoryStatus story=session.storyStatus();
+            // A signed HOST first-stage PREPARE already reached this guest.
+            // Dismiss only the overlay, NEVER stop the shared TLS room.
+            // The ORIGINAL BLACK frontend remains responsible for stage load.
+            if(shouldDismissGuestOnAuthenticatedFirstStage(
+                    state.phase,story.ticket,state.roster)){
+                RoomDiagnostics.event("MENU_GUEST_FIRST_STAGE_AUTO_DISMISSED");
+                dialog.dismiss();
+                return;
+            }
             boolean startPossible=state.phase==RoomSession.Phase.HOSTING&&
                 state.roster!=null&&state.roster.players.size()>=2&&state.roster.players.size()<=4&&
                 story.ticket==null;
@@ -76,6 +85,22 @@ public final class RoomOverlay {
             handler.postDelayed(this,400);
         }
     };
+    // Pure, fail-closed first-stage guest UI gate; exercised on Android29.
+    // JOINED alone must NOT close the lobby while the guest is waiting.
+    static boolean shouldDismissGuestOnAuthenticatedFirstStage(
+            RoomSession.Phase phase,RoomStoryWire.Ticket ticket,
+            RoomWire.State roster){
+        if(phase!=RoomSession.Phase.JOINED||ticket==null||roster==null||
+           ticket.mission!=0||ticket.stage!=1||ticket.sceneEpoch<=0||
+           (ticket.participants!=3&&ticket.participants!=7&&ticket.participants!=15)||
+           roster.players==null||roster.players.size()<2||roster.players.size()>4||
+           roster.players.size()!=Integer.bitCount(ticket.participants)||
+           roster.revision!=ticket.rosterRevision||
+           !java.security.MessageDigest.isEqual(roster.session,ticket.session()))
+            return false;
+        int slot=RoomWire.storySlot(roster,roster.self);
+        return slot>=2&&slot<=4&&ticket.includes(slot);
+    }
     public static void show(Activity activity,int action){
         if(action!=-102&&action!=-103)return;
         if(active!=null&&!active.closed&&active.activity==activity){
