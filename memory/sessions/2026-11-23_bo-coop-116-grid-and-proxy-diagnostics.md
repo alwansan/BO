@@ -1,3 +1,7 @@
+### Session116 CI test correction
+
+- [Harness run 45226635580](https://github.com/alwansan/BO/actions/runs/45226635580) initially FAILED in a new synthetic Python assertion only. The existing `evaluate()` correctly reports `p2_not_ready` for 1000 mission ticks but zero ready P2 ticks. The new test incorrectly asserted `mission_not_reached`; fixed the test expectation, **NOT** the original engine acceptance logic or counters. Retry required before claiming source/test success. Original real-engine job was skipped because harness failure.
+
 # BO-COOP Session116 — 2026-11-23
 
 ### Session116 — 2026-11-23 — original PC engine P2 proxy blocker and grid-node restoration source proof

@@ -64,7 +64,7 @@ class LabTests(unittest.TestCase):
         x = {'mission_ticks': 1000, 'p2_ready_ticks': 0, 'phases_completed': 0,
              'p2_proxy_missing_ticks': 900, 'restore_grid_node_failures': 170}
         self.assertFalse(lab.evaluate(x)['passed'])
-        self.assertEqual(lab.evaluate(x)['blocker'],'mission_not_reached')
+        self.assertEqual(lab.evaluate(x)['blocker'],'p2_not_ready')
 
     def test_aggregate_parser_rejects_extra_fields(self):
         lab = self.module()

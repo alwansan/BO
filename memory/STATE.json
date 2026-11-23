@@ -3636,6 +3636,9 @@
     "ownerTrialRequiredNow": false
   },
   "session116OriginalPcGridProxy": {
+    "firstHarnessRun": 45226635580,
+    "firstHarnessResult": "failed_synthetic_expected_blocker_wrong",
+    "fixedOnlyAssertion": true,
     "latestPcRun": 45222127349,
     "latestPcGameplayPassed": false,
     "latestPcMissionTicks": 176,
