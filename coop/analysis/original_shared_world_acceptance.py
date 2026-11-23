@@ -36,13 +36,37 @@ def events_from_text(text):
             found.add(match.group(1))
     return found
 
+def _committed_contracts(text, commit_name, required):
+    """Require scene-local evidence after commit; abort/restart clears evidence."""
+    active = False
+    witnessed = False
+    observed = set()
+    for line in text.splitlines():
+        match = EVENT.match(line)
+        if not match:
+            continue
+        event = match.group(1)
+        if event in ("ROOM_LEFT", "STORY_ABORTED", "STORY_GUEST_ABORTED",
+                     "STORY_HOST_ABORTED", "ROOM_DISCONNECTED"):
+            active = False
+            witnessed = False
+            observed.clear()
+        elif event == commit_name:
+            active = True
+            witnessed = True
+            observed.clear()
+        elif active and event in required:
+            observed.add(event)
+    return witnessed, observed
+
+
 def evaluate(host_text, guest_text):
-    host = events_from_text(host_text)
-    guest = events_from_text(guest_text)
+    host_committed, host = _committed_contracts(host_text, HOST_COMMIT, REQUIRED_HOST)
+    guest_commit = GUEST_COMMIT if GUEST_COMMIT in events_from_text(guest_text) else HOST_COMMIT
+    guest_committed, guest = _committed_contracts(guest_text, guest_commit, REQUIRED_GUEST)
     missing_host = sorted(REQUIRED_HOST - host)
     missing_guest = sorted(REQUIRED_GUEST - guest)
-    # A host commit must be witnessed on both devices, not inferred from the lobby.
-    commits = HOST_COMMIT in host and (GUEST_COMMIT in guest or HOST_COMMIT in guest)
+    commits = host_committed and guest_committed
     return {
         "status": "ready_for_combined_phone_validation" if commits and not missing_host and not missing_guest else "not_ready",
         "host_commit_witnessed_both_devices": commits,
