@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-126-parallel-p2-compiler-warning.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-127-original-1e0e40-multi-tick.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3879,5 +3879,18 @@
     "originalAndroidHostP2Active": false,
     "originalAndroidP3P4Active": false,
     "guestCanonicalGameStateApplied": false
+  },
+  "session127OriginalSetupTick": {
+    "status": "original_P2_to_P4_multi_frame_setup_call_abi_guard_and_tests_staged_not_activated",
+    "baseCommit": "f914475feaed1e25ef0202b0ba369aa1bd87dc2c",
+    "originalWindowsTwoPlayer": 45239818055,
+    "parallelTestsSucceeded": 45252355828,
+    "sourceChecksSucceeded": 45252355876,
+    "udpChecksSucceeded": 45252355735,
+    "androidCandidateInProgress": 45252355675,
+    "sourceFile": "coop/room_network/room_original_host_setup_tick.hpp",
+    "originalEngineGuestCallEnabled": false,
+    "originalP2P3P4NativeActorReady": false,
+    "guestHostNpcDoorsObjectivesApplied": false
   }
 }

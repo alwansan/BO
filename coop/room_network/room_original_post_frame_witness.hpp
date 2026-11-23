@@ -4,6 +4,7 @@
 #pragma once
 #include "coop/room_original_post_frame_contract.hpp"
 #include "coop/room_original_host_multi_actor_lanes.hpp"
+#include "coop/room_original_host_setup_tick.hpp"
 #include "coop/room_original_guest_canonical_source_barrier.hpp"
 #include "coop/room_original_guest_host_world_witness.hpp"
 #include "coop/room_original_guest_host_npc_witness.hpp"
@@ -19,6 +20,7 @@ inline void ObserveOriginalPostWorldFrame()noexcept{
  // separately on the genuine original game thread. Never synthesize engine
  // actor readiness or apply host NPC/door events from transport alone.
  static OriginalHostHumanLanes humanLanes;
+ static OriginalHumanSetupLanes humanSetup; // native guest-call IO unimplemented, no active actor
  static OriginalGuestCanonicalSourceBarrier guestBarrier;
  constexpr uint32_t worldAt=0x002D45D4u,ownerAt=0x002D12B8u;
  constexpr uint32_t physicsAt=0x002D45F4u,npcAt=0x002D1980u;
@@ -44,6 +46,7 @@ inline void ObserveOriginalPostWorldFrame()noexcept{
   SendSafeWorldCodeToAndroid(2130); // candidate, NOT P2 ready
  (void)humanLanes.Progress(2);(void)humanLanes.Progress(3);
  (void)humanLanes.Progress(4); // never marks a lane ready
+ (void)humanSetup.At(2);(void)humanSetup.At(3);(void)humanSetup.At(4);
  OriginalGuestLaunchMatchKey signedMatch{};
  if(gate.StableOriginalFrames()>=30u&&
     GuestOriginalLaunchMatch().ReadMatchedKey(signedMatch)){

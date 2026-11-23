@@ -125,6 +125,12 @@ jobs:
           set -euo pipefail
           g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread -fsanitize=address,undefined bo/coop/room_network/test_room_original_host_pad_port_bridge.cpp -o "$RUNNER_TEMP/test_native_remote_pad_bridge"
           "$RUNNER_TEMP/test_native_remote_pad_bridge"
+      - name: Original multi-frame 1E0E40 P2 P3 P4 lifecycle guard
+        shell: bash
+        run: |
+          set -euo pipefail
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread -fsanitize=address,undefined bo/coop/room_network/test_room_original_host_setup_tick.cpp -o "$RUNNER_TEMP/test_original_setup_tick"
+          "$RUNNER_TEMP/test_original_setup_tick"
       - name: Parallel ORIGINAL host P2 P3 P4 lifecycle lanes (C++ ASan/UBSan)
         shell: bash
         run: |

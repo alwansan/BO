@@ -24,6 +24,7 @@ jobs:
           set -euo pipefail
           for file in test_room_original_host_player_storage.cpp \
             test_room_original_host_player_shadow_plan.cpp \
+            test_room_original_host_setup_tick.cpp \
             test_room_original_host_player_link_exchange.cpp \
             test_room_original_animation_context.cpp \
             test_room_original_host_proxy_engine.cpp; do

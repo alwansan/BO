@@ -315,6 +315,7 @@ def prepare(root: pathlib.Path):
     pending['src/coop/room_net_ui.hpp'] = (HERE / 'room_network/room_net_ui.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_post_frame_contract.hpp'] = (HERE / 'room_network/room_original_post_frame_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_host_multi_actor_lanes.hpp'] = (HERE / 'room_network/room_original_host_multi_actor_lanes.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_host_setup_tick.hpp'] = (HERE / 'room_network/room_original_host_setup_tick.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_guest_canonical_source_barrier.hpp'] = (HERE / 'room_network/room_original_guest_canonical_source_barrier.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_post_frame_witness.hpp'] = (HERE / 'room_network/room_original_post_frame_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_world_tick.hpp'] = (HERE / 'room_network/room_world_tick.hpp').read_text(encoding='utf-8')
