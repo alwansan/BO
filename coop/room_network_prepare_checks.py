@@ -321,7 +321,7 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('ORIGINAL_REMOTE_VISUAL_PEER_BODY_MISSING_OR_STALE',java)
             self.assertIn('ORIGINAL_REMOTE_VISUAL_DRAW_METHOD_UNAVAILABLE',java)
             self.assertIn('dispatch::Find(0x0017E130u)',puppet)
-            self.assertIn('kernel::CallGuest(ctx,0x0017E130u,',puppet)
+            self.assertIn('kernel::CallGuest(call,0x0017E130u,',puppet)
             self.assertIn('TM_AR_S_001',puppet)
             self.assertIn('TM_AR_S_MOV',puppet)
             self.assertIn('OriginalRemoteHumanMotionPlan',puppetAnim)
