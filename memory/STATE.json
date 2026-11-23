@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-92-real-engine-lab-and-soldier-ownership.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-93-private-engine-evidence-integrity.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3171,5 +3171,16 @@
       "configuredGenerator": "Visual Studio 17 2022",
       "retryPending": true
     }
+  },
+  "lastAutomationWork": {
+    "date": "2026-11-23",
+    "scope": "private_engine_lab_evidence_integrity_not_gameplay",
+    "codeCommits": [
+      "e721c588f9aa87b9130f7d3f1f7a4f32511c542a",
+      "8a887bb686a083b69e0e68fc9e5882e83a5d2db2"
+    ],
+    "verifiedOnOriginalEngine": false,
+    "sharedWorldVerified": false,
+    "remaining": "host original physical player2 ownership, independent weapons/AI, guest apply and authoritative objects"
   }
 }
