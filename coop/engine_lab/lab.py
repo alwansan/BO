@@ -220,6 +220,29 @@ static HANDLE bo_hdd_partition0_handle = INVALID_HANDLE_VALUE;
         fputs("BO_ENGINE_HDD_TABLE_WRITE_OK\n", stderr);
     else
         fputs("BO_ENGINE_HDD_TABLE_WRITE_FAILED\n", stderr);''')
+        # The pinned BLACK PC main passes save_dir="save". Windows
+        # SHCreateDirectoryExW requires an ABSOLUTE pathname. Its failure
+        # prevented Partition0.img from ever being created (real lab evidence).
+        # Do not alter owner files or use a network supplied path.
+        save_anchor = '        SHCreateDirectoryExW(NULL, s_save_dir, NULL);'
+        if text.count(save_anchor) != 1:
+            raise ValueError('pinned Xbox save-path source drift')
+        text = text.replace(save_anchor, r'''        WCHAR bo_absolute_save[MAX_PATH];
+        DWORD bo_save_length = GetFullPathNameW(s_save_dir, MAX_PATH, bo_absolute_save, NULL);
+        if (bo_save_length > 0 && bo_save_length < MAX_PATH) {
+            wcscpy_s(s_save_dir, MAX_PATH, bo_absolute_save);
+            fputs("BO_ENGINE_HDD_SAVE_PATH_NORMALIZED\n", stderr);
+        } else {
+            fputs("BO_ENGINE_HDD_SAVE_PATH_NORMALIZE_FAILED\n", stderr);
+        }
+        {
+            int bo_mkdir = SHCreateDirectoryExW(NULL, s_save_dir, NULL);
+            if (bo_mkdir == ERROR_SUCCESS || bo_mkdir == ERROR_FILE_EXISTS ||
+                bo_mkdir == ERROR_ALREADY_EXISTS)
+                fputs("BO_ENGINE_HDD_SAVE_DIR_CREATED\n", stderr);
+            else
+                fputs("BO_ENGINE_HDD_SAVE_DIR_FAILED\n", stderr);
+        }''')
         return text
     raise ValueError('unknown patch kind')
 
@@ -403,6 +426,10 @@ def collect_boot_media_hints(line, progress):
     # Only markers emitted by our disposable, pinned original-PC kernel.
     # Do not forward any partition path, guest address, OS error or disk data.
     known = {
+        'BO_ENGINE_HDD_SAVE_PATH_NORMALIZED': 'hdd_save_path_normalized',
+        'BO_ENGINE_HDD_SAVE_PATH_NORMALIZE_FAILED': 'hdd_save_path_normalize_failed',
+        'BO_ENGINE_HDD_SAVE_DIR_CREATED': 'hdd_save_dir_created',
+        'BO_ENGINE_HDD_SAVE_DIR_FAILED': 'hdd_save_dir_failed',
         'BO_ENGINE_HDD_TABLE_CREATE_OK': 'hdd_table_created',
         'BO_ENGINE_HDD_TABLE_CREATE_FAILED': 'hdd_table_create_failed',
         'BO_ENGINE_HDD_TABLE_WRITE_OK': 'hdd_table_written',
