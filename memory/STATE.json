@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": 100,
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-102-original-resource-ownership-continuation.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3280,5 +3280,16 @@
     "gameplaySharedWorld": false,
     "androidGameplayReady": false,
     "protectedRepositoriesUntouched": true
+  },
+  "session102": {
+    "remoteBase": "822ae3fab3cd5b12c3721da4e32b50cfe0ee0999",
+    "activeCheckout": "BO-world-sync",
+    "originalEngineExecutableBuilt": true,
+    "originalEngineMissionObserved": false,
+    "actualSharedWorld": false,
+    "animationContext": "local_review_in_progress",
+    "audioBankLifecycle": "original_cleanup_callgraph_under_verification",
+    "allToolsAndRestorationRequested": true,
+    "ownerPhoneTrialReady": false
   }
 }

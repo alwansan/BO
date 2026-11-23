@@ -11,6 +11,7 @@ import subprocess
 import sys
 import tempfile
 import threading
+import time
 
 PC_PIN = 'b2512fafd3e181e4febfb298f297245b845ef628'
 RUNTIME_PIN = 'e4b621706a3b5e58c084838d1f27547548cf27a8'
@@ -23,6 +24,10 @@ MANUAL_ANCHOR = '''void sub_001F1080(void)
     sub_001F1080_gen();
     black_p2_tick();
 }'''
+HAL_RETURN_ANCHOR = '''        "HalReturnToFirmware: routine=%u (exiting)", Routine);
+    ExitProcess(0);'''
+HAL_SHUTDOWN_ANCHOR = '''    xbox_log(XBOX_LOG_INFO, XBOX_LOG_HAL, "HalInitiateShutdown (exiting)");
+    ExitProcess(0);'''
 MENU_ANCHOR = '''    black_native_menu_tick(ui);
     sub_00124330_gen();'''
 USB_ANCHOR = '''    out[0] = 0;
@@ -85,6 +90,14 @@ void sub_001F1080(void)
     black_p2_tick();
     bo_lab_after();
 }''')
+    if kind == 'hal':
+        if text.count(HAL_RETURN_ANCHOR) != 1 or text.count(HAL_SHUTDOWN_ANCHOR) != 1:
+            raise ValueError('HAL exit source drift')
+        text = text.replace(HAL_RETURN_ANCHOR, HAL_RETURN_ANCHOR.replace(
+            '    ExitProcess(0);', '    fputs("BO_ENGINE_FIRMWARE_RETURN\\n", stderr);\n    ExitProcess(0);'))
+        text = text.replace(HAL_SHUTDOWN_ANCHOR, HAL_SHUTDOWN_ANCHOR.replace(
+            '    ExitProcess(0);', '    fputs("BO_ENGINE_FIRMWARE_SHUTDOWN\\n", stderr);\n    ExitProcess(0);'))
+        return '#include <stdio.h>\n' + text
     if kind == 'menu':
         if text.count(MENU_ANCHOR) != 1:
             raise ValueError('frontend source drift')
@@ -120,7 +133,8 @@ def prepare(pc):
         raise ValueError('source checkout is not disposable and clean')
     sources = [(pc / 'src/recomp_manual.c', 'manual'),
                (pc / 'src/black_native_menu.inc', 'menu'),
-               (pc / 'third_party/xboxrecomp/src/usb/usb_gamepad.c', 'usb')]
+               (pc / 'third_party/xboxrecomp/src/usb/usb_gamepad.c', 'usb'),
+               (pc / 'third_party/xboxrecomp/src/kernel/kernel_hal.c', 'hal')]
     patched = [(path, patch_text(path.read_text(encoding='utf-8'), kind)) for path, kind in sources]
     for path, text in patched:
         path.write_text(text, encoding='utf-8')
@@ -227,7 +241,16 @@ def private_call(argv, cwd, timeout, env=None, progress=None, diagnostics=None):
         pending = b''
         markers = {b'XBE loaded:': 'xbe_loaded', b'Starting game...': 'guest_entry_called',
                    b'BO_ENGINE_PAD_STARTED': 'usb_pad_polled',
-                   b'BO_ENGINE_MENU_TICK': 'frontend_ui_polled'}
+                   b'BO_ENGINE_MENU_TICK': 'frontend_ui_polled',
+                   b'Game returned. Cleaning up...': 'guest_entry_returned',
+                   b'BO_ENGINE_FIRMWARE_RETURN': 'firmware_return',
+                   b'BO_ENGINE_FIRMWARE_SHUTDOWN': 'firmware_shutdown',
+                   b'[KELVIN] NV2A engine on the CPU: started': 'cpu_renderer_started',
+                   b'OHCI: two controllers': 'usb_controller_started',
+                   b'[BOOT] emulated APU up': 'audio_emulation_started',
+                   b'D3D8: Failed to create D3D11 device': 'd3d_device_failed',
+                   b'D3D8: Device created': 'd3d_device_started',
+                   b'[XA2] CreateMasteringVoice failed': 'audio_output_unavailable'}
         while True:
             chunk = proc.stdout.read(65536)
             if not chunk:
@@ -320,7 +343,9 @@ def execute(bo, pc, out, seconds):
                    RECOMP_BLACK_SKIP_MOVIES='1', RECOMP_BLACK_SKIP_STARTUP_VIDEOS='1',
                    BO_LAB_AGGREGATE=str(temp / 'aggregate.json'))
         progress = {}
+        started = time.monotonic()
         code = private_call([executable], pc, seconds, env, progress)
+        report['runtime_elapsed_ms'] = min(2000000, int((time.monotonic() - started) * 1000))
         report['boot_progress'] = progress
         raw = temp / 'aggregate.json'
         if raw.is_file():
@@ -328,7 +353,13 @@ def execute(bo, pc, out, seconds):
         result = evaluate(report['observations'])
         report.update(result)
         if report['blocker'] == 'mission_not_reached':
-            if not progress.get('guest_entry_called'):
+            if progress.get('firmware_return') or progress.get('firmware_shutdown'):
+                report['blocker'] = 'guest_requested_firmware_exit'
+            elif progress.get('d3d_device_failed'):
+                report['blocker'] = 'graphics_device_initialization_failed'
+            elif progress.get('guest_entry_returned'):
+                report['blocker'] = 'guest_entry_returned_before_mission'
+            elif not progress.get('guest_entry_called'):
                 report['blocker'] = 'original_boot_incomplete'
             elif not progress.get('frontend_ui_polled') and not progress.get('usb_pad_polled'):
                 report['blocker'] = 'frontend_and_usb_input_not_polled'

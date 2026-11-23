@@ -134,6 +134,26 @@ class LabTests(unittest.TestCase):
             lab.parse_aggregate(duplicate)
         self.assertEqual(lab.parse_aggregate(payload), fields)
 
+    def test_runtime_exit_markers_are_only_fixed_booleans(self):
+        lab = self.module()
+        progress = {}
+        code = lab.private_call([sys.executable, '-c',
+            "print('[KELVIN] NV2A engine on the CPU: started'); print('BO_ENGINE_FIRMWARE_RETURN'); print('Game returned. Cleaning up...'); print('PRIVATE_GUEST_ADDRESS')"],
+            HERE, 5, progress=progress)
+        self.assertEqual(code, 0)
+        self.assertEqual(progress, dict(cpu_renderer_started=True, firmware_return=True, guest_entry_returned=True))
+        self.assertNotIn('PRIVATE', str(progress))
+
+    def test_hal_marker_preserves_original_exit_and_rejects_drift(self):
+        lab = self.module()
+        original = lab.HAL_RETURN_ANCHOR + '\n' + lab.HAL_SHUTDOWN_ANCHOR
+        patched = lab.patch_text(original, 'hal')
+        self.assertEqual(patched.count('BO_ENGINE_FIRMWARE_RETURN'), 1)
+        self.assertEqual(patched.count('BO_ENGINE_FIRMWARE_SHUTDOWN'), 1)
+        self.assertEqual(patched.count('ExitProcess(0);'), 2)
+        with self.assertRaises(ValueError):
+            lab.patch_text('unknown HAL', 'hal')
+
     def test_truncated_aggregate_cannot_pass(self):
         lab = self.module()
         with self.assertRaises(ValueError):

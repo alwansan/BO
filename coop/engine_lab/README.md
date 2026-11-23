@@ -26,7 +26,10 @@ extract every owner file into the runner's disposable `engine/game/` directory.
 It leaves the disc layout intact. It refuses an existing game directory, dirty
 host sources, differing source pins and changed patch anchors. It changes only
 host `src/recomp_manual.c`, adds the observer/scheduler beside it, and observes the native frontend wrapper in `src/black_native_menu.inc`, and changes
-runtime `src/usb/usb_gamepad.c` in the disposable checkout. No original game bytes
+runtime `src/usb/usb_gamepad.c` in the disposable checkout. Two fixed markers
+are also inserted before the existing HAL firmware-return/shutdown exits in
+`src/kernel/kernel_hal.c`; their original log calls, parameters and `ExitProcess(0)`
+behavior are preserved. No exit is suppressed or converted into gameplay. No original game bytes
 or generated game-function bodies are patched. Generation follows the pinned
 production script; compilation uses Ninja with the active x64 MSVC developer environment and
 production CMake definitions, with two build jobs. This supports the runner
@@ -92,7 +95,12 @@ change count leave the runner, never raw page strings or addresses. This callbac
 is read-only and does not request a page or write menu input/state.
 
 Fixed boot-progress booleans distinguish XBE load, the guest entry call and first
-USB poll. They never satisfy gameplay acceptance. With USB polling observed but
+USB poll. Fixed runtime markers additionally distinguish normal guest entry
+return, guest-requested firmware return/shutdown, CPU renderer startup, USB
+controller startup, audio-emulation startup and graphics/audio device failure.
+Only booleans are retained, plus bounded elapsed runtime in milliseconds; neither
+error text, guest addresses nor the firmware routine argument is exported. These
+markers never satisfy gameplay acceptance. With USB polling observed but
 no mission-running samples, `mission_not_reached` identifies the unverified
 frontend navigation/startup path; earlier blockers are `original_boot_incomplete`
 or `usb_input_not_polled`.
@@ -135,3 +143,13 @@ dependencies and generated original code. It failed at CMake configure; the
 public setup log identifies VS18/MSVC14.52 while the first lab requested the
 VS17/2022 generator. The Ninja change addresses that observed toolchain mismatch.
 A successful configure/build/mission run has not yet been established.
+
+The later actual run `45113568182` at BO `44a5369` built the engine and exited
+with code zero after calling guest entry, but reached neither the frontend UI
+marker nor a USB pad poll. Its aggregate blocker was
+`frontend_and_usb_input_not_polled`, with no mission/P2 observations. That is a
+pre-frontend runtime failure, not evidence that A/START menu navigation failed.
+The following fixed HAL/normal-return markers and elapsed duration narrow that
+exit on the next real run; the already discarded runtime output cannot establish
+retrospectively whether guest entry returned, firmware exit occurred, or graphics
+initialization failed. No speculative game-state fix has been applied.
