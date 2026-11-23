@@ -29,6 +29,7 @@ inline void ObserveOriginalPostWorldFrame()noexcept{
  }
  s.corePhase=kernel::R32(s.world+0x5AE0u);
  s.localKind=kernel::R32(s.world+0x30u+0xC4u);
+ s.localVtable=kernel::R32(s.world+0x30u); // exact ORIGINAL P1 identity
  if(gate.Observe(s,true))
   SendSafeWorldCodeToAndroid(2130); // candidate, NOT P2 ready
 }

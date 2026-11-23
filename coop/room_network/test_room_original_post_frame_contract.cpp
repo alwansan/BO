@@ -1,16 +1,24 @@
 #include "room_original_post_frame_contract.hpp"
 #include <cassert>
 #include <iostream>
+#include <thread>
 using namespace blackcoop;
 int main(){
  OriginalPostFrameGate gate;
- const OriginalPostFrameSample valid{0x100000,0x120000,0x140000,0x150000,0x1C,2};
+ const OriginalPostFrameSample valid{0x100000,0x120000,0x140000,0x150000,0x1C,2,0x28CFE0};
  assert(!gate.Observe(valid,false));
  for(unsigned n=0;n<29;n++)assert(!gate.Observe(valid,true));
  assert(gate.StableOriginalFrames()==29u);
  assert(gate.Observe(valid,true));
  for(unsigned n=0;n<500;n++)assert(!gate.Observe(valid,true));
  assert(!gate.OriginalPlayer2Ready());
+ bool foreignSaw=false;
+ std::thread wrongThread([&]{
+  foreignSaw=gate.Observe(valid,true);
+  assert(gate.StableOriginalFrames()==0u);
+  gate.Reset(); // foreign caller cannot reset the real game-thread state
+ });wrongThread.join();
+ assert(!foreignSaw&&gate.StableOriginalFrames()==30u);
  auto bad=valid;bad.localKind=1;
  assert(!gate.Observe(bad,true)&&gate.StableOriginalFrames()==0);
  for(unsigned n=0;n<29;n++)assert(!gate.Observe(valid,true));
@@ -20,6 +28,8 @@ int main(){
  assert(gate.StableOriginalFrames()==1);
  for(unsigned n=0;n<28;n++)assert(!gate.Observe(bad,true));
  assert(gate.Observe(bad,true));
+ bad=valid;bad.localVtable=0x28CFD0;
+ assert(!gate.Observe(bad,true)&&gate.StableOriginalFrames()==0);
  bad=valid;bad.corePhase=0x1B;
  assert(!gate.Observe(bad,true)&&gate.StableOriginalFrames()==0);
  bad=valid;bad.physics=0;

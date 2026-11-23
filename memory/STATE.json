@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-121-original-post-frame-and-multiplayer-pad-ports.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-122-postframe-vtable-tls-epoch-rollback.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3787,5 +3787,22 @@
     "androidOriginalHostOwnedCoopCampaignVerified": false,
     "originalGuestNpcDoorObjectiveStateApplied": false,
     "userPhoneTestNeededNow": false
+  },
+  "session122OriginalPostFrameIdentityAndTlsEpochRollback": {
+    "status": "source_committed_CI_pending_original_android_shared_story_not_done",
+    "baseCommit": "38840eb76427a0306cbf2fabf221a2d38a1d8189",
+    "originalAndroidBuildLastVerified": 45243553282,
+    "originalPcRealTwoPlayerRunHistorical": 45233723518,
+    "pcRerun": 45239818055,
+    "pcRerunAtCheck": "original-engine_in_progress",
+    "safeguards": [
+      "post_1F1080_P1_exact_vtable_0x28CFE0",
+      "post_frame_owning_thread_fail_closed",
+      "authenticated_TLS_input_epoch_rollback_rejected"
+    ],
+    "coreNext": "Safe original Android P2-P4 actor lifecycle with P1 context restoration, original weapon/animation/audio/physics and host-owned NPC/doors/objectives guest apply",
+    "originalAndroidP2ActorActive": false,
+    "sharedOriginalMissionOnPhones": false,
+    "ownerPhoneMicrotest": false
   }
 }

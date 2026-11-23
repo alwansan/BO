@@ -5,12 +5,15 @@
 // NOT a loaded-scene event, peer COMMIT, player-2 setup or shared AI proof.
 #pragma once
 #include <cstdint>
+#include <thread>
 namespace blackcoop {
 struct OriginalPostFrameSample {
  uint32_t world=0,owner=0,physics=0,npcPool=0;
- uint32_t corePhase=0,localKind=0;
+ uint32_t corePhase=0,localKind=0,localVtable=0;
 };
 class OriginalPostFrameGate final {
+ const std::thread::id thread_=std::this_thread::get_id();
+ bool onThread()const noexcept{return thread_==std::this_thread::get_id();}
  OriginalPostFrameSample current_{};
  unsigned consecutive_=0;
  bool logged_=false;
@@ -19,12 +22,13 @@ class OriginalPostFrameGate final {
     a.physics==b.physics&&a.npcPool==b.npcPool;
  }
 public:
- void Reset()noexcept{current_={};consecutive_=0;logged_=false;}
+ void Reset()noexcept{if(!onThread())return;current_={};consecutive_=0;logged_=false;}
  // Returns true only ONCE after 30 consecutive genuine stable frames.
  bool Observe(const OriginalPostFrameSample& sample,bool originalPostTick)noexcept{
-  if(!originalPostTick||sample.world<0x10000u||sample.owner<0x10000u||
+  if(!onThread()||!originalPostTick||sample.world<0x10000u||sample.owner<0x10000u||
      sample.physics<0x10000u||sample.npcPool<0x10000u||
-     sample.corePhase!=0x1Cu||sample.localKind!=2u){
+     sample.corePhase!=0x1Cu||sample.localKind!=2u||
+     sample.localVtable!=0x0028CFE0u){
    Reset();return false;
   }
   if(!same(current_,sample)){
@@ -34,7 +38,7 @@ public:
   if(logged_||consecutive_<30u)return false;
   logged_=true;return true;
  }
- unsigned StableOriginalFrames()const noexcept{return consecutive_;}
+ unsigned StableOriginalFrames()const noexcept{return onThread()?consecutive_:0u;}
  // Source candidate only; this never authorizes original native P2 setup.
  bool OriginalPlayer2Ready()const noexcept{return false;}
 };

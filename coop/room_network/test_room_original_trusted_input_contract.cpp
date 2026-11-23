@@ -38,6 +38,10 @@ int main(){
     assert(inbox.Ingest(newEpoch,8)==1);
     assert(inbox.Fresh(2,out)&&out.sceneEpoch==43&&out.sequence==1);
     assert(!inbox.Fresh(3,out));
+    const int32_t oldSceneReplay[]={42,1,2,999,1000,-1000,0,3};
+    assert(inbox.Ingest(oldSceneReplay,8)==0);
+    assert(inbox.Epoch()==43);
+    assert(inbox.Fresh(2,out)&&out.sceneEpoch==43&&out.sequence==1&&out.flags==0);
     // A foreign worker can NEVER drain or modify original game-thread inbox.
     bool foreign=false,foreignRead=true;
     std::thread worker([&]{

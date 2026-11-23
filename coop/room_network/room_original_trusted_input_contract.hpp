@@ -61,6 +61,11 @@ public:
         }
         if(!owned_){owner_=std::this_thread::get_id();owned_=true;}
         const uint32_t epoch=static_cast<uint32_t>(rawEpoch);
+        // Delayed authenticated packets from an older room story must never
+        // resurrect an old player or FIRE input in the active game epoch.
+        // A deliberate room Reset() is required before accepting a new lower
+        // epoch in a fresh authenticated session.
+        if(epoch_&&epoch<epoch_)return 0;
         if(epoch_!=epoch){
             epoch_=epoch;lastSequence_={};lastPoll_={};commands_={};polls_=0;
         }
