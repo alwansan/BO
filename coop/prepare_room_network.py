@@ -228,6 +228,7 @@ def prepare(root: pathlib.Path):
         else if (code == 2125) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_EXTRA_ACTOR_GATE_NO_SAFE_AI_TARGET_CAPACITY");
         else if (code == 2126) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_EXTRA_ACTOR_GATE_NO_SOLDIER_BODY_CAPACITY");
         else if (code == 2127) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_EXTRA_ACTOR_GATE_SOURCE_ELIGIBLE_NO_GAMEPLAY_ACTOR");
+        else if (code == 2130) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_POST_1F1080_GAME_FRAME_STABLE_SOURCE_ONLY_NO_PLAYER2");
         else if (code == 20) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_EASY_NOT_MISSION");
         else if (code == 21) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_NORMAL_NOT_MISSION");
         else if (code == 22) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_HARD_NOT_MISSION");
@@ -312,6 +313,8 @@ def prepare(root: pathlib.Path):
         pending[destination] = content
 
     pending['src/coop/room_net_ui.hpp'] = (HERE / 'room_network/room_net_ui.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_post_frame_contract.hpp'] = (HERE / 'room_network/room_original_post_frame_contract.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_post_frame_witness.hpp'] = (HERE / 'room_network/room_original_post_frame_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_world_tick.hpp'] = (HERE / 'room_network/room_world_tick.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_eye_contract.hpp'] = (HERE / 'room_network/room_original_eye_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_nonfrontend_original_player.hpp'] = (HERE / 'room_network/room_nonfrontend_original_player.hpp').read_text(encoding='utf-8')
@@ -425,7 +428,7 @@ X86_FUNC(sub_000D1500) {
     cheat='src/game/cheats.cpp'
     game=pending.get(cheat,originals[cheat].decode('utf-8'))
     game=once(game,'#include "game/layout.h"',
-              '#include "game/layout.h"\n#include "coop/room_world_tick.hpp"\n#include "coop/room_original_eye_witness.hpp"\n#include "coop/room_original_trusted_input_witness.hpp"\n#include "coop/room_original_host_player_storage_kernel.hpp"\n#include "coop/room_original_host_player_shadow_plan.hpp"',cheat)
+              '#include "game/layout.h"\n#include "coop/room_world_tick.hpp"\n#include "coop/room_original_post_frame_witness.hpp"\n#include "coop/room_original_eye_witness.hpp"\n#include "coop/room_original_trusted_input_witness.hpp"\n#include "coop/room_original_host_player_storage_kernel.hpp"\n#include "coop/room_original_host_player_shadow_plan.hpp"',cheat)
     game=once(game,'    __imp__sub_001E5FA0(ctx, base);',
         '''    // Candidate only: first original-player update in this world is
     // NOT proof that host-selected mission/stage loaded on both phones.
@@ -439,6 +442,17 @@ X86_FUNC(sub_000D1500) {
         blackcoop::ObserveOriginalHostInputTick(me);
     }
     __imp__sub_001E5FA0(ctx, base);''',cheat)
+    # Verified same original post-frame boundary as native PC dual-control
+    # source. Read-only on Android: no P2 actor setup/tick call yet.
+    game += '''
+// ORIGINAL full world-frame update; the PC 2-player engine schedules
+// its player2 after vanilla 1F1080, not inside a frontend/menu callback.
+X86_EXTERN_FUNC(__imp__sub_001F1080);
+X86_FUNC(sub_001F1080) {
+    __imp__sub_001F1080(ctx,base); // original gameplay MUST execute once
+    blackcoop::ObserveOriginalPostWorldFrame(); // no guest writes
+}
+'''
     pending[cheat]=game
 
     # The pinned source already wraps this genuine difficulty-menu launch
