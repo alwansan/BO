@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": 99,
+  "lastSession": 100,
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3256,5 +3256,20 @@
       "originalContracts": 45151218818,
       "udp": 45151218720
     }
+  },
+  "latestSession100": {
+    "date": "2026-11-23",
+    "scope": "fix_escaped_Cpp_comments_disabling_reset_tests",
+    "commits": [
+      "adbd00ff2f3d8582901f0ff3d49809e701044d9a",
+      "6e0c99a9dc6262283dbc3e81ede5ac90cbd39d25",
+      "c772c874f2898d8cab15056d3105ae3b80d65646"
+    ],
+    "previousCiFalsePositive": true,
+    "hostEvent": "ROOM_HOSTING",
+    "guestEvent": "ROOM_JOINED",
+    "sharedWorldProven": false,
+    "originalHostExtraActorImplemented": false,
+    "next": "Verify corrected CI, wire reset into authenticated disconnect, implement real host-owned original P2 actor and guest world consumer"
   }
 }
