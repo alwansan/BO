@@ -50,6 +50,13 @@ class OriginalHumanBotVisual {
         visualCodesReported_|=bit;
         SendSafeWorldCodeToAndroid(static_cast<jint>(code));
     }
+    static void ClearOriginalSoldierCallRegisters(X86Context& call)noexcept{
+        // Pinned MIT PC black_guest_call creates a ZERO BlackRegs record
+        // (eax/ecx/edx/ebx/esi/edi), preserving the actual stack/ebp.
+        // Avoid accidentally passing registers from grid draw to an original
+        // game model/animation entry point with undocumented side effects.
+        call.eax=call.ecx=call.edx=call.ebx=call.esi=call.edi=0;
+    }
     void applyOriginalSoldierAnimation(X86Context& ctx,
         const OriginalOtherHumanBody& body,uint64_t now)noexcept{
         clipPlan_.Observe(body.epoch,body.revision,body.tick,
@@ -70,11 +77,11 @@ class OriginalHumanBotVisual {
             std::memcpy(kernel::HostPtr(clipNames_),
                         kSoldierClips,sizeof(kSoldierClips));
         }
-        X86Context saved=ctx;
-        ctx.eax=replicaInstance_;
-        kernel::CallGuest(ctx,0x0017E130u,
+        X86Context call=ctx;
+        ClearOriginalSoldierCallRegisters(call);
+        call.eax=replicaInstance_;
+        kernel::CallGuest(call,0x0017E130u,
                           {clipNames_+(desired==2u?16u:0u)});
-        ctx=saved;
         activeClip_=desired; // changes only for genuine source motion
     }
     static uint32_t fp(float v)noexcept{
@@ -185,10 +192,10 @@ class OriginalHumanBotVisual {
         kernel::G<uint8_t>(blank+0x13Bu)=0;
         std::memcpy(kernel::HostPtr(dstA),kernel::HostPtr(donorA),0x70u);
         std::memcpy(kernel::HostPtr(dstB),kernel::HostPtr(donorB),0x3C0u);
-        X86Context saved=ctx;
-        ctx.eax=blank;ctx.esi=dstInst;
-        kernel::CallGuest(ctx,0x0017E420u,{static_cast<uint32_t>(argsAddr)});
-        ctx=saved;
+        X86Context call=ctx;
+        ClearOriginalSoldierCallRegisters(call);
+        call.eax=blank;call.esi=dstInst;
+        kernel::CallGuest(call,0x0017E420u,{static_cast<uint32_t>(argsAddr)});
         replica_=blank;replicaTemplate_=model;replicaInstance_=dstInst;
         replicaEpoch_=epoch;
         if(!valid(root)){
@@ -299,10 +306,10 @@ public:
         // this detached original soldier's animations. It still has no AI
         // brain, physics proxy, weapons, collision or mission authority.
         applyOriginalSoldierAnimation(ctx,body,now);
-        X86Context saved=ctx;
-        ctx.eax=replicaInstance_;
-        kernel::CallGuest(ctx,0x001801B0u,{fp(1.0f/30.0f),0});
-        ctx=saved;
+        X86Context call=ctx;
+        ClearOriginalSoldierCallRegisters(call);
+        call.eax=replicaInstance_;
+        kernel::CallGuest(call,0x001801B0u,{fp(1.0f/30.0f),0});
         if(!valid(root))return;
         uint32_t vtable=0,method=0;
         if(!read(replica_,vtable)||!vtable||
@@ -310,9 +317,10 @@ public:
            !dispatch::Find(method)){
             reportVisualGate(2210);return;
         }
-        ctx.ecx=replica_;ctx.esi=0;
-        kernel::CallGuest(ctx,method,{0});
-        ctx=saved;
+        call=ctx;
+        ClearOriginalSoldierCallRegisters(call);
+        call.ecx=replica_;
+        kernel::CallGuest(call,method,{0});
         if(!logged_){
             logged_=true;SendSafeWorldCodeToAndroid(91);
         }
