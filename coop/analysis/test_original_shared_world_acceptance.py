@@ -23,6 +23,13 @@ class AcceptanceTest(unittest.TestCase):
         self.assertEqual(result["status"], "ready_for_combined_phone_validation")
         self.assertIn("not_runtime_proof", result["scope"])
 
+    def test_host_commit_in_guest_log_cannot_impersonate_guest_commit(self):
+        host = lines(["STORY_HOST_COMMITTED"]) + lines(REQUIRED_HOST)
+        guest = lines(["STORY_HOST_COMMITTED"]) + lines(REQUIRED_GUEST)
+        result = evaluate(host, guest)
+        self.assertEqual(result["status"], "not_ready")
+        self.assertFalse(result["host_commit_witnessed_both_devices"])
+
     def test_contracts_before_commit_cannot_pass(self):
         self.assertEqual(evaluate(lines(REQUIRED_HOST) + lines(["STORY_HOST_COMMITTED"]),
                                   lines(REQUIRED_GUEST) + lines(["STORY_GUEST_COMMITTED"]))["status"], "not_ready")
