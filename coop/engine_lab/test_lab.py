@@ -94,6 +94,26 @@ class LabTests(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertEqual(progress, dict(xbe_loaded=True, guest_entry_called=True, usb_pad_polled=True))
 
+    def test_vs18_environment_uses_active_msvc_with_ninja(self):
+        lab = self.module()
+        configure, build, executable = lab.windows_build_commands(Path('engine'), {'VisualStudioVersion': '18.0'})
+        self.assertIn('Ninja', configure)
+        self.assertIn('-DCMAKE_BUILD_TYPE=Release', configure)
+        self.assertNotIn('Visual Studio 17 2022', configure)
+        self.assertNotIn('/nodeReuse:false', build)
+        self.assertEqual(executable, Path('engine/build-lab/black_xbox_recomp.exe'))
+
+    def test_safe_diagnostics_drop_source_text_and_generated_file_names(self):
+        lab = self.module()
+        errors = {}
+        lab.collect_diagnostics('CMake Error: could not find any instance of Visual Studio. PRIVATE_BYTES', errors)
+        lab.collect_diagnostics(r'C:/private/src/bo_engine_lab.inc(71): error C2065: PRIVATE_GAME_BYTES', errors)
+        lab.collect_diagnostics(r'C:/private/src/recomp/gen/recomp_0001.c(33): error C2143: PRIVATE_ASM', errors)
+        self.assertIn('visual_studio_instance_missing', errors['categories'])
+        self.assertEqual(errors['compiler_errors'], [dict(code='C2065', source='bo_engine_lab.inc', line=71), dict(code='C2143')])
+        self.assertNotIn('PRIVATE', str(errors))
+        self.assertNotIn('recomp_0001', str(errors))
+
     def test_truncated_aggregate_cannot_pass(self):
         lab = self.module()
         with self.assertRaises(ValueError):

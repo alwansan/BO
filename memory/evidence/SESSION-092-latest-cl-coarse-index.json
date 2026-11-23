@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "session": 92,
+  "date": "2026-11-23",
+  "repository": "alwansan/CL",
+  "purpose": "Read-only latest owner evidence; no personal values copied",
+  "images": [
+    {
+      "path": "black log/img/Screenshot_٢٠٢٦-١١-٢٣-٠٥-١٤-٥٩-٩٠٥_org.bocoop.black.roomnet.jpg",
+      "gitBlob": "e87505592802be1e6b1a5f85163deab3e7c7b5a9",
+      "observed": "Host lobby two of four peers, start first mission control; UI describes world synchronization as unfinished"
+    },
+    {
+      "basename": "Screenshot_20261123_033809_org.bocoop.black.roomnet.jpg",
+      "gitBlob": "7dd22c4e848f4f2f3a8636409b8d00f7af2c90fc",
+      "observed": "Guest original first-person mission scene; no second human visible in frame"
+    }
+  ],
+  "hostProbe": {
+    "label": "Probe051323",
+    "blacklogGitBlob": "2341a83e7962d5820f69290d931a73a01a5c7f26",
+    "coopProbeGitBlob": "421553f88e5ccbb71d7904df68dd431ce28b0b4e",
+    "coarseCounts": {
+      "start": 1,
+      "player": 92,
+      "pool": 93,
+      "animation": 74,
+      "lod": 9
+    }
+  },
+  "guestProbe": {
+    "label": "Probe051400",
+    "blacklogGitBlob": "a5b8c2463c081eef585cca23180ffddd779466ef",
+    "coopProbeGitBlob": "b51fca9d60db565bebf85eeb13144ba3d74c11ca",
+    "coarseCounts": {
+      "start": 1,
+      "player": 75,
+      "pool": 77,
+      "animation": 68,
+      "lod": 9
+    }
+  },
+  "eventExports": {
+    "hostGitBlob": "f193bd65e03195bfc5881014ef133fc5a3bf85df",
+    "guestGitBlob": "dac50ba101d25192ed8073d561cdc14bac6763ff",
+    "scope": "Both sampled exports end before START; establish lobby transport only"
+  },
+  "ownerReport": "START now loads same stage on both phones but each remains in independent world",
+  "sharedWorldProven": false,
+  "rawMediaUploaded": false
+}

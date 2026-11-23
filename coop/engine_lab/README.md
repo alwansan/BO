@@ -28,8 +28,10 @@ host sources, differing source pins and changed patch anchors. It changes only
 host `src/recomp_manual.c`, adds the observer/scheduler beside it, and observes the native frontend wrapper in `src/black_native_menu.inc`, and changes
 runtime `src/usb/usb_gamepad.c` in the disposable checkout. No original game bytes
 or generated game-function bodies are patched. Generation follows the pinned
-production script; compilation follows the production Visual Studio 2022 x64
-CMake path with two build jobs. Python uses capstone 5.0.7; Rust is 1.98.1.
+production script; compilation uses Ninja with the active x64 MSVC developer environment and
+production CMake definitions, with two build jobs. This supports the runner
+image's Visual Studio 2022 or 2026 toolchain without hardcoding an unavailable
+Visual Studio year. The MSVC major and backend are included as safe metadata. Python uses capstone 5.0.7; Rust is 1.98.1.
 
 ## Inputs, observations and failure semantics
 
@@ -78,7 +80,10 @@ not a full determinism or collision correctness proof.
 is reported by stage (`runtime_dependency_checkout_failed`, `dsp_dependency_checkout_failed`,
 `original_code_generation_failed`,
 `engine_build_failed`, etc.). Compiler/guest output is privately drained and never
-printed or retained. This trades detailed diagnostics for keeping original-code
+printed or retained. Configure/build failures retain only fixed allowlisted
+error categories and up to sixteen numeric MSVC/linker/Rust error codes. A small
+allowlist of public host/lab source basenames may include a line number; generated
+game-source names and all diagnostic message text/private paths are discarded. This trades detailed diagnostics for keeping original-code
 snippets and guest addresses out of public CI logs. The native frontend update also observes only the original bounded page-name
 field at UI+0x3840, then exports a fixed integer category: 0 empty/unavailable,
 1 initial title, 2 progressed title, 3 options, 4 difficulty, 5 profile/name/keyboard
@@ -123,3 +128,10 @@ and observer accounting under explicit stubs. They cannot establish original
 engine gameplay. The actual job requires Windows x64/AVX2, owner assets, network
 access, Visual Studio 2022/CMake/Python/Rust and substantial runner disk space.
 The current ARM64 owner workspace cannot directly execute this Windows engine.
+
+The first actual CI attempt, run `45102832832` at BO `a122d765`, passed harness
+checks, extracted 574 owner files with the correct XBE hash, fetched the exact
+dependencies and generated original code. It failed at CMake configure; the
+public setup log identifies VS18/MSVC14.52 while the first lab requested the
+VS17/2022 generator. The Ninja change addresses that observed toolchain mismatch.
+A successful configure/build/mission run has not yet been established.

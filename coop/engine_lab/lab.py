@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import shutil
 import subprocess
@@ -161,19 +162,75 @@ def extract_owner(bo, pc, temp):
         iso.unlink(missing_ok=True)
 
 
-def private_call(argv, cwd, timeout, env=None, progress=None):
+def windows_build_commands(pc, environment):
+    # The public run used VS18/MSVC14.52; VS17 generators cannot select it.
+    # Ninja uses the active x64 developer environment without guessing a VS year.
+    major = environment.get('VisualStudioVersion', '').split('.')[0]
+    if major not in ('17', '18'):
+        raise ValueError('unsupported MSVC developer environment')
+    configure = ['cmake', '-S', '.', '-B', 'build-lab', '-G', 'Ninja',
+                 '-DCMAKE_BUILD_TYPE=Release', '-DCMAKE_C_COMPILER=cl']
+    build = ['cmake', '--build', 'build-lab', '--target', 'black_xbox_recomp', '--parallel', '2']
+    return configure, build, pc / 'build-lab/black_xbox_recomp.exe'
+
+
+def collect_diagnostics(line, result):
+    """Extract fixed categories/codes; never retain a diagnostic message or path."""
+    if len(line) > 8192:
+        return
+    lowered = line.lower()
+    patterns = {
+        'visual_studio_instance_missing': ('could not find any instance of visual studio',),
+        'cmake_generator_unavailable': ('could not create named generator',),
+        'build_tool_missing': ('cmake_make_program is not set', 'unable to find a build program'),
+        'compiler_missing': ('no cmake_c_compiler could be found', 'is not able to compile a simple test program'),
+        'windows_sdk_missing': ('windows sdk version', 'was not found.'),
+        'dsp_source_missing': ('pinned dsp56300 source is missing',),
+        'cargo_missing': ('rust/cargo 1.98 or newer is required',),
+        'generation_missing': ('supply your retail black xbox files',),
+        'disk_full': ('no space left on device', 'not enough space on the disk'),
+        'rust_dependency_failure': ('failed to get', 'as a dependency of package'),
+    }
+    categories = result.setdefault('categories', [])
+    for category, fragments in patterns.items():
+        if all(fragment in lowered for fragment in fragments) and category not in categories:
+            categories.append(category)
+    # These filenames are public host/lab source, never generated game bodies.
+    sources = {'main.c', 'recomp_manual.c', 'black_native_menu.inc', 'bo_engine_lab.inc', 'schedule.h'}
+    match = re.search(r'(?i)\b(?:fatal\s+)?error\s+(C[0-9]{4}|LNK[0-9]{4}|MSB[0-9]{4})\b', line)
+    rust = re.search(r'\berror\[(E[0-9]{4})\]', line)
+    if not match and not rust:
+        return
+    entry = {'code': (match or rust).group(1).upper()}
+    location = re.search(r'([^/\\(): ]+)\(([0-9]{1,7})(?:,[0-9]+)?\)\s*:', line)
+    if location and location.group(1) in sources and '/recomp/gen/' not in lowered.replace('\\', '/'):
+        entry.update(source=location.group(1), line=int(location.group(2)))
+    errors = result.setdefault('compiler_errors', [])
+    if len(errors) < 16 and entry not in errors:
+        errors.append(entry)
+
+
+def private_call(argv, cwd, timeout, env=None, progress=None, diagnostics=None):
     """Drain child output without publishing it or allowing an unbounded logfile."""
     proc = subprocess.Popen([str(a) for a in argv], cwd=cwd, env=env,
                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                             creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if os.name == 'nt' else 0)
     def drain():
         tail = b''
+        pending = b''
         markers = {b'XBE loaded:': 'xbe_loaded', b'Starting game...': 'guest_entry_called',
                    b'BO_ENGINE_PAD_STARTED': 'usb_pad_polled'}
         while True:
             chunk = proc.stdout.read(65536)
             if not chunk:
+                if diagnostics is not None and pending:
+                    collect_diagnostics(pending.decode('utf-8', errors='replace'), diagnostics)
                 break
+            if diagnostics is not None:
+                lines = (pending + chunk).split(b'\n')
+                pending = lines.pop()[-8192:]
+                for line in lines:
+                    collect_diagnostics(line.decode('utf-8', errors='replace'), diagnostics)
             if progress is not None:
                 window = tail + chunk
                 for marker, key in markers.items():
@@ -229,11 +286,20 @@ def execute(bo, pc, out, seconds):
         phase = 'original_code_generation'
         if private_call([pc / '.venv/Scripts/python.exe', 'scripts/generate.py'], pc, 1800):
             raise RuntimeError('generation')
+        phase = 'engine_toolchain'
+        configure, build, executable = windows_build_commands(pc, os.environ)
+        if not shutil.which('ninja') or not shutil.which('cl'):
+            raise RuntimeError('active build tools missing')
+        report['build_backend'] = 'ninja_msvc'
+        report['msvc_major'] = int(os.environ['VisualStudioVersion'].split('.')[0])
+        report['safe_build_diagnostics'] = {}
         phase = 'engine_configure'
-        if private_call(['cmake', '-S', '.', '-B', 'build-lab', '-G', 'Visual Studio 17 2022', '-A', 'x64'], pc, 300):
+        diagnostics = report['safe_build_diagnostics'].setdefault(phase, {})
+        if private_call(configure, pc, 300, diagnostics=diagnostics):
             raise RuntimeError('configure')
         phase = 'engine_build'
-        if private_call(['cmake', '--build', 'build-lab', '--config', 'Release', '--target', 'black_xbox_recomp', '--parallel', '2', '--', '/nodeReuse:false', '/verbosity:minimal'], pc, 2400):
+        diagnostics = report['safe_build_diagnostics'].setdefault(phase, {})
+        if private_call(build, pc, 2400, diagnostics=diagnostics):
             raise RuntimeError('build')
         report['engine_built'] = True
         phase = 'original_engine_run'
@@ -246,7 +312,7 @@ def execute(bo, pc, out, seconds):
                    RECOMP_BLACK_SKIP_MOVIES='1', RECOMP_BLACK_SKIP_STARTUP_VIDEOS='1',
                    BO_LAB_AGGREGATE=str(temp / 'aggregate.json'))
         progress = {}
-        code = private_call([pc / 'build-lab/Release/black_xbox_recomp.exe'], pc, seconds, env, progress)
+        code = private_call([executable], pc, seconds, env, progress)
         report['boot_progress'] = progress
         raw = temp / 'aggregate.json'
         if raw.is_file():

@@ -41,6 +41,14 @@ jobs:
         run: |
           g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -fsanitize=address,undefined bo/coop/room_network/test_original_soldier_copy.cpp -o "$RUNNER_TEMP/test_soldier_copy"
           "$RUNNER_TEMP/test_soldier_copy"
+      - name: Original host physics proxy ownership and rollback regression
+        run: |
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread -fsanitize=address,undefined bo/coop/room_network/test_room_original_host_proxy_engine.cpp -o "$RUNNER_TEMP/test_host_proxy_engine"
+          "$RUNNER_TEMP/test_host_proxy_engine"
+      - name: Original owned player storage and camera constructor lifecycle
+        run: |
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread -fsanitize=address,undefined bo/coop/room_network/test_room_original_host_player_storage.cpp -o "$RUNNER_TEMP/test_player_storage"
+          "$RUNNER_TEMP/test_player_storage"
       - name: Native original first-person camera eye quantization guards
         shell: bash
         run: |

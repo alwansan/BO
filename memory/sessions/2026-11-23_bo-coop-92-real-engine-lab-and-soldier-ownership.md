@@ -14,3 +14,5 @@ Next: inspect real engine lab Actions results, fix actual dependency/build/runti
 
 References: https://github.com/alwansan/CL/tree/main/black%20log ; https://github.com/Peterson047/BLACK-XBEMultiplayer (binary-only, no borrowed restricted assets); MIT PC source above; docs/ORIGINAL_HOST_PLAYER_CONTEXT_ABI_AR.md. Images and logs continue to arrive in CL including Arabic-named guest folders. No owner assets, saves, private logs or credentials uploaded.
 
+
+Actual publication a122d765f3c5814fe9830fe33be703f447565efd: source preflight45102832708 SUCCESS, UDP45102832714 SUCCESS. Real original-engine run45102832832 passed harness and exact dependencies, privately extracted574 owner files and validated XBE and generated original code, then failed engine_configure. Public MSVC setup log proves runner VisualStudioVersion18.0 while initial command requested VS17; repair uses matching active compiler generator. No engine binary or gameplay acceptance yet.

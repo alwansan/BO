@@ -3154,6 +3154,22 @@
     "soldierOwnershipRegression": "local_pass",
     "actualHostExtraActor": false,
     "sharedOriginalPhysicalWorld": false,
-    "phoneTrialReady": false
+    "phoneTrialReady": false,
+    "commit": "a122d765f3c5814fe9830fe33be703f447565efd",
+    "sourcePreflight": {
+      "run": 45102832708,
+      "result": "success"
+    },
+    "realEngineLab": {
+      "run": 45102832832,
+      "result": "engine_configure_failed",
+      "ownerFilesExtracted": 574,
+      "exactXbeVerified": true,
+      "originalCodeGenerated": true,
+      "engineExecutableBuilt": false,
+      "runnerVSVersion": "18.0",
+      "configuredGenerator": "Visual Studio 17 2022",
+      "retryPending": true
+    }
   }
 }

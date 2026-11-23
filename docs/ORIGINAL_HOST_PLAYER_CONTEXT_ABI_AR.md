@@ -1,3 +1,20 @@
+### Session92: decoded C5 caller contracts and implemented prerequisites
+
+The private original XBE bodies and callers were decoded locally; entry-address presence alone was insufficient. These contracts apply to the exact C5 owner image, not arbitrary BLACK builds.
+
+| Entry | Proven input | Result / lifecycle |
+| --- | --- | --- |
+| 00014380 | ESI=owned zeroed 16C0 camera allocation; no stack args | EAX=owner, RET0. Constructor-only object has no resource allocations. It is not safe to run the later initialized-camera virtual cleanup on a constructor-only owner. |
+| 000DF400 | EBX=current original physics world; one stack argument initialized kind2 actor | AL=1 success, RET4. Result is not the proxy address; retrieve actor+B4 and prove exact occupied slot/backlinks. No full-pool check: reserve an NPC spare immediately before calling on original game thread. |
+| 000DBBE0 | EBX=same live physics world; one stack argument proxy VALUE | RET4; validate exact occupied ownership before call and cleared actor/proxy/flag afterward. Never call against a replaced world. |
+| DF120 prerequisite | actor+354 is an initialized collision resource; actor70..AF is transform | A zeroed or copied visual actor is insufficient to call DF400 safely. |
+
+`room_original_host_proxy_engine.hpp` now implements checked actual acquire/release operations through injected IO; `room_original_host_proxy_kernel.hpp` uses real dispatch and full copied X86Context. It is deliberately not invoked until original player setup/resource ownership exists. The actor must be outside the entire original core5CC0 and NPC allocation. Tests include rollback, pool exhaustion, wrong return, foreign ownership, scope loss, reused serial, wrong thread and a valid-looking actor embedded at core+1000.
+
+SDK `kernel::CallGuest` restores integer registers: capture its C++ return, not ctx.eax. Copy the entire X86Context for isolated SIMD/x87 as well. `mem::AllocSystem(size,16)` provides zeroed guest allocations; `AllocStack` returns stack TOP. Never pass the top as an ordinary allocation base.
+
+Still unresolved: safe initialized original P2 setup/teardown, complete actor/camera/viewmodel/animation/weapon/sound ownership, native AI targeting, authoritative guest NPC/object/objective mutation. This adapter alone does not create a second player or a shared world.
+
 # BO-COOP — ORIGINAL HOST HUMAN PLAYER CONTEXT / ABI — تنفيذ P0 الأساسي
 
 آخر مراجعة 2026-11-23، الفرع `experiment/black-coop`.
