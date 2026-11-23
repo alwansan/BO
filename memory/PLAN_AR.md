@@ -1,3 +1,9 @@
+### Session105 — 2026-11-23 — original Xbox Quick Reboot root-cause classification
+
+- Windows original engine run [45193373405](https://github.com/alwansan/BO/actions/runs/45193373405) verified owner XBE / 574 owner files / real engine build, yet requested HalQuickRebootRoutine (firmware_kind_2) after 202ms before USB, frontend or mission. Runtime gameplay acceptance FAILED. Exit code zero is not success.
+- Implemented 476410fb1c025075f32c98171305f0f9b4e8b136: bounded private Xbox kernel launch data page parser, categories only for launch page present/absent, type 0..3/other, path exists/empty, initial payload word 0..3/other; no game paths, title IDs, original guest words or stack. Three regressions. Original HAL behavior preserved, no fake restart.
+- Next verified real Windows lab must distinguish intended XLaunchNewImage from error-driven reboot; then implement actual original HOST P2-4 actors, independent animation/weapon/audio/physics/AI and authoritative NPC/objective/door guest application. Source tests and room-only APK [45195066473](https://github.com/alwansan/BO/actions/runs/45195066473) are not shared gameplay. One major phone test only after real integration. No edits to main/CL/biso/original game bytes; always maintain handoff docs.
+
 ### Session104 — 2026-11-23 — original P2 physics native-call quarantine
 
 - Implementation commits 913aa472967751d85e73ab95f90baabf8cc89b71 and 1ae169ba5997a7b4cd04707051b27aa30b3df362 prevent unsafe same-adapter retries after partially failed original physics proxy acquire/release. Isolated sanitizer preflight [45195066451](https://github.com/alwansan/BO/actions/runs/45195066451) SUCCESS. No real P2 actor created yet.
