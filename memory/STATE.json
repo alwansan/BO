@@ -3629,7 +3629,7 @@
     "engineCleanupImplemented": false,
     "productionCallEnabled": false,
     "nativeOriginalP2SetupDone": false,
-    "sourcePreflightVerified": false,
+    "sourcePreflightVerified": true, "sourcePreflightRun": 45225086457, "sourcePreflightStatus": "pass_native_sanitizer_and_pinned_sdk_compile_only", "udpRun": 45225086329, "udpStatus": "success", "androidRun": 45225086434, "androidAtCheck": "candidate_probe_in_progress",
     "physicalProxyAiWeaponReady": false,
     "originalHostCanonicalWorld": false,
     "originalGuestCanonicalApply": false,

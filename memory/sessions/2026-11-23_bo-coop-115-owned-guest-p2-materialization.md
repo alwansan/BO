@@ -1,3 +1,9 @@
+### Session115 CI verification — 2026-11-23
+
+- Latest source [45225086457](https://github.com/alwansan/BO/actions/runs/45225086457) SUCCESS after owned-buffer writer and missing-phase guard, including pinned Android Xbox SDK C++ syntax and strict ASan/UBSan original P2 staging fixture; [UDP 45225086329](https://github.com/alwansan/BO/actions/runs/45225086329) SUCCESS.
+- Full Android [45225086434](https://github.com/alwansan/BO/actions/runs/45225086434) still IN_PROGRESS at last check, candidate-probe compiling; previous Android build was cancelled by workflow concurrency, not a game failure. Do not mark APK as fully verified until job complete.
+- Both source outcomes are compile/fixture-only: `MaterializeOwned` is NOT invoked from original Android game thread, needs separately implemented engine-safe teardown and full original P1/P2 camera/weapon/animation/audio context, physics/AI and canonical host NPC/door/objective guest apply. No playable co-op yet; no small owner test.
+
 # BO-COOP Session115 — 2026-11-23
 
 ### Session115 — 2026-11-23 — separately owned ORIGINAL guest P2 materialization, permanently quarantined on partial writes

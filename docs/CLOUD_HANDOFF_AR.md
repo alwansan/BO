@@ -1,3 +1,9 @@
+### Session115 CI verification — 2026-11-23
+
+- Latest source [45225086457](https://github.com/alwansan/BO/actions/runs/45225086457) SUCCESS after owned-buffer writer and missing-phase guard, including pinned Android Xbox SDK C++ syntax and strict ASan/UBSan original P2 staging fixture; [UDP 45225086329](https://github.com/alwansan/BO/actions/runs/45225086329) SUCCESS.
+- Full Android [45225086434](https://github.com/alwansan/BO/actions/runs/45225086434) still IN_PROGRESS at last check, candidate-probe compiling; previous Android build was cancelled by workflow concurrency, not a game failure. Do not mark APK as fully verified until job complete.
+- Both source outcomes are compile/fixture-only: `MaterializeOwned` is NOT invoked from original Android game thread, needs separately implemented engine-safe teardown and full original P1/P2 camera/weapon/animation/audio context, physics/AI and canonical host NPC/door/objective guest apply. No playable co-op yet; no small owner test.
+
 ### Session115 — 2026-11-23 — separately owned ORIGINAL guest P2 materialization, permanently quarantined on partial writes
 
 - Code [a7113623](https://github.com/alwansan/BO/commit/a7113623abf1dd627dd67c4a08a3c741e584f298) and [c31c58ae](https://github.com/alwansan/BO/commit/c31c58aed88cf4c809e163a1bac8bd0c914632ca) implement an **OPT-IN, NOT ACTIVE** owned-guest-memory path. `OriginalPlayerStorageKernelIO::WriteOwned` permits writes ONLY into separately tracked exact P2 allocation bases and sizes after checking committed pages. The detached shadow stores original scene and source-pointer identity, validates original mission phase 0x1C and stable world/owner/physics/NPC/model/parts/input pointers, then writes parts (0x630), input (0x40), zeroed weapons (0x40), rebased camera owner (0x16C0), then actor (0x900) LAST. Never writes original P1/core/physics/NPC or marks a network room/mission ready.
