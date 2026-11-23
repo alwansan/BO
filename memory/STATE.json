@@ -3308,5 +3308,24 @@
     "newCiStatus": "pending",
     "phoneTrialReady": false,
     "remaining": "original engine boot, host player2 original real actor and resources, original physics AI authoritative world and guest apply"
+  },
+  "session104": {
+    "date": "2026-11-23",
+    "scope": "original_engine_physics_proxy_ambiguous_call_quarantine",
+    "sourceCommits": [
+      "913aa472967751d85e73ab95f90baabf8cc89b71",
+      "1ae169ba5997a7b4cd04707051b27aa30b3df362"
+    ],
+    "regressionRun": 45195066451,
+    "sourceRegressionConclusion": "success",
+    "quarantineScope": "adapter_instance_only",
+    "nativeCleanupWitnessImplemented": false,
+    "originalHostExtraActorImplemented": false,
+    "originalGameBootSuccess": false,
+    "oneSharedOriginalMission": false,
+    "androidGameplayCoopReady": false,
+    "ownerPhoneTrialReady": false,
+    "warning": "new adapter instance cannot be used to defeat previous native quarantine",
+    "next": "review latest engine firmware mode; fix real boot, original actor/weapon/audio/physics/AI ownership, host NPC/objectives and guest application"
   }
 }
