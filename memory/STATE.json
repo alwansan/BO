@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-94-scene-scoped-acceptance.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-95-engine-input-boot-diagnostics.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3191,5 +3191,23 @@
     ],
     "sharedOriginalWorldVerified": false,
     "phoneTrialReady": false
+  },
+  "session95": {
+    "date": "2026-11-23",
+    "branch": "experiment/black-coop",
+    "engineLabRun": 45104974473,
+    "engineBuilt": true,
+    "engineExitSuccess": true,
+    "usbPadPolled": false,
+    "missionVerified": false,
+    "sharedWorldVerified": false,
+    "sourceGuardRun": 45107430108,
+    "roomOnlyApkRun": 45103454355,
+    "codeCommits": [
+      "a1641ced280ac98502f3404cc43372f354a97c55",
+      "290e63f942c93631fb14aa495bf5b2246b851061",
+      "44a536918371b974daed1a4fdc5771066db21888"
+    ],
+    "next": "Diagnose frontend/USB boot, then original host player2 actor/physics/weapon/AI and guest authoritative scene apply"
   }
 }
