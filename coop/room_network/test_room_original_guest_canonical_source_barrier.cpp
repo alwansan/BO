@@ -23,20 +23,20 @@ int main(){
  assert(gate.Observe(key,0x100000,world,npc,1007));
  assert(gate.SourceCoherent(1007)&&!gate.OriginalGuestEngineApplied());
  assert(!gate.SourceCoherent(1104)); // no perpetual source readiness
- int32_t unexpected[]={23,10,3,4,
+ int32_t unexpected[]={23,17,3,4,
   1,100,200,300,0,0,2,120,200,300,0,0,
   3,130,200,300,0,0,4,150,200,300,0,0};
  assert(world.Ingest(unexpected,28,1010));
  assert(world.PlayerMask(1010)==15u);
  assert(!gate.Observe(key,0x100000,world,npc,1011)); // guest room mask 7
- avatars[1]=14;
+ avatars[1]=18;
  assert(world.Ingest(avatars,22,1020));
  assert(!gate.Observe(key,0x100000,world,npc,1021));
  assert(!gate.Observe(key,0x100000,world,npc,1022));
  assert(!gate.Observe(key,0x100000,world,npc,1023));
- avatars[1]=15;assert(world.Ingest(avatars,22,1024));
+ avatars[1]=19;assert(world.Ingest(avatars,22,1024));
  assert(!gate.Observe(key,0x100000,world,npc,1025));
- avatars[1]=16;assert(world.Ingest(avatars,22,1026));
+ avatars[1]=20;assert(world.Ingest(avatars,22,1026));
  assert(gate.Observe(key,0x100000,world,npc,1027));
  assert(gate.SourceCoherent(1027)&&!gate.SourceCoherent(1128));
  bool foreign=true;std::thread t([&]{
