@@ -94,6 +94,17 @@ class LabTests(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertEqual(progress, dict(xbe_loaded=True, guest_entry_called=True, usb_pad_polled=True))
 
+    def test_original_frontend_progress_is_distinct_from_usb_poll(self):
+        lab = self.module()
+        progress = {}
+        code = lab.private_call([sys.executable, '-c',
+            "print('Starting game...'); print('BO_ENGINE_MENU_TICK')"],
+            HERE, 5, progress=progress)
+        self.assertEqual(code, 0)
+        self.assertEqual(progress, dict(guest_entry_called=True, frontend_ui_polled=True))
+        self.assertNotIn('usb_pad_polled', progress)
+        self.assertIn("frontend_and_usb_input_not_polled", (HERE / 'lab.py').read_text())
+
     def test_vs18_environment_uses_active_msvc_with_ninja(self):
         lab = self.module()
         configure, build, executable = lab.windows_build_commands(Path('engine'), {'VisualStudioVersion': '18.0'})
