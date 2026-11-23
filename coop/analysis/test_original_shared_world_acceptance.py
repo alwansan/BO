@@ -4,7 +4,7 @@ from coop.analysis.original_shared_world_acceptance import (
 )
 
 def lines(names):
-    return "".join(f"1795378511993 {name}\\n" for name in names)
+    return "".join(f"1795378511993 {name}\n" for name in names)
 
 class AcceptanceTest(unittest.TestCase):
     def test_current_real_world_host_log_is_not_shared_gameplay(self):
@@ -24,9 +24,9 @@ class AcceptanceTest(unittest.TestCase):
         self.assertIn("not_runtime_proof", result["scope"])
 
     def test_no_sensitive_line_content_is_returned(self):
-        result = evaluate("1795378511993 STORY_HOST_COMMITTED secret=private-ip\\n", "bad")
+        result = evaluate("1795378511993 STORY_HOST_COMMITTED secret=private-ip\n", "bad")
         self.assertNotIn("private-ip", str(result))
-        self.assertEqual(events_from_text("STORY_HOST_COMMITTED\\n"), set())
+        self.assertEqual(events_from_text("STORY_HOST_COMMITTED\n"), set())
 
 if __name__ == "__main__":
     unittest.main()

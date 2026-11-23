@@ -9,7 +9,7 @@ import json
 import re
 from pathlib import Path
 
-EVENT = re.compile(r"^\\s*\\d{10,16}\\s+([A-Z][A-Z0-9_]{2,100})(?:\\s|$)")
+EVENT = re.compile(r"^\s*\d{10,16}\s+([A-Z][A-Z0-9_]{2,100})(?:\s|$)")
 # These names are future *acceptance contracts*, not existing game implementation.
 REQUIRED_HOST = frozenset({
     "ORIGINAL_HOST_EXTRA_ACTOR_PHYSICS_VERIFIED",

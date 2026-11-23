@@ -1,0 +1,16 @@
+name: BO-COOP original shared-world acceptance guard (NO GAMEPLAY)
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/analysis/original_shared_world_acceptance.py'
+      - 'coop/analysis/test_original_shared_world_acceptance.py'
+      - '.github/workflows/black-coop-original-shared-world-acceptance.yml'
+  workflow_dispatch:
+jobs:
+  acceptance-contract-unit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run source-only fail-closed contract tests
+        run: python3 -m unittest coop.analysis.test_original_shared_world_acceptance -v
