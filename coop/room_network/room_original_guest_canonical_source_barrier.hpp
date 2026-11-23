@@ -35,10 +35,14 @@ public:
     stable_=0;lastObservedAt_=0;return false;
   }
   const uint64_t token=(uint64_t(key.tokenHi)<<32)|key.tokenLo;
-  if(token>0x7fffffffffffffffull)return false;
+  if(token>0x7fffffffffffffffull){
+   stable_=0;lastObservedAt_=0;return false;
+  }
   if(epoch_){
    if(key.sceneEpoch<epoch_||(key.sceneEpoch==epoch_&&
-      key.rosterRevision<revision_))return false;
+      key.rosterRevision<revision_)){
+    stable_=0;lastObservedAt_=0;return false;
+   }
    if(key.sceneEpoch!=epoch_||key.rosterRevision!=revision_||
       token!=token_||nativeScene!=originalScene_){
     Reset();return false; // new original engine requires explicit scene rebind
@@ -48,7 +52,7 @@ public:
    stable_=0;lastObservedAt_=0;return false;
   }
   if(players.Tick()<worldTick_||npcs.Tick()<npcTick_){
-   stable_=0;return false;
+   stable_=0;lastObservedAt_=0;return false;
   }
   epoch_=key.sceneEpoch;revision_=key.rosterRevision;
   token_=token;originalScene_=nativeScene;
