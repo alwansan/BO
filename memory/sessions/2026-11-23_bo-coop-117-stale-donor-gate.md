@@ -1,3 +1,8 @@
+### Session117 CI proof — 2026-11-23
+
+- [Source preflight 45227692500](https://github.com/alwansan/BO/actions/runs/45227692500) SUCCESS for P1 donor freshness and original independent P2 stage (synthetic native ASan/UBSan and pinned Android SDK header compatibility), [UDP 45227692651](https://github.com/alwansan/BO/actions/runs/45227692651) SUCCESS.
+- [Android candidate 45227692658](https://github.com/alwansan/BO/actions/runs/45227692658) is still compiling at last check; [original PC engine 45227027742](https://github.com/alwansan/BO/actions/runs/45227027742) is still running after harness PASS. No original Android P2 actor/physics/AI/shared world, despite green preflight. No phone mini-trial.
+
 # BO-COOP Session117 — 2026-11-23
 
 ### Session117 — 2026-11-23 — fail closed on stale original P1 donor before extra actor guest materialization

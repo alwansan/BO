@@ -3668,7 +3668,7 @@
     "preflightBeforeEngineTouched": true,
     "noP2WritesOnStaleSource": true,
     "sourcePreflightRun": 45227692500,
-    "sourcePreflightResult": "pending",
+    "sourcePreflightResult": "success_compiler_sanitizer_pinned_sdk",
     "androidBuildRun": 45227692658,
     "androidBuildResult": "pending",
     "pcOriginalLabRun": 45227027742,

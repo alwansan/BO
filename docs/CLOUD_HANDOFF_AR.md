@@ -1,3 +1,8 @@
+### Session117 CI proof — 2026-11-23
+
+- [Source preflight 45227692500](https://github.com/alwansan/BO/actions/runs/45227692500) SUCCESS for P1 donor freshness and original independent P2 stage (synthetic native ASan/UBSan and pinned Android SDK header compatibility), [UDP 45227692651](https://github.com/alwansan/BO/actions/runs/45227692651) SUCCESS.
+- [Android candidate 45227692658](https://github.com/alwansan/BO/actions/runs/45227692658) is still compiling at last check; [original PC engine 45227027742](https://github.com/alwansan/BO/actions/runs/45227027742) is still running after harness PASS. No original Android P2 actor/physics/AI/shared world, despite green preflight. No phone mini-trial.
+
 ### Session117 — 2026-11-23 — fail closed on stale original P1 donor before extra actor guest materialization
 
 - [Code 6968f2d7](https://github.com/alwansan/BO/commit/6968f2d7d3f3a9dcf91b08bbde58b9785ebde1f6): `OriginalHostPlayerShadowPlan` now retains an UNCHANGED internal 0x900-byte original P1 actor source and 0x16C0-byte camera-owner source BEFORE P2 pointer rebasing. `SourceStillCurrent` rechecks original scene/world/owner/physics/NPC and input-manager source identity, then compares untouched original actor (including 0x20..0x57 world-owned grid), owner, 0x70+0x3C0 parts, 0x200 model and 0x40 input snapshots against current guest bytes. The result is only Boolean; no raw donor bytes, addresses, game strings or state exported. This is targeted to the proven grid risk, and prevents preparing a second actor across an intervening P1/AI/world update.
