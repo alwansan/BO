@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-82-two-phone-guest-overlay-original-world-p0.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-83-real-guest-feet-host-world.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -2895,5 +2895,33 @@
     "pcReference": "portingpete/Black-2006-Recomp@b2512fafd3:docs/plans/split-screen-coop.md",
     "pcSecondActorMilestone": "experimental_PC_only_enemy_aggro_missing",
     "originalActorSingletonVerified": true
+  },
+  "session83": {
+    "date": "2026-11-23",
+    "writeBranch": "experiment/black-coop",
+    "codeHead": "2cc6aee110e424e24d1c8a723809e428b54c33dc",
+    "realOriginalGuestFeetToHostVisualValues": true,
+    "sourceCommit": "25b1b6d13f192565ba6da8e502e07cfe71891a9e",
+    "sessionCommit": "37b581a012c03e1c2f959737369f4f23e8588bc1",
+    "fourHumanTlsSourceCommit": "8d258a7eca4e9fbb3a0b6fb753afb9e26690ad62",
+    "testsFixedCommit": "2cc6aee110e424e24d1c8a723809e428b54c33dc",
+    "tlsRun": 45092061436,
+    "tlsResult": "SUCCESS",
+    "android29Run": 45092061453,
+    "android29Result": "SUCCESS",
+    "sourcePreflightRun": 45092061476,
+    "sourcePreflightResult": "SUCCESS",
+    "androidRun": 45092061435,
+    "androidResult": "IN_PROGRESS_AT_LAST_CHECK",
+    "visualBodyAppearsOnPhone": false,
+    "hostRealPeerPhysicsActor": false,
+    "hostEnemiesTargetRemoteHumans": false,
+    "guestHostOriginalNpcStateApplied": false,
+    "sharedDoorsAndDestruction": false,
+    "sharedObjectives": false,
+    "oneOriginalPhysicalWorld": false,
+    "completeCoopApkReady": false,
+    "ownerPhoneTrialRequested": false,
+    "automationId": "6b03909067548191a740f2121625a041"
   }
 }
