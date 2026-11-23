@@ -56,6 +56,21 @@ int main(){
     assert(guest.ApplyTrustedSnapshot(two,12,302));
     assert(guest.ReadRemote(2,302,view));
     assert(guest.ReadLocal(302,view)&&view.player==1);
+    // A different authenticated room in the SAME scene starts at tick=1.
+    // Foreign threads must not erase the live guest or host view.
+    const uint64_t oldGeneration=view.generation;
+    bool foreignReset=true;
+    std::thread resetWorker([&]{foreignReset=guest.ResetSession();});
+    resetWorker.join();
+    assert(!foreignReset);
+    assert(guest.ReadRemote(2,302,view));
+    assert(guest.ResetSession());
+    assert(!guest.ReadRemote(2,302,view));
+    assert(!guest.ApplyTrustedSnapshot(two,12,400));
+    assert(guest.BindScene(12,1));
+    assert(guest.ApplyTrustedSnapshot(two,12,400));
+    assert(guest.ReadRemote(2,400,view));
+    assert(view.tick==1 && view.generation!=oldGeneration);
     std::cout<<"ALLY_VIEW_CONTRACT_PASS: host sees guest body, guest sees host body,"
                 " self only first-person, stale/scene/ownership guarded\\n";
     std::cout<<"No actual BLACK render, actor creation, AI ownership or mission start\\n";

@@ -1,3 +1,9 @@
+### Session101 — 2026-11-23 — guest/host remote ally view session reset
+- Code: RemoteAllyRoster::ResetSession() now clears stale scene, self, ticks, roster and thread binding after authenticated room teardown, preserving monotonically changing remote-body generations. Rejects reset from a foreign thread. Same original mission can rejoin with tick=1 without resurrecting previous avatar handles. Test regression added in coop/bridge/test_remote_ally_roster.cpp.
+- Verified prior CI at c772c874: bridge 45159528745 SUCCESS, original contracts 45159529203 SUCCESS, UDP 45159528650 SUCCESS. New commit CI is NOT yet verified.
+- CL read-only latest paired events BLACK-Room-1795400088589-events.txt and BLACK-Room-1795400090425-events.txt remain room hosting/joined, not actual shared mission.
+- This is value-only guest/host roster lifecycle. Not yet connected to production disconnect and NOT original BLACK actor spawn, physics, weapon, enemy, object, objective or auto START. Android APK remains NO-GAMEPLAY-COOP. Next P0: actual host-owned engine actor and guest scene application. Do not request phone microtests. Only experiment/black-coop may be written.
+
 ### Session100 — 2026-11-23 — activate previously escaped proxy reset and regression
 - Audited Session99 code and discovered literal backslash-n characters inside C++ line comments in coop/bridge/remote_proxy_roster.hpp and test_remote_proxy_roster.cpp. This silently commented out ResetSession and its test assertions. Prior green CI therefore did NOT execute the intended reset tests.
 - Commits adbd00ff2f3d8582901f0ff3d49809e701044d9a and 6e0c99a9dc6262283dbc3e81ede5ac90cbd39d25 replaced those escaped sequences with real newlines. First CI runs 45159441889 and 45159441652 failed compilation because two C++ output strings also contained escaped newline sequences; c772c874f2898d8cab15056d3105ae3b80d65646 restored those string escapes. Verify final CI results, never assume success.

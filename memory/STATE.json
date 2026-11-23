@@ -3271,5 +3271,14 @@
     "sharedWorldProven": false,
     "originalHostExtraActorImplemented": false,
     "next": "Verify corrected CI, wire reset into authenticated disconnect, implement real host-owned original P2 actor and guest world consumer"
+  },
+  "session101": {
+    "date": "2026-11-23",
+    "change": "remote ally view ResetSession and same-scene reconnect regression",
+    "codeStatus": "committing",
+    "ciStatus": "unverified",
+    "gameplaySharedWorld": false,
+    "androidGameplayReady": false,
+    "protectedRepositoriesUntouched": true
   }
 }

@@ -42,6 +42,15 @@ public:
         }
         return true;
     }
+    // Authenticated room teardown/replacement must invalidate remote views even
+    // when the next room loads the same original stage. Only the game owner
+    // thread can reset an active roster; preserve generations across sessions.
+    bool ResetSession() noexcept {
+        if(bound_ && std::this_thread::get_id()!=owner_) return false;
+        slots_={}; owner_={}; bound_=false; has_snapshot_=false;
+        self_=0; scene_=0; tick_=0; last_update_=0;
+        return true;
+    }
     // MUST be invoked only after authenticating and verifying an authoritative
     // host snapshot at the network boundary. No raw LAN discovery packets.
     // Complete roster snapshot: omission logically drops remote display state.
