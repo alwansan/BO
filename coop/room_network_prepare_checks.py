@@ -38,7 +38,7 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('RoomAppRooms.offerOriginalGuestControllerFromGameThread(',java)
             self.assertIn('RoomAppRooms.pollHostWorldSnapshotFromGameThread()',java)
             self.assertIn('RoomAppRooms.pollTrustedHumanInputsFromGameThread()',java)
-            self.assertIn('RoomAppRooms.originalPlayerEyeFromGameThread(xCm,yCm,zCm,bx,by,bz)',java)
+            self.assertIn('RoomAppRooms.originalPlayerEyeFromGameThread(xCm,yCm,zCm,bx,by,bz,yawCentiDeg)',java)
             staging=(root/'app/src/main/java/com/racas/black/coop/RoomSession.java').read_text(encoding='utf-8')
             self.assertIn('hostHumanPoses.observeHostSourceFeet(',staging)
             self.assertIn('prepareObservedHostStageFromGameThread()',staging)
