@@ -3292,5 +3292,21 @@
     "allToolsAndRestorationRequested": true,
     "ownerPhoneTrialReady": false,
     "animationNativeProvenanceHook": false
+  },
+  "session103": {
+    "date": "2026-11-23",
+    "implementationCommit": "1fc007e547344daddc15ece5dfe2825372437c36",
+    "originalEngineLabRun": 45186010290,
+    "engineBuilt": true,
+    "ownerFilesExtracted": 574,
+    "firmwareReturnAtMs": 219,
+    "originalUsbInputPolled": false,
+    "originalFrontendObserved": false,
+    "originalMissionReached": false,
+    "sharedWorldProven": false,
+    "change": "fixed_firmware_routine_category_without_private_data",
+    "newCiStatus": "pending",
+    "phoneTrialReady": false,
+    "remaining": "original engine boot, host player2 original real actor and resources, original physics AI authoritative world and guest apply"
   }
 }
