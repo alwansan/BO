@@ -3518,6 +3518,21 @@
     "hostAuthoritativeOriginalWorldImplemented": false,
     "guestOriginalWorldApplied": false,
     "ownerPhoneTrialReady": false,
-    "next": "read bounded private HDD flags; identify failing Xbox virtual partition API; fix actual PC boot only with native evidence; separately implement real Android original host P2-4 actors/input/camera/animation/weapon/audio/physics AI and guest original world"
+    "next": "read private run 45213250944; verify savedir/Partition0 create/write and original mission; if another exact PC error repair it; then implement authentic Android original host P2-4 with full P1-restore context and canonical guest original world",
+    "verifiedRealPCPartitionImageCreationFailureRun": 45210679103,
+    "verifiedRealPCPartitionImageCreationFailure": true,
+    "sourceCallerPcMainPassedRelativeSave": true,
+    "sourceSHCreateDirectoryRequiresAbsolute": true,
+    "diagnosis": "relative_save_path_supplied_to_SHCreateDirectoryExW_prevented_virtual_Partition0_img_creation",
+    "pcVirtualHddPathFixCommit": "737bc70f7eeef0185eb6047284b2a5b790399fdf",
+    "pcVirtualHddPathTestsCommit": "cfff509c10fa8efab9c81131e2c964839c548a7e",
+    "pcVirtualHddFixOriginalEngineRun": 45213250944,
+    "pcVirtualHddFixOriginalEngineRunStatus": "pending_at_last_check",
+    "pcBootAfterFixVerified": false,
+    "pcOriginalMissionAfterFixVerified": false,
+    "androidP2LifecycleSourceMap": "docs/ORIGINAL_ANDROID_P2_SETUP_SOURCE_MAP_AR.md",
+    "androidGameNativeOriginalActorReady": false,
+    "androidOriginalHostAuthorityWithOriginalNPC": false,
+    "androidGuestOriginalSharedWorldApplied": false
   }
 }
