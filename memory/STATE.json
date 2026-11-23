@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-111-original-p2-stage.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-112-p1-restore-regions.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3576,6 +3576,19 @@
     "originalAndroidPlayer2Active": false,
     "originalHostCanonicalWorld": false,
     "originalGuestCanonicalApply": false,
+    "ownerTrialRequiredNow": false
+  },
+  "session112P1RestoreRegions": {
+    "originalPcLabRun": 45213250944,
+    "virtualHddFixVerified": true,
+    "pcOriginalMissionTickSamples": 167,
+    "p1ContextRestoreFailureSamples": 161,
+    "realActor2AndPhysicsVerified": false,
+    "sourceScope": "original-PC-lab-only",
+    "sixNewFixedRegionCounters": true,
+    "acceptanceRelaxed": false,
+    "realLabRecheckPending": true,
+    "androidGameplayCoopVerified": false,
     "ownerTrialRequiredNow": false
   }
 }

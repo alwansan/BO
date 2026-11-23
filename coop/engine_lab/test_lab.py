@@ -36,6 +36,22 @@ class LabTests(unittest.TestCase):
             evidence[key] = 1
             self.assertFalse(lab.evaluate(evidence)['passed'])
 
+    def test_restore_mismatch_regions_are_private_counters_not_acceptance(self):
+        lab = self.module()
+        regions = ('restore_scope_failures','restore_actor_grid_failures',
+                   'restore_actor_motion_failures','restore_actor_weapon_failures',
+                   'restore_actor_model_failures','restore_actor_tail_failures')
+        self.assertTrue(set(regions).issubset(lab.FIELDS))
+        data = dict(mission_ticks=1000,p2_ready_ticks=900,phases_completed=8,
+                    distinct_actor_ticks=900,distinct_proxy_ticks=900,distinct_weapon_ticks=900,
+                    restored_ticks=899,restore_failures=1,
+                    p1_move_mm=1000,p2_move_mm=1000,p1_body_move_mm=1000,p2_body_move_mm=1000,
+                    p1_shots=2,p2_shots=2,input0_move_reports=100,input1_move_reports=100,
+                    input0_fire_reports=100,input1_fire_reports=100,restore_actor_grid_failures=1)
+        result = lab.evaluate(data)
+        self.assertFalse(result['passed'])
+        self.assertIn('p1_context_not_restored', result['failed_checks'])
+
     def test_aggregate_parser_rejects_extra_fields(self):
         lab = self.module()
         with self.assertRaises(ValueError):

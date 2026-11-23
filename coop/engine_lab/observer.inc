@@ -11,6 +11,10 @@ typedef struct BoLabCounts {
     unsigned mission_ticks, p2_ready_ticks, phases_completed;
     unsigned distinct_actor_ticks, distinct_proxy_ticks, distinct_weapon_ticks;
     unsigned restored_ticks, restore_failures, proxy_failures, epoch_changes, invalid_samples;
+    /* Bounded region counts; never expose private original game bytes. */
+    unsigned restore_scope_failures, restore_actor_grid_failures;
+    unsigned restore_actor_motion_failures, restore_actor_weapon_failures;
+    unsigned restore_actor_model_failures, restore_actor_tail_failures;
     unsigned p1_move_mm, p2_move_mm, p1_idle_mm, p2_idle_mm;
     unsigned p1_body_move_mm, p2_body_move_mm, p1_shots, p2_shots;
 } BoLabCounts;
@@ -55,6 +59,9 @@ static void bo_lab_write(void)
         "{\"mission_ticks\":%u,\"p2_ready_ticks\":%u,\"phases_completed\":%u,"
         "\"distinct_actor_ticks\":%u,\"distinct_proxy_ticks\":%u,\"distinct_weapon_ticks\":%u,"
         "\"restored_ticks\":%u,\"restore_failures\":%u,\"proxy_failures\":%u,"
+        "\"restore_scope_failures\":%u,\"restore_actor_grid_failures\":%u,"
+        "\"restore_actor_motion_failures\":%u,\"restore_actor_weapon_failures\":%u,"
+        "\"restore_actor_model_failures\":%u,\"restore_actor_tail_failures\":%u,"
         "\"epoch_changes\":%u,\"invalid_samples\":%u,"
         "\"p1_move_mm\":%u,\"p2_move_mm\":%u,\"p1_idle_mm\":%u,\"p2_idle_mm\":%u,"
         "\"p1_body_move_mm\":%u,\"p2_body_move_mm\":%u,\"p1_shots\":%u,\"p2_shots\":%u,"
@@ -64,6 +71,9 @@ static void bo_lab_write(void)
         bo_lab.mission_ticks, bo_lab.p2_ready_ticks, bo_lab.phases_completed,
         bo_lab.distinct_actor_ticks, bo_lab.distinct_proxy_ticks, bo_lab.distinct_weapon_ticks,
         bo_lab.restored_ticks, bo_lab.restore_failures, bo_lab.proxy_failures,
+        bo_lab.restore_scope_failures, bo_lab.restore_actor_grid_failures,
+        bo_lab.restore_actor_motion_failures, bo_lab.restore_actor_weapon_failures,
+        bo_lab.restore_actor_model_failures, bo_lab.restore_actor_tail_failures,
         bo_lab.epoch_changes, bo_lab.invalid_samples,
         bo_lab.p1_move_mm, bo_lab.p2_move_mm, bo_lab.p1_idle_mm, bo_lab.p2_idle_mm,
         bo_lab.p1_body_move_mm, bo_lab.p2_body_move_mm, bo_lab.p1_shots, bo_lab.p2_shots,
@@ -136,10 +146,23 @@ static void bo_lab_after_impl(void)
     if (!bo_lab_epoch) bo_lab_epoch = core;
     if (bo_lab_epoch != core) ++bo_lab.epoch_changes;
     if (bo_lab_before_valid) {
-        if (core == bo_lab_before_core && GUEST32(0x002D12B8u) == bo_lab_before_owner && !black_p2_in &&
-            memcmp(bo_lab_before_actor, (uint8_t *)(uintptr_t)g_xbox_mem_offset + core + BLACK_ACTOR_AT, BLACK_ACTOR_BYTES) == 0)
-            ++bo_lab.restored_ticks;
-        else ++bo_lab.restore_failures;
+        /* A failed restore MUST remain a failure, even after categorization. */
+        if (core != bo_lab_before_core || GUEST32(0x002D12B8u) != bo_lab_before_owner || black_p2_in) {
+            ++bo_lab.restore_failures;
+            ++bo_lab.restore_scope_failures;
+        } else {
+            const uint8_t *const after = (const uint8_t *)(uintptr_t)g_xbox_mem_offset + core + BLACK_ACTOR_AT;
+            const uint8_t *const before = bo_lab_before_actor;
+            if (memcmp(before, after, BLACK_ACTOR_BYTES) == 0) ++bo_lab.restored_ticks;
+            else {
+                ++bo_lab.restore_failures;
+                if (memcmp(before + 0x000u, after + 0x000u, 0x080u)) ++bo_lab.restore_actor_grid_failures;
+                if (memcmp(before + 0x080u, after + 0x080u, 0x100u)) ++bo_lab.restore_actor_motion_failures;
+                if (memcmp(before + 0x180u, after + 0x180u, 0x180u)) ++bo_lab.restore_actor_weapon_failures;
+                if (memcmp(before + 0x300u, after + 0x300u, 0x100u)) ++bo_lab.restore_actor_model_failures;
+                if (memcmp(before + 0x400u, after + 0x400u, 0x500u)) ++bo_lab.restore_actor_tail_failures;
+            }
+        }
     }
     if (black_p2_state != 2 || black_p2_in) { bo_lab_write(); return; }
     actors[0] = core + BLACK_ACTOR_AT; actors[1] = black_p2_shadow;

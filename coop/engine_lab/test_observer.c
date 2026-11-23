@@ -56,7 +56,10 @@ int main(void) {
     bo_lab_before(); bo_lab_after();
     assert(bo_lab.mission_ticks==1 && bo_lab.restored_ticks==1 && bo_lab.distinct_proxy_ticks==1);
     bo_lab_before(); GUEST8(0x1030+0x50)=1; bo_lab_after();
-    assert(bo_lab.restore_failures==1);
+    assert(bo_lab.restore_failures==1 && bo_lab.restore_actor_grid_failures==1);
+    bo_lab_before(); GUEST8(0x1030+0x298)=1; bo_lab_after();
+    assert(bo_lab.restore_failures==2 && bo_lab.restore_actor_weapon_failures==1);
+    assert(bo_lab.restore_scope_failures==0 && bo_lab.restore_actor_motion_failures==0);
     bo_lab_before(); GUEST32(0x8000+0xB4)=0x9000; bo_lab_after();
     assert(bo_lab.proxy_failures==1);
     assert(bo_lab.phases_completed==0);
