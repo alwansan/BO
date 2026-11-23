@@ -64,6 +64,23 @@ int main() {
     assert(roster.ApplyTrustedSnapshot(Snap(1,{{1,0,0},{2,1,1}}),18,500));
     assert(roster.Read(2,500,view) && view.scene==18);
     assert(view.generation!=secondGeneration);
-    // Disconnect/reconnect into the SAME mission must accept a fresh tick=1,\n    // without reviving any old proxy or recycling its generation.\n    const uint64_t previousGeneration=view.generation;\n    bool foreignReset=true;\n    std::thread resetWorker([&]{ foreignReset=roster.ResetSession(); });\n    resetWorker.join();\n    assert(!foreignReset);\n    assert(roster.Read(2,500,view));\n    assert(roster.ResetSession());\n    assert(!roster.Read(2,500,view));\n    assert(!roster.ApplyTrustedSnapshot(first,18,600));\n    assert(roster.BindScene(18));\n    assert(roster.ApplyTrustedSnapshot(Snap(1,{{1,0,0},{2,4,9}}),18,600));\n    assert(roster.Read(2,600,view) && view.tick==1);\n    assert(view.generation!=previousGeneration);\n    std::cout<<"PASS ACTOR value-only remote roster: owner, epoch, generation, stale, validation\n";
-    std::cout<<"No guest model, player2 actor, or secure network session exists\n";
+    // Disconnect/reconnect into the SAME mission must accept a fresh tick=1,
+    // without reviving any old proxy or recycling its generation.
+    const uint64_t previousGeneration=view.generation;
+    bool foreignReset=true;
+    std::thread resetWorker([&]{ foreignReset=roster.ResetSession(); });
+    resetWorker.join();
+    assert(!foreignReset);
+    assert(roster.Read(2,500,view));
+    assert(roster.ResetSession());
+    assert(!roster.Read(2,500,view));
+    assert(!roster.ApplyTrustedSnapshot(first,18,600));
+    assert(roster.BindScene(18));
+    assert(roster.ApplyTrustedSnapshot(Snap(1,{{1,0,0},{2,4,9}}),18,600));
+    assert(roster.Read(2,600,view) && view.tick==1);
+    assert(view.generation!=previousGeneration);
+    std::cout<<"PASS ACTOR value-only remote roster: owner, epoch, generation, stale, validation
+";
+    std::cout<<"No guest model, player2 actor, or secure network session exists
+";
 }
