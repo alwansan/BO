@@ -12,6 +12,10 @@ namespace blackcoop {
 class OriginalHostPlayerShadowPlan final {
  std::thread::id thread_=std::this_thread::get_id();
  std::array<uint8_t,0x900> actor_{};
+ // Untouched originals: compare before copying into guest P2 to reject a
+ // stale source frame. Never expose donor bytes outside the native stage.
+ std::array<uint8_t,0x900> donorActor_{};
+ std::array<uint8_t,0x16C0> donorOwner_{};
  std::array<uint8_t,0x16C0> owner_{};
  std::array<uint8_t,0x630> parts_{}; // +0x430..+0x62F: separate 0x200 model workspace
  std::array<uint8_t,0x40> input_{}; // independent P2 controller snapshot
@@ -41,6 +45,7 @@ public:
  void Reset()noexcept{
   if(!onThread())return;
   actor_.fill(0);owner_.fill(0);parts_.fill(0);input_.fill(0);
+  donorActor_.fill(0);donorOwner_.fill(0);
   ready_=false;modelIsolated_=false;inputIsolated_=false;
   boundScene_={};boundTarget_={};
   donorPartA_=donorPartB_=donorModel_=donorManager_=donorInput_=0;
@@ -136,6 +141,9 @@ public:
    Reset();return false;
   }
   if(get(actor_.data()+0x320)!=sourceModel){Reset();return false;}
+  // Capture the source *before* rewriting actor and owner pointers.
+  std::memcpy(donorActor_.data(),actor_.data(),0x900u);
+  std::memcpy(donorOwner_.data(),owner_.data(),0x16C0u);
   // Installing the real second-pad pointer is reserved for a proven original
   // game update: the detached snapshot never sends a controller report.
   if(sourceInput)inputIsolated_=true;
@@ -184,6 +192,34 @@ public:
   donorManager_=inputManager;donorInput_=sourceInput;
   ready_=true;return true;
  }
+ // Read-only source freshness gate. No caller may carry the prepared P2
+ // owner/actor/model/input across a P1 game update without re-preparing it.
+ // The original actor's world-grid node is included, not ignored.
+ template<class IO>bool SourceStillCurrent(IO& io)const{
+  if(!Ready()||!ModelIsolated()||!InputIsolated()||
+     !boundScene_.scene||io.Scene()!=boundScene_.scene)return false;
+  uint32_t core=0,owner=0,physics=0,npcs=0,input=0;
+  if(!io.Read32(0x2D45D4,core)||core!=boundScene_.core||
+     !io.Read32(0x2D12B8,owner)||owner!=boundScene_.owner||
+     !io.Read32(0x2D45F4,physics)||physics!=boundScene_.physics||
+     !io.Read32(0x2D1980,npcs)||npcs!=boundScene_.npcs||
+     !donorManager_||!donorModel_||!donorInput_||
+     !io.Read32(donorManager_+0xA8u,input)||input!=donorInput_)return false;
+  std::array<uint8_t,0x900> actor{};
+  std::array<uint8_t,0x16C0> camera{};
+  std::array<uint8_t,0x630> parts{};
+  std::array<uint8_t,0x40> controller{};
+  if(!io.CopyGuest(boundScene_.core+0x30u,actor.data(),0x900u)||
+     !io.CopyGuest(boundScene_.owner,camera.data(),0x16C0u)||
+     !io.CopyGuest(donorPartA_,parts.data(),0x70u)||
+     !io.CopyGuest(donorPartB_,parts.data()+0x70u,0x3C0u)||
+     !io.CopyGuest(donorModel_,parts.data()+0x430u,0x200u)||
+     !io.CopyGuest(donorInput_,controller.data(),0x40u))return false;
+  return std::memcmp(actor.data(),donorActor_.data(),0x900u)==0&&
+         std::memcmp(camera.data(),donorOwner_.data(),0x16C0u)==0&&
+         std::memcmp(parts.data(),parts_.data(),0x630u)==0&&
+         std::memcmp(controller.data(),input_.data(),0x40u)==0;
+ }
  // Explicit opt-in, NEVER called by current Android gameplay. Writes only
  // five exact, separately tracked P2 allocations. Caller must mark the
  // storage engine-touched BEFORE entering: a partial write requires cleanup.
@@ -216,6 +252,8 @@ public:
      !io.Read32(b.core+0x354u,manager)||manager!=donorManager_||
      !manager||!io.Read32(manager+0xA8u,input)||input!=donorInput_)
    return false;
+  // Do not commit a stale source even if its root pointers are unchanged.
+  if(!SourceStillCurrent(io))return false;
   // This operation does NOT register an original second actor, call setup,
   // swap original P1 context, attach a physical proxy or send input.
   const std::array<uint8_t,0x40> blankWeapons{};
@@ -289,7 +327,8 @@ public:
    return OriginalHostPlayerStageStatus::Incomplete;
   uint32_t phase=0;
   if(io.Scene()!=binding_.scene||
-     !io.Read32(binding_.core+0x5AE0u,phase)||phase!=0x1Cu)
+     !io.Read32(binding_.core+0x5AE0u,phase)||phase!=0x1Cu||
+     !shadow_.SourceStillCurrent(io))
    return OriginalHostPlayerStageStatus::Incomplete;
   if(!storage_.BeginOriginalSetup(io))return OriginalHostPlayerStageStatus::StorageRejected;
   touched_=true;

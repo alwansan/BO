@@ -193,6 +193,28 @@ int main(){
   assert(stage.ReleaseConstructorOnly(io)==OriginalStorageStatus::EngineCleanupRequired);
   assert(io.frees==0&&io.owned.size()==5);
  }
+ // Even with identical roots/addresses, real P1 gameplay can modify
+ // actor, grid links, owner, parts, model or input between staging and use.
+ for(unsigned kind=0;kind<6;kind++){
+  ShadowIO io;io.set(b.core+0x30+0x320,0x210000);
+  io.set(b.core+0x354u,0x220000);io.set(0x220000+0xA8u,0x230000);
+  io.set(b.core+0x5AE0u,0x1Cu);
+  OriginalHostPlayerStage stage;
+  assert(stage.Prepare(io,b)==OriginalHostPlayerStageStatus::Prepared);
+  const uint32_t changed[]={
+   b.core+0x30u+0x50u, // P1 world-grid links
+   b.core+0x30u+0xA0u, // original actor position
+   b.owner+0x820u,     // camera/controller state
+   0x200000u+0x20u,    // original partA
+   0x210000u+0x20u,    // original model
+   0x230000u+0x20u     // original input
+  };
+  io.set(changed[kind],0xABC00000u+kind);
+  assert(stage.MaterializeOwned(io)==OriginalHostPlayerStageStatus::Incomplete);
+  assert(io.ownedWrites==0&&io.ownedAttempts==0);
+  assert(stage.ReleaseConstructorOnly(io)==OriginalStorageStatus::Released);
+  assert(io.frees==5&&io.owned.empty());
+ }
  {ShadowIO io;OriginalHostPlayerStage stage;
   assert(stage.Prepare(io,b)==OriginalHostPlayerStageStatus::Prepared);
   assert(stage.MaterializeOwned(io)==OriginalHostPlayerStageStatus::Incomplete);
