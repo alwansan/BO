@@ -27,6 +27,7 @@ static uint32_t bo_lab_weapon_was[2], bo_lab_mag_was[2];
 static unsigned bo_lab_ammo_was[2];
 static int bo_lab_control_ready;
 static unsigned bo_lab_ui_ticks, bo_lab_ui_now, bo_lab_ui_changes;
+static int bo_lab_ui_marker_emitted;
 
 int bo_lab_pad_report(int pad, unsigned char *out)
 {
@@ -79,6 +80,10 @@ static void bo_lab_write(void)
 static void bo_lab_ui_page(const char *page)
 {
     const unsigned category = bo_lab_ui_category(page);
+    if (!bo_lab_ui_marker_emitted) {
+        bo_lab_ui_marker_emitted = 1;
+        fputs("BO_ENGINE_MENU_TICK\n", stderr);
+    }
     const int changed = category != bo_lab_ui_now;
     ++bo_lab_ui_ticks;
     if (changed) { bo_lab_ui_now = category; ++bo_lab_ui_changes; }
