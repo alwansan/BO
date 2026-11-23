@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-119-original-p1-grid-linked-exchange-preview.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-120-authentic-pc-two-players-and-stage-gates.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3730,5 +3730,44 @@
     "originalHostCanonicalWorld": false,
     "originalGuestCanonicalStateApply": false,
     "ownerPhoneTrialRequested": false
+  },
+  "session120AuthenticOriginalPcTwoPlayers": {
+    "sourcePcRun": 45233723518,
+    "sourcePcWorkflowConclusion": "failure_old_full_actor_memcmp_only",
+    "sourcePcElapsedMs": 1071250,
+    "sourcePcMissionTicks": 1221,
+    "sourcePcP2ReadyTicks": 768,
+    "sourcePcIndependentProxyTicks": 768,
+    "sourcePcIndependentWeaponTicks": 768,
+    "sourcePcRealP1MoveMm": 4527,
+    "sourcePcRealP2MoveMm": 6363,
+    "sourcePcP1Shots": 10,
+    "sourcePcP2Shots": 10,
+    "sourcePcPhasesCompleted": 8,
+    "sourcePcActorNongridRestoredTicks": 1215,
+    "sourcePcP1FullRawRestoredTicks": 0,
+    "sourcePcWorldNodeHeadOnlyChangedTicks": 1215,
+    "sourcePcUnexpectedGridCellOrLinkChanges": 0,
+    "sourcePcUnexpectedActorMotionWeaponModelChanges": 0,
+    "sourcePcOriginalActorAndWorldPresent": true,
+    "sourcePcActuallyTwoPlayersMoveAndShootInOneOriginalMission": true,
+    "sourcePcNetworkedBetweenAndroidPhones": false,
+    "sourcePcFourPlayersVerified": false,
+    "strictWorldGridAwareEvaluatorCommit": "c2007390dcd25b0fea807a1a4a5446f9694b1fc0",
+    "strictEvaluatorNewRealRun": 45239818055,
+    "strictEvaluatorNewRealRunConclusion": "pending",
+    "androidWriterGateCommit": "3fe6ab69d6fc861983e950fe18404e380db0ab17",
+    "androidPlayerStageLinkWitnessCommit": "ccd754be59c0caddae43571ebe7ab5cb6d0a1fcd",
+    "androidLatestPreflightRun": 45239115392,
+    "androidLatestPreflightResult": "success",
+    "androidFailedCandidateRun": 45239115094,
+    "androidFailedCandidateCause": "missing_reviewed_world_link_header_in_strict_allowlist",
+    "androidCandidateRepairCommit": "a68a01ee25f9d1f4b688a1bbd1c9a3ecfd07a767",
+    "androidRepairCandidateRun": 45240432290,
+    "androidRepairCandidateConclusion": "queued",
+    "androidOriginalPlayer2Active": false,
+    "androidAllRemoteHumansInHostCanonicalOriginalStory": false,
+    "androidHostNpcDoorObjectivesAppliedToGuests": false,
+    "userPhoneTestNeededNow": false
   }
 }
