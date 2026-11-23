@@ -1,3 +1,9 @@
+### Session108 verified Android-native outcome
+
+[45206563984](https://github.com/alwansan/BO/actions/runs/45206563984) **SUCCESS** after [242fa976](https://github.com/alwansan/BO/commit/242fa976716961f2c2eacb459de64ca9bba0229c) strict exact header allowlist repair. Actual Windows runner `candidate-probe` built Android original `libmain.so` and isolated APK; the workflow's `Compile isolated Android baseline with bounded parallelism`, `Verify ... JNI, signature, ABI and compile image` and artifact-upload steps each SUCCESS. Therefore the original player storage/proxy headers are now **compiled into the pinned Android game source without breaking the build**. This is NOT actor initialization or playable shared-world co-op: no extra game-engine actor, separate host player weapons, synced enemy AI/doors/objectives or guest original world has been proven. Avoid unnecessary user APK test.
+
+The original Windows private engine [45202073768](https://github.com/alwansan/BO/actions/runs/45202073768) has confirmed `dashboard_error_harddrive`; this is virtual-HDD compatibility of the **different PC emulator**, not phone storage. Track work separately. See `docs/ORIGINAL_PC_HARDDRIVE_DASHBOARD_ERROR_AR.md`.
+
 # سبب الخروج من محرك BLACK الأصلي في مختبر Windows: خطأ القرص الافتراضي
 
 Session108 — 2026-11-23.
