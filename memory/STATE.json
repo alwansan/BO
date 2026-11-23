@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-108-original-actor-provenance.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-109-original-hdd-sector-trace.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3479,5 +3479,45 @@
     "pcVirtualHarddriveCallsiteProven": false,
     "pcVirtualHarddriveFixApplied": false,
     "session108LastValidatedCommit": "bd0cafe15126d53bddca6f24e3cdefa6285dda3c"
+  },
+  "session109": {
+    "date": "2026-11-23",
+    "branch": "experiment/black-coop",
+    "sourceProbeCommit": "58bc280a7c6b5fa0448de09304afefc630b7dbe0",
+    "sourceProbeWin32SemanticsFix": "cb5a405e9b42582fbbde730b3ffa4b53abf9c624",
+    "sourceProbeTestCommit": "e440e3b3348478fe5ce992a59b4b6377a1faf903",
+    "documentationReadmeCommit": "103ae727f605fb7f129315cf0453e88a8f6fca20",
+    "verifiedPreviousPCOriginalEngineRun": 45202073768,
+    "previousPCOriginalEngineError": "Xbox Dashboard Type1 Reason1 ERROR parameter0=2 Invalid Harddrive",
+    "pcHddRootAPIVerified": false,
+    "sourceProbeChecksRun": 45210679103,
+    "sourceProbeChecksConclusion": "success",
+    "actualPCOriginalEngineProbeRun": 45210679103,
+    "actualPCOriginalEngineProbeStatus": "in_progress_at_last_check",
+    "sourceIntermediateFailureRun": 45210316015,
+    "sourceIntermediateFailure": "source_patch_failed_wrong_anchor_count_fixed",
+    "privateProbeCategories": [
+      "hdd_table_created",
+      "hdd_table_create_failed",
+      "hdd_table_written",
+      "hdd_table_write_failed",
+      "hdd_partition0_open_tried",
+      "hdd_partition0_directory_open",
+      "hdd_partition0_open_ok",
+      "hdd_partition0_open_failed",
+      "hdd_partition0_sector4_read",
+      "hdd_partition0_sector4_valid",
+      "hdd_partition0_sector4_invalid",
+      "hdd_fs_size_query_seen"
+    ],
+    "privacyPreserved": true,
+    "androidOriginalActorHeadersFullCompileRun": 45206563984,
+    "androidOriginalActorHeadersFullCompileSuccess": true,
+    "actualAndroidOriginalP2ActorSpawned": false,
+    "actualAndroidOriginalP3P4ActorsSpawned": false,
+    "hostAuthoritativeOriginalWorldImplemented": false,
+    "guestOriginalWorldApplied": false,
+    "ownerPhoneTrialReady": false,
+    "next": "read bounded private HDD flags; identify failing Xbox virtual partition API; fix actual PC boot only with native evidence; separately implement real Android original host P2-4 actors/input/camera/animation/weapon/audio/physics AI and guest original world"
   }
 }
