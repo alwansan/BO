@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-89-p2-private-callsites-abi-survey.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-90-original-shared-world-acceptance-guard.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3109,5 +3109,13 @@
     },
     "ownerPolicy": "Only one major phone trial after original host actor/AI/damage/door all integrated; capture all diagnostics in one run",
     "nextP0": "Safely construct genuine player2 original actor context on HOST with independent owner/input/weapon/physics/AI and rollback after verifying calling conventions"
+  },
+  "originalSharedWorldAcceptance": {
+    "status": "not_ready_original_host_actor_unimplemented",
+    "source": "coop/analysis/original_shared_world_acceptance.py",
+    "windowsApkRun": 45096922149,
+    "windowsApkConclusion": "success_room_only_no_gameplay",
+    "hostLog": "black log/logs/BLACK-Room-1795378772503-events.txt",
+    "deviceAcceptance": false
   }
 }
