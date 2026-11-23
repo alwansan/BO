@@ -13,11 +13,24 @@ class OriginalPlayerLinkExchangePlan final {
  const std::thread::id thread_=std::this_thread::get_id();
  std::array<uint8_t,kBytes> first_{},second_{};
  std::array<uint8_t,kWords> protected_{};
+ struct NeighborWitness {uint32_t at=0,next=0,previous=0;};
+ std::array<NeighborWitness,kWords> witnesses_{};
+ unsigned witnessCount_=0;
  OriginalPlayerStorageScene scene_{};
  uint32_t source_=0,target_=0;
  bool ready_=false;
  unsigned dynamic_=0;
  bool sameThread()const noexcept{return thread_==std::this_thread::get_id();}
+ template<class IO>bool neighborLinksCurrent(IO& io)const noexcept{
+  for(unsigned i=0;i<witnessCount_;i++){
+   const auto& w=witnesses_[i];
+   uint32_t next=0,previous=0;
+   if(!range(w.at,8u)||!io.Span(w.at,8u)||
+      !io.Read32(w.at,next)||!io.Read32(w.at+4u,previous)||
+      next!=w.next||previous!=w.previous)return false;
+  }
+  return true;
+ }
  static bool range(uint32_t at,uint32_t n)noexcept{
   return at>=0x10000u&&n&&uint64_t(at)+n<=0x100000000ull;
  }
@@ -46,6 +59,7 @@ public:
  void Reset()noexcept{
   if(!sameThread())return;
   first_.fill(0);second_.fill(0);protected_.fill(0);
+  witnesses_.fill({});witnessCount_=0;
   scene_={};source_=target_=0;dynamic_=0;ready_=false;
  }
  ~OriginalPlayerLinkExchangePlan(){Reset();}
@@ -82,6 +96,10 @@ public:
       !io.Span(v,8u))continue;
    uint32_t next=0,prev=0;
    if(!io.Read32(v,next)||!io.Read32(v+4u,prev)){Reset();return false;}
+   // Also pin unprotected eligible neighbor contents: if another engine
+   // subsystem relinks this list after mask creation, the mask is stale.
+   if(witnessCount_>=witnesses_.size()){Reset();return false;}
+   witnesses_[witnessCount_++]={v,next,prev};
    if(next==original+off||prev==original+off||
       (off>=4u&&(next==original+off-4u||prev==original+off-4u))){
     protected_[off/4u]=1u;++dynamic_;
@@ -90,6 +108,7 @@ public:
   // Do not trust a source that moved while link neighbors were inspected.
   std::array<uint8_t,kBytes> check{};
   if(!roots(io,b)||!io.OwnsActor(p2,kBytes)||
+     !neighborLinksCurrent(io)||
      !io.CopyGuest(original,check.data(),kBytes)||
      std::memcmp(check.data(),first_.data(),kBytes)!=0||
      !io.CopyGuest(p2,check.data(),kBytes)||
@@ -99,7 +118,8 @@ public:
   scene_=b;source_=original;target_=p2;ready_=true;return true;
  }
  template<class IO>bool SourceStillCurrent(IO& io)const noexcept{
-  if(!Ready()||!roots(io,scene_)||!io.OwnsActor(target_,kBytes))return false;
+  if(!Ready()||!roots(io,scene_)||!io.OwnsActor(target_,kBytes)||
+     !neighborLinksCurrent(io))return false;
   std::array<uint8_t,kBytes> current{};
   return io.CopyGuest(source_,current.data(),kBytes)&&
    std::memcmp(current.data(),first_.data(),kBytes)==0&&

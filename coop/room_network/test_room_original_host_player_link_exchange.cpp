@@ -51,6 +51,10 @@ int main(){
   assert(io.bytes==first); // no guest RAM writes
   io.set(actor+0x22Cu,0x77770000u);
   assert(!plan.SourceStillCurrent(io));
+  io.set(actor+0x22Cu,0u);
+  assert(plan.SourceStillCurrent(io));
+  io.set(0x350000u,0u);
+  assert(!plan.SourceStillCurrent(io)); // external linked list drift
   plan.Reset();assert(!plan.Ready()&&!plan.PreviewRoundTrip());
  }
  {LinkIO io;OriginalPlayerLinkExchangePlan plan;auto bad=b;bad.scene++;
