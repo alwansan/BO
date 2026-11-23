@@ -39,9 +39,12 @@ int main(){
   assert(adapter.Release(e)==OriginalProxyStatus::Released);assert(e.calls.size()==2&&e.calls[1].arg==h.proxy);
   assert(!adapter.Handle().proxy);}
  for(unsigned k=0;k<8;k++){Engine e;OriginalHostProxyEngine a;auto bad=b;
-  if(k==0)bad.setupComplete=false;if(k==1)e.scene++;
-  if(k==2)bad.actor=Engine::world+0x30;if(k==3)bad.actor=Engine::pool+0xA0;
-  if(k==4)e.words[Engine::actor+0x354]=0;if(k==5)e.words[Engine::actor+0x374]++;
+  if(k==0) bad.setupComplete=false;
+  if(k==1) e.scene++;
+  if(k==2) bad.actor=Engine::world+0x30;
+  if(k==3) bad.actor=Engine::pool+0xA0;
+  if(k==4) e.words[Engine::actor+0x354]=0;
+  if(k==5) e.words[Engine::actor+0x374]++;
   if(k==6)e.words[Engine::actor+0xB4]=Engine::physics+0x2320;
   if(k==7)for(unsigned i=0;i<19;i++)e.flags[Engine::physics+0x2960+i]=1;
   assert(a.Acquire(e,bad)==OriginalProxyStatus::Rejected);assert(e.calls.empty());}
