@@ -1,0 +1,80 @@
+name: BO-COOP private owner original host second-player actor ABI direct caller audit (NO ACTOR)
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/analysis/original_host_actor_callsites_xbe.py'
+      - 'coop/analysis/test_original_host_actor_callsites_xbe.py'
+      - '.github/workflows/black-coop-original-host-actor-callsites.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: bo-private-host-extra-actor-callsites
+  cancel-in-progress: true
+jobs:
+  synthetic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Validate private original actor caller parser and owner identity
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s coop/analysis -p test_original_host_actor_callsites_xbe.py -v
+  owner-xbe-private:
+    needs: synthetic
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: bo
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - uses: actions/checkout@v4
+        with:
+          repository: alwansan/biso
+          ref: 9ceb6a65fb5a4414c106ca3961295a1f8f7e558b
+          path: owner-biso
+          sparse-checkout: Black_Xbox_Extracted/default.xbe
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+          lfs: false
+      - name: Private bounded original x86 callsite summaries, never raw XBE
+        run: |
+          set -euo pipefail
+          python3 bo/coop/analysis/original_host_actor_callsites_xbe.py \
+            --owner-xbe owner-biso/Black_Xbox_Extracted/default.xbe \
+            --report "$RUNNER_TEMP/owner-actor-callsites-numeric.json"
+          python3 - <<'PY'
+          import pathlib,json,os
+          f=pathlib.Path(os.environ["RUNNER_TEMP"])/"owner-actor-callsites-numeric.json"
+          r=json.loads(f.read_text())
+          assert r["schema"]=="bo-original-human-actor-private-direct-calls-v1"
+          assert r["owner_original_xbe_sha1_pinned"]
+          assert len(r["target_summaries"])==5
+          assert r["direct_calls_not_equal_complete_callgraph"]
+          assert all(not v["android_guest_abi_proven"] for v in r["target_summaries"].values())
+          assert not r["instructions_or_source_bytes_exported"]
+          assert not r["actor2_native_heap_allocated"]
+          assert f.stat().st_size<4500
+          print("BO_ORIGINAL_PLAYER2_CALLSITE_PRIVATE_COUNTS_PASS_NO_NATIVE_ACTOR")
+          PY
+      - name: Export bounded numerical caller counts only
+        uses: actions/upload-artifact@v4
+        with:
+          name: bo-original-p2-callsite-summary-numeric
+          path: ${{ runner.temp }}/owner-actor-callsites-numeric.json
+          retention-days: 7
+          if-no-files-found: error
+      - name: Destroy private owner XBE and caller counts
+        if: always()
+        run: |
+          rm -rf owner-biso
+          rm -f "$RUNNER_TEMP/owner-actor-callsites-numeric.json"
