@@ -16,8 +16,12 @@ int main(){
  assert(!gate.Observe(key,0,world,npc,1001));
  assert(!gate.Observe(key,0x100000,world,npc,1001));
  assert(!gate.Observe(key,0x100000,world,npc,1002));
- assert(gate.Observe(key,0x100000,world,npc,1003));
- assert(gate.SourceCoherent(1003)&&!gate.OriginalGuestEngineApplied());
+ assert(!gate.Observe(key,0x100000,world,npc,1003)); // same packets cannot earn quorum
+ avatars[1]=10;assert(world.Ingest(avatars,22,1004));
+ assert(!gate.Observe(key,0x100000,world,npc,1005));
+ avatars[1]=11;assert(world.Ingest(avatars,22,1006));
+ assert(gate.Observe(key,0x100000,world,npc,1007));
+ assert(gate.SourceCoherent(1007)&&!gate.OriginalGuestEngineApplied());
  assert(!gate.SourceCoherent(1104)); // no perpetual source readiness
  int32_t unexpected[]={23,10,3,4,
   1,100,200,300,0,0,2,120,200,300,0,0,
@@ -29,8 +33,12 @@ int main(){
  assert(world.Ingest(avatars,22,1020));
  assert(!gate.Observe(key,0x100000,world,npc,1021));
  assert(!gate.Observe(key,0x100000,world,npc,1022));
- assert(gate.Observe(key,0x100000,world,npc,1023));
- assert(gate.SourceCoherent(1023)&&!gate.SourceCoherent(1124));
+ assert(!gate.Observe(key,0x100000,world,npc,1023));
+ avatars[1]=12;assert(world.Ingest(avatars,22,1024));
+ assert(!gate.Observe(key,0x100000,world,npc,1025));
+ avatars[1]=13;assert(world.Ingest(avatars,22,1026));
+ assert(gate.Observe(key,0x100000,world,npc,1027));
+ assert(gate.SourceCoherent(1027)&&!gate.SourceCoherent(1128));
  bool foreign=true;std::thread t([&]{
   foreign=gate.Observe(key,0x100000,world,npc,1003);
  });t.join();assert(!foreign);
@@ -43,8 +51,12 @@ int main(){
  gate.Reset();
  assert(!gate.Observe(newer,0x200000,world,npc,1401));
  assert(!gate.Observe(newer,0x200000,world,npc,1402));
- assert(gate.Observe(newer,0x200000,world,npc,1403));
- const int32_t zero[]={0,0,0};assert(npc.Ingest(zero,3,1404));
- assert(!gate.Observe(newer,0x200000,world,npc,1404));
+ assert(!gate.Observe(newer,0x200000,world,npc,1403));
+ avatars[1]=2;assert(world.Ingest(avatars,22,1405));
+ assert(!gate.Observe(newer,0x200000,world,npc,1406));
+ avatars[1]=3;assert(world.Ingest(avatars,22,1407));
+ assert(gate.Observe(newer,0x200000,world,npc,1408));
+ const int32_t zero[]={0,0,0};assert(npc.Ingest(zero,3,1409));
+ assert(!gate.Observe(newer,0x200000,world,npc,1409));
  std::cout<<"ORIGINAL_GUEST_HOST_NPC_AVATAR_BARRIER_PASS_NO_ENGINE_APPLY\n";
 }
