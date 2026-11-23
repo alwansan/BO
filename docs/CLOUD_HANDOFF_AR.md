@@ -1,3 +1,10 @@
+### Session103 — 2026-11-23 — original engine firmware exit diagnosed, not resolved
+- Latest verified source commit 1fc007e547344daddc15ece5dfe2825372437c36 introduces only bounded real-engine firmware exit mode markers 0/1/2/3/OTHER, with private-log exclusion regression. It preserves original HAL ExitProcess. No original actor2 or shared mission.
+- Original Windows engine lab 45186010290: original XBE validated, 574 owner files, executable built and returned through firmware after 219ms; neither first USB pad report nor frontend tick, mission unobserved; this CI FAILED gameplay acceptance.
+- Room-only Android Actions 45187210283, source preflight 45187210265 both SUCCESS at previous HEAD 10b4ae54, but do not certify multiplayer campaign. Check new source/engine CI on new commit.
+- Next P0: inspect real firmware mode and fix original boot root cause; then complete host-owned original P2-P4 actor/camera/animation/audio/weapons/physics/AI, host canonical NPC/object/objective producers and guest native apply. One combined 2–4 device trial only after actual integration.
+- Update restore/state/memory/session every significant stage. Branch experiment/black-coop only. Do not change main/CL/biso/original XBE/ISO/save or publish private data.
+
 ### Session102 — 2026-11-23 — original resource ownership implementation, continue from current remote
 
 - Owner again explicitly requests continuous implementation and publishing ALL created tools, plans, source findings and restoration records. Latest original goal remains ONE shared host-authoritative original BLACK mission, not synchronized separate stages. Any existing original soldier model is accepted. No minor phone trials.
