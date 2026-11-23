@@ -40,7 +40,7 @@ public:
         }
         return true;
     }
-    // This must be called ONLY after production-grade authenticated
+    // Call on authenticated session disconnect/replacement, including when the\n    // next room reuses the same original scene identifier. Never carry remote\n    // actors or monotonic packet ticks across separate network sessions.\n    // Only the bound game thread may clear an active scene.\n    bool ResetSession() noexcept {\n        if(bound_ && std::this_thread::get_id()!=owner_) return false;\n        slots_={}; scene_=0; tick_=0; has_snapshot_=false;\n        last_update_=0; owner_={}; bound_=false;\n        // Deliberately preserve generation_: stale renderer handles from a\n        // previous session must never match a recycled player slot.\n        return true;\n    }\n    // This must be called ONLY after production-grade authenticated
     // session validation at the network boundary. The current toy protocol
     // has NO such authentication: this is not a WAN-safe entry point.
     // Snapshots are FULL rosters, not differential actor-spawn commands.
