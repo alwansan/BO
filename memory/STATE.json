@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-90-original-shared-world-acceptance-guard.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-91-actual-two-phone-logs-and-reference-review.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3117,5 +3117,34 @@
     "windowsApkConclusion": "success_room_only_no_gameplay",
     "hostLog": "black log/logs/BLACK-Room-1795378772503-events.txt",
     "deviceAcceptance": false
+  },
+  "session91": {
+    "date": "2026-11-23",
+    "branch": "experiment/black-coop",
+    "newOwnerTwoPhoneFailureConfirmed": true,
+    "hostProbePath": "black log/logs/BLACK-Probe-20261123-051323-254/coop_probe.txt",
+    "guestProbePath": "black log/من الهاتف الثاني/BLACK-Probe-20261123-051400-678/coop_probe.txt",
+    "originalHostLocalPlayerSamples": 92,
+    "originalGuestLocalPlayerSamples": 75,
+    "noOriginalRemoteHumanActorOnOwnerPhones": true,
+    "referenceWindowsBinaryOnly": "Peterson047/BLACK-XBEMultiplayer Team Deathmatch 8p; linked source returned 404; licensed custom body.bca not reusable",
+    "visualSourceDiagnosticCodes": [
+      2200,
+      2210
+    ],
+    "originalSoldierVisualGateCommit": "614c412eacc464ac441400fb0027eb87658cd252",
+    "originalSoldierGuestRegisterIsolationCommit": "58955883939ec12a07e21afd557d85d2b0263b6d",
+    "visualSourceRegressionFixCommit": "1891520f09715edd4bff0dab53d6f4de4d4130aa",
+    "latestSourcePreflightRun": 45100690136,
+    "latestSourcePreflightSuccess": true,
+    "latestUdpRun": 45100690162,
+    "latestUdpSuccess": true,
+    "latestRoomOnlyAndroidBuildRun": 45100690222,
+    "latestRoomOnlyAndroidBuildAtCheck": "IN_PROGRESS_NO_GAMEPLAY",
+    "sourcePuppetShownOnActualPhones": false,
+    "originalHostExtraHumanActorExists": false,
+    "sharedCombatAndDoorsExists": false,
+    "readyForMajorOwnerPhoneTrial": false,
+    "nextPriority": "Real host-owned original player2 shadow actor, physics, weapons, AI target and replicated original world; no phone microtests"
   }
 }
