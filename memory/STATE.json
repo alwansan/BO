@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-88-true-original-player-forward-and-extra-actor-gates.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-89-p2-private-callsites-abi-survey.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3070,5 +3070,44 @@
     },
     "noOwnerPhoneMiniTrials": true,
     "nextP0": "Original player2 shadow actor owned by HOST game, independent physics+weapons and original AI-target; prepare safe context-swap ABI source with rollbacks before enabling"
+  },
+  "session89": {
+    "date": "2026-11-23",
+    "branch": "experiment/black-coop",
+    "privateOriginalP2CallerAuditCommit": "ef0901d5e9ce6ae3c0d6fc11bf46ac1e8a700a75",
+    "privateOriginalP2CallerAuditRun": 45097189389,
+    "privateOriginalP2CallerAuditResult": "SUCCESS",
+    "pinnedOriginalXbeDirectCallCandidatesTotal": 10,
+    "directCallCandidatesVerifyAndroidAbi": false,
+    "originalHostExtraActorsAllocated": false,
+    "originalHostP2PhysicsProxyAllocated": false,
+    "originalHostP2IndependentWeapons": false,
+    "originalHostAIEnemyTargetsAllHumans": false,
+    "realGameplay2to4Accepted": false,
+    "sharedDoorsAuthoritative": false,
+    "hostForwardYawTransportCode": true,
+    "signedHostSourceEpochGuard": true,
+    "sourcePreflight": {
+      "run": 45096922154,
+      "conclusion": "success"
+    },
+    "realTLS": {
+      "run": 45096922229,
+      "conclusion": "success"
+    },
+    "android29": {
+      "run": 45096922209,
+      "conclusion": "success"
+    },
+    "udp": {
+      "run": 45096922153,
+      "conclusion": "success"
+    },
+    "latestRoomAndroidApk": {
+      "run": 45096922149,
+      "statusAtCheck": "IN_PROGRESS_LOBBY_NO_GAMEPLAY"
+    },
+    "ownerPolicy": "Only one major phone trial after original host actor/AI/damage/door all integrated; capture all diagnostics in one run",
+    "nextP0": "Safely construct genuine player2 original actor context on HOST with independent owner/input/weapon/physics/AI and rollback after verifying calling conventions"
   }
 }
