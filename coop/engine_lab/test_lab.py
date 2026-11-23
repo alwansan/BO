@@ -264,6 +264,56 @@ class LabTests(unittest.TestCase):
                                          file_open_failed_seen=True, firmware_kind_2=True))
         self.assertNotIn('PRIVATE', str(progress))
 
+    def test_original_dashboard_error_is_classified_without_guest_values(self):
+        lab = self.module()
+        page = ("  [KERNEL] launch data page 0x00123456: "
+                "type=1 titleid=0xAABBCCDD path=''")
+        for parameter, label in ((1, 'invalid_xbe'), (2, 'harddrive'),
+                                 (3, 'region'), (4, 'parental_control'),
+                                 (5, 'media_type'), (65535, 'other')):
+            progress = {}
+            lab.collect_launch_hints(page, progress)
+            line = ("  [KERNEL]   launch data: 00000001 12345678 "
+                    + format(parameter, '08X')
+                    + " 00000000 00000000 00000000 00000000 00000000")
+            lab.collect_launch_hints(line, progress)
+            self.assertTrue(progress['dashboard_error_' + label])
+            self.assertTrue(progress['launch_word0_1'])
+            for private in ('AABBCCDD', '00123456', '12345678', format(parameter, '08X')):
+                self.assertNotIn(private, str(progress))
+
+    def test_dashboard_error_does_not_infer_from_unrelated_launch_types(self):
+        lab = self.module()
+        line = ("  [KERNEL]   launch data: 00000001 12345678 00000005 "
+                "00000000 00000000 00000000 00000000 00000000")
+        for kind in (0, 2, 3):
+            progress = {}
+            lab.collect_launch_hints(
+                "  [KERNEL] launch data page 0x00123456: "
+                + "type=" + str(kind) + " titleid=0xAABBCCDD path=''", progress)
+            lab.collect_launch_hints(line, progress)
+            self.assertFalse(any(k.startswith('dashboard_error_') for k in progress))
+        progress = {}
+        lab.collect_launch_hints(line, progress)
+        self.assertFalse(any(k.startswith('dashboard_error_') for k in progress))
+
+    def test_private_stream_dashboard_error_omits_owner_path_and_title_id(self):
+        lab = self.module()
+        lines = [
+            "  [KERNEL] launch data page 0x00991111: type=1 titleid=0xABCDEF12 path=''",
+            "  [KERNEL]   launch data: 00000001 FFFF1234 00000005 "
+            "00000000 00000000 00000000 00000000 00000000",
+            "BO_ENGINE_FIRMWARE_KIND_2",
+        ]
+        progress = {}
+        script = 'for line in ' + repr(lines) + ': print(line)'
+        code = lab.private_call([sys.executable, '-c', script], HERE, 5, progress=progress)
+        self.assertEqual(code, 0)
+        self.assertTrue(progress['dashboard_error_media_type'])
+        self.assertTrue(progress['firmware_kind_2'])
+        self.assertNotIn('ABCDEF12', str(progress))
+        self.assertNotIn('FFFF1234', str(progress))
+
     def test_truncated_aggregate_cannot_pass(self):
         lab = self.module()
         with self.assertRaises(ValueError):

@@ -269,6 +269,15 @@ def collect_launch_hints(line, progress):
         if len(words) == 8 and all(re.fullmatch(r'[0-9A-Fa-f]{8}', w) for w in words):
             kind = int(words[0], 16)
             progress['launch_word0_' + (str(kind) if kind <= 3 else 'other')] = True
+            # Original Xbox LaunchData type 1 is Dashboard; word0 == 1
+            # means ERROR. The third payload word is parameter[0].
+            # Only publish an allowlisted error class, never its raw value.
+            if progress.get('launch_type_1') and kind == 1:
+                category = {
+                    1: 'invalid_xbe', 2: 'harddrive',
+                    3: 'region', 4: 'parental_control', 5: 'media_type',
+                }.get(int(words[2], 16), 'other')
+                progress['dashboard_error_' + category] = True
 
 
 def collect_boot_media_hints(line, progress):
