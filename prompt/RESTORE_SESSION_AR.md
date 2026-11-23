@@ -1,3 +1,5 @@
+**P0 ORIGINAL SHARED WORLD IMPLEMENTATION PLAN:** [docs/ORIGINAL_HOST_SHARED_WORLD_P0_AR.md](../docs/ORIGINAL_HOST_SHARED_WORLD_P0_AR.md) — original singleton core, 2–4 real host actors and physics, AI target correction, authoritative destructibles/doors/objectives and one major owner test. NOT IMPLEMENTED YET.
+
 ## Session83 — original guest feet -> bounded HOST canonical visual world (2026-11-23)
 - OWNER GOAL remains UNMET: HOST START once, 2–4 independent original first-person BLACK players with each other's visible soldier actors and a SINGLE shared original enemy AI/physics/door/destruction/quest world. NEVER call the current room-only APK playable co-op.
 - Source diagnosis: `RoomCameraEyeWire.Eye` already transported guest's genuine original PLAYER BODY FEET (+0xA0) across authenticated TLS, but HOST `RoomHostHumanKinematics` ignored `latestVerifiedCameraEyes()`, integrating only axis-based placeholders. Thus remote soldier positions were not the actual other phone's original actor positions.
