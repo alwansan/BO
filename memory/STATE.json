@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": 97,
+  "lastSession": 99,
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3232,5 +3232,24 @@
     "sharedOriginalWorldVerified": false,
     "majorPhoneTrialReady": false
   },
-  "latest_session_note": "Session98 — 2026-11-23 — original-world acceptance timestamp rollback guard. Commits 41f43b6f19ed109a9d479e7433b07449b9d362d2, ba039072192f687a9cd9a5c2a9a84112824a582c, 697f5fb2db893411f1901046257f707287001d50: reject older event timestamps after scene commit to prevent cross-capture evidence inheritance; tests cover rollback and equal millisecond timestamps. GitHub Actions runs 45131600544 source, 45131600475 UDP, 45131600446 Android jobs completed SUCCESS; Android artifact black-room-network-android-arm64-NO-GAMEPLAY-COOP is NOT gameplay. CL read-only host event log shows STORY_HOST_ABORTED and stage mismatch, not shared world. Native original player2-4 actor, independent physics/weapons, shared AI/doors/objectives, guest world application and auto-close remain NOT IMPLEMENTED. Only experiment/black-coop writes; no phone microtests."
+  "latest_session_note": "Session98 — 2026-11-23 — original-world acceptance timestamp rollback guard. Commits 41f43b6f19ed109a9d479e7433b07449b9d362d2, ba039072192f687a9cd9a5c2a9a84112824a582c, 697f5fb2db893411f1901046257f707287001d50: reject older event timestamps after scene commit to prevent cross-capture evidence inheritance; tests cover rollback and equal millisecond timestamps. GitHub Actions runs 45131600544 source, 45131600475 UDP, 45131600446 Android jobs completed SUCCESS; Android artifact black-room-network-android-arm64-NO-GAMEPLAY-COOP is NOT gameplay. CL read-only host event log shows STORY_HOST_ABORTED and stage mismatch, not shared world. Native original player2-4 actor, independent physics/weapons, shared AI/doors/objectives, guest world application and auto-close remain NOT IMPLEMENTED. Only experiment/black-coop writes; no phone microtests.",
+  "latestSession99": {
+    "date": "2026-11-23",
+    "scope": "value_only_remote_proxy_disconnect_reconnect",
+    "commits": [
+      "d0fc0bc9d9df5658e6499313ab524a3bb1acdb17",
+      "f3296f48bf33c15cbe7ca88c66a22f01e3f35e8b"
+    ],
+    "verifiedPriorRuns": {
+      "source": 45145126970,
+      "udp": 45145126909,
+      "privacy": 45145127078
+    },
+    "newCodeCiVerified": false,
+    "originalHostExtraActorImplemented": false,
+    "sharedWorldProven": false,
+    "latestHostEvent": "ROOM_HOSTING",
+    "latestGuestEvent": "ROOM_JOINED",
+    "next": "Wire session reset to actual disconnect and create original host-owned player2 actor/physics/weapon/AI with guest authoritative world consumption"
+  }
 }
