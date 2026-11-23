@@ -63,6 +63,9 @@ jobs:
             blackcoop::OriginalPlayerStorageScene binding{};
             blackcoop::OriginalPlayerStorageView buffers{};
             (void) plan.Prepare(owned,binding,buffers);
+            (void) plan.CopyIntoOwned(owned,binding,buffers);
+            blackcoop::OriginalHostPlayerStage staged;
+            (void) staged.MaterializeOwned(owned);
           }
           CPP
           g++ -std=c++20 -pthread -fsyntax-only \

@@ -41,6 +41,13 @@ public:
   std::memcpy(destination,kernel::HostPtr(address),length);
   return true;
  }
+ // Only tracked exact allocation bases, never P1/core/world/NPC or any
+ // arbitrary committed guest page. Used by opt-in P2 materialization only.
+ bool WriteOwned(uint32_t address,const void* source,uint32_t bytes)noexcept{
+  if(!source||!bytes||!Owns(address,bytes)||!Span(address,bytes))return false;
+  std::memcpy(kernel::HostPtr(address),source,bytes);
+  return true;
+ }
  bool Free(uint32_t address){
   for(auto& record:allocations_)if(address&&record.address==address){
    if(!Owns(address,record.size))return false;

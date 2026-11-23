@@ -10,7 +10,7 @@ struct ShadowIO {
  std::vector<uint8_t> memory=std::vector<uint8_t>(0x700000);
  std::map<uint32_t,uint32_t> owned;
  uint64_t scene=9;unsigned writes=0;bool copyFailure=false,cameraFails=false,modelCopyFailure=false,inputCopyFailure=false;
- unsigned allocs=0,frees=0,cameraCalls=0;
+ unsigned allocs=0,frees=0,cameraCalls=0,ownedWrites=0,ownedAttempts=0,failOwnedAttempt=0;
  ShadowIO(){
   owned={{0x500000,0x16C0},{0x503000,0x900},{0x504000,0x40},{0x505000,0x40},{0x506000,0x630}};
   set(0x2D45D4,0x100000);set(0x2D12B8,0x120000);
@@ -29,6 +29,13 @@ struct ShadowIO {
   static constexpr uint32_t sizes[]={0x16C0,0x900,0x40,0x40,0x630};
   if(allocs>=5||sizes[allocs]!=size)return 0;
   return addresses[allocs++];
+ }
+ bool WriteOwned(uint32_t address,const void* src,uint32_t size){
+  ++ownedAttempts;
+  if((failOwnedAttempt&&ownedAttempts==failOwnedAttempt)||!src||
+     !Owns(address,size)||!Span(address,size))return false;
+  std::memcpy(memory.data()+address,src,size);
+  ++ownedWrites;return true;
  }
  bool Free(uint32_t address){
   if(!owned.erase(address))return false;
@@ -161,6 +168,56 @@ int main(){
  {ShadowIO io;OriginalHostPlayerStage stage;OriginalHostPlayerStageStatus result{};
   std::thread foreign([&]{result=stage.Prepare(io,b);});foreign.join();
   assert(result==OriginalHostPlayerStageStatus::WrongThread&&io.cameraCalls==0);
+ }
+ {ShadowIO io;io.set(b.core+0x30+0x320,0x210000);
+  io.set(0x210000,0xDEADBEEFu);io.set(b.core+0x354u,0x220000);
+  io.set(0x220000+0xA8u,0x230000);io.set(0x230000+0x0Cu,0x0BADF00Du);
+  io.set(b.core+0x30+0x274u,0x230000);io.set(b.core+0x5AE0u,0x1Cu);
+  OriginalHostPlayerStage stage;
+  assert(stage.Prepare(io,b)==OriginalHostPlayerStageStatus::Prepared);
+  const auto prior=io.memory;
+  assert(stage.Ready()&&stage.ModelIsolated()&&stage.InputIsolated());
+  assert(stage.MaterializeOwned(io)==OriginalHostPlayerStageStatus::Materialized);
+  assert(stage.Materialized()&&!stage.Ready()&&io.ownedWrites==5);
+  uint32_t word=0;
+  assert(io.Read32(t.actor+0x320u,word)&&word==t.parts+0x430u);
+  assert(io.Read32(t.actor+0x274u,word)&&word==t.input);
+  assert(io.Read32(t.parts+0x430u,word)&&word==0xDEADBEEFu);
+  assert(io.Read32(t.input+0x0Cu,word)&&word==0x0BADF00Du);
+  assert(io.Read32(t.weapons,word)&&word==0);
+  assert(std::memcmp(prior.data()+b.core,io.memory.data()+b.core,0x5CC0u)==0);
+  assert(std::memcmp(prior.data()+b.owner,io.memory.data()+b.owner,0x16C0u)==0);
+  assert(std::memcmp(prior.data()+b.physics,io.memory.data()+b.physics,0x2974u)==0);
+  assert(std::memcmp(prior.data()+b.npcs,io.memory.data()+b.npcs,0x8540u)==0);
+  assert(stage.MaterializeOwned(io)==OriginalHostPlayerStageStatus::CleanupRequired);
+  assert(stage.ReleaseConstructorOnly(io)==OriginalStorageStatus::EngineCleanupRequired);
+  assert(io.frees==0&&io.owned.size()==5);
+ }
+ {ShadowIO io;OriginalHostPlayerStage stage;
+  assert(stage.Prepare(io,b)==OriginalHostPlayerStageStatus::Prepared);
+  assert(stage.MaterializeOwned(io)==OriginalHostPlayerStageStatus::Incomplete);
+  assert(io.ownedWrites==0);
+  assert(stage.ReleaseConstructorOnly(io)==OriginalStorageStatus::Released);
+  assert(io.frees==5);
+ }
+ {ShadowIO io;io.set(b.core+0x30+0x320,0x210000);
+  io.set(b.core+0x354u,0x220000);io.set(0x220000+0xA8u,0x230000);
+  io.set(b.core+0x5AE0u,0x1Cu);io.failOwnedAttempt=3;
+  OriginalHostPlayerStage stage;
+  assert(stage.Prepare(io,b)==OriginalHostPlayerStageStatus::Prepared);
+  auto prior=io.memory;
+  assert(stage.MaterializeOwned(io)==OriginalHostPlayerStageStatus::CleanupRequired);
+  assert(!stage.Materialized()&&io.ownedWrites==2);
+  assert(std::memcmp(prior.data()+b.core,io.memory.data()+b.core,0x5CC0u)==0);
+  assert(stage.ReleaseConstructorOnly(io)==OriginalStorageStatus::EngineCleanupRequired);
+  assert(io.frees==0&&io.owned.size()==5);
+ }
+ {ShadowIO io;io.set(b.core+0x30+0x320,0x210000);
+  io.set(b.core+0x354u,0x220000);io.set(0x220000+0xA8u,0x230000);
+  OriginalHostPlayerStage stage;
+  assert(stage.Prepare(io,b)==OriginalHostPlayerStageStatus::Prepared);
+  assert(stage.MaterializeOwned(io)==OriginalHostPlayerStageStatus::StorageRejected);
+  assert(stage.ReleaseConstructorOnly(io)==OriginalStorageStatus::Released);
  }
  std::cout<<"ORIGINAL_HOST_PLAYER_SHADOW_PLAN_PASS: no original writes, isolated camera/actor/weapon/parts plan, safe scope/thread\n";
 }

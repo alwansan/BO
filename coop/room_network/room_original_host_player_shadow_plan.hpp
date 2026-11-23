@@ -18,6 +18,10 @@ class OriginalHostPlayerShadowPlan final {
  bool ready_=false;
  bool modelIsolated_=false;
  bool inputIsolated_=false;
+ OriginalPlayerStorageScene boundScene_{};
+ OriginalPlayerStorageView boundTarget_{};
+ uint32_t donorPartA_=0,donorPartB_=0,donorModel_=0;
+ uint32_t donorManager_=0,donorInput_=0;
  static bool range(uint32_t p,uint32_t n)noexcept{
   return p>=0x10000u&&n&&uint64_t(p)+n<=0x100000000ull;
  }
@@ -36,7 +40,10 @@ public:
  ~OriginalHostPlayerShadowPlan(){if(onThread())Reset();}
  void Reset()noexcept{
   if(!onThread())return;
-  actor_.fill(0);owner_.fill(0);parts_.fill(0);input_.fill(0);ready_=false;modelIsolated_=false;inputIsolated_=false;
+  actor_.fill(0);owner_.fill(0);parts_.fill(0);input_.fill(0);
+  ready_=false;modelIsolated_=false;inputIsolated_=false;
+  boundScene_={};boundTarget_={};
+  donorPartA_=donorPartB_=donorModel_=donorManager_=donorInput_=0;
  }
  bool Ready()const noexcept{return onThread()&&ready_;}
  // A separate donor model copy is an additional invariant; Ready alone does
@@ -172,7 +179,51 @@ public:
      (inputManager&&(!io.Read32(inputManager+0xA8u,sameSource)||sameSource!=sourceInput))){
    Reset();return false;
   }
+  boundScene_=b;boundTarget_=t;
+  donorPartA_=partA;donorPartB_=partB;donorModel_=sourceModel;
+  donorManager_=inputManager;donorInput_=sourceInput;
   ready_=true;return true;
+ }
+ // Explicit opt-in, NEVER called by current Android gameplay. Writes only
+ // five exact, separately tracked P2 allocations. Caller must mark the
+ // storage engine-touched BEFORE entering: a partial write requires cleanup.
+ // Actor is LAST so no partially copied actor can be mistaken for prepared.
+ template<class IO>bool CopyIntoOwned(IO& io,
+   const OriginalPlayerStorageScene& b,const OriginalPlayerStorageView& t){
+  if(!Ready()||!ModelIsolated()||!InputIsolated()||!b.scene||
+     b.scene!=boundScene_.scene||b.core!=boundScene_.core||
+     b.owner!=boundScene_.owner||b.physics!=boundScene_.physics||
+     b.npcs!=boundScene_.npcs||
+     t.owner!=boundTarget_.owner||t.actor!=boundTarget_.actor||
+     t.input!=boundTarget_.input||t.weapons!=boundTarget_.weapons||
+     t.parts!=boundTarget_.parts||t.partsBytes!=0x630u||
+     io.Scene()!=b.scene)return false;
+  const uint32_t addresses[]={t.owner,t.actor,t.input,t.weapons,t.parts};
+  const uint32_t sizes[]={0x16C0u,0x900u,0x40u,0x40u,0x630u};
+  for(unsigned i=0;i<5;i++)
+   if(!io.Owns(addresses[i],sizes[i])||!io.Span(addresses[i],sizes[i]))return false;
+  uint32_t core=0,owner=0,physics=0,npcs=0,phase=0;
+  uint32_t model=0,partA=0,partB=0,manager=0,input=0;
+  const uint32_t local=b.core+0x30u;
+  if(!io.Read32(0x2D45D4,core)||core!=b.core||
+     !io.Read32(0x2D12B8,owner)||owner!=b.owner||
+     !io.Read32(0x2D45F4,physics)||physics!=b.physics||
+     !io.Read32(0x2D1980,npcs)||npcs!=b.npcs||
+     !io.Read32(b.core+0x5AE0u,phase)||phase!=0x1Cu||
+     !io.Read32(local+0x320u,model)||model!=donorModel_||
+     !io.Read32(local+0x34Cu,partA)||partA!=donorPartA_||
+     !io.Read32(local+0x350u,partB)||partB!=donorPartB_||
+     !io.Read32(b.core+0x354u,manager)||manager!=donorManager_||
+     !manager||!io.Read32(manager+0xA8u,input)||input!=donorInput_)
+   return false;
+  // This operation does NOT register an original second actor, call setup,
+  // swap original P1 context, attach a physical proxy or send input.
+  const std::array<uint8_t,0x40> blankWeapons{};
+  return io.WriteOwned(t.parts,parts_.data(),0x630u)&&
+         io.WriteOwned(t.input,input_.data(),0x40u)&&
+         io.WriteOwned(t.weapons,blankWeapons.data(),0x40u)&&
+         io.WriteOwned(t.owner,owner_.data(),0x16C0u)&&
+         io.WriteOwned(t.actor,actor_.data(),0x900u);
  }
 };
 
@@ -180,11 +231,13 @@ public:
 // a detached P1-derived actor snapshot. This does NOT write P2 into original
 // game RAM, initialize weapons/physics/AI, swap P1 or prove a shared mission.
 enum class OriginalHostPlayerStageStatus {
- Prepared, AlreadyOwned, WrongThread, StorageRejected, ShadowRejected, CleanupRequired
+ Prepared, AlreadyOwned, WrongThread, StorageRejected, ShadowRejected, CleanupRequired, Incomplete, Materialized
 };
 class OriginalHostPlayerStage final {
  OriginalHostPlayerStorage storage_{};
  OriginalHostPlayerShadowPlan shadow_{};
+ OriginalPlayerStorageScene binding_{};
+ bool touched_=false,materialized_=false;
  const std::thread::id thread_=std::this_thread::get_id();
  bool onThread()const noexcept{return thread_==std::this_thread::get_id();}
 public:
@@ -192,7 +245,8 @@ public:
  OriginalHostPlayerStage(const OriginalHostPlayerStage&)=delete;
  OriginalHostPlayerStage& operator=(const OriginalHostPlayerStage&)=delete;
  // No destructor-driven guest free: owning game thread must release resources.
- bool Ready()const noexcept{return onThread()&&shadow_.Ready()&&storage_.View().actor!=0;}
+ bool Ready()const noexcept{return onThread()&&!touched_&&shadow_.Ready()&&storage_.View().actor!=0;}
+ bool Materialized()const noexcept{return onThread()&&touched_&&materialized_;}
  bool ModelIsolated()const noexcept{return Ready()&&shadow_.ModelIsolated();}
  bool InputIsolated()const noexcept{return Ready()&&shadow_.InputIsolated();}
  OriginalPlayerStorageView View()const noexcept{
@@ -222,12 +276,33 @@ public:
      OriginalHostPlayerStageStatus::ShadowRejected:
      OriginalHostPlayerStageStatus::CleanupRequired;
   }
+  binding_=binding;
   return OriginalHostPlayerStageStatus::Prepared;
+ }
+ // The caller must retain this stage/IO for the scene lifetime. A failed
+ // or successful guest-owned write permanently bars shallow FreeSystem.
+ // There is NO automatic game setup, no readiness/room announcement.
+ template<class IO>OriginalHostPlayerStageStatus MaterializeOwned(IO& io){
+  if(!onThread())return OriginalHostPlayerStageStatus::WrongThread;
+  if(touched_)return OriginalHostPlayerStageStatus::CleanupRequired;
+  if(!Ready()||!ModelIsolated()||!InputIsolated())
+   return OriginalHostPlayerStageStatus::Incomplete;
+  if(!storage_.BeginOriginalSetup(io))return OriginalHostPlayerStageStatus::StorageRejected;
+  touched_=true;
+  try{
+   if(!shadow_.CopyIntoOwned(io,binding_,storage_.View()))
+    return OriginalHostPlayerStageStatus::CleanupRequired;
+  }catch(...){return OriginalHostPlayerStageStatus::CleanupRequired;}
+  materialized_=true;
+  return OriginalHostPlayerStageStatus::Materialized;
  }
  template<class IO>OriginalStorageStatus ReleaseConstructorOnly(IO& io){
   if(!onThread())return OriginalStorageStatus::WrongThread;
-  shadow_.Reset();
-  return storage_.ReleaseConstructorOnly(io);
+  const auto result=storage_.ReleaseConstructorOnly(io);
+  if(result==OriginalStorageStatus::Released){
+   shadow_.Reset();binding_={};touched_=materialized_=false;
+  }
+  return result;
  }
 };
 } // namespace blackcoop
