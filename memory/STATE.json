@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": 96,
+  "lastSession": 97,
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3217,5 +3217,19 @@
     "udpResult": "success, network-only",
     "sharedWorldReady": false
   },
-  "latestCodeWork": "Original proxy actor guard rejects any player2 storage overlapping original physics allocation; negative regression added"
+  "latestCodeWork": "Original proxy actor guard rejects any player2 storage overlapping original physics allocation; negative regression added",
+  "session97": {
+    "date": "2026-11-23",
+    "branch": "experiment/black-coop",
+    "scope": "guest_story_commit_acceptance_guard_only",
+    "codeCommits": [
+      "6cdd624cc757a0b5e2d8aa8e84f364be93aaf71b",
+      "551289eb72783d52c102c858f5f2d92fa652f9cd"
+    ],
+    "sourceTestsRun": "not_verified",
+    "latestActionsConclusions": "not_verified",
+    "originalHostExtraActorExists": false,
+    "sharedOriginalWorldVerified": false,
+    "majorPhoneTrialReady": false
+  }
 }
