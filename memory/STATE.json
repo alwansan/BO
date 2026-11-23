@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-93-private-engine-evidence-integrity.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-94-scene-scoped-acceptance.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3182,5 +3182,14 @@
     "verifiedOnOriginalEngine": false,
     "sharedWorldVerified": false,
     "remaining": "host original physical player2 ownership, independent weapons/AI, guest apply and authoritative objects"
+  },
+  "session94": {
+    "status": "source_acceptance_guard_only",
+    "codeCommits": [
+      "4b0efa719728e4207defa15417a48a2d741c9569",
+      "a6c94b94721a7cbbb8610528af8229f4ccffd2d9"
+    ],
+    "sharedOriginalWorldVerified": false,
+    "phoneTrialReady": false
   }
 }
