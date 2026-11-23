@@ -1,3 +1,11 @@
+### Session108 evidence update — exact Dashboard harddrive error and Android builder gating
+
+- Real Windows original-game lab [45202073768](https://github.com/alwansan/BO/actions/runs/45202073768) **FAILED gameplay** but established `dashboard_error_harddrive=true`, `firmware_kind_2`, Dashboard Type1 Reason1, 234ms; Xbox launch parameter[0]=2 is Invalid Harddrive. This is PC virtual-Xbox disk emulation, **NOT evidence the user phone storage is bad**. Distinct Android SDK originally runs through `TGP482/XboxXBERecomp`, PC lab through `portingpete/xboxrecomp`. Investigate virtual partition/utility mount semantics and specific API only with privacy-safe evidence, no fake firmware success. Detailed source comparison `docs/ORIGINAL_PC_HARDDRIVE_DASHBOARD_ERROR_AR.md`.
+- Native Android first full build of new headers [45205630319](https://github.com/alwansan/BO/actions/runs/45205630319) failed BEFORE C++ at strict candidate file allowlist: exactly four new reviewed headers needed adding. Commit [242fa976](https://github.com/alwansan/BO/commit/242fa976716961f2c2eacb459de64ca9bba0229c) updated that allowlist and retained protections. Retest [45206563984](https://github.com/alwansan/BO/actions/runs/45206563984) was IN_PROGRESS at last check.
+- Dedicated Android SDK pinned-header C++ compile smoke in [bd0cafe1](https://github.com/alwansan/BO/commit/bd0cafe15126d53bddca6f24e3cdefa6285dda3c) has [CI 45207066206](https://github.com/alwansan/BO/actions/runs/45207066206) **SUCCESS**. This validates header compatibility, not original actor2 game initialization.
+- Remains: actual original Android actor2–4 creation with independent camera/animation/weapon/audio/physics/AI and stable scene lifetime, host original enemy/door/objective and guest original world apply. Android room-only APK is NOT co-op yet. One major owner trial only when genuine shared mission works.
+
+
 # تحليل Quick Reboot الأصلي قبل أول مهمة BLACK
 
 Session105 — 2026-11-23. الهدف ليس تجاوز HAL، بل معرفة سبب طلب المحرك الأصلي إعادة تشغيله قبل أول قراءة USB أو تحديث قائمة.
