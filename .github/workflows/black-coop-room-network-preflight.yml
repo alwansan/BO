@@ -107,6 +107,12 @@ jobs:
         run: |
           g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread -fsanitize=address,undefined bo/coop/room_network/test_room_original_animation_context.cpp -o "$RUNNER_TEMP/test_original_animation_context"
           "$RUNNER_TEMP/test_original_animation_context"
+      - name: Original host TLS peer pad ports 1-3 (read-only, no game)
+        shell: bash
+        run: |
+          set -euo pipefail
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread -fsanitize=address,undefined bo/coop/room_network/test_room_original_host_remote_pad_plan.cpp -o "$RUNNER_TEMP/test_remote_pad_ports"
+          "$RUNNER_TEMP/test_remote_pad_ports"
       - name: Native original first-person camera eye quantization guards
         shell: bash
         run: |

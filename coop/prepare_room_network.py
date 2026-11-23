@@ -357,6 +357,7 @@ def prepare(root: pathlib.Path):
     pending['src/coop/room_original_guest_pad_contract.hpp'] = (HERE / 'room_network/room_original_guest_pad_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_guest_pad_witness.hpp'] = (HERE / 'room_network/room_original_guest_pad_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_trusted_input_contract.hpp'] = (HERE / 'room_network/room_original_trusted_input_contract.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_host_remote_pad_plan.hpp'] = (HERE / 'room_network/room_original_host_remote_pad_plan.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_trusted_input_witness.hpp'] = (HERE / 'room_network/room_original_trusted_input_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_guest_host_world_contract.hpp'] = (HERE / 'room_network/room_original_guest_host_world_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_guest_host_world_witness.hpp'] = (HERE / 'room_network/room_original_guest_host_world_witness.hpp').read_text(encoding='utf-8')

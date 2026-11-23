@@ -4,6 +4,7 @@
 // A source-verified local player update is the sole caller of this adapter.
 #pragma once
 #include "coop/room_original_trusted_input_contract.hpp"
+#include "coop/room_original_host_remote_pad_plan.hpp"
 #include "coop/room_original_guest_host_world_witness.hpp"
 #include "coop/room_original_guest_pad_witness.hpp"
 #include "coop/room_world_tick.hpp"
@@ -17,6 +18,15 @@ namespace blackcoop {
 inline OriginalHostHumanInbox& OriginalHostHumanInputs()noexcept{
     static OriginalHostHumanInbox inbox;
     return inbox;
+}
+// This uses REAL TLS game-thread intake, not synthetic network fixtures.
+// Live Android original player2/3/4 engine setup is NOT implemented.
+// Read-only until independent source-backed native actor readiness exists.
+inline bool PreviewOriginalAuthenticatedRemotePort(uint32_t epoch,uint8_t port,
+    bool originalSceneVerified,bool originalNativeActorReady,
+    OriginalHostRemotePadValue& candidate)noexcept{
+    return OriginalHostRemotePadPlan::Preview(OriginalHostHumanInputs(),epoch,
+        port,originalSceneVerified,originalNativeActorReady,candidate);
 }
 inline void PollOriginalHostHumanInputs(JNIEnv* env,jobject activity,jclass cls)noexcept{
     if(!env||!activity||!cls)return;
