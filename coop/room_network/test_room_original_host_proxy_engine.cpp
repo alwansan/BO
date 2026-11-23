@@ -18,7 +18,7 @@ struct Engine {
   words[actor]=0x28CFE0;words[actor+0xC4]=2;words[actor+0x354]=collider;words[actor+0x374]=9;words[actor+0xB4]=0;
   words[world+0x30+0xB4]=physics+0x2320+19*0x50;
   for(unsigned i=0;i<20;i++)flags[physics+0x2960+i]=0;
-  for(const auto [a,serial,col]:{std::tuple<uint32_t,uint32_t,uint32_t>{actor2,10,0x81000},
+  for(const auto& [a,serial,col]:{std::tuple<uint32_t,uint32_t,uint32_t>{actor2,10,0x81000},
                                 {actor3,11,0x82000},{actor4,12,0x83000}}){
    words[a]=0x28CFE0;words[a+0xC4]=2;words[a+0x354]=col;
    words[a+0x374]=serial;words[a+0xB4]=0;

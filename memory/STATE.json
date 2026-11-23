@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-125-three-parallel-github-tracks.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-126-parallel-p2-compiler-warning.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3864,5 +3864,20 @@
     "androidOriginalP3P4Ready": false,
     "guestHostNpcDoorsObjectivesApplied": false,
     "userMicrotestNeeded": false
+  },
+  "session126ParallelP2CompilerWarningRepair": {
+    "status": "parallel_CI_P3P4_and_canonical_world_success_P2_fixture_compiler_warning_repaired_pending_rerun",
+    "sourceCommitBeforeFix": "76fb1c77477bbab7eac078247046939ccdda4857",
+    "parallelRun": 45251920286,
+    "p2Job": 137963522480,
+    "p2Failure": "GCC_-Werror_range-loop-construct_existing_test_fixture_copy_only",
+    "p3p4Job": 137963522870,
+    "p3p4Status": "success",
+    "canonicalStoryJob": 137963522903,
+    "canonicalStoryStatus": "success",
+    "repairPath": "coop/room_network/test_room_original_host_proxy_engine.cpp",
+    "originalAndroidHostP2Active": false,
+    "originalAndroidP3P4Active": false,
+    "guestCanonicalGameStateApplied": false
   }
 }
