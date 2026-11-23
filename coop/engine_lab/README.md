@@ -153,3 +153,7 @@ The following fixed HAL/normal-return markers and elapsed duration narrow that
 exit on the next real run; the already discarded runtime output cannot establish
 retrospectively whether guest entry returned, firmware exit occurred, or graphics
 initialization failed. No speculative game-state fix has been applied.
+
+## Session103 real original firmware exit evidence
+
+Real Windows engine run [45186010290](https://github.com/alwansan/BO/actions/runs/45186010290) verified owner XBE, extracted 574 files and built/executed the original PC engine, but `HalReturnToFirmware` exited after ~219 ms before a pad report, original menu tick, mission or P2. It FAILED gameplay acceptance despite process code zero. The private instrumented HAL now emits only five fixed mode marker categories for routine values 0/1/2/3/other, preserving ExitProcess and all privacy restrictions. A matching source-only test checks no unknown code or owner game log is forwarded. CI runtime is still required to establish which mode is seen. Do not suppress firmware exit or claim gameplay from this diagnostic.
