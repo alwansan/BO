@@ -24,17 +24,42 @@ No successful original-engine run has been established by the harness checks.
 `lab.py` uses the existing BO manifest restoration and bounded XDVDFS walker to
 extract every owner file into the runner's disposable `engine/game/` directory.
 It leaves the disc layout intact. It refuses an existing game directory, dirty
-host sources, differing source pins and changed patch anchors. It changes only
-host `src/recomp_manual.c`, adds the observer/scheduler beside it, and observes the native frontend wrapper in `src/black_native_menu.inc`, and changes
-runtime `src/usb/usb_gamepad.c` in the disposable checkout. Two fixed markers
-are also inserted before the existing HAL firmware-return/shutdown exits in
-`src/kernel/kernel_hal.c`; their original log calls, parameters and `ExitProcess(0)`
-behavior are preserved. No exit is suppressed or converted into gameplay. No original game bytes
+host sources, differing source pins and changed patch anchors. It changes
+host `src/recomp_manual.c`, adds the observer/scheduler beside it, observes
+`src/black_native_menu.inc`, and instruments runtime `src/usb/usb_gamepad.c` in
+the disposable checkout. It also inserts fixed booleans before the original
+HAL firmware-return/shutdown exits in `src/kernel/kernel_hal.c`, preserving
+all original parameters and `ExitProcess(0)` behaviour. Session109 additionally
+instruments **pinned, disposable Windows-only kernel files** `src/kernel/kernel_path.c`
+and `src/kernel/kernel_file.c` to classify `Partition0.img` image creation,
+partition-table write, exact original `NtCreateFile` partition0 open outcome,
+original `NtReadFile` at sector4 offset `0x800` and fixed magic validity, and
+FileFsSizeInformation inquiry. These markers never print paths, guest bytes,
+file handles, error codes or the private Xbox disk data, and capture the actual
+Win32 `GetLastError` before diagnostic stderr output. No exit is suppressed or converted into gameplay. No original game bytes
 or generated game-function bodies are patched. Generation follows the pinned
 production script; compilation uses Ninja with the active x64 MSVC developer environment and
 production CMake definitions, with two build jobs. This supports the runner
 image's Visual Studio 2022 or 2026 toolchain without hardcoding an unavailable
 Visual Studio year. The MSVC major and backend are included as safe metadata. Python uses capstone 5.0.7; Rust is 1.98.1.
+
+
+### Session109: fail-closed Xbox virtual-HDD diagnostics
+
+Original owner-engine run [45202073768](https://github.com/alwansan/BO/actions/runs/45202073768)
+reported Dashboard Type1/Reason1 ERROR with parameter0=2 = Invalid Harddrive,
+not a successful playable mission or any evidence about Android device storage.
+Windows source instrumentation now emits *only* predetermined Boolean fields
+in the private report's `boot_progress` dictionary, so cause may be narrowed
+to table-file creation/write, partition0 open, and sector4 read (or excluded
+from those exact branches). Missing flags are NOT proof that Xbox code never
+attempted a different interface. See `docs/ORIGINAL_PC_HDD_PARTITION_PROBE_AR.md`.
+The private Windows kernel patches are never committed to pinned upstream.
+Intermediate [45210316015](https://github.com/alwansan/BO/actions/runs/45210316015)
+failed due to a test-exposed Windows/POSIX anchor-count mismatch; corrected
+and regression-tested via [e440e3b3](https://github.com/alwansan/BO/commit/e440e3b3348478fe5ce992a59b4b6377a1faf903).
+Real original gameplay still fails until original mission, independent player2
+and valid two-controller/weapon results are witnessed.
 
 ## Inputs, observations and failure semantics
 
