@@ -1,3 +1,12 @@
+### Session109 verified root — Windows source passes relative save to absolute-only directory API
+
+Evidence chain: original PC [45210679103](https://github.com/alwansan/BO/actions/runs/45210679103) private engine built from owner's XBE/574 files but exited Xbox Dashboard Invalid Harddrive at 390ms; its new sanitized probe recorded **`hdd_table_create_failed=true`**, before Partition0 open/sector4 read. Pinned source `portingpete/Black-2006-Recomp@b2512fa/src/main.c` passes `xbox_path_init(YOUR_GAME_DIR,"save")`, while `portingpete/xboxrecomp@e4b6217/src/kernel/kernel_path.c` calls `SHCreateDirectoryExW(NULL,s_save_dir,NULL)` directly on that relative pathname. [Microsoft documentation](https://learn.microsoft.com/en-us/windows/win32/api/shlobj_core/nf-shlobj_core-shcreatedirectoryexw) explicitly requires a fully qualified pathname, confirming a **source-level mismatch**. No owner XBE/ISO or Android storage fault implied.
+
+New temporary pinned **PC emulator** code [737bc70f](https://github.com/alwansan/BO/commit/737bc70f7eeef0185eb6047284b2a5b790399fdf) normalizes the save directory via `GetFullPathNameW` before `SHCreateDirectoryExW`; emits only bounded path-normalized/dir-created/failed boolean markers; never prints private paths. [cfff509c](https://github.com/alwansan/BO/commit/cfff509c10fa8efab9c81131e2c964839c548a7e) adds regression for correct call order, invalid source refusal and private fixed flags. Real private engine test [45213250944](https://github.com/alwansan/BO/actions/runs/45213250944) was **PENDING** on initial review. This is a candidate fix, not yet a demonstrated original game boot. Earlier source-only harness [45210679103](https://github.com/alwansan/BO/actions/runs/45210679103) SUCCESS for earlier raw sector probe.
+
+Android [45206563984](https://github.com/alwansan/BO/actions/runs/45206563984) remains a successful compile-only APK with original player-storage/proxy C++ headers, **NO GAMEPLAY CO-OP**. Need native actor P2–4 initialization/safe P1 restore, independent weapon/audio/animation/physics/AI, host canonical enemy/doors/objectives, guest original state application. One large owner multi-phone trial only after shared mission integration.
+
+
 # Session109 — original PC virtual-HDD sector/read provenance
 
 Date: 2026-11-23. Writable alwansan/BO branch experiment/black-coop; prior HEAD 4f16fdc9353d4e8a1275ed42ec05cdbb4d2d5c56.
