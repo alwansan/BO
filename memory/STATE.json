@@ -3637,6 +3637,9 @@
   },
   "session116OriginalPcGridProxy": {
     "firstHarnessRun": 45226635580,
+    "secondHarnessRun": 45226828102,
+    "secondHarnessFailure": "fixture_proxy_failures_absolute_count_after_more_cases",
+    "fixedFixtureRelativeCounter": true,
     "firstHarnessResult": "failed_synthetic_expected_blocker_wrong",
     "fixedOnlyAssertion": true,
     "latestPcRun": 45222127349,

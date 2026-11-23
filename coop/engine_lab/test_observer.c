@@ -71,8 +71,11 @@ int main(void) {
     assert(bo_lab.proxy_pool_low_ticks==1);
     bo_lab_before(); GUEST8(0x7000+0x821)=1; bo_lab_after();
     assert(bo_lab.scripted_control_ticks>=1);
+    /* Earlier intentional missing-proxy cases already counted failures.
+     * Assert the final duplicate-proxy rejection adds exactly ONE. */
+    const unsigned prior_proxy_failures = bo_lab.proxy_failures;
     bo_lab_before(); GUEST32(0x8000+0xB4)=0x9000; bo_lab_after();
-    assert(bo_lab.proxy_failures==1);
+    assert(bo_lab.proxy_failures==prior_proxy_failures+1);
     assert(bo_lab.phases_completed==0);
     /* Header is encoded by the actual scheduler; phase-separated delivery. */
     InterlockedExchange(&bo_lab_phase,3);

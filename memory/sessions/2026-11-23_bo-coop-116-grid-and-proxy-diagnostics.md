@@ -1,3 +1,7 @@
+### Session116 harness correction 2
+
+- [45226828102](https://github.com/alwansan/BO/actions/runs/45226828102) passed 32 Python unit tests but failed the C synthetic fixture's legacy `proxy_failures==1` assumption. The newly added *intentional missing-proxy* cases already increment that counter before the old final duplicate proxy case. Replaced fragile absolute count with an incremental check `prior_proxy_failures+1`. No gameplay accounting, observer checks or original engine code changed; original-engine job was skipped until fixture passes.
+
 ### Session116 CI test correction
 
 - [Harness run 45226635580](https://github.com/alwansan/BO/actions/runs/45226635580) initially FAILED in a new synthetic Python assertion only. The existing `evaluate()` correctly reports `p2_not_ready` for 1000 mission ticks but zero ready P2 ticks. The new test incorrectly asserted `mission_not_reached`; fixed the test expectation, **NOT** the original engine acceptance logic or counters. Retry required before claiming source/test success. Original real-engine job was skipped because harness failure.
