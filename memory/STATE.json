@@ -3435,6 +3435,17 @@
     "actualHostSharedWorld": false,
     "actualGuestOriginalWorldApply": false,
     "ownerPhoneTrialReady": false,
-    "next": "read bounded dashboard_error class when current private Windows lab finishes, fix source-backed early Dashboard error, then integrate original host P2-4 actors+AI/weapon/physics and host authoritative guest mission"
+    "next": "read bounded dashboard_error class when current private Windows lab finishes, fix source-backed early Dashboard error, then integrate original host P2-4 actors+AI/weapon/physics and host authoritative guest mission",
+    "androidOriginalActorHeaderStagingCommit": "10e546bf2b978b00d086ed7554c71081624dc023",
+    "androidPinnedSdk": "TGP482/XboxXBERecomp",
+    "windowsPrivateSdk": "portingpete/xboxrecomp",
+    "sdkVariantsIdentical": false,
+    "androidNativeCompileOnly": true,
+    "androidStagedOriginalOwnerHeaders": 4,
+    "originalAndroidActor2Instantiated": false,
+    "androidSourcePreflightRun": 45205630356,
+    "androidSourcePreflightConclusion": "success",
+    "androidNativeCompileRun": 45205630319,
+    "androidNativeCompileConclusion": "in_progress_at_last_check"
   }
 }
