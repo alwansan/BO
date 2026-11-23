@@ -361,6 +361,8 @@ def prepare(root: pathlib.Path):
     pending['src/coop/room_original_guest_pad_witness.hpp'] = (HERE / 'room_network/room_original_guest_pad_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_trusted_input_contract.hpp'] = (HERE / 'room_network/room_original_trusted_input_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_host_remote_pad_plan.hpp'] = (HERE / 'room_network/room_original_host_remote_pad_plan.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_host_inbox.hpp'] = (HERE / 'room_network/room_original_host_inbox.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_host_pad_port_bridge.hpp'] = (HERE / 'room_network/room_original_host_pad_port_bridge.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_trusted_input_witness.hpp'] = (HERE / 'room_network/room_original_trusted_input_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_guest_host_world_contract.hpp'] = (HERE / 'room_network/room_original_guest_host_world_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_guest_host_world_witness.hpp'] = (HERE / 'room_network/room_original_guest_host_world_witness.hpp').read_text(encoding='utf-8')
@@ -381,7 +383,7 @@ def prepare(root: pathlib.Path):
     pad_file='native/input.cpp'
     pad=originals[pad_file].decode('utf-8').replace('\r\n','\n')
     pad=once(pad,'#include "host.h"',
-             '#include "host.h"\n#include "coop/room_original_local_pad_tap.hpp"',pad_file)
+             '#include "host.h"\n#include "coop/room_original_local_pad_tap.hpp"\n#include "coop/room_original_host_inbox.hpp"\n#include "coop/room_original_host_pad_port_bridge.hpp"',pad_file)
     pad=once(pad,'''    touch::Apply(port, p);
     if (app::kGame.pad) app::kGame.pad(port, p);''',
     '''    // Original local input delivered unchanged; one read-only snapshot
@@ -398,6 +400,17 @@ def prepare(root: pathlib.Path):
         blackcoop::LocalPadTap().Capture({
             p.connected,addedTouch,p.lx,p.ly,p.analog[0],p.analog[7]},
             static_cast<uint64_t>(SDL_GetTicks()));
+    }
+    // The native Xbox port1..3 TLS bridge is source-staged HERE, after
+    // original touch and before the only guest pad callback. CRITICAL:
+    // real original HOST actor2-4 setup and its independent lifecycle are
+    // not implemented yet. Never treat room membership as that proof.
+    // Both engine-authenticated readiness gates remain deliberately FALSE.
+    if (port>=1 && port<=3) {
+        (void)blackcoop::OriginalHostPadPortBridge::Route(
+            p,blackcoop::OriginalHostHumanInputs(),
+            blackcoop::OriginalHostHumanInputs().Epoch(),
+            port,false,false);
     }
     if (app::kGame.pad) app::kGame.pad(port, p);''',pad_file)
     pending[pad_file]=pad

@@ -3,7 +3,7 @@
 // No AI, original actor writes, guest CallGuest, client snapshots or READY.
 // A source-verified local player update is the sole caller of this adapter.
 #pragma once
-#include "coop/room_original_trusted_input_contract.hpp"
+#include "coop/room_original_host_inbox.hpp"
 #include "coop/room_original_host_remote_pad_plan.hpp"
 #include "coop/room_original_guest_host_world_witness.hpp"
 #include "coop/room_original_guest_pad_witness.hpp"
@@ -15,10 +15,6 @@
 #include <atomic>
 #include <cstdint>
 namespace blackcoop {
-inline OriginalHostHumanInbox& OriginalHostHumanInputs()noexcept{
-    static OriginalHostHumanInbox inbox;
-    return inbox;
-}
 // This uses REAL TLS game-thread intake, not synthetic network fixtures.
 // Live Android original player2/3/4 engine setup is NOT implemented.
 // Read-only until independent source-backed native actor readiness exists.

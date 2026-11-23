@@ -291,6 +291,13 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertLess(stagedInput.index('touch::Apply(port, p);'),stagedInput.index('LocalPadTap().Capture({'))
             self.assertLess(stagedInput.index('LocalPadTap().Capture({'),stagedInput.index('if (app::kGame.pad) app::kGame.pad(port, p);'))
             self.assertEqual(stagedInput.count('if (app::kGame.pad) app::kGame.pad(port, p);'),1)
+            self.assertIn('OriginalHostPadPortBridge::Route(',stagedInput)
+            self.assertIn('port,false,false);',stagedInput)
+            self.assertIn('#include "coop/room_original_host_inbox.hpp"',stagedInput)
+            self.assertIn('class OriginalHostPadPortBridge final',
+                (root/'src/coop/room_original_host_pad_port_bridge.hpp').read_text(encoding='utf-8'))
+            self.assertLess(stagedInput.index('OriginalHostPadPortBridge::Route('),
+                stagedInput.index('if (app::kGame.pad) app::kGame.pad(port, p);'))
             self.assertIn('FIRST_ORIGINAL_GUEST_TOUCH_INPUT_QUEUED_NOT_GAMEPLAY',java)
             self.assertIn('FIRST_SOURCE_ORIGINAL_GUEST_MERGED_INPUT_QUEUED_NOT_GAMEPLAY',java)
             self.assertIn('ORIGINAL_GUEST_SOURCE_FORWARD_YAW_NOT_AVAILABLE_USING_NEUTRAL',java)

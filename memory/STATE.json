@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-122-postframe-vtable-tls-epoch-rollback.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-123-native-xbox-pad-bridge-pc-pass.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3804,5 +3804,21 @@
     "originalAndroidP2ActorActive": false,
     "sharedOriginalMissionOnPhones": false,
     "ownerPhoneMicrotest": false
+  },
+  "session123NativePadBridgeAndRealPcPass": {
+    "status": "source_integration_committed_ci_pending_android_original_multiplayer_not_ready",
+    "branchBase": "3f3d0d3f24b25b2ae1a4c10803d1de4751c966b7",
+    "ciSourceVerified": 45246004594,
+    "ciAndroidVerified": 45246004607,
+    "ciUdpVerified": 45246004719,
+    "originalPcEngineRun": 45239818055,
+    "originalPcEnginePassed": true,
+    "originalPcScope": "one original PC engine two players, not Android network or 4 players",
+    "portBridge": "original native input::Poll ports1-3 compiled adapter; hard gated false until native original actor setup, cannot affect gameplay",
+    "noP1PortReplacement": true,
+    "noHardwareFallthroughWhenRemoteReserved": true,
+    "originalAndroidP2P4ActorsReady": false,
+    "originalHostCanonicalNpcDoorsObjectivesApplied": false,
+    "userPhoneMicrotests": false
   }
 }

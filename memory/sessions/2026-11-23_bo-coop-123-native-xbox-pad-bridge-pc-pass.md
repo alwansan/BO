@@ -1,0 +1,21 @@
+# Session123 — native Xbox TLS pad routing (future active actor gate) and original PC acceptance — 2026-11-23
+
+### Session123 (2026-11-23): PASS original PC shared engine + Android Xbox port1–3 TLS input routing staged in REAL native Poll
+
+- **Verified latest source/Android/UDP CI all SUCCESS:** source 45246004594, Android original candidate 45246004607 (observer-core and candidate-probe), UDP 45246004719. **PRIVATE ORIGINAL WINDOWS REAL ENGINE 45239818055 COMPLETED SUCCESS** (not only job status): source summary `passed=true`, `blocker=none`, `failed_checks=[]`, `scope=original_PC_engine_two_players_only`, mission ticks 1221, P2 ready 768, P1/P2 independently moved 4527/6363 mm, fired 10 shots each, independent proxy/weapon 768 ticks, protected original world-grid HEAD restored under source-authentic exception without relaxing any non-grid integrity constraints. Android runtime false and 4 players false in the same summary. Do NOT call this 2-phone Android co-op.
+- Implemented original native **Xbox input::Poll port1/2/3 adapter** as `room_original_host_pad_port_bridge.hpp` with one `OriginalHostHumanInputs()` singleton shared between actual TLS original game-thread poll and original native input source. A reserved remotely-owned port explicitly discards physical controller/touch state if the TLS peer command is stale/invalid/lost; maps signed stick+Xbox FIRE RT/JUMP A from authenticated peer2/3/4 only, never touches port0 or synthesizes yaw. Native C++ ASan/UBSan tests for all 3 ports, 0 unmodified, no original scene/actor readiness, stale commands, wrong epoch, wrong thread, loss and neutral pad. Staged in the **real** `native/input.cpp::input::Poll` immediately before the existing single guest pad callback; Python source checks enforce exact placement and no extra Poll/callback.
+- **Activation is deliberately OFF in native input** (`port,false,false`) until independently verified original host scene AND full native original P2-P4 engine actor setup, distinct weapons/animation/audio/physics/AI and safe teardown. This is compiled source integration, not playable Android human2. Never substitute room COMMIT or staged P2 bytes for original game actor evidence. New Android/source CI triggered and must be inspected.
+- NEXT: source-backed actual Android engine post-1F1080 P2 lifecycle, reversible original world-owned P1/P2 linked actor+camera/viewmodel/FX+audio+weapon context, multi-update `sub_001E0E40`, original DF400 physics proxy/AI. Then host canonical NPC/doors/objectives/mission applied in each guest ORIGINAL engine, activate trusted port sources, one substantial integrated phone trial only. ONLY `experiment/black-coop` write. Do not modify main/CL/biso/owner XBE, ISO, saves, private logs.
+
+
+## Source routing invariants
+
+- Source upstream Android pinned: `native/input.cpp::input::Poll` includes SDL+loose+touch merge; it calls `app::kGame.pad(port,p)` once. Our input route is immediately before this callback. Port0 is never routed.
+- Original guest PC source `black_p2_update` reads port1 at `[0x002D45E8] + 0x98 + 0x120`; original PC dual-player accepted in game lab 45239818055. Android port1..3 mapping is future-compatible but cannot make port2/3 actors without original native guest lifecycle.
+- `OriginalHostHumanInputs()` shared inline symbol is singleton across genuine TLS poll and Xbox input. Same original game-thread binding in inbox remains strict; foreign thread yields no peer command.
+- `Route` is only allowed for **verified original host mission and independently engine-created human actor**. When both not proven, `Unowned`, original Xbox pad behavior unchanged. When verified slot reserved, bad input yields exactly neutral pad, not physical pad fallback or a stale FIRE.
+- Source tests and build statuses for NEW Session123 are pending until CI returns. Neither build nor new header simulation means Android playable co-op. Protected repos, binaries and owner saves untouched.
+
+## Next P0
+
+Implement full native original actor/owner context transition, ownership-safe animation/audio/weapon/FX and physics proxies, original `0x1E0E40` multi-tick setup and verified native actor teardown. Make host original enemy/doors/objectives authoritative in the guest original engines before enabling the remote Xbox port. One significant multi-device acceptance only; no microtest.
