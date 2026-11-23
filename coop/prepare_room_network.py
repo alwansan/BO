@@ -194,6 +194,17 @@ def prepare(root: pathlib.Path):
         else if (code == 81) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_GUEST_RUNNING_LEVEL_MATCHES_HOST_STAGE_NO_SHARED_WORLD");
         else if (code == 90) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_REMOTE_HUMAN_BOT_VISUAL_SLOT_INITIALIZED_UNTESTED");
         else if (code == 91) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_REMOTE_HUMAN_BOT_DRAW_CALLED_NOT_VISUAL_PROOF");
+        else if (code == 2200) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_REMOTE_VISUAL_ORIGINAL_GRID_DRAW_ENTERED_NOT_DISPLAY_PROOF");
+        else if (code == 2201) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_REMOTE_VISUAL_ORIGINAL_RENDER_THREAD_MISMATCH");
+        else if (code == 2202) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_REMOTE_VISUAL_ORIGINAL_GRID_WORLD_MISMATCH");
+        else if (code == 2203) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_REMOTE_VISUAL_NO_TRUSTED_HOST_PEER_FRAME");
+        else if (code == 2204) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_REMOTE_VISUAL_PEER_BODY_MISSING_OR_STALE");
+        else if (code == 2205) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_REMOTE_VISUAL_ORIGINAL_BOT_POOL_UNREADABLE");
+        else if (code == 2206) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_REMOTE_VISUAL_NO_SAFE_SOLDIER_DONOR_OR_BLANK_SLOT");
+        else if (code == 2207) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_REMOTE_VISUAL_ORIGINAL_ANIMATION_FUNCTION_MISSING");
+        else if (code == 2208) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_REMOTE_VISUAL_SOLDIER_MODEL_RESOURCE_UNSAFE");
+        else if (code == 2209) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_REMOTE_VISUAL_SLOT_RECLAIMED_OR_CONSTRUCTOR_REJECTED");
+        else if (code == 2210) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_REMOTE_VISUAL_DRAW_METHOD_UNAVAILABLE");
         else if (code == 92) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_TWO_PHONE_AUTO_MENU_DIFFICULTY_PAGE_REQUESTED");
         else if (code == 93) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_TWO_PHONE_AUTO_MENU_CONFIRM_SENT");
         else if (code == 89) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_AI_TARGET_LOCAL_PLAYER_RECORD_BOUND_READ_ONLY");

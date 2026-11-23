@@ -40,6 +40,16 @@ class OriginalHumanBotVisual {
     OriginalRemoteHumanMotionPlan clipPlan_{};
     uint32_t clipNames_=0;
     unsigned activeClip_=0;
+    uint32_t visualCodesReported_=0;
+    // One safe, coarse category per original stage/peer; NO guest pointers,
+    // remote coordinates, network IDs, model bytes or private assets in logs.
+    void reportVisualGate(unsigned code)noexcept{
+        if(code<2200u||code>2210u)return;
+        const uint32_t bit=1u<<(code-2200u);
+        if((visualCodesReported_&bit)!=0u)return;
+        visualCodesReported_|=bit;
+        SendSafeWorldCodeToAndroid(static_cast<jint>(code));
+    }
     void applyOriginalSoldierAnimation(X86Context& ctx,
         const OriginalOtherHumanBody& body,uint64_t now)noexcept{
         clipPlan_.Observe(body.epoch,body.revision,body.tick,
@@ -104,8 +114,12 @@ class OriginalHumanBotVisual {
         nextCreateTryMs_=now+2000u;
         OriginalBotPoolAvailability result{};
         std::array<OriginalBotPoolSlotEvidence,32> slots{};
-        if(!ReadOriginalBotPoolAvailability(result,&slots)||
-           !result.sourceLooks||!result.emptyVisualSlots)return false;
+        if(!ReadOriginalBotPoolAvailability(result,&slots)){
+            reportVisualGate(2205);return false;
+        }
+        if(!result.sourceLooks||!result.emptyVisualSlots){
+            reportVisualGate(2206);return false;
+        }
         uint32_t donor=0,blank=0;
         for(uint32_t i=0;i<32u;i++)if(OriginalLookSource(slots[i])){
             donor=character(root,i);break;
@@ -113,18 +127,27 @@ class OriginalHumanBotVisual {
         for(uint32_t i=32u;i-->0;)if(OriginalLookEmpty(slots[i])){
             blank=character(root,i);break;
         }
-        if(!donor||!blank||blank==donor||
-           !dispatch::Find(0x0017E420u)||
-           !dispatch::Find(0x001801B0u))return false;
+        if(!donor||!blank||blank==donor){
+            reportVisualGate(2206);return false;
+        }
+        if(!dispatch::Find(0x0017E420u)||
+           !dispatch::Find(0x001801B0u)){
+            reportVisualGate(2207);return false;
+        }
         uint32_t model=0,modelType=0,ptr=0,dstInst=0;
         uint32_t donorA=0,donorB=0,dstA=0,dstB=0,origin=0;
+        // The pinned MIT PC original puppet does not cap modelType at 255:
+        // only the computed, 64-bit checked original descriptor address and
+        // committed page span may authorize a source template. The former
+        // arbitrary 255 restriction could silently reject valid soldiers.
         if(!read(donor+0x320,model)||!model||
-           !read(model+8u,modelType)||modelType>255u||
+           !read(model+8u,modelType)||
            !read(donor+0x34Cu,donorA)||!read(donor+0x350u,donorB)||
            !read(blank+0x328u,dstInst)||!read(blank+0x34Cu,dstA)||
            !read(blank+0x350u,dstB)||
-           !read(0x002D12C8u,origin)||!origin)
-            return false;
+           !read(0x002D12C8u,origin)||!origin){
+            reportVisualGate(2208);return false;
+        }
         const uint64_t argsAddr=static_cast<uint64_t>(origin)+0xF8u+
                                 static_cast<uint64_t>(modelType)*0x60u;
         if(argsAddr>0xffffffffull||
@@ -133,12 +156,16 @@ class OriginalHumanBotVisual {
            !OriginalGuestSpanCommitted(donorA,0x70u)||
            !OriginalGuestSpanCommitted(donorB,0x3C0u)||
            !OriginalGuestSpanCommitted(dstA,0x70u)||
-           !OriginalGuestSpanCommitted(dstB,0x3C0u))return false;
+           !OriginalGuestSpanCommitted(dstB,0x3C0u)){
+            reportVisualGate(2208);return false;
+        }
         // One last read-only vacancy check immediately before any writes.
         uint32_t currentModel=0,controller=0,currentInst=0;
         if(!read(blank+0x320,currentModel)||currentModel||
            !read(blank+0x324,controller)||controller||
-           !read(blank+0x328,currentInst)||currentInst!=dstInst)return false;
+           !read(blank+0x328,currentInst)||currentInst!=dstInst){
+            reportVisualGate(2206);return false;
+        }
         attempted_=true; // irreversible original guest-memory mutation below
         // Do not copy list/proxy/weapon/buffers that the blank slot owns.
         for(uint32_t off=0;off<kStride;off+=4u){
@@ -164,7 +191,12 @@ class OriginalHumanBotVisual {
         ctx=saved;
         replica_=blank;replicaTemplate_=model;replicaInstance_=dstInst;
         replicaEpoch_=epoch;
-        return valid(root);
+        if(!valid(root)){
+            // The original guest function may have changed an object after
+            // our irreversible clone; do not retry a partially owned slot.
+            reportVisualGate(2209);return false;
+        }
+        return true;
     }
 public:
     void BindPeer(uint8_t peer)noexcept{
@@ -177,27 +209,43 @@ public:
             sourceWorld_=sourceEpisode_=0;sourceAtMs_=0;
             return;
         }
-        if(sourceWorld_!=world||sourceEpisode_!=episode)purgeEvidence();
+        if(sourceWorld_!=world||sourceEpisode_!=episode){
+            purgeEvidence();visualCodesReported_=0;
+        }
         sourceWorld_=world;sourceEpisode_=episode;
         sourceAtMs_=static_cast<uint64_t>(SDL_GetTicks());
     }
     void Draw(X86Context& ctx,uint32_t grid)noexcept{
-        if(!assignedPeer_||!owner_||gameThread_!=std::this_thread::get_id()||!sourceWorld_||
-           !sourceEpisode_)return;
+        if(!assignedPeer_||!owner_||!sourceWorld_||!sourceEpisode_)
+            return;
+        if(gameThread_!=std::this_thread::get_id()){
+            reportVisualGate(2201);return;
+        }
         const uint64_t now=static_cast<uint64_t>(SDL_GetTicks());
         if(now<sourceAtMs_||now-sourceAtMs_>350)return;
         const uint32_t world=kernel::R32(layout::kWorld);
         if(world!=sourceWorld_||
            static_cast<uint64_t>(world)+0x4960u>0xffffffffull||
-           grid!=world+0x4960u)return;
+           grid!=world+0x4960u){
+            reportVisualGate(2202);return;
+        }
+        // A source-matched original draw has fired; this does not prove
+        // that the other human is actually visible to any player.
+        const uint8_t self=AllOtherHumanBodies().Self();
+        if(self==0u){reportVisualGate(2203);return;}
+        if(assignedPeer_==self)return;
+        reportVisualGate(2200);
         OriginalOtherHumanBody body{};
         if(!AllOtherHumanBodies().Read(assignedPeer_,now,body)||body.epoch==0||
-           !body.revision||body.tick==0)return;
+           !body.revision||body.tick==0){
+            reportVisualGate(2204);return;
+        }
         uint32_t root=0;
         if(!read(kPool,root)||!root||
            static_cast<uint64_t>(root)+kFirst+kStride*32u>0xffffffffull||
-           !OriginalGuestSpanCommitted(root+kFirst,kStride*32u))
-            return;
+           !OriginalGuestSpanCommitted(root+kFirst,kStride*32u)){
+            reportVisualGate(2205);return;
+        }
         if(replica_&&(!valid(root)||replicaEpoch_!=body.epoch)){
             // Never overwrite or rescue a slot taken back by NPC engine.
             // No undocumented force-release: only stop drawing it.
@@ -208,6 +256,7 @@ public:
             purgeEvidence();
             sourceWorld_=world;sourceEpisode_=existingEpisode;
             sourceAtMs_=now;
+            reportVisualGate(2209);
             return;
         }
         if(!replica_){
@@ -258,7 +307,9 @@ public:
         uint32_t vtable=0,method=0;
         if(!read(replica_,vtable)||!vtable||
            !read(vtable+0x14u,method)||!method||
-           !dispatch::Find(method))return;
+           !dispatch::Find(method)){
+            reportVisualGate(2210);return;
+        }
         ctx.ecx=replica_;ctx.esi=0;
         kernel::CallGuest(ctx,method,{0});
         ctx=saved;
