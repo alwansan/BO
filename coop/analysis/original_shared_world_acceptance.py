@@ -41,10 +41,18 @@ def _committed_contracts(text, commit_name, required):
     active = False
     witnessed = False
     observed = set()
+    last_timestamp = None
     for line in text.splitlines():
         match = EVENT.match(line)
         if not match:
             continue
+        timestamp = int(line.split(None, 1)[0])
+        if last_timestamp is not None and timestamp < last_timestamp:
+            # A concatenated/reordered capture cannot inherit evidence from an older scene.
+            active = False
+            witnessed = False
+            observed.clear()
+        last_timestamp = timestamp
         event = match.group(1)
         if event in ("ROOM_LEFT", "STORY_ABORTED", "STORY_GUEST_ABORTED",
                      "STORY_HOST_ABORTED", "ROOM_DISCONNECTED"):
