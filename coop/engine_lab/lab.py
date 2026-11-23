@@ -138,8 +138,12 @@ void sub_001F1080(void)
             '    XBOX_TRACE(XBOX_LOG_FILE, "NtClose(handle=%p)", Handle);',
             '    switch (FsInformationClass) {',
         )
-        if any(text.count(anchor) != 1 for anchor in checks):
+        # NtClose and filesystem-query anchors also exist in POSIX code.
+        # We patch the FIRST (Windows) occurrence only.
+        counts = (1, 1, 1, 1, 1, 2, 2)
+        if any(text.count(anchor) != count for anchor, count in zip(checks, counts)):
             raise ValueError('pinned Xbox Windows harddrive I/O source drift')
+        text = '#include <wchar.h>\n' + text
         text = text.replace('#if defined(_WIN32)\n/* ====================  Win32 backend',
             r'''#if defined(_WIN32)
 static HANDLE bo_hdd_partition0_handle = INVALID_HANDLE_VALUE;
@@ -155,9 +159,9 @@ static HANDLE bo_hdd_partition0_handle = INVALID_HANDLE_VALUE;
     /* A partition device opened as a directory.''')
         text = text.replace('    if (h == INVALID_HANDLE_VALUE) {\n        DWORD err = GetLastError();',
             r'''    if (h == INVALID_HANDLE_VALUE) {
+        DWORD err = GetLastError();
         if (bo_hdd0_path)
-            fputs("BO_ENGINE_HDD_PART0_OPEN_FAILED\n", stderr);
-        DWORD err = GetLastError();''')
+            fputs("BO_ENGINE_HDD_PART0_OPEN_FAILED\n", stderr);''')
         text = text.replace('    *FileHandle = h;\n    if (IoStatusBlock) {',
             r'''    *FileHandle = h;
     if (bo_hdd0_path) {
@@ -166,7 +170,8 @@ static HANDLE bo_hdd_partition0_handle = INVALID_HANDLE_VALUE;
     }
     if (IoStatusBlock) {''')
         text = text.replace('    if (result || GetLastError() == ERROR_HANDLE_EOF) {',
-            r'''    if (bo_hdd_partition0_handle != INVALID_HANDLE_VALUE &&
+            r'''    const DWORD bo_hdd_read_error = result ? ERROR_SUCCESS : GetLastError();
+    if (bo_hdd_partition0_handle != INVALID_HANDLE_VALUE &&
         FileHandle == bo_hdd_partition0_handle && ByteOffset &&
         ByteOffset->QuadPart == 0x800 && Length >= 512) {
         fputs("BO_ENGINE_HDD_PART0_SECTOR4_READ\n", stderr);
@@ -176,7 +181,11 @@ static HANDLE bo_hdd_partition0_handle = INVALID_HANDLE_VALUE;
         else
             fputs("BO_ENGINE_HDD_PART0_SECTOR4_INVALID\n", stderr);
     }
-    if (result || GetLastError() == ERROR_HANDLE_EOF) {''', 1)
+    if (result || bo_hdd_read_error == ERROR_HANDLE_EOF) {''', 1)
+        # Preserve the pre-instrumentation last-error diagnostic after stderr I/O.
+        text = text.replace(
+            'FileHandle, Length, GetLastError());',
+            'FileHandle, Length, bo_hdd_read_error);', 1)
         text = text.replace('    XBOX_TRACE(XBOX_LOG_FILE, "NtClose(handle=%p)", Handle);',
             r'''    if (Handle == bo_hdd_partition0_handle)
         bo_hdd_partition0_handle = INVALID_HANDLE_VALUE;
