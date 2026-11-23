@@ -29,14 +29,14 @@ int main(){
  assert(world.Ingest(unexpected,28,1010));
  assert(world.PlayerMask(1010)==15u);
  assert(!gate.Observe(key,0x100000,world,npc,1011)); // guest room mask 7
- avatars[1]=11;
+ avatars[1]=14;
  assert(world.Ingest(avatars,22,1020));
  assert(!gate.Observe(key,0x100000,world,npc,1021));
  assert(!gate.Observe(key,0x100000,world,npc,1022));
  assert(!gate.Observe(key,0x100000,world,npc,1023));
- avatars[1]=12;assert(world.Ingest(avatars,22,1024));
+ avatars[1]=15;assert(world.Ingest(avatars,22,1024));
  assert(!gate.Observe(key,0x100000,world,npc,1025));
- avatars[1]=13;assert(world.Ingest(avatars,22,1026));
+ avatars[1]=16;assert(world.Ingest(avatars,22,1026));
  assert(gate.Observe(key,0x100000,world,npc,1027));
  assert(gate.SourceCoherent(1027)&&!gate.SourceCoherent(1128));
  bool foreign=true;std::thread t([&]{
