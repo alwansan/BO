@@ -124,7 +124,7 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('kernel::G<float>(original_player+0xA4)',eye)
             self.assertIn('kernel::G<float>(original_player+0xA8)',eye)
             self.assertIn('QuantizeOriginalBodyFeet(',eye)
-            self.assertIn('"coopRecordOriginalPlayerEye","(IIIIII)V"',eye)
+            self.assertIn('"coopRecordOriginalPlayerEye","(IIIIIII)V"',eye)
             self.assertIn('SDL_GetAndroidJNIEnv()',eye)
             self.assertIn('NonFrontendOriginalPlayerWitness stable;',eye)
             self.assertIn('#include "kernel/coop_stage_resource_contract.hpp"',eye)
