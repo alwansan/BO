@@ -37,6 +37,33 @@ jobs:
           python3 -m unittest discover -s bo/coop -p room_network_prepare_checks.py -v
           python3 -m unittest discover -s bo/coop -p room_ui_prepare_checks.py -v
           echo 'ROOM_NET_STAGE_PASS: in-game Flash -> Android source transformation is atomic; NO game APK/gameplay claimed'
+      - uses: actions/checkout@v4
+        with:
+          repository: TGP482/XboxXBE-Recomp
+          ref: 99078b119b5d5e0d1d6afb1390e29437c0c984c0
+          path: android-sdk
+          persist-credentials: false
+      - name: Compile original host proxy and player storage headers against pinned Android Xbox SDK
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/original_actor_header_smoke.cpp" <<'CPP'
+          #include "room_original_host_player_storage_kernel.hpp"
+          #include <type_traits>
+          static_assert(std::is_base_of_v<blackcoop::OriginalHostProxyKernelIO,
+                                          blackcoop::OriginalPlayerStorageKernelIO>);
+          void compile_only(X86Context& ctx, uint64_t (*scene)() noexcept) {
+            blackcoop::OriginalPlayerStorageKernelIO owned(ctx, scene);
+            blackcoop::OriginalProxySceneLedger ledger;
+            blackcoop::OriginalHostProxyEngine guard(ledger);
+            (void) owned.OwnsActor(0x10000u,0x900u);
+            (void) guard.RequiresEngineCleanup();
+          }
+          CPP
+          g++ -std=c++20 -pthread -fsyntax-only \
+            -I bo/coop/room_network -I android-sdk/runtime \
+            "$RUNNER_TEMP/original_actor_header_smoke.cpp"
+          echo 'ANDROID_ORIGINAL_ACTOR_HEADER_PASS: pinned SDK compatibility only, NO actor created or game run'
       - name: Original soldier real clone ownership regression
         run: |
           g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -fsanitize=address,undefined bo/coop/room_network/test_original_soldier_copy.cpp -o "$RUNNER_TEMP/test_soldier_copy"
