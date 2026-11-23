@@ -1,3 +1,9 @@
+### Session94 — 2026-11-23 — scene-scoped shared-world acceptance
+- Code commits 4b0efa719728e4207defa15417a48a2d741c9569 and a6c94b94721a7cbbb8610528af8229f4ccffd2d9: the paired-device acceptance checker now requires each gameplay contract AFTER the corresponding original scene commit, clears observations on abort/disconnect/leave and on repeated scene commit, and has regression tests for stale evidence. This prevents false readiness when logs concatenate multiple independent sessions. It is source-level test hardening only, not host actor implementation.
+- No new runtime actor, weapon/physics, AI, door, objective or guest scene application is proven. Existing paired phones remain separate worlds; NO co-op APK, NO minor phone test.
+- Original engine lab run 45102832832 previously failed at configure. Current live Actions/CL newest artifacts could not be queried with available connected Actions API (commit workflow lookup is PR-only); do not claim current build success. Preserve long Android build.
+- Next P0: original host player2 ownership/physics/weapon/AI and native guest authoritative scene consumption. Branch experiment/black-coop only; CL, main, biso, XBE/ISO/saves untouched.
+
 ### Session93 — 2026-11-23 — private engine evidence integrity hardening
 - Code commits e721c588f9aa87b9130f7d3f1f7a4f32511c542a and 8a887bb686a083b69e0e68fc9e5882e83a5d2db2: fail closed on duplicate JSON keys in private original-engine aggregate evidence and add regression for duplicate even when values agree. Previously Python JSON silently accepted the last duplicate value, permitting ambiguous observation provenance. This is harness integrity work, not game actor integration.
 - Existing Session92 confirms original-engine Windows CI reached generation but failed configuration; Ninja/MSVC repair is in branch source. Do not claim subsequent Windows engine build or runtime succeeded without run evidence.
