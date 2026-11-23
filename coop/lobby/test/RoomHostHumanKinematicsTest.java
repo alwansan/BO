@@ -71,6 +71,7 @@ public final class RoomHostHumanKinematicsTest {
         ok(!host.reconcileOriginalGuestFeet(first,2,
             new RoomCameraEyeWire.Eye(changed,3,0,0,0,
                 preSource+50,2000,3000),10200000000L));
+        two=find(host.remotePoses(first),2);
         // Observing original host actor again must NOT teleport remote people.
         ok(host.observeHostSourceFeet(first,5000,7000,9000));
         ok(find(host.remotePoses(first),2).xCm==two.xCm);
