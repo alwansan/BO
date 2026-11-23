@@ -64,7 +64,7 @@ public final class RoomSession implements AutoCloseable {
     }
     private LocalEye lastEye;
     private int localEyeTransportSeq,hostEyeWorldTick;
-    private boolean eyeBridgeErrorLogged;
+    private boolean eyeBridgeErrorLogged,remoteOriginalFeetLogged;
     // HOST game-thread value-only remote HUMAN movement proxy.
     // Source: real BLACK actor feet; inputs: authenticated TLS socket peers.
     // This is not a real BLACK character, AI, collision or weapon simulation.
@@ -391,13 +391,26 @@ public final class RoomSession implements AutoCloseable {
                         new java.util.ArrayList<>(4);
                     // The real original actor's +0xA0 BODY FEET, not eye +0x100.
                     avatars.add(new RoomWorldSnapshotWire.Avatar(1,bx,by,bz,0,0));
-                    // Never trust guest-reported body coordinates as a HOST
-                    // world transform. Only bounded commands from an actual
-                    // authenticated TLS peer may move a host-owned placeholder.
+                    // The host owns the canonical positions: the guest's
+                    // original-game body feet arrive over an authenticated
+                    // TLS socket, and move the host VISUAL pose only through
+                    // sequence/epoch/slot and speed-clamped reconciliation.
+                    // No raw guest pointer, actor or physics enters BLACK.
                     RoomStoryWire.Ticket exact=host.storyTicket();
                     if(exact!=null&&hostHumanPoses.observeHostSourceFeet(
-                           exact,bx,by,bz))
+                           exact,bx,by,bz)){
+                        long nowNs=System.nanoTime();
+                        for(RoomTls.Server.TrustedEye eye:
+                                host.latestVerifiedCameraEyes()){
+                            if(hostHumanPoses.reconcileOriginalGuestFeet(exact,
+                                    eye.playerSlot,eye.camera,nowNs)&&
+                               !remoteOriginalFeetLogged){
+                                remoteOriginalFeetLogged=true;
+                                event("ORIGINAL_HOST_GUEST_FEET_RECONCILED_VISUAL_VALUES_ONLY");
+                            }
+                        }
                         avatars.addAll(hostHumanPoses.remotePoses(exact));
+                    }
                     avatars.sort((a,b)->Integer.compare(a.playerId,b.playerId));
                     host.offerWorldSnapshot(++hostEyeWorldTick,avatars);
                 }
@@ -718,7 +731,7 @@ public final class RoomSession implements AutoCloseable {
             token=++generation;
             storyGameThread=null;lastEye=null;
             hostHumanPoses.resetForNewRoom();
-            localEyeTransportSeq=0;hostEyeWorldTick=0;hostNpcTick=0;eyeBridgeErrorLogged=false;
+            localEyeTransportSeq=0;hostEyeWorldTick=0;hostNpcTick=0;eyeBridgeErrorLogged=false;remoteOriginalFeetLogged=false;
             lastStageResourceFolder=-1;lastStageResourceObservedAt=0;
             lastSourceStage=null;lastSourceStageAtNs=0;
             sourceStagePrepare.reset();
@@ -859,7 +872,7 @@ public final class RoomSession implements AutoCloseable {
         RoomTls.Client oldClient;
         synchronized(lock){
             ++generation;storyGameThread=null;lastEye=null;
-            localEyeTransportSeq=0;hostEyeWorldTick=0;hostNpcTick=0;eyeBridgeErrorLogged=false;
+            localEyeTransportSeq=0;hostEyeWorldTick=0;hostNpcTick=0;eyeBridgeErrorLogged=false;remoteOriginalFeetLogged=false;
             lastStageResourceFolder=-1;lastStageResourceObservedAt=0;
             lastSourceStage=null;lastSourceStageAtNs=0;
             sourceStagePrepare.reset();
