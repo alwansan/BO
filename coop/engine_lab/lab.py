@@ -93,8 +93,16 @@ void sub_001F1080(void)
     if kind == 'hal':
         if text.count(HAL_RETURN_ANCHOR) != 1 or text.count(HAL_SHUTDOWN_ANCHOR) != 1:
             raise ValueError('HAL exit source drift')
+        mode_lines = (
+            '    if (Routine == 0) fputs("BO_ENGINE_FIRMWARE_KIND_0\\n", stderr);\n'
+            '    else if (Routine == 1) fputs("BO_ENGINE_FIRMWARE_KIND_1\\n", stderr);\n'
+            '    else if (Routine == 2) fputs("BO_ENGINE_FIRMWARE_KIND_2\\n", stderr);\n'
+            '    else if (Routine == 3) fputs("BO_ENGINE_FIRMWARE_KIND_3\\n", stderr);\n'
+            '    else fputs("BO_ENGINE_FIRMWARE_KIND_OTHER\\n", stderr);\n'
+        )
         text = text.replace(HAL_RETURN_ANCHOR, HAL_RETURN_ANCHOR.replace(
-            '    ExitProcess(0);', '    fputs("BO_ENGINE_FIRMWARE_RETURN\\n", stderr);\n    ExitProcess(0);'))
+            '    ExitProcess(0);', mode_lines +
+            '    fputs("BO_ENGINE_FIRMWARE_RETURN\\n", stderr);\n    ExitProcess(0);'))
         text = text.replace(HAL_SHUTDOWN_ANCHOR, HAL_SHUTDOWN_ANCHOR.replace(
             '    ExitProcess(0);', '    fputs("BO_ENGINE_FIRMWARE_SHUTDOWN\\n", stderr);\n    ExitProcess(0);'))
         return '#include <stdio.h>\n' + text
@@ -243,7 +251,12 @@ def private_call(argv, cwd, timeout, env=None, progress=None, diagnostics=None):
                    b'BO_ENGINE_PAD_STARTED': 'usb_pad_polled',
                    b'BO_ENGINE_MENU_TICK': 'frontend_ui_polled',
                    b'Game returned. Cleaning up...': 'guest_entry_returned',
-                   b'BO_ENGINE_FIRMWARE_RETURN': 'firmware_return',
+                   b'BO_ENGINE_FIRMWARE_KIND_0': 'firmware_kind_0',
+                    b'BO_ENGINE_FIRMWARE_KIND_1': 'firmware_kind_1',
+                    b'BO_ENGINE_FIRMWARE_KIND_2': 'firmware_kind_2',
+                    b'BO_ENGINE_FIRMWARE_KIND_3': 'firmware_kind_3',
+                    b'BO_ENGINE_FIRMWARE_KIND_OTHER': 'firmware_kind_other',
+                    b'BO_ENGINE_FIRMWARE_RETURN': 'firmware_return',
                    b'BO_ENGINE_FIRMWARE_SHUTDOWN': 'firmware_shutdown',
                    b'[KELVIN] NV2A engine on the CPU: started': 'cpu_renderer_started',
                    b'OHCI: two controllers': 'usb_controller_started',

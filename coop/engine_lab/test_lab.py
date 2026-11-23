@@ -154,6 +154,26 @@ class LabTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             lab.patch_text('unknown HAL', 'hal')
 
+    def test_firmware_kind_is_bounded_and_never_raw_original_data(self):
+        lab = self.module()
+        original = lab.HAL_RETURN_ANCHOR + '\n' + lab.HAL_SHUTDOWN_ANCHOR
+        patched = lab.patch_text(original, 'hal')
+        for label in ('0', '1', '2', '3', 'OTHER'):
+            self.assertEqual(patched.count('BO_ENGINE_FIRMWARE_KIND_' + label), 1)
+        self.assertEqual(patched.count('ExitProcess(0);'), 2)
+        progress = {}
+        code = lab.private_call([sys.executable, '-c',
+            "print('BO_ENGINE_FIRMWARE_KIND_2'); print('BO_ENGINE_FIRMWARE_RETURN'); print('PRIVATE_GAME_DATA')"],
+            HERE, 5, progress=progress)
+        self.assertEqual(code, 0)
+        self.assertEqual(progress, dict(firmware_kind_2=True, firmware_return=True))
+        self.assertNotIn('PRIVATE', str(progress))
+        other = {}
+        lab.private_call([sys.executable, '-c',
+            "print('BO_ENGINE_FIRMWARE_KIND_OTHER'); print('BO_ENGINE_FIRMWARE_KIND_9999')"],
+            HERE, 5, progress=other)
+        self.assertEqual(other, dict(firmware_kind_other=True))
+
     def test_truncated_aggregate_cannot_pass(self):
         lab = self.module()
         with self.assertRaises(ValueError):
