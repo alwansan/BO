@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-113-p2-model-detached-isolation.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-114-p2-input-source-isolation.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3602,6 +3602,20 @@
     "originalP2PhysicsAiAndWeaponAvailable": false,
     "hostOriginalSharedWorld": false,
     "guestOriginalStateApplication": false,
+    "ownerTrialRequiredNow": false
+  },
+  "session114OriginalP2DetachedControllerSource": {
+    "codeCommit": "54cc9b553dc6cfd0d1930f1af64e3678e3f6d89f",
+    "sourcePin": "portingpete/Black-2006-Recomp@b2512fafd3e181e4febfb298f297245b845ef628",
+    "originalInputSourceExpression": "GUEST32(GUEST32(core+0x354)+0xA8)",
+    "detachedInputBytes": 64,
+    "detachedP2ActorInputRebased": true,
+    "missingSourceNotInputReady": true,
+    "originalGuestWrites": false,
+    "sourcePreflightResult": "pending",
+    "realOriginalAndroidP2Active": false,
+    "originalHostCanonicalWorld": false,
+    "originalGuestWorldApplication": false,
     "ownerTrialRequiredNow": false
   }
 }
