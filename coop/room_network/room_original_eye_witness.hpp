@@ -19,6 +19,7 @@
 #include "coop/room_original_live_remote_bot.hpp"
 #include "coop/room_original_ai_target_witness.hpp"
 #include "coop/room_original_host_physics_proxy_witness.hpp"
+#include "coop/room_original_host_extra_actor_witness.hpp"
 #include "coop/room_original_host_npc_source_witness.hpp"
 #include "coop/room_original_guest_host_npc_witness.hpp"
 #include "coop/room_original_guest_host_object_witness.hpp"
@@ -208,6 +209,13 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
         // fewer than 3 safe proxies during NPC spawns; NEVER allocate here.
         ObserveOriginalHostPhysicsProxyReadiness(coreEpisode,
             original_player,static_cast<uint8_t>(peerMask),
+            originalLocalSceneRunning&&lookSourceMatched);
+        // Candidate readiness for 1-3 genuinely authenticated human inputs
+        // plus independent ORIGINAL physics/AI/render resources; all values
+        // read-only. No original host player2+ exists until engine ABI and
+        // ownership lifecycle are separately implemented and proven.
+        ObserveOriginalHostExtraActorGate(coreEpisode,world,original_player,
+            static_cast<uint8_t>(peerMask),
             originalLocalSceneRunning&&lookSourceMatched);
         // Actually fetch the other REAL human's HOST-owned feet for a future
         // independent original-bot draw. Still NO original actor memory write.

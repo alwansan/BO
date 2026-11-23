@@ -204,6 +204,14 @@ def prepare(root: pathlib.Path):
         else if (code == 2101) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_LOCAL_PHYSICS_PROXY_NOT_VERIFIED");
         else if (code == 2102) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_PHYSICS_POOL_INSUFFICIENT_RESERVED_FREE_SLOTS");
         else if (code == 2103) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_PHYSICS_PROXY_CAPACITY_SOURCE_ELIGIBLE_NO_NEW_ACTOR");
+        else if (code == 2120) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_EXTRA_ACTOR_GATE_NO_MATCHED_SOURCE");
+        else if (code == 2121) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_EXTRA_ACTOR_GATE_BAD_AUTHENTICATED_ROSTER");
+        else if (code == 2122) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_EXTRA_ACTOR_GATE_NO_COMMITTED_INPUT_EPOCH");
+        else if (code == 2123) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_EXTRA_ACTOR_GATE_MISSING_FRESH_HUMAN_INPUT");
+        else if (code == 2124) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_EXTRA_ACTOR_GATE_NO_SAFE_PHYSICS_CAPACITY");
+        else if (code == 2125) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_EXTRA_ACTOR_GATE_NO_SAFE_AI_TARGET_CAPACITY");
+        else if (code == 2126) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_EXTRA_ACTOR_GATE_NO_SOLDIER_BODY_CAPACITY");
+        else if (code == 2127) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_EXTRA_ACTOR_GATE_SOURCE_ELIGIBLE_NO_GAMEPLAY_ACTOR");
         else if (code == 20) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_EASY_NOT_MISSION");
         else if (code == 21) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_NORMAL_NOT_MISSION");
         else if (code == 22) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_HARD_NOT_MISSION");
@@ -304,6 +312,8 @@ def prepare(root: pathlib.Path):
     pending['src/coop/room_original_ai_target_witness.hpp'] = (HERE / 'room_network/room_original_ai_target_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_host_physics_proxy_contract.hpp'] = (HERE / 'room_network/room_original_host_physics_proxy_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_host_physics_proxy_witness.hpp'] = (HERE / 'room_network/room_original_host_physics_proxy_witness.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_host_extra_actor_contract.hpp'] = (HERE / 'room_network/room_original_host_extra_actor_contract.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_host_extra_actor_witness.hpp'] = (HERE / 'room_network/room_original_host_extra_actor_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_host_npc_source_witness.hpp'] = (HERE / 'room_network/room_original_host_npc_source_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_guest_host_npc_contract.hpp'] = (HERE / 'room_network/room_original_guest_host_npc_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_guest_host_npc_witness.hpp'] = (HERE / 'room_network/room_original_guest_host_npc_witness.hpp').read_text(encoding='utf-8')
