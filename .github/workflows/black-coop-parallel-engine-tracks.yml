@@ -1,0 +1,77 @@
+name: BO-COOP parallel original engine tracks (source only)
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/room_network/**'
+      - '.github/workflows/black-coop-parallel-engine-tracks.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: bo-coop-three-source-tracks
+  cancel-in-progress: true
+jobs:
+  original-p2-native-lifecycle:
+    name: P2 actor camera animation and physics source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test independent original co-op source contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in test_room_original_host_player_storage.cpp \
+            test_room_original_host_player_shadow_plan.cpp \
+            test_room_original_host_player_link_exchange.cpp \
+            test_room_original_animation_context.cpp \
+            test_room_original_host_proxy_engine.cpp; do
+            g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread \
+              -fsanitize=address,undefined "coop/room_network/$file" -o "$RUNNER_TEMP/parallel_test"
+            "$RUNNER_TEMP/parallel_test"
+          done
+          echo "ORIGINAL_P2_NATIVE_LIFECYCLE_PASS_SOURCE_ONLY_NOT_ANDROID_GAMEPLAY"
+
+  extra-p3-p4-and-authenticated-gamepads:
+    name: P2 P3 P4 actor ownership and TLS gamepad ports
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test independent original co-op source contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in test_room_original_host_multi_actor_lanes.cpp \
+            test_room_original_host_remote_pad_plan.cpp \
+            test_room_original_host_pad_port_bridge.cpp \
+            test_room_original_trusted_input_contract.cpp \
+            test_room_original_host_extra_actor_contract.cpp; do
+            g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread \
+              -fsanitize=address,undefined "coop/room_network/$file" -o "$RUNNER_TEMP/parallel_test"
+            "$RUNNER_TEMP/parallel_test"
+          done
+          echo "EXTRA_P3_P4_AND_AUTHENTICATED_GAMEPADS_PASS_SOURCE_ONLY_NOT_ANDROID_GAMEPLAY"
+
+  single-host-original-world:
+    name: One host NPC avatar object and guest story
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test independent original co-op source contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in test_room_original_guest_host_world_contract.cpp \
+            test_room_original_guest_host_npc_contract.cpp \
+            test_room_original_guest_host_object_contract.cpp \
+            test_room_original_guest_canonical_source_barrier.cpp \
+            test_room_original_guest_prepared_story_contract.cpp \
+            test_room_original_guest_launch_match_contract.cpp; do
+            g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread \
+              -fsanitize=address,undefined "coop/room_network/$file" -o "$RUNNER_TEMP/parallel_test"
+            "$RUNNER_TEMP/parallel_test"
+          done
+          echo "SINGLE_HOST_ORIGINAL_WORLD_PASS_SOURCE_ONLY_NOT_ANDROID_GAMEPLAY"

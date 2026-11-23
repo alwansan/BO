@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-124-parallel-actors-p2p4-original-guest-world.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-125-three-parallel-github-tracks.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3847,5 +3847,22 @@
     "originalPcTwoPlayerVerifiedRun": 45239818055,
     "ownerPhoneTrialNow": false,
     "restrictedBranch": "experiment/black-coop"
+  },
+  "session125ParallelSourceJobs": {
+    "status": "parallel_github_source_check_lanes_written; original_android_multiplayer_gameplay_unfinished",
+    "baseCommit": "cd0e537efa6f705156faad9eac8e49ca8466a831",
+    "parallelWorkflow": ".github/workflows/black-coop-parallel-engine-tracks.yml",
+    "jobs": [
+      "original-p2-native-lifecycle",
+      "extra-p3-p4-and-authenticated-gamepads",
+      "single-host-original-world"
+    ],
+    "preflightSession124": 45251338131,
+    "udpSession124": 45251338270,
+    "fullAndroidSession124": 45251338108,
+    "androidOriginalP2Ready": false,
+    "androidOriginalP3P4Ready": false,
+    "guestHostNpcDoorsObjectivesApplied": false,
+    "userMicrotestNeeded": false
   }
 }
