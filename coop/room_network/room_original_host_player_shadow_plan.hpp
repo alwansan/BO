@@ -118,4 +118,57 @@ public:
   ready_=true;return true;
  }
 };
+
+// Phase A/B only: bind independently owned camera constructor allocations to
+// a detached P1-derived actor snapshot. This does NOT write P2 into original
+// game RAM, initialize weapons/physics/AI, swap P1 or prove a shared mission.
+enum class OriginalHostPlayerStageStatus {
+ Prepared, AlreadyOwned, WrongThread, StorageRejected, ShadowRejected, CleanupRequired
+};
+class OriginalHostPlayerStage final {
+ OriginalHostPlayerStorage storage_{};
+ OriginalHostPlayerShadowPlan shadow_{};
+ const std::thread::id thread_=std::this_thread::get_id();
+ bool onThread()const noexcept{return thread_==std::this_thread::get_id();}
+public:
+ OriginalHostPlayerStage()=default;
+ OriginalHostPlayerStage(const OriginalHostPlayerStage&)=delete;
+ OriginalHostPlayerStage& operator=(const OriginalHostPlayerStage&)=delete;
+ // No destructor-driven guest free: owning game thread must release resources.
+ bool Ready()const noexcept{return onThread()&&shadow_.Ready()&&storage_.View().actor!=0;}
+ OriginalPlayerStorageView View()const noexcept{
+  return Ready()?storage_.View():OriginalPlayerStorageView{};
+ }
+ bool PreviewActorWord(uint32_t off,uint32_t& word)const noexcept{
+  return Ready()&&shadow_.PreviewActorWord(off,word);
+ }
+ template<class IO>OriginalHostPlayerStageStatus Prepare(
+     IO& io,const OriginalPlayerStorageScene& binding){
+  if(!onThread())return OriginalHostPlayerStageStatus::WrongThread;
+  if(storage_.View().owner||shadow_.Ready())return OriginalHostPlayerStageStatus::AlreadyOwned;
+  const auto allocated=storage_.Allocate(io,binding);
+  if(allocated!=OriginalStorageStatus::ConstructorReady){
+   if(allocated==OriginalStorageStatus::EngineCleanupRequired||
+      allocated==OriginalStorageStatus::CleanupFailed)
+    return OriginalHostPlayerStageStatus::CleanupRequired;
+   if(allocated==OriginalStorageStatus::AlreadyOwned)
+    return OriginalHostPlayerStageStatus::AlreadyOwned;
+   if(allocated==OriginalStorageStatus::WrongThread)
+    return OriginalHostPlayerStageStatus::WrongThread;
+   return OriginalHostPlayerStageStatus::StorageRejected;
+  }
+  if(!shadow_.Prepare(io,binding,storage_.View())){
+   const auto released=storage_.ReleaseConstructorOnly(io);
+   return released==OriginalStorageStatus::Released?
+     OriginalHostPlayerStageStatus::ShadowRejected:
+     OriginalHostPlayerStageStatus::CleanupRequired;
+  }
+  return OriginalHostPlayerStageStatus::Prepared;
+ }
+ template<class IO>OriginalStorageStatus ReleaseConstructorOnly(IO& io){
+  if(!onThread())return OriginalStorageStatus::WrongThread;
+  shadow_.Reset();
+  return storage_.ReleaseConstructorOnly(io);
+ }
+};
 } // namespace blackcoop

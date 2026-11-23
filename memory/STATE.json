@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-110-original-p2-shadow-plan.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-111-original-p2-stage.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3560,5 +3560,22 @@
     "ownerTrialRequiredNow": false,
     "doc": "docs/ORIGINAL_HOST_P2_SHADOW_PLAN_AR.md",
     "next": "verify Windows original game save-path fix and native Android APK; implement original P2 camera+actor storage and complete source-verified context setup/swap, then physics/AI/weapon and host canonical guest world"
+  },
+  "session111OriginalP2Stage": {
+    "pcLabRun": 45213250944,
+    "pcLabAcceptance": "failed_mission_and_original_player2",
+    "pcVirtualHddNormalized": true,
+    "pcFrontendAndUsbPolling": true,
+    "pcOriginalMissionTicks": 167,
+    "pcPlayer2PhysicsReady": false,
+    "pcFullCoop": false,
+    "nativeStage": "owned_camera_constructor_and_detached_actor_shadow_only",
+    "nativeStageCiVerified": false,
+    "androidRun": 45216969800,
+    "androidRunAtObservation": "candidate_probe_compiling",
+    "originalAndroidPlayer2Active": false,
+    "originalHostCanonicalWorld": false,
+    "originalGuestCanonicalApply": false,
+    "ownerTrialRequiredNow": false
   }
 }
