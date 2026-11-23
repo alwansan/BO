@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-87-original-remote-soldier-animation-and-host-actor-abi.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-88-true-original-player-forward-and-extra-actor-gates.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3032,5 +3032,43 @@
     "originalWorldHostAuthoritative": false,
     "ownerMajorPhoneTrialReady": false,
     "nextGate": "Host original scene: independent shadow actor+camera+weapons+physics proxy+AI target, game-thread verified"
+  },
+  "session88": {
+    "date": "2026-11-23",
+    "branch": "experiment/black-coop",
+    "sourceCodeCommit": "44bec0b8567a7db2e6c2c7664498c16ab033b60a",
+    "actorGateCommit": "80e8cdf2d0974dbe3c981dd9a350851c8580e90e",
+    "signedEpochFixCommit": "ebd43706112c7fa8b80810396a61a545ad01eb2c",
+    "genuineOriginalPlayerForwardYawTransport": true,
+    "sourceHeadingVerifiedOnPhone": false,
+    "actualHostExtraActors": false,
+    "sharedOriginalHostPhysics": false,
+    "originalEnemyAiForRemoteHumans": false,
+    "actualSharedDoorDamage": false,
+    "originalHostActorSourceInputReadiness": true,
+    "hostSignedStoryEpochIndependentlyVerified": true,
+    "hostActorPrerequisitesNativeReadyProofOnOwnerPhone": false,
+    "sourcePreflight": {
+      "id": 45096922154,
+      "conclusion": "success"
+    },
+    "udp": {
+      "id": 45096922153,
+      "conclusion": "success"
+    },
+    "tls": {
+      "id": 45096922229,
+      "atLastCheck": "IN_PROGRESS"
+    },
+    "android29": {
+      "id": 45096922209,
+      "atLastCheck": "IN_PROGRESS"
+    },
+    "candidateAndroidApk": {
+      "id": 45096922149,
+      "atLastCheck": "IN_PROGRESS_NO_GAMEPLAY"
+    },
+    "noOwnerPhoneMiniTrials": true,
+    "nextP0": "Original player2 shadow actor owned by HOST game, independent physics+weapons and original AI-target; prepare safe context-swap ABI source with rollbacks before enabling"
   }
 }
