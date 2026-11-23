@@ -314,6 +314,92 @@ class LabTests(unittest.TestCase):
         self.assertNotIn('ABCDEF12', str(progress))
         self.assertNotIn('FFFF1234', str(progress))
 
+    def test_xbox_virtual_hdd_file_instrumentation_preserves_win32_results(self):
+        lab = self.module()
+        # The pinned C source has one Win32 and one POSIX NT-close and
+        # filesystem-query branch. The Windows probes MUST NOT patch POSIX.
+        fixture = '''#include <stdio.h>
+#if defined(_WIN32)
+/* ====================  Win32 backend
+    /* A partition device opened as a directory.
+    if (h == INVALID_HANDLE_VALUE) {
+        DWORD err = GetLastError();
+    *FileHandle = h;
+    if (IoStatusBlock) {
+    if (result || GetLastError() == ERROR_HANDLE_EOF) {
+    XBOX_TRACE(XBOX_LOG_FILE, "NtClose(handle=%p)", Handle);
+    switch (FsInformationClass) {
+    XBOX_TRACE(XBOX_LOG_FILE, "NtReadFile(handle=%p, len=%u) failed err=%u",
+               FileHandle, Length, GetLastError());
+#else
+    XBOX_TRACE(XBOX_LOG_FILE, "NtClose(handle=%p)", Handle);
+    switch (FsInformationClass) {
+#endif
+'''
+        patched = lab.patch_text(fixture, 'hdd_file')
+        self.assertEqual(patched.count('BO_ENGINE_HDD_PART0_OPEN_TRIED'), 1)
+        self.assertEqual(patched.count('BO_ENGINE_HDD_PART0_SECTOR4_VALID'), 1)
+        self.assertEqual(patched.count('BO_ENGINE_HDD_FS_SIZE_QUERY'), 1)
+        self.assertIn('const DWORD bo_hdd_read_error = result ? ERROR_SUCCESS : GetLastError();', patched)
+        self.assertIn('if (result || bo_hdd_read_error == ERROR_HANDLE_EOF)', patched)
+        self.assertIn('FileHandle, Length, bo_hdd_read_error);', patched)
+        self.assertIn('DWORD err = GetLastError();\n        if (bo_hdd0_path)', patched)
+        self.assertEqual(patched.count('XBOX_TRACE(XBOX_LOG_FILE, "NtClose(handle=%p)", Handle)'), 2)
+        self.assertEqual(patched.count('if (Handle == bo_hdd_partition0_handle)'), 1)
+        self.assertEqual(patched.count('switch (FsInformationClass)'), 2)
+        self.assertNotIn('PRIVATE_GAME_BYTES', patched)
+        with self.assertRaisesRegex(ValueError, 'source drift'):
+            lab.patch_text(fixture.replace('NtClose(handle=%p)', 'NtClose(PRIVATE)'), 'hdd_file')
+
+    def test_xbox_virtual_hdd_partition_table_probe_never_replaces_disk_bytes(self):
+        lab = self.module()
+        fixture = '''    DWORD written;
+    if (h == INVALID_HANDLE_VALUE)
+        return;
+    memcpy(sector, "****PARTINFO****", 16);
+    if (SetFilePointerEx(h, off, NULL, FILE_BEGIN))
+        WriteFile(h, sector, sizeof(sector), &written, NULL);
+    CloseHandle(h);
+'''
+        patched = lab.patch_text(fixture, 'hdd_path')
+        self.assertIn('DWORD written = 0;', patched)
+        self.assertIn('BO_ENGINE_HDD_TABLE_CREATE_FAILED', patched)
+        self.assertIn('BO_ENGINE_HDD_TABLE_WRITE_OK', patched)
+        self.assertIn('memcpy(sector, "****PARTINFO****", 16)', patched)
+        self.assertIn('WriteFile(h, sector, sizeof(sector), &written, NULL);', patched)
+        self.assertIn('CloseHandle(h);', patched)
+        self.assertNotIn('ExitProcess(0)', patched)
+        with self.assertRaisesRegex(ValueError, 'source drift'):
+            lab.patch_text(fixture.replace('SetFilePointerEx', 'FAKE_READ'), 'hdd_path')
+
+    def test_original_private_virtual_hdd_probe_only_exports_boolean_categories(self):
+        lab = self.module()
+        allowed = (
+            'BO_ENGINE_HDD_TABLE_CREATE_OK',
+            'BO_ENGINE_HDD_TABLE_WRITE_OK',
+            'BO_ENGINE_HDD_PART0_OPEN_TRIED',
+            'BO_ENGINE_HDD_PART0_OPEN_OK',
+            'BO_ENGINE_HDD_PART0_SECTOR4_READ',
+            'BO_ENGINE_HDD_PART0_SECTOR4_VALID',
+            'BO_ENGINE_HDD_FS_SIZE_QUERY',
+        )
+        progress = {}
+        script = 'for line in ' + repr(list(allowed) +
+            ['PRIVATE_XBE_PATH=C:\\SECRET\\default.xbe',
+             'BO_ENGINE_HDD_UNKNOWN_SECRET',
+             'raw frame BO_ENGINE_HDD_TABLE_CREATE_FAILED extra']) + ': print(line)'
+        rc = lab.private_call([sys.executable, '-c', script], HERE, 5,
+                              progress=progress)
+        self.assertEqual(rc, 0)
+        self.assertEqual(progress, dict(
+            hdd_table_created=True, hdd_table_written=True,
+            hdd_partition0_open_tried=True, hdd_partition0_open_ok=True,
+            hdd_partition0_sector4_read=True, hdd_partition0_sector4_valid=True,
+            hdd_fs_size_query_seen=True))
+        self.assertNotIn('PRIVATE', str(progress))
+        self.assertNotIn('SECRET', str(progress))
+        self.assertNotIn('default.xbe', str(progress))
+
     def test_truncated_aggregate_cannot_pass(self):
         lab = self.module()
         with self.assertRaises(ValueError):
