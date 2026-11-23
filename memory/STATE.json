@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-95-engine-input-boot-diagnostics.md",
+  "lastSession": 96,
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3209,5 +3209,13 @@
       "44a536918371b974daed1a4fdc5771066db21888"
     ],
     "next": "Diagnose frontend/USB boot, then original host player2 actor/physics/weapon/AI and guest authoritative scene apply"
-  }
+  },
+  "latestRunReview": {
+    "engineLabRun": 45113568182,
+    "engineLabResult": "failure: frontend_and_usb_input_not_polled; engine built and exited, gameplay unproven",
+    "udpRun": 45113568213,
+    "udpResult": "success, network-only",
+    "sharedWorldReady": false
+  },
+  "latestCodeWork": "Original proxy actor guard rejects any player2 storage overlapping original physics allocation; negative regression added"
 }

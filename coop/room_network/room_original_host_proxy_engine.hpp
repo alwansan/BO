@@ -38,6 +38,10 @@ class OriginalHostProxyEngine {
   // The original core spans 0x5CC0 (pinned PC original tick); none of its
   // embedded storage may masquerade as an independently owned shadow actor.
   if(uint64_t(b.actor)<uint64_t(b.world)+0x5CC0&&uint64_t(b.actor)+0x900>b.world)return false;
+  // A forged kind-2 header inside the live physics allocator is not a
+  // separately owned human. Reject every overlap, including interior spans.
+  if(uint64_t(b.actor)<uint64_t(b.physics)+0x2974&&
+     uint64_t(b.actor)+0x900>b.physics)return false;
   return io.Read32(b.actor,table)&&table==0x28CFE0&&io.Read32(b.actor+0xC4,kind)&&kind==2&&
    io.Read32(b.actor+0x374,serial)&&serial==b.serial&&
    io.Read32(b.actor+0x354,collider)&&collider==b.collider&&range(collider,0x60)&&io.Span(collider,0x60);

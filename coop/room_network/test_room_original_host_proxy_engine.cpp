@@ -50,6 +50,10 @@ int main(){
  {Engine e;OriginalHostProxyEngine a;auto bad=b;bad.actor=Engine::world+0x1000;
   for(auto off:{0u,0xC4u,0x354u,0x374u,0xB4u})e.words[bad.actor+off]=e.words[Engine::actor+off];
   assert(a.Acquire(e,bad)==OriginalProxyStatus::Rejected);assert(e.calls.empty());}
+ // A forged actor in the original physics allocation must never reach DF400.
+ {Engine e;OriginalHostProxyEngine a;auto bad=b;bad.actor=Engine::physics+0x1000;
+  for(auto off:{0u,0xC4u,0x354u,0x374u,0xB4u})e.words[bad.actor+off]=e.words[Engine::actor+off];
+  assert(a.Acquire(e,bad)==OriginalProxyStatus::Rejected);assert(e.calls.empty());}
  {Engine e;OriginalHostProxyEngine a;e.badReturn=true;assert(a.Acquire(e,b)==OriginalProxyStatus::RolledBack);assert(e.calls.size()==2&&!a.Handle().proxy);}
  {Engine e;OriginalHostProxyEngine a;e.badReturn=true;e.failRelease=true;assert(a.Acquire(e,b)==OriginalProxyStatus::RollbackFailed);assert(a.Handle().proxy);}
  {Engine e;OriginalHostProxyEngine a;e.changeWorld=true;assert(a.Acquire(e,b)==OriginalProxyStatus::ScopeLost);assert(e.calls.size()==1);}
