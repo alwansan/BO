@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-102-original-resource-ownership-continuation.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-106-shared-original-scene-ownership.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3351,5 +3351,31 @@
     "sharedWorldProven": false,
     "ownerPhoneTrialReady": false,
     "next": "inspect actual private launch page presence/type and source-backed reboot reason; fix boot; implement original host P2-4 actors/physics/weapon/AI and authoritative original world"
+  },
+  "session106": {
+    "date": "2026-11-23",
+    "implementationCommits": [
+      "81e623fc1768e151e6671db9538eede91cc868de",
+      "50b1d0e2ec7ad91557798240508ca678907f3086"
+    ],
+    "sharedSceneLedgerImplemented": true,
+    "sharedLedgerScope": "one_original_engine_scene_3_extra_human_actor_proxy_slots",
+    "newAdaptersRequireSharedLedger": true,
+    "ledgerKeepsNativeQuarantineAcrossAdapterDeletion": true,
+    "originalEngineTeardownWitnessImplemented": false,
+    "sourceRegressionRun": 45199349609,
+    "sourceRegressionConclusion": "success",
+    "actualOriginalHostPlayer2Initialized": false,
+    "actualOriginalHostPlayer3Initialized": false,
+    "actualOriginalHostPlayer4Initialized": false,
+    "latestOriginalEnginePrivateRun": 45197279738,
+    "latestOriginalEngineRunConclusion": "in_progress_at_last_check",
+    "previousOriginalEngineRun": 45193624586,
+    "previousOriginalEngineFailure": "HalQuickRebootRoutine_kind_2_at_202ms",
+    "androidRoomOnlyRun": 45195066473,
+    "androidRoomOnlyPass": true,
+    "sharedOriginalMissionVerified": false,
+    "ownerPhoneTrialReady": false,
+    "next": "inspect launch-page result and root-cause quick reboot, then original actor/camera/animation/weapon/audio/physics lifecycle and canonical host/guest world integration"
   }
 }
