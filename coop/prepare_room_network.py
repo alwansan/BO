@@ -329,6 +329,13 @@ def prepare(root: pathlib.Path):
     pending['src/coop/room_original_ai_target_witness.hpp'] = (HERE / 'room_network/room_original_ai_target_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_host_physics_proxy_contract.hpp'] = (HERE / 'room_network/room_original_host_physics_proxy_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_host_physics_proxy_witness.hpp'] = (HERE / 'room_network/room_original_host_physics_proxy_witness.hpp').read_text(encoding='utf-8')
+    # Opt-in compile-only original player storage and real physics ownership.
+    # No actor setup, guest call or room READY is enabled by these headers.
+    for name in ('room_original_host_proxy_engine.hpp',
+                 'room_original_host_proxy_kernel.hpp',
+                 'room_original_host_player_storage.hpp',
+                 'room_original_host_player_storage_kernel.hpp'):
+        pending['src/coop/' + name] = (HERE / 'room_network' / name).read_text(encoding='utf-8')
     pending['src/coop/room_original_host_extra_actor_contract.hpp'] = (HERE / 'room_network/room_original_host_extra_actor_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_host_extra_actor_witness.hpp'] = (HERE / 'room_network/room_original_host_extra_actor_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_host_npc_source_witness.hpp'] = (HERE / 'room_network/room_original_host_npc_source_witness.hpp').read_text(encoding='utf-8')
@@ -415,7 +422,7 @@ X86_FUNC(sub_000D1500) {
     cheat='src/game/cheats.cpp'
     game=pending.get(cheat,originals[cheat].decode('utf-8'))
     game=once(game,'#include "game/layout.h"',
-              '#include "game/layout.h"\n#include "coop/room_world_tick.hpp"\n#include "coop/room_original_eye_witness.hpp"\n#include "coop/room_original_trusted_input_witness.hpp"',cheat)
+              '#include "game/layout.h"\n#include "coop/room_world_tick.hpp"\n#include "coop/room_original_eye_witness.hpp"\n#include "coop/room_original_trusted_input_witness.hpp"\n#include "coop/room_original_host_player_storage_kernel.hpp"',cheat)
     game=once(game,'    __imp__sub_001E5FA0(ctx, base);',
         '''    // Candidate only: first original-player update in this world is
     // NOT proof that host-selected mission/stage loaded on both phones.

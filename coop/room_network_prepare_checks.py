@@ -115,6 +115,18 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('blackcoop::ObserveOriginalHostInputTick(me)',native)
             self.assertIn('#include "coop/room_original_trusted_input_witness.hpp"',native)
             self.assertIn('#include "coop/room_original_eye_witness.hpp"',native)
+            # Header must be compiled by Android's actual game source.
+            # Staging alone is insufficient: compile-only inclusion proves
+            # SDK types coexist without invoking an original guest actor.
+            self.assertIn('#include "coop/room_original_host_player_storage_kernel.hpp"',native)
+            storage=(root/'src/coop/room_original_host_player_storage_kernel.hpp').read_text(encoding='utf-8')
+            proxy=(root/'src/coop/room_original_host_proxy_engine.hpp').read_text(encoding='utf-8')
+            kernel=(root/'src/coop/room_original_host_proxy_kernel.hpp').read_text(encoding='utf-8')
+            self.assertIn('bool OwnsActor(uint32_t address,uint32_t size)',storage)
+            self.assertIn('!io.OwnsActor(b.actor,0x900)',proxy)
+            self.assertIn('OriginalProxySceneLedger',proxy)
+            self.assertIn('bool OwnsActor(uint32_t,uint32_t)',kernel)
+            self.assertNotIn('OriginalHostProxyEngine()=default;',proxy)
             eye=(root/'src/coop/room_original_eye_witness.hpp').read_text(encoding='utf-8')
             contract=(root/'src/coop/room_original_eye_contract.hpp').read_text(encoding='utf-8')
             self.assertIn('kernel::G<float>(original_player+0x100)',eye)
