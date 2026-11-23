@@ -21,6 +21,10 @@ enum class OriginalProxyStatus {Rejected,Owned,Released,RolledBack,RollbackFaile
 class OriginalHostProxyEngine {
  std::thread::id owner_=std::this_thread::get_id();
  OriginalHostProxyHandle handle_{};
+ // A native call can have side effects even if it throws/returns false.
+ // Once uncertain, never retry acquire/release without independently proven
+ // engine cleanup. A new object instance is NOT proof the scene was cleaned.
+ bool uncertain_=false;
  static bool range(uint32_t p,uint32_t n)noexcept{return p>=0x10000u&&uint64_t(p)+n<=0x100000000ull;}
  bool owner()const noexcept{return owner_==std::this_thread::get_id();}
  template<class IO>static bool scope(IO& io,const OriginalHostProxyBinding& b){
@@ -60,22 +64,25 @@ class OriginalHostProxyEngine {
  }
  template<class IO>bool release(IO& io){
   uint32_t ignored=0;
-  if(!io.Call(0xDBBE0,handle_.binding.physics,handle_.proxy,ignored))return false;
+  try{if(!io.Call(0xDBBE0,handle_.binding.physics,handle_.proxy,ignored))return false;}
+  catch(...){return false;}
   const auto& b=handle_.binding;uint32_t proxy=1,back=1;uint8_t flag=1;
   // Do not dereference a previous world after the original call changes scope.
   if(!scope(io,b)||!actor(io,b))return false;
   const uint32_t slot=(handle_.proxy-b.physics-0x2320u)/0x50u;
   if(!io.Read32(b.actor+0xB4,proxy)||proxy||!io.Read32(handle_.proxy+0x30,back)||back||
    !io.Read8(b.physics+0x2960u+slot,flag)||flag)return false;
-  handle_={};return true;
+  handle_={};uncertain_=false;return true;
  }
 public:
  OriginalHostProxyEngine()=default;
  OriginalHostProxyEngine(const OriginalHostProxyEngine&)=delete;
  OriginalHostProxyEngine& operator=(const OriginalHostProxyEngine&)=delete;
  OriginalHostProxyHandle Handle()const noexcept{return owner()?handle_:OriginalHostProxyHandle{};}
+ // A positive result requires engine-lifecycle intervention, not a new retry.
+ bool RequiresEngineCleanup()const noexcept{return owner()&&uncertain_;}
  template<class IO>OriginalProxyStatus Acquire(IO& io,const OriginalHostProxyBinding& b){
-  if(!owner()||handle_.proxy||!scope(io,b)||!actor(io,b))return OriginalProxyStatus::Rejected;
+  if(!owner()||uncertain_||handle_.proxy||!scope(io,b)||!actor(io,b))return OriginalProxyStatus::Rejected;
   uint32_t previous=0;if(!io.Read32(b.actor+0xB4,previous)||previous)return OriginalProxyStatus::Rejected;
   unsigned free=0;uint32_t expected=0;
   for(uint32_t i=0;i<20;i++){uint8_t flag=0;if(!io.Read8(b.physics+0x2960+i,flag))return OriginalProxyStatus::Rejected;
@@ -84,22 +91,30 @@ public:
    !io.Read32(b.actor+0xB4,previous)||previous)return OriginalProxyStatus::Rejected;
   // DF400 has no exhaustion guard. The free scan and call must run on the
   // original engine thread without yielding or concurrent engine allocation.
-  uint32_t result=0;const bool called=io.Call(0xDF400,b.physics,b.actor,result);
+  // The original DF400 may allocate before its return value or failure.
+  // Quarantine immediately before touching the engine; later failures must
+  // not permit another DF400 against the possibly occupied slot.
+  uncertain_=true;
+  uint32_t result=0;bool called=false;
+  try{called=io.Call(0xDF400,b.physics,b.actor,result);}
+  catch(...){return OriginalProxyStatus::OwnershipLost;}
   if(!scope(io,b))return OriginalProxyStatus::ScopeLost;
   uint32_t proxy=0;
   if(!actor(io,b)||!io.Read32(b.actor+0xB4,proxy))return OriginalProxyStatus::OwnershipLost;
   OriginalHostProxyHandle candidate{b,proxy};
   if(!owned(io,candidate))return OriginalProxyStatus::OwnershipLost;
   handle_=candidate;
-  if(called&&(result&255u)==1u&&proxy==expected)return OriginalProxyStatus::Owned;
+  if(called&&(result&255u)==1u&&proxy==expected){uncertain_=false;return OriginalProxyStatus::Owned;}
   // Even a failed result may have acquired a native object. Release only an
   // exact same-scene slot whose owner/backlink is still exclusively ours.
   return release(io)?OriginalProxyStatus::RolledBack:OriginalProxyStatus::RollbackFailed;
  }
  template<class IO>OriginalProxyStatus Release(IO& io){
-  if(!owner()||!handle_.proxy)return OriginalProxyStatus::Rejected;
-  if(!scope(io,handle_.binding))return OriginalProxyStatus::ScopeLost;
-  if(!actor(io,handle_.binding)||!owned(io,handle_))return OriginalProxyStatus::OwnershipLost;
+  if(!owner()||uncertain_||!handle_.proxy)return OriginalProxyStatus::Rejected;
+  if(!scope(io,handle_.binding)){uncertain_=true;return OriginalProxyStatus::ScopeLost;}
+  if(!actor(io,handle_.binding)||!owned(io,handle_)){uncertain_=true;return OriginalProxyStatus::OwnershipLost;}
+  // Even destructor failure/throw can release a proxy before reporting status.
+  uncertain_=true;
   return release(io)?OriginalProxyStatus::Released:OriginalProxyStatus::RollbackFailed;
  }
 };
