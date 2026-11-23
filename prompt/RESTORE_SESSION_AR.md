@@ -1,3 +1,9 @@
+### Session103 — 2026-11-23 — latest original firmware-exit diagnostic
+- Commit 1fc007e547344daddc15ece5dfe2825372437c36 adds bounded firmware mode markers in private original-engine Windows lab, preserving original exit behavior and filtering raw log data. This is diagnostic only; no original player2 actor or shared mission exists.
+- Last original engine CI 45186010290 built original executable, verified XBE and 574 owner files, then firmware returned at 219ms before frontend/UI or USB polling, and FAILED gameplay acceptance. Prior room-only Android build 45187210283 and bridge 45187210265 succeeded on 10b4ae54, explicitly NO GAMEPLAY CO-OP.
+- P0: inspect fresh firmware mode; fix actual engine boot; complete host P2-P4 independent actors/camera/animation/audio/weapons, original physics proxy and AI, host-owned NPC/doors/mission state and safe guest original-engine application. Do not request phone microtests; only one substantial combined trial after genuine shared-world implementation.
+- Change only experiment/black-coop; protect main, CL, biso, owner XBE/ISO/saves, and all raw private logs. Keep plan/restoration/memory/session synchronized.
+
 ### Session102 — 2026-11-23 — original resource ownership implementation, continue from current remote
 
 - Owner again explicitly requests continuous implementation and publishing ALL created tools, plans, source findings and restoration records. Latest original goal remains ONE shared host-authoritative original BLACK mission, not synchronized separate stages. Any existing original soldier model is accepted. No minor phone trials.
