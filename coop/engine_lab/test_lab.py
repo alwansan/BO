@@ -114,6 +114,15 @@ class LabTests(unittest.TestCase):
         self.assertNotIn('PRIVATE', str(errors))
         self.assertNotIn('recomp_0001', str(errors))
 
+    def test_duplicate_aggregate_keys_rejected_even_if_values_agree(self):
+        lab = self.module()
+        fields = {key: 0 for key in lab.FIELDS}
+        payload = __import__('json').dumps(fields)
+        duplicate = payload[:-1] + ', "mission_ticks": 0}'
+        with self.assertRaisesRegex(ValueError, 'duplicate aggregate field'):
+            lab.parse_aggregate(duplicate)
+        self.assertEqual(lab.parse_aggregate(payload), fields)
+
     def test_truncated_aggregate_cannot_pass(self):
         lab = self.module()
         with self.assertRaises(ValueError):
