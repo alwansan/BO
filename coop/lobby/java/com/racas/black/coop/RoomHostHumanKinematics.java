@@ -8,11 +8,11 @@ import java.util.List;
 /**
  * HOST-ONLY authoritative VALUES for up to three remote human placeholders.
  *
- * Input originates from the authenticated TLS peer socket via RoomTls.Server,
- * never from guest-provided body coordinates. Every update is bound to the
- * exact story token, roster revision, scene epoch and the original BLACK
- * first-person game thread. Host positions start by the original player's
- * genuine actor feet (+0xA0) and integrate bounded, rate-limited input.
+ * Inputs and actual original player feet arrive from authenticated TLS sockets.
+ * Guest source coordinates never become host positions directly: the host
+ * validates story scope, compact player slot, sequence and movement speed.
+ * Host positions begin at the original host's source-verified player feet,
+ * then bounded input is reconciled toward the guests' real original feet.
  *
  * Not a game ENGINE actor, physics/collision, real bot renderer, AI, health,
  * shot/hit authority or mission synchronizer. Real actor creation follows.
@@ -24,7 +24,9 @@ final class RoomHostHumanKinematics {
 
     private static final class Slot {
         int x,y,z,yaw,flags,sequence;
-        long lastInputNs;
+        long lastInputNs,lastSourceNs;
+        int lastSourceSeq;
+        boolean sourceActive;
     }
     private final Slot[] slots=new Slot[5];
     private RoomStoryWire.Ticket ticket;
@@ -94,12 +96,46 @@ final class RoomHostHumanKinematics {
             return false;
         long nx=(long)p.x+vx,nz=(long)p.z+vz;
         if(nx< -MAX_CM||nx>MAX_CM||nz< -MAX_CM||nz>MAX_CM)return false;
-        p.x=(int)nx;p.z=(int)nz;
+        // Once the real guest original feet have arrived, input updates only
+        // intent/buttons; do NOT integrate a second fictional trajectory.
+        if(!p.sourceActive){p.x=(int)nx;p.z=(int)nz;}
         p.yaw=input.yaw;
         // These buttons are value-only; fire/jump must never directly invoke
         // original weapon physics, NPC AI or quest state.
         p.flags=(input.fire?1:0)|(input.jump?2:0);
         p.sequence=input.sequence;p.lastInputNs=nowNs;
+        return true;
+    }
+    /**
+     * Reconcile the original game's guest feet into HOST-owned visual values.
+     * Never copy unbounded guest coordinates into the canonical world:
+     * speed-limit in 3D; no teleport, engine actor or physics write.
+     */
+    boolean reconcileOriginalGuestFeet(RoomStoryWire.Ticket current,int slot,
+          RoomCameraEyeWire.Eye sample,long nowNs){
+        if(!sameOwner()||!seeded||!scope(current)||
+           slot<2||slot>4||!ticket.includes(slot)||sample==null||
+           !sample.matches(ticket)||nowNs<=0)return false;
+        Slot p=slots[slot];
+        if(p==null||sample.sequence<=p.lastSourceSeq||
+           (p.lastSourceNs!=0&&nowNs<=p.lastSourceNs))return false;
+        final long deltaNs=p.lastSourceNs==0?100000000L:
+            Math.min(300000000L,nowNs-p.lastSourceNs);
+        final double maxStep=12.0+600.0*(double)deltaNs/1000000000.0;
+        final long dx=(long)sample.bodyXcm-p.x;
+        final long dy=(long)sample.bodyYcm-p.y;
+        final long dz=(long)sample.bodyZcm-p.z;
+        final double distance=Math.sqrt((double)dx*dx+(double)dy*dy+
+                                        (double)dz*dz);
+        final double ratio=distance>maxStep?maxStep/distance:1.0;
+        final long nx=(long)p.x+Math.round(dx*ratio);
+        final long ny=(long)p.y+Math.round(dy*ratio);
+        final long nz=(long)p.z+Math.round(dz*ratio);
+        if(nx< -MAX_CM||nx>MAX_CM||ny< -MAX_CM||ny>MAX_CM||
+           nz< -MAX_CM||nz>MAX_CM)return false;
+        p.x=(int)nx;p.y=(int)ny;p.z=(int)nz;
+        p.lastSourceSeq=sample.sequence;p.lastSourceNs=nowNs;
+        p.sourceActive=true;
         return true;
     }
     List<RoomWorldSnapshotWire.Avatar> remotePoses(RoomStoryWire.Ticket current)
