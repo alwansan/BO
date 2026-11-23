@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-84-object-events-ordered-host-tls-v9.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-85-native-guest-world-object-inbox.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -2959,5 +2959,30 @@
     "hourlyAgentId": "6b03909067548191a740f2121625a041",
     "hourlyAgentEnabledVerified": true,
     "originalSharedWorldPhoneAcceptance": false
+  },
+  "session85": {
+    "date": "2026-11-23",
+    "branch": "experiment/black-coop",
+    "latestCodeCommit": "e7c3c0e2408a821c97e102d22a510006b078cccd",
+    "originalGuestObjectEventNativeInbox": true,
+    "actualOriginalDoorGuestApplied": false,
+    "originalHostWorldActor2To4": false,
+    "originalHostNpcDamageSynced": false,
+    "authoritativeDoorCollision": false,
+    "allHumanOriginalAI": false,
+    "visibleOriginalHumanBotOnOwnerPhoneVerified": false,
+    "objectWireProfile": 9,
+    "guestNativeObjectInboxCapacity": 64,
+    "sourceGameThreadScope": true,
+    "hostObjectEventsNativeProduced": false,
+    "readOnlyStageMatched": true,
+    "ownerPhoneMajorTrialReady": false,
+    "sourcePreflightRun": 45094353051,
+    "realTlsRun": 45094353077,
+    "android29Run": 45094353079,
+    "roomOnlyApkRun": 45094353098,
+    "ciAtLastCheck": "IN_PROGRESS_NOT_A_PLAYABLE_SHARED_GAME",
+    "originalNpcSameSlotAcrossPhonesIsStableId": false,
+    "ownerRequest": "continue until same host-authoritative original world and 2-4 human physics with synced destructibles and combat, no micro phone trials"
   }
 }
