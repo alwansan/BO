@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-120-authentic-pc-two-players-and-stage-gates.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-121-original-post-frame-and-multiplayer-pad-ports.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3768,6 +3768,24 @@
     "androidOriginalPlayer2Active": false,
     "androidAllRemoteHumansInHostCanonicalOriginalStory": false,
     "androidHostNpcDoorObjectivesAppliedToGuests": false,
+    "userPhoneTestNeededNow": false
+  },
+  "session121OriginalPostFrameAndRemotePadPorts": {
+    "sourceCommitRemoteXboxPortPlan": "406197d975feedb97ce30255e6145f6df6c91122",
+    "sourceCommitOriginalAndroidPost1F1080Frame": "4b4a03a810a12f415e33de8f6b74cd0170c8b4db",
+    "remoteHumanPeerToOriginalXboxPort": {"2": 1,"3": 2,"4": 3},
+    "remotePadSourcePreflightRun": 45242784463,
+    "remotePadSourcePreflightConclusion": "success",
+    "originalPostFrameSourcePreflightRun": 45243553430,
+    "originalPostFrameSourcePreflightConclusion": "success",
+    "originalPostFrameAndroidCompileRun": 45243553282,
+    "originalPostFrameAndroidCompileConclusion": "in_progress",
+    "newOriginalPCSourceAwareRerun": 45239818055,
+    "newOriginalPCSourceAwareRerunStatus": "in_progress",
+    "remoteOriginalInputAppliedToLiveP2P3P4": false,
+    "nativeAndroidOriginalP2P3P4ActorEngineSetupComplete": false,
+    "androidOriginalHostOwnedCoopCampaignVerified": false,
+    "originalGuestNpcDoorObjectiveStateApplied": false,
     "userPhoneTestNeededNow": false
   }
 }
