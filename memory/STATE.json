@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-114-p2-input-source-isolation.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-115-owned-guest-p2-materialization.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3616,6 +3616,23 @@
     "realOriginalAndroidP2Active": false,
     "originalHostCanonicalWorld": false,
     "originalGuestWorldApplication": false,
+    "ownerTrialRequiredNow": false
+  },
+  "session115OwnedGuestP2Materialization": {
+    "codeCommits": ["a7113623abf1dd627dd67c4a08a3c741e584f298", "c31c58aed88cf4c809e163a1bac8bd0c914632ca"],
+    "stage": "opt_in_cpp_native_write_to_five_exact_tracked_guest_P2_allocations",
+    "originalP1MemoryWritePermitted": false,
+    "initializationRequiresOriginalPhase1C": true,
+    "inputModelIsolationRequired": true,
+    "actorCopiedLast": true,
+    "partialWriteQuarantinesCleanup": true,
+    "engineCleanupImplemented": false,
+    "productionCallEnabled": false,
+    "nativeOriginalP2SetupDone": false,
+    "sourcePreflightVerified": false,
+    "physicalProxyAiWeaponReady": false,
+    "originalHostCanonicalWorld": false,
+    "originalGuestCanonicalApply": false,
     "ownerTrialRequiredNow": false
   }
 }
