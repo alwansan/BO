@@ -226,7 +226,8 @@ def private_call(argv, cwd, timeout, env=None, progress=None, diagnostics=None):
         tail = b''
         pending = b''
         markers = {b'XBE loaded:': 'xbe_loaded', b'Starting game...': 'guest_entry_called',
-                   b'BO_ENGINE_PAD_STARTED': 'usb_pad_polled'}
+                   b'BO_ENGINE_PAD_STARTED': 'usb_pad_polled',
+                   b'BO_ENGINE_MENU_TICK': 'frontend_ui_polled'}
         while True:
             chunk = proc.stdout.read(65536)
             if not chunk:
@@ -329,6 +330,8 @@ def execute(bo, pc, out, seconds):
         if report['blocker'] == 'mission_not_reached':
             if not progress.get('guest_entry_called'):
                 report['blocker'] = 'original_boot_incomplete'
+            elif not progress.get('frontend_ui_polled') and not progress.get('usb_pad_polled'):
+                report['blocker'] = 'frontend_and_usb_input_not_polled'
             elif not progress.get('usb_pad_polled'):
                 report['blocker'] = 'usb_input_not_polled'
         report['bounded_run_finished'] = code != -1
