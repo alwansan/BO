@@ -1,3 +1,9 @@
+### Session93 — 2026-11-23 — private engine evidence integrity hardening
+- Code commits e721c588f9aa87b9130f7d3f1f7a4f32511c542a and 8a887bb686a083b69e0e68fc9e5882e83a5d2db2: fail closed on duplicate JSON keys in private original-engine aggregate evidence and add regression for duplicate even when values agree. Previously Python JSON silently accepted the last duplicate value, permitting ambiguous observation provenance. This is harness integrity work, not game actor integration.
+- Existing Session92 confirms original-engine Windows CI reached generation but failed configuration; Ninja/MSVC repair is in branch source. Do not claim subsequent Windows engine build or runtime succeeded without run evidence.
+- Owner's paired device evidence still shows separate original campaign worlds, not a shared host-owned world. Original player2 physical actor, weapon, AI, objects, objectives and guest application remain P0. No minor phone tests and no co-op APK claim. Only experiment/black-coop modified; CL read-only.
+- Next: check private engine lab run status, fix build blockers without disrupting long Android build; implement safe host-owned original player2 lifecycle and actual guest scene consumers.
+
 ### Session92 — 2026-11-23 — real engine lab and original soldier ownership repair
 
 Latest owner explicitly accepts any original enemy/ally soldier appearance. START already loads the same stage on both phones; a shared physical world remains UNIMPLEMENTED. Do not present the current APK as completed co-op or request minor phone probes.
