@@ -46,6 +46,31 @@ public final class RoomHostHumanKinematicsTest {
         ok(host.acceptAuthenticated(first,2,input(first,3,-1000,0,0,false,false),10000000000L));
         two=find(host.remotePoses(first),2);
         ok(originalX-two.xCm<=15); // 50ms upper bound despite long lag
+        // The source-sampled ORIGINAL second player's feet now improve host
+        // pose accuracy, but are bounded and NEVER copied directly.
+        int preSource=find(host.remotePoses(first),2).xCm;
+        RoomCameraEyeWire.Eye realFeet=new RoomCameraEyeWire.Eye(first,1,
+            0,0,0,preSource+600,2000,3000);
+        ok(!host.reconcileOriginalGuestFeet(changed,2,realFeet,10100000000L));
+        ok(!host.reconcileOriginalGuestFeet(first,1,realFeet,10100000000L));
+        ok(!host.reconcileOriginalGuestFeet(first,5,realFeet,10100000000L));
+        ok(host.reconcileOriginalGuestFeet(first,2,realFeet,10100000000L));
+        int reconciled=find(host.remotePoses(first),2).xCm;
+        ok(reconciled>preSource&&reconciled-preSource<=73);
+        ok(!host.reconcileOriginalGuestFeet(first,2,realFeet,10110000000L));
+        ok(!host.reconcileOriginalGuestFeet(first,3,realFeet,10110000000L));
+        ok(host.acceptAuthenticated(first,2,
+            input(first,4,-1000,0,100,false,true),10110000000L));
+        ok(find(host.remotePoses(first),2).xCm==reconciled);
+        ok(find(host.remotePoses(first),2).flags==2);
+        ok(host.reconcileOriginalGuestFeet(first,2,
+            new RoomCameraEyeWire.Eye(first,2,0,0,0,
+                preSource+700,2000,3000),10150000000L));
+        ok(find(host.remotePoses(first),2).xCm>reconciled);
+        // A fresh original source from a different scene is always rejected.
+        ok(!host.reconcileOriginalGuestFeet(first,2,
+            new RoomCameraEyeWire.Eye(changed,3,0,0,0,
+                preSource+50,2000,3000),10200000000L));
         // Observing original host actor again must NOT teleport remote people.
         ok(host.observeHostSourceFeet(first,5000,7000,9000));
         ok(find(host.remotePoses(first),2).xCm==two.xCm);
