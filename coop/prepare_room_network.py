@@ -97,6 +97,9 @@ def prepare(root: pathlib.Path):
     public int[] coopPollHostOriginalNpcWorldFromGameThread() {
         return com.racas.black.coop.RoomAppRooms.pollHostOriginalNpcWorldFromGameThread();
     }
+    public int[] coopPollHostObjectEventFromGameThread() {
+        return com.racas.black.coop.RoomAppRooms.pollHostObjectEventFromGameThread();
+    }
     // Obtain HOST-owned authenticated room roster ordinal slots only.
     // No guest coordinates, no actor pointers and no game scene READY.
     public int coopHostAppearancePeerMaskFromGameThread() {
@@ -195,6 +198,7 @@ def prepare(root: pathlib.Path):
         else if (code == 98) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_AI_TARGET_POOL_TWO_FREE_SLOTS_NO_ACTOR");
         else if (code == 99) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_AI_TARGET_POOL_THREE_OR_MORE_FREE_SLOTS_NO_ACTOR");
         else if (code == 102) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_GUEST_HOST_NPC_VALUES_FIRST_TLS_RECEIVED_NOT_SHARED_AI");
+        else if (code == 103) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_GUEST_HOST_OBJECT_EVENT_INBOX_NOT_NATIVE_DOOR_APPLIED");
         else if (code == 20) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_EASY_NOT_MISSION");
         else if (code == 21) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_NORMAL_NOT_MISSION");
         else if (code == 22) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_HARD_NOT_MISSION");
@@ -295,6 +299,8 @@ def prepare(root: pathlib.Path):
     pending['src/coop/room_original_host_npc_source_witness.hpp'] = (HERE / 'room_network/room_original_host_npc_source_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_guest_host_npc_contract.hpp'] = (HERE / 'room_network/room_original_guest_host_npc_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_guest_host_npc_witness.hpp'] = (HERE / 'room_network/room_original_guest_host_npc_witness.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_guest_host_object_contract.hpp'] = (HERE / 'room_network/room_original_guest_host_object_contract.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_guest_host_object_witness.hpp'] = (HERE / 'room_network/room_original_guest_host_object_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/original_first_stage_auto_menu_contract.hpp'] = (HERE / 'room_network/original_first_stage_auto_menu_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_first_stage_auto_menu_witness.hpp'] = (HERE / 'room_network/room_original_first_stage_auto_menu_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_streaming_stage_contract.hpp'] = (HERE / 'room_network/room_original_streaming_stage_contract.hpp').read_text(encoding='utf-8')

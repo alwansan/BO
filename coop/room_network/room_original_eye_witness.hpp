@@ -20,6 +20,7 @@
 #include "coop/room_original_ai_target_witness.hpp"
 #include "coop/room_original_host_npc_source_witness.hpp"
 #include "coop/room_original_guest_host_npc_witness.hpp"
+#include "coop/room_original_guest_host_object_witness.hpp"
 #include "game/layout.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_system.h>
@@ -203,6 +204,11 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
         PublishOriginalHostNpcValues(env,activity,cls,coreEpisode,
             originalLocalSceneRunning&&lookSourceMatched&&peerMask!=0);
         PollHostNpcValuesOnOriginalGuestThread(env,activity,cls,
+            originalLocalSceneRunning&&lookSourceMatched);
+        // Immutable host-world change events enter a bounded ORIGINAL
+        // guest game-thread inbox. Applying them requires a future proven
+        // native stable-object identity lookup; NEVER write objects here.
+        PollHostObjectEventsOnOriginalGuestThread(env,activity,cls,
             originalLocalSceneRunning&&lookSourceMatched);
         env->DeleteLocalRef(cls);
     }else if(env->ExceptionCheck())env->ExceptionClear();

@@ -286,6 +286,16 @@ public final class RoomAppRooms {
   }
   return answer;
  }
+ /**
+  * One HOST-only event to verified ORIGINAL guest game thread.
+  * Source values only; no game memory, bot AI, or object mutation.
+  */
+ public static int[] pollHostObjectEventFromGameThread(){
+  RoomSession s;
+  synchronized(RoomAppRooms.class){s=active;}
+  return s==null?new int[]{-1}:
+      s.pollOriginalHostObjectEventFrameFromGameThread();
+ }
  // Source-only native gamepad -> authenticated GUEST TLS inputs.
  // Exact COMMITTED ticket scope resets the per-story sequence.
  // Not a loaded scene, NPC input, remote actor controller or physics.

@@ -737,6 +737,33 @@ public final class RoomSession implements AutoCloseable {
             return client.pollHostObjectEvent();
         }
     }
+    /**
+     * JNI-friendly source-scoped object-event transfer onto ORIGINAL GUEST
+     * BLACK game thread. [-1] means ABORT/uncommitted/wrong source thread;
+     * [0] means committed but no event currently queued.
+     * A ten-int frame contains only host-owned immutable value fields.
+     */
+    public int[] pollOriginalHostObjectEventFrameFromGameThread(){
+        synchronized(lock){
+            if(closed||!validStoryThread()||phase!=Phase.JOINED||
+               client==null||!client.isRunning()||!client.storyCommitted()||
+               originalRunningReadyTicket==null||lastSourceStage==null)
+                return new int[]{-1};
+            RoomStoryWire.Ticket ticket=client.storyTicket();
+            if(ticket==null||!ticket.same(originalRunningReadyTicket)||
+               ticket.mission!=lastSourceStage.level||
+               ticket.stage!=lastSourceStage.stage||
+               System.nanoTime()-lastSourceStageAtNs>3000000000L)
+                return new int[]{-1};
+            RoomObjectEventWire.Event evt=client.pollHostObjectEvent();
+            if(evt==null)return new int[]{0};
+            if(!evt.matches(ticket))return new int[]{-1};
+            return new int[]{evt.sceneEpoch,(int)evt.rosterRevision,
+                (int)(evt.token>>>32),(int)evt.token,
+                evt.sequence,evt.tick,(int)(evt.objectKey>>>32),
+                (int)evt.objectKey,evt.kind,evt.state};
+        }
+    }
     /** Host scene unload/cancel invalidates its prepared ticket. */
     public boolean cancelStoryFromGameThread(){
         synchronized(lock){
