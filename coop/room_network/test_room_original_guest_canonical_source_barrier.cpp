@@ -59,5 +59,24 @@ int main(){
  assert(gate.Observe(newer,0x200000,world,npc,1408));
  const int32_t zero[]={0,0,0};assert(npc.Ingest(zero,3,1409));
  assert(!gate.Observe(newer,0x200000,world,npc,1409));
+ // After expiry require three NEW host updates, not a single fresh packet.
+ OriginalGuestHostWorldInbox lateWorld;OriginalGuestHostNpcInbox lateNpc;
+ OriginalGuestCanonicalSourceBarrier lateGate;
+ int32_t lateAvatars[]={23,30,3,3,1,100,200,300,0,0,2,120,200,300,0,0,3,130,200,300,0,0};
+ int32_t lateEnemies[]={23,30,1,0,100,200,300,1000,0};
+ assert(lateWorld.Ingest(lateAvatars,22,2000)&&lateNpc.Ingest(lateEnemies,9,2000));
+ assert(!lateGate.Observe(key,0x100000,lateWorld,lateNpc,2001));
+ lateAvatars[1]=31;assert(lateWorld.Ingest(lateAvatars,22,2002));
+ assert(!lateGate.Observe(key,0x100000,lateWorld,lateNpc,2003));
+ lateAvatars[1]=32;assert(lateWorld.Ingest(lateAvatars,22,2004));
+ assert(lateGate.Observe(key,0x100000,lateWorld,lateNpc,2005));
+ assert(!lateGate.SourceCoherent(2106));
+ lateAvatars[1]=33;assert(lateWorld.Ingest(lateAvatars,22,2107));
+ assert(!lateGate.Observe(key,0x100000,lateWorld,lateNpc,2108));
+ lateAvatars[1]=34;assert(lateWorld.Ingest(lateAvatars,22,2109));
+ assert(!lateGate.Observe(key,0x100000,lateWorld,lateNpc,2110));
+ lateAvatars[1]=35;assert(lateWorld.Ingest(lateAvatars,22,2111));
+ assert(lateGate.Observe(key,0x100000,lateWorld,lateNpc,2112));
+ assert(lateGate.SourceCoherent(2112));
  std::cout<<"ORIGINAL_GUEST_HOST_NPC_AVATAR_BARRIER_PASS_NO_ENGINE_APPLY\n";
 }

@@ -54,6 +54,8 @@ public:
   if(players.Tick()<worldTick_||npcs.Tick()<npcTick_){
    stable_=0;lastObservedAt_=0;return false;
   }
+  // Expired quorum cannot be revived by one fresh packet after a long gap.
+  if(lastObservedAt_ && (now<lastObservedAt_ || now-lastObservedAt_>100u))stable_=0;
   // Three confirmations require three distinct authenticated host frames,
   // not three render callbacks replaying the same packet pair.
   const bool advanced=players.Tick()>worldTick_||npcs.Tick()>npcTick_;

@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-24_bo-coop-129-source-replay-freshness-ci.md",
+  "lastSession": "memory/sessions/2026-11-24_bo-coop-130-expired-quorum-reset.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3947,5 +3947,14 @@
     "androidLobbyArtifact": 14863104326,
     "udpRun": 45266674179,
     "verification": "pending_new_ci"
+  },
+  "latestSourceHardening": {
+    "session": 130,
+    "sourceRun": 45276818053,
+    "parallelRun": 45276818179,
+    "udpRun": 45276818177,
+    "androidRun": 45276818213,
+    "androidGameplayVerified": false,
+    "fix": "Reset expired canonical host quorum before accepting new frames"
   }
 }
