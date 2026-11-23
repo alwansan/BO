@@ -1,3 +1,9 @@
+#### Session108 Android native source bridge — 2026-11-23
+
+- Actual isolated Android source transformation now stages original host player storage/kernel and physics proxy/ledger headers and compile-only includes them in `src/game/cheats.cpp`: commit [10e546bf](https://github.com/alwansan/BO/commit/10e546bf2b978b00d086ed7554c71081624dc023). Source preflight [45205630356](https://github.com/alwansan/BO/actions/runs/45205630356) SUCCESS, full native Android candidate-probe [45205630319](https://github.com/alwansan/BO/actions/runs/45205630319) IN_PROGRESS at last check. No original actor2 setup, physics/AI insertion, networking gameplay or shared world can be claimed.
+- Android uses TGP482/XboxXBERecomp SDK, private Windows lab uses portingpete/xboxrecomp: do not infer identical original runtime from matching kernel API. Original Dashboard ERROR detailed lab 45202073768 in progress. Next after proof: fix boot, bind genuine actor lifecycle and native original host authority for P2–4, then guest world apply and one substantive multi-phone test.
+- See docs/ORIGINAL_ACTOR_ALLOCATION_PROVENANCE_AR.md and memory/sessions/2026-11-23_bo-coop-108-original-actor-provenance.md. Preserve protected main/CL/biso/original game inputs and auto-update handoff.
+
 ### Session108 — 2026-11-23 — tracked original actor allocation gate
 
 - [2910ab90](https://github.com/alwansan/BO/commit/2910ab90004b40749008ca8d82daa7787d3935e4): original physics proxy actor now requires `io.OwnsActor(actor,0x900)`; base kernel IO never trusts committed pages, storage-owning kernel IO checks its tracked guest allocation, and native tests reject fake actor and lost ownership. [Source sanitizer CI 45204058892](https://github.com/alwansan/BO/actions/runs/45204058892) SUCCESS. Does NOT create actor2 in actual game.
