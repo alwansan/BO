@@ -53,6 +53,32 @@ def parse_aggregate(text):
     return data
 
 
+def original_p1_actor_context_restored(data):
+    """The engine owns P1's core+0x30 spatial-list node (+0x20..+0x57).
+
+    Pinned MIT PC black_p2_find_links/black_p2_swap do NOT exchange that
+    world-owned node. Only its opaque +0x20..+0x2F head is observed to change
+    in real PC run 45233723518. Any actor bytes outside the node, any node
+    cell/neighbor link, any original owner/core swap or inconsistent count
+    MUST fail original P1 context restoration. The legacy whole-actor
+    memcmp counters remain in the output for independent auditing.
+    """
+    count = data.get('restored_immutable_ticks', 0)
+    grid = data.get('restore_grid_only_ticks', 0)
+    exact = data.get('restored_ticks', 0)
+    return (count >= 720 and
+            exact + grid == count and
+            data.get('restore_failures', 0) == grid and
+            data.get('restore_actor_grid_failures', 0) == grid and
+            data.get('restore_grid_node_failures', 0) == grid and
+            data.get('grid_region_head_ticks', 0) == grid and
+            all(data.get(k, 0) == 0 for k in (
+                'restore_scope_failures', 'restore_grid_other_failures',
+                'restore_actor_motion_failures', 'restore_actor_weapon_failures',
+                'restore_actor_model_failures', 'restore_actor_tail_failures',
+                'grid_region_cell_ticks', 'grid_region_links_ticks')))
+
+
 def evaluate(data):
     """This evaluates observations; no unit test or join log is engine evidence."""
     checks = [
@@ -63,7 +89,7 @@ def evaluate(data):
         ('physical_proxy_identity_unproven', data.get('distinct_proxy_ticks', 0) >= 720 and data.get('proxy_failures', 0) == 0),
         ('weapon_identity_unproven', data.get('distinct_weapon_ticks', 0) >= 720),
         ('physical_motion_unproven', data.get('p1_body_move_mm', 0) >= 100 and data.get('p2_body_move_mm', 0) >= 100),
-        ('p1_context_not_restored', data.get('restored_ticks', 0) >= 720 and data.get('restore_failures', 0) == 0),
+        ('p1_context_not_restored', original_p1_actor_context_restored(data)),
         ('mission_epoch_changed', data.get('epoch_changes', 0) == 0),
         ('invalid_observation', data.get('invalid_samples', 0) == 0),
         ('p1_input_not_delivered', data.get('input0_move_reports', 0) >= 10 and data.get('input0_fire_reports', 0) >= 10),

@@ -78,6 +78,64 @@ class LabTests(unittest.TestCase):
         self.assertIn('p2_not_ready',observed['failed_checks'])
         self.assertIn('p1_context_not_restored',observed['failed_checks'])
 
+    def test_original_pc_20261123_world_owned_grid_node_is_not_p1_corruption(self):
+        lab = self.module()
+        # Allowlisted numeric-only aggregate emitted by *real* private
+        # Windows original engine run 45233723518, NOT a synthetic claim
+        # that real two-phone co-op or 4-player Android is operational.
+        observed = dict(
+            mission_ticks=1221, p2_ready_ticks=768, phases_completed=8,
+            distinct_actor_ticks=1216, distinct_proxy_ticks=768,
+            distinct_weapon_ticks=768, p1_body_move_mm=4527,
+            p2_body_move_mm=6363, p1_move_mm=4527, p2_move_mm=6363,
+            p1_shots=10, p2_shots=10,
+            input0_move_reports=1995, input1_move_reports=1882,
+            input0_fire_reports=1732, input1_fire_reports=1727,
+            restored_ticks=0, restored_immutable_ticks=1215,
+            restore_failures=1215, restore_actor_grid_failures=1215,
+            restore_grid_node_failures=1215, restore_grid_only_ticks=1215,
+            grid_region_head_ticks=1215, grid_region_cell_ticks=0,
+            grid_region_links_ticks=0, restore_scope_failures=0,
+            restore_grid_other_failures=0, restore_actor_motion_failures=0,
+            restore_actor_weapon_failures=0, restore_actor_model_failures=0,
+            restore_actor_tail_failures=0,
+        )
+        result=lab.evaluate(observed)
+        self.assertTrue(result['passed'], result['failed_checks'])
+        self.assertEqual(result['blocker'], 'none')
+        # Still *not* a full-array byte match; preserve the old diagnostic.
+        self.assertGreater(observed['restore_failures'], 0)
+        self.assertEqual(observed['restored_ticks'], 0)
+        self.assertTrue(lab.original_p1_actor_context_restored(observed))
+        # No one is allowed to turn a corrupt original list, player weapon,
+        # P1 motion, model or scene owner into a successful mission.
+        for name in (
+            'restore_scope_failures','restore_grid_other_failures',
+            'restore_actor_motion_failures','restore_actor_weapon_failures',
+            'restore_actor_model_failures','restore_actor_tail_failures',
+            'grid_region_cell_ticks','grid_region_links_ticks',
+        ):
+            corrupt = dict(observed)
+            corrupt[name] = 1
+            self.assertFalse(lab.evaluate(corrupt)['passed'], name)
+            self.assertIn('p1_context_not_restored',
+                          lab.evaluate(corrupt)['failed_checks'], name)
+        for name in ('restore_actor_grid_failures',
+                     'restore_grid_node_failures','grid_region_head_ticks',
+                     'restored_immutable_ticks','restore_grid_only_ticks',
+                     'restore_failures'):
+            corrupt = dict(observed)
+            corrupt[name] -= 1
+            self.assertFalse(lab.original_p1_actor_context_restored(corrupt),
+                             name)
+        corrupt=dict(observed)
+        corrupt['p2_ready_ticks']=0
+        self.assertIn('p2_not_ready',lab.evaluate(corrupt)['failed_checks'])
+        corrupt=dict(observed)
+        corrupt['p2_shots']=0
+        self.assertIn('p2_original_weapon_effect_unproven',
+                      lab.evaluate(corrupt)['failed_checks'])
+
     def test_aggregate_parser_rejects_extra_fields(self):
         lab = self.module()
         with self.assertRaises(ValueError):
@@ -98,7 +156,8 @@ class LabTests(unittest.TestCase):
         lab = self.module()
         complete = dict(mission_ticks=1000, p2_ready_ticks=900, phases_completed=8,
             distinct_actor_ticks=900, distinct_proxy_ticks=900, distinct_weapon_ticks=900,
-            restored_ticks=900, p1_move_mm=1000, p2_move_mm=1000,
+            restored_ticks=900, restored_immutable_ticks=900,
+            p1_move_mm=1000, p2_move_mm=1000,
             p1_body_move_mm=1000, p2_body_move_mm=1000, p1_shots=2, p2_shots=2,
             input0_move_reports=100, input1_move_reports=100,
             input0_fire_reports=100, input1_fire_reports=100)

@@ -89,5 +89,13 @@ int main(void) {
     InterlockedExchange(&bo_lab_phase,3);
     assert(bo_lab_pad_report(1,report)==1 && report[13]==0x80);
     assert(bo_lab_moves[1]==1 && bo_lab_fires[1]==0);
+    /* The legitimate original world-grid node head can change without any
+     * P1 actor context or neighbor link corruption. Count it separately. */
+    const unsigned before_head = bo_lab.grid_region_head_ticks;
+    const unsigned before_grid_only = bo_lab.restore_grid_only_ticks;
+    bo_lab_before(); GUEST8(0x1030+0x20u)^=1u; bo_lab_after();
+    assert(bo_lab.grid_region_head_ticks == before_head+1u);
+    assert(bo_lab.restore_grid_only_ticks == before_grid_only+1u);
+    assert(bo_lab.grid_region_cell_ticks == 0u);
     return 0;
 }
