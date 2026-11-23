@@ -1,3 +1,8 @@
+### Session119 source verification result — 2026-11-23
+
+- [Current source preflight 45236523923](https://github.com/alwansan/BO/actions/runs/45236523923) SUCCESS after the extra neighboring-list identity witnesses were added (strict compiler, ASan/UBSan fixture, pinned original Android SDK header smoke, Java source checks). [UDP 45236523873](https://github.com/alwansan/BO/actions/runs/45236523873) SUCCESS.
+- New Android [45236523964](https://github.com/alwansan/BO/actions/runs/45236523964) was still building, not a gameplay result. Real PC [45233723518](https://github.com/alwansan/BO/actions/runs/45233723518) still executing authentic 1200-second bounded engine mission at last check. No verified real Android original P2 actor, no authoritative host-owned shared story in original guests yet.
+
 ### Session119 — 2026-11-23 — original P1 world-grid linked-actor exchange PREVIEW (read-only)
 
 - The pinned MIT PC source `portingpete/Black-2006-Recomp@b2512fafd3/src/recomp_manual.c`, `black_p2_find_links` and `black_p2_swap`, proves the core+0x30 original actor grid node words actor + `0x20..0x57` MUST **not be exchanged** into a second player: the world owns their list linkage. Additional actor words whose external list neighbors point back to themselves or the prior adjacent word are also protected dynamically. The full 0x900 actor is **not a simple shallow-copy context swap**.

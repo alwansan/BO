@@ -3716,7 +3716,7 @@
     "sourcePreflightPreviousRun": 45236281197,
     "sourcePreflightPreviousPassed": true,
     "sourcePreflightCurrentRun": 45236523923,
-    "sourcePreflightCurrentResult": "pending",
+    "sourcePreflightCurrentResult": "success_native_asan_ubsan_pinned_sdk",
     "androidCurrentRun": 45236523964,
     "androidCurrentStatus": "pending_compile_only",
     "udpCurrentRun": 45236523873,
