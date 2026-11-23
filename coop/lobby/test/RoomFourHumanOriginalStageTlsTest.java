@@ -115,7 +115,7 @@ public final class RoomFourHumanOriginalStageTlsTest {
             // NOW source-based host first-person body feet seeds three
             // independent value-only proxies, not original game actors.
             ok(host.observeOriginalEyeFromGameThread(
-                1200,1400,1700,10000,12000,14000));
+                1200,1400,1700,10000,12000,14000,4500));
             until(()->{
                 for(RoomSession g:guests){
                     RoomWorldSnapshotWire.Snapshot w=g.readHostWorldFromGameThread();
@@ -150,7 +150,7 @@ public final class RoomFourHumanOriginalStageTlsTest {
             });
             ok(inputSlots.containsAll(Arrays.asList(2,3,4)));
             ok(host.observeOriginalEyeFromGameThread(
-                1200,1400,1700,10000,12000,14000));
+                1200,1400,1700,10000,12000,14000,4500));
             until(()->{
                 for(RoomSession g:guests){
                     RoomWorldSnapshotWire.Snapshot w=g.readHostWorldFromGameThread();
@@ -179,10 +179,10 @@ public final class RoomFourHumanOriginalStageTlsTest {
             int oldSecondX=second.readHostWorldFromGameThread()
                 .avatars.get(actualSlots[0]-1).xCm;
             ok(second.observeOriginalEyeFromGameThread(
-                0,2000,0,oldSecondX+500,12000,14000));
+                0,2000,0,oldSecondX+500,12000,14000,-3200));
             until(()->{
                 host.observeOriginalEyeFromGameThread(
-                    1200,1400,1700,10000,12000,14000);
+                    1200,1400,1700,10000,12000,14000,4500);
                 RoomWorldSnapshotWire.Snapshot canonical=
                     second.readHostWorldFromGameThread();
                 return canonical!=null&&canonical.avatars.size()==4&&

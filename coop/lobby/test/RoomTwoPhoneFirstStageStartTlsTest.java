@@ -94,8 +94,9 @@ public final class RoomTwoPhoneFirstStageStartTlsTest {
                 (int)(t.token>>>32),(int)t.token,2)==2);
             until(()->host.storyStatus().committed&&guest.storyStatus().committed);
             ok(host.observeOriginalEyeFromGameThread(
-                1300,1400,1500,9000,14000,11000));
+                1300,1400,1500,9000,14000,11000,-7500));
             until(()->guest.readHostWorldFromGameThread()!=null);
+            ok(guest.readHostWorldFromGameThread().avatars.get(0).yawCentiDeg==-7500);
             int[] hostOther=host.otherHumanBodySourceFromGameThread();
             int[] guestOther=guest.otherHumanBodySourceFromGameThread();
             ok(hostOther.length==10&&hostOther[0]==t.sceneEpoch&&
