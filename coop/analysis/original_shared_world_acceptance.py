@@ -62,8 +62,8 @@ def _committed_contracts(text, commit_name, required):
 
 def evaluate(host_text, guest_text):
     host_committed, host = _committed_contracts(host_text, HOST_COMMIT, REQUIRED_HOST)
-    guest_commit = GUEST_COMMIT if GUEST_COMMIT in events_from_text(guest_text) else HOST_COMMIT
-    guest_committed, guest = _committed_contracts(guest_text, guest_commit, REQUIRED_GUEST)
+    # A guest must acknowledge its own scene commit; the host commit is not a substitute.
+    guest_committed, guest = _committed_contracts(guest_text, GUEST_COMMIT, REQUIRED_GUEST)
     missing_host = sorted(REQUIRED_HOST - host)
     missing_guest = sorted(REQUIRED_GUEST - guest)
     commits = host_committed and guest_committed
