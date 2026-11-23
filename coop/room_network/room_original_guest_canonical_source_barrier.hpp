@@ -54,11 +54,14 @@ public:
   if(players.Tick()<worldTick_||npcs.Tick()<npcTick_){
    stable_=0;lastObservedAt_=0;return false;
   }
+  // Three confirmations require three distinct authenticated host frames,
+  // not three render callbacks replaying the same packet pair.
+  const bool advanced=players.Tick()>worldTick_||npcs.Tick()>npcTick_;
   epoch_=key.sceneEpoch;revision_=key.rosterRevision;
   token_=token;originalScene_=nativeScene;
   worldTick_=players.Tick();npcTick_=npcs.Tick();
   lastObservedAt_=now;
-  if(stable_<3u)++stable_;
+  if(advanced&&stable_<3u)++stable_;
   return stable_>=3u;
  }
  // A previous accepted source cannot grant eternal readiness when game
