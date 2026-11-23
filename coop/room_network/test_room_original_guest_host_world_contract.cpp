@@ -50,6 +50,9 @@ int main(){
     assert(guest.Ingest(next,22,1400));
     assert(guest.Scene()==18);
     assert(guest.ReadRemote(2,1400,remote));
+    assert(guest.HasPlayer(3,1400)&&guest.Self()==3&&guest.Tick()==1);
+    assert(!guest.Ingest(valid,22,1401)); // old scene 17 cannot rewind 18
+    assert(guest.Scene()==18);
     assert(!guest.Ingest(&invalid,1,1500));
     assert(!guest.Ingest(valid,22,0));
     assert(!guest.Ingest(clear,4,1500));

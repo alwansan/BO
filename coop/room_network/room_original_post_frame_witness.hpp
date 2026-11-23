@@ -3,6 +3,11 @@
 // 2-player runtime). A fixed diagnostic event only; never guest writes.
 #pragma once
 #include "coop/room_original_post_frame_contract.hpp"
+#include "coop/room_original_host_multi_actor_lanes.hpp"
+#include "coop/room_original_guest_canonical_source_barrier.hpp"
+#include "coop/room_original_guest_host_world_witness.hpp"
+#include "coop/room_original_guest_host_npc_witness.hpp"
+#include "coop/room_original_guest_launch_match_witness.hpp"
 #include "coop/room_original_bot_pool_witness.hpp"
 #include "coop/room_world_tick.hpp"
 #include "kernel/kernel.h"
@@ -10,6 +15,11 @@
 namespace blackcoop {
 inline void ObserveOriginalPostWorldFrame()noexcept{
  static OriginalPostFrameGate gate;
+ // Three native host-player lanes and guest canonical source are kept
+ // separately on the genuine original game thread. Never synthesize engine
+ // actor readiness or apply host NPC/door events from transport alone.
+ static OriginalHostHumanLanes humanLanes;
+ static OriginalGuestCanonicalSourceBarrier guestBarrier;
  constexpr uint32_t worldAt=0x002D45D4u,ownerAt=0x002D12B8u;
  constexpr uint32_t physicsAt=0x002D45F4u,npcAt=0x002D1980u;
  if(!OriginalGuestSpanCommitted(worldAt,4u)||
@@ -32,5 +42,15 @@ inline void ObserveOriginalPostWorldFrame()noexcept{
  s.localVtable=kernel::R32(s.world+0x30u); // exact ORIGINAL P1 identity
  if(gate.Observe(s,true))
   SendSafeWorldCodeToAndroid(2130); // candidate, NOT P2 ready
+ (void)humanLanes.Progress(2);(void)humanLanes.Progress(3);
+ (void)humanLanes.Progress(4); // never marks a lane ready
+ OriginalGuestLaunchMatchKey signedMatch{};
+ if(gate.StableOriginalFrames()>=30u&&
+    GuestOriginalLaunchMatch().ReadMatchedKey(signedMatch)){
+  const uint64_t nativeScene=(uint64_t(signedMatch.originalEpisode)<<32)|s.world;
+  (void)guestBarrier.Observe(signedMatch,nativeScene,
+     OriginalGuestHostWorld(),GuestOriginalHostNpcs(),
+     static_cast<uint64_t>(SDL_GetTicks()));
+ }else guestBarrier.Reset();
 }
 } // namespace blackcoop

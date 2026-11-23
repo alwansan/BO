@@ -17,6 +17,9 @@ int main(){
  f[1]=4;f[9]=0;assert(!s.Ingest(f,sizeof(f)/4,1400)); // unsorted
  f[9]=15;f[14]=2;assert(!s.Ingest(f,sizeof(f)/4,1400)); // invalid dead
  f[14]=1;assert(s.Ingest(f,sizeof(f)/4,1400));
+ const int32_t older[]={6,100,1,15,0,0,0,9000,0};
+ assert(!s.Ingest(older,9,1401)&&s.Epoch()==7);
+ assert(s.Fresh(1401));
  bool accepted=true;std::thread t([&]{accepted=s.Ingest(f,sizeof(f)/4,1410);});
  t.join();assert(!accepted);
  int32_t tombstone[]={0,0,0};

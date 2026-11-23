@@ -125,6 +125,18 @@ jobs:
           set -euo pipefail
           g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread -fsanitize=address,undefined bo/coop/room_network/test_room_original_host_pad_port_bridge.cpp -o "$RUNNER_TEMP/test_native_remote_pad_bridge"
           "$RUNNER_TEMP/test_native_remote_pad_bridge"
+      - name: Parallel ORIGINAL host P2 P3 P4 lifecycle lanes (C++ ASan/UBSan)
+        shell: bash
+        run: |
+          set -euo pipefail
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread -fsanitize=address,undefined bo/coop/room_network/test_room_original_host_multi_actor_lanes.cpp -o "$RUNNER_TEMP/test_original_multi_lanes"
+          "$RUNNER_TEMP/test_original_multi_lanes"
+      - name: Canonical original guest NPC avatar host world barrier (C++ ASan/UBSan)
+        shell: bash
+        run: |
+          set -euo pipefail
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread -fsanitize=address,undefined bo/coop/room_network/test_room_original_guest_canonical_source_barrier.cpp -o "$RUNNER_TEMP/test_guest_host_story_barrier"
+          "$RUNNER_TEMP/test_guest_host_story_barrier"
       - name: Native original first-person camera eye quantization guards
         shell: bash
         run: |

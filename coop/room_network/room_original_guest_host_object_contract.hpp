@@ -60,6 +60,12 @@ public:
      (data[8]==1&&data[9]!=1))return false;
   const uint32_t seq=static_cast<uint32_t>(data[4]);
   const uint32_t tick=static_cast<uint32_t>(data[5]);
+  // Older authenticated stories/revisions must never displace a newer
+  // canonical guest object queue; token switches require an explicit reset.
+  if(scoped_&&(matched.sceneEpoch<epoch_||
+      (matched.sceneEpoch==epoch_&&matched.rosterRevision<revision_)||
+      (matched.sceneEpoch==epoch_&&matched.rosterRevision==revision_&&
+       token!=token_)))return false;
   bool sameScope=scoped_&&
       epoch_==matched.sceneEpoch&&revision_==matched.rosterRevision&&
       token_==token;

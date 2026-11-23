@@ -33,6 +33,7 @@ public:
         const int32_t epoch=data[0],tick=data[1],self=data[2],count=data[3];
         if(epoch<=0||tick<=0||self<2||self>4||count<2||count>4||
            n!=4u+static_cast<size_t>(count)*6u||!nowMs)return false;
+        if(scene_&&static_cast<uint32_t>(epoch)<scene_)return false;
         std::array<OriginalHostAvatar,5> incoming{};
         int prev=0;
         bool hasSelf=false;
@@ -76,5 +77,14 @@ public:
         actors_={};scene_=tick_=self_=0;lastAt_=0;return true;
     }
     uint32_t Scene()const noexcept{return onOwner()?scene_:0;}
+    uint32_t Self()const noexcept{return onOwner()?self_:0;}
+    uint32_t Tick()const noexcept{return onOwner()?tick_:0;}
+    bool Fresh(uint64_t now)const noexcept{
+        return onOwner()&&bound_&&scene_&&tick_&&lastAt_&&
+          now>=lastAt_&&now-lastAt_<=kFreshMs;
+    }
+    bool HasPlayer(uint8_t id,uint64_t now)const noexcept{
+        return Fresh(now)&&id>=1&&id<=4&&actors_[id].id==id;
+    }
 };
 } // namespace blackcoop

@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-123-native-xbox-pad-bridge-pc-pass.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-124-parallel-actors-p2p4-original-guest-world.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3820,5 +3820,32 @@
     "originalAndroidP2P4ActorsReady": false,
     "originalHostCanonicalNpcDoorsObjectivesApplied": false,
     "userPhoneMicrotests": false
+  },
+  "session124ParallelOriginalPlayersAndHostWorld": {
+    "status": "parallel_tracks_source_integration_no_original_android_actor_setup_or_shared_guest_engine_yet",
+    "baseCommit": "636af127772ec6f167b151dc369a81ae037e1ab0",
+    "tracks": {
+      "hostP2": {
+        "phase": "native_guest_owned_lifecycle_contract_only",
+        "source": "coop/room_network/room_original_host_multi_actor_lanes.hpp",
+        "originalEngineSetupComplete": false
+      },
+      "hostP3P4": {
+        "phase": "three_concurrent_native_lanes_with_disjoint_ownership",
+        "nativeActorCreated": false
+      },
+      "canonicalHostGuestWorld": {
+        "phase": "signed_scene_human_npc_consistency_barrier",
+        "npcDoorQuestGuestEngineApplied": false
+      }
+    },
+    "tests": [
+      "native_source_C++_ASAN_UBSAN",
+      "source_staging_strict_allowlist",
+      "Android_native_candidate"
+    ],
+    "originalPcTwoPlayerVerifiedRun": 45239818055,
+    "ownerPhoneTrialNow": false,
+    "restrictedBranch": "experiment/black-coop"
   }
 }

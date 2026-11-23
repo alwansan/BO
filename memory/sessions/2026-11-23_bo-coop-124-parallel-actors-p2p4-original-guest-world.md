@@ -1,0 +1,21 @@
+# Session124 — original BLACK simultaneous P2–P4 host actor and guest canonical world work
+
+### Session124 (2026-11-23): PARALLEL P2/P3/P4 original host actor lifecycle + canonical guest world safety
+
+- Owner explicitly requested **simultaneous** work on original host P2 native actor, expansion to P3/P4 and independently authoritative original host NPC/door/mission guest world; do not artificially serialize these tracks. This commit advances all lanes together, while engine mutations remain fail-closed until sourced ABI + safe teardown exist.
+- **Host engine actor lane (P2/P3/P4):** `room_original_host_multi_actor_lanes.hpp` keeps 3 per-player native-original-scene lifecycle records with independently owned actor, camera/owner, input, weapons, model, physics proxy, AI target, animation, audio and visible soldier body. Rejects shared/aliased pointers, old frames, skipped stages, wrong original scene/roster, cross-thread update and rebind with resources; permanent quarantine until independently verified original engine teardown. The source does NOT call `sub_001E0E40` or allocate game objects. Real Android 3-player actor factory/setup/cleanup remains missing. Source runs inside actual post-`sub_001F1080` hook only as passive game-thread lane observation.
+- **Guest single host world (parallel):** `room_original_guest_canonical_source_barrier.hpp` correlates authentic signed original launched stage/scene, host-human roster and host NPC snapshots with strict epoch/TTL and original native scene identity, without conflating receiving values with **applying** original NPC, doors and mission. Hardens guest avatar/NPC inbox against old epoch replay, and host-object FIFO against old epoch, revision or token rollback. Existing guest JNI inboxes remain untouched. Source barrier is passively invoked on original Android post-frame thread, cannot mark real guest engine applied.
+- **Validation**: added ASan/UBSan C++ tests for P2/P3/P4 independent phases, unsafe rebinding, source scope, actor readiness never inferred from room alone, guest human/NPC original story barrier, old epoch/revision/token replay; new source staging and strict Android packaged file allowlist. Continue verification via GitHub Actions, no phone microtest.
+- **Current known verified predecessor**: Session123 source preflight 45249323974 SUCCESS, UDP 45249324041 SUCCESS; Session123 Android 45249324001 was still building at last check. Real original **PC** two-player lab 45239818055 SUCCESS with exact original mission P1/P2 motion, fire, physics+weapon and new P1 restore evaluator; no actual Android original co-op or 3/4 humans. Do not conflate simulations, preflight, compile and phone gameplay.
+- P0 IN PARALLEL next: original Android independent native guest P2/P3/P4 actor creation+multi-frame `sub_001E0E40` setup, correct P1/world-grid dynamic link and camera+viewmodel/sound/animation+weapon/FX context swap, per-player DF400 proxy/AI, independently proven teardown; engine apply of authenticated host-owned NPC/doors/objectives to original guest scenes; then activate TLS Xbox ports 1/2/3 and one substantial 2–4 phone story test. Preserve `experiment/black-coop` only, main/CL/biso, raw XBE/ISO/saves/logs unchanged.
+
+
+## Independent engineering workstreams (same session)
+
+A. Native actor ownership: independently tracked P2, P3, P4 allocation provenance; original game setup and cleanup are P0 blocking future actual engine writes. No shallow borrowed P1 world-node writes.
+
+B. Camera/combat/physics/body: independent input (already source-wired native Xbox port1..3), camera/weapon/animation/audio and AI/physics/body obligations are explicit in each lane. Original scene identity, signed scene epoch, per-lane native frame, pointer uniqueness and cleanup ownership all required. Actual engine setup is not represented by this typed proof alone.
+
+C. Host canonical guest story: reject stale host NPC/avatar/object epochs, correlate signed host guest original launch to genuine original world and fresh snapshots. No original AI/quest/door guest update until independently source-verified scene native object-ID mapping and reversible apply.
+
+D. CI: source tests + ASan/UBSan, Android source staging and full candidate; do not claim results before runs conclude. No raw binaries, saves, private logs or disconnected phone microtests.

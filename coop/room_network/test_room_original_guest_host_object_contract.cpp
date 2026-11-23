@@ -38,6 +38,10 @@ int main(){
  msg[0]=8;msg[3]=10;msg[4]=1;msg[5]=1;msg[6]=0;msg[7]=555;msg[8]=1;msg[9]=1;
  assert(inbox.Ingest(msg,10,key));
  auto old=key;old.sceneEpoch=7;assert(!inbox.Ingest(msg,10,old));
+ auto rollback=key;rollback.sceneEpoch=7;rollback.tokenLo=9;
+ int32_t obsolete[]={7,5,3,9,1,1,0,1000,1,1};
+ assert(!inbox.Ingest(obsolete,10,rollback));
+ assert(inbox.Pending()==1);
  msg[9]=0;assert(!inbox.Ingest(msg,10,key));
  msg[9]=1;msg[7]=0;assert(!inbox.Ingest(msg,10,key));
  msg[7]=555;msg[0]=7;assert(!inbox.Ingest(msg,10,key));

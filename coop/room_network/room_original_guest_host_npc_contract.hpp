@@ -34,6 +34,8 @@ public:
   }
   if(f[0]<=0||f[1]<=0||f[2]<0||f[2]>32||
      n!=3u+static_cast<size_t>(f[2])*6u||!now)return false;
+  if(epoch_&&static_cast<uint32_t>(f[0])<epoch_)return false;
+  if(receivedAt_&&now<receivedAt_)return false;
   std::array<OriginalNpcValue,32> next{};
   for(auto& e:next)e.slot=255u;
   int prev=-1;
@@ -65,5 +67,10 @@ public:
   out=npcs_[slot];return true;
  }
  uint32_t Tick()const noexcept{return owner()?tick_:0;}
+ uint32_t Epoch()const noexcept{return owner()?epoch_:0;}
+ bool Fresh(uint64_t now)const noexcept{
+  return owner()&&bound_&&epoch_&&tick_&&receivedAt_&&
+         now>=receivedAt_&&now-receivedAt_<=350u;
+ }
 };
 }
