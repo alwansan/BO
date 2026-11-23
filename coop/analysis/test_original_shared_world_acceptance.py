@@ -44,6 +44,19 @@ class AcceptanceTest(unittest.TestCase):
         guest = lines(["STORY_GUEST_COMMITTED"]) + lines(REQUIRED_GUEST)
         self.assertEqual(evaluate(host + lines(["STORY_HOST_COMMITTED"]), guest)["status"], "not_ready")
 
+    def test_timestamp_rollback_invalidates_old_scene_contracts(self):
+        host = lines(["STORY_HOST_COMMITTED"]) + lines(REQUIRED_HOST)
+        guest = lines(["STORY_GUEST_COMMITTED"]) + lines(REQUIRED_GUEST)
+        # A later line with an earlier clock value starts an untrusted capture segment.
+        host += "1795378511000 ROOM_HOSTING\\n"
+        self.assertEqual(evaluate(host, guest)["status"], "not_ready")
+        self.assertFalse(evaluate(host, guest)["host_commit_witnessed_both_devices"])
+
+    def test_equal_timestamps_remain_accepted(self):
+        host = lines(["STORY_HOST_COMMITTED"]) + lines(REQUIRED_HOST)
+        guest = lines(["STORY_GUEST_COMMITTED"]) + lines(REQUIRED_GUEST)
+        self.assertEqual(evaluate(host, guest)["status"], "ready_for_combined_phone_validation")
+
     def test_no_sensitive_line_content_is_returned(self):
         result = evaluate("1795378511993 STORY_HOST_COMMITTED secret=private-ip\n", "bad")
         self.assertNotIn("private-ip", str(result))
