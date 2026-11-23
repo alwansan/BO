@@ -1,0 +1,82 @@
+name: BO-COOP original BLACK human actor physics and animation ABI candidate audit (NO ACTOR)
+on:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/analysis/original_host_human_actor_abi_xbe.py'
+      - 'coop/analysis/test_original_host_human_actor_abi_xbe.py'
+      - '.github/workflows/black-coop-original-host-actor-abi.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: bo-original-host-actor-abi-private
+  cancel-in-progress: true
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - name: Verify original actor candidate pin reject rules
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s coop/analysis -p test_original_host_human_actor_abi_xbe.py -v
+  private-owner:
+    needs: contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: bo
+          sparse-checkout: coop/analysis
+          sparse-checkout-cone-mode: false
+          lfs: false
+      - uses: actions/checkout@v4
+        with:
+          repository: alwansan/biso
+          ref: 9ceb6a65fb5a4414c106ca3961295a1f8f7e558b
+          path: owner-biso
+          sparse-checkout: Black_Xbox_Extracted/default.xbe
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+          lfs: false
+      - name: Examine exact original XBE executable candidate windows privately
+        run: |
+          set -euo pipefail
+          python3 bo/coop/analysis/original_host_human_actor_abi_xbe.py \
+            --owner-xbe owner-biso/Black_Xbox_Extracted/default.xbe \
+            --report "$RUNNER_TEMP/owner-human-actor-abi-numeric.json"
+          python3 - <<'PY'
+          import json,os,pathlib
+          p=pathlib.Path(os.environ["RUNNER_TEMP"])/"owner-human-actor-abi-numeric.json"
+          data=json.loads(p.read_text())
+          assert data["owner_xbe_sha1_pinned"]
+          assert data["schema"]=="bo-original-black-host-human-actor-ABI-candidate-v1"
+          assert len(data["candidate_windows"])==8
+          assert all(e["unique_original_executable_candidate"] for e in data["candidate_windows"].values())
+          assert not data["android_runtime_guest_call_abi_proven"]
+          assert not data["host_extra_player_actor_allocated"]
+          assert not data["host_extra_physics_proxy_allocated"]
+          assert not data["shared_gameplay_or_ai_proven"]
+          assert not data["full_xbe_or_disassembly_exported"]
+          assert p.stat().st_size<3600
+          print("BO_OWNER_ORIGINAL_HUMAN_ABI_PRIVATE_EVIDENCE_ONLY_PASS")
+          PY
+      - name: Export only bounded source candidate counts
+        uses: actions/upload-artifact@v4
+        with:
+          name: bo-owner-human-actor-abi-numeric-only
+          path: ${{ runner.temp }}/owner-human-actor-abi-numeric.json
+          retention-days: 7
+          if-no-files-found: error
+      - name: Destroy private original owner XBE and report
+        if: always()
+        run: |
+          rm -rf owner-biso
+          rm -f "$RUNNER_TEMP/owner-human-actor-abi-numeric.json"
