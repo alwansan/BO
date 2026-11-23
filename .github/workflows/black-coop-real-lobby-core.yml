@@ -38,6 +38,7 @@ jobs:
           timeout 30s java -ea -cp "$out/classes" com.racas.black.coop.RoomScanGateTest
           timeout 30s java -ea -cp "$out/classes" com.racas.black.coop.WireTest
           timeout 30s java -ea -cp "$out/classes" com.racas.black.coop.RoomHumanInputWireTest
+          timeout 30s java -ea -cp "$out/classes" com.racas.black.coop.RoomObjectEventWireTest
           timeout 30s java -ea -cp "$out/classes" com.racas.black.coop.RoomNpcWorldWireTest
           timeout 30s java -ea -cp "$out/classes" com.racas.black.coop.RoomWorldSnapshotWireTest
           timeout 30s java -ea -cp "$out/classes" com.racas.black.coop.RoomCameraEyeWireTest
@@ -51,6 +52,7 @@ jobs:
           timeout 30s java -ea -cp "$out/classes" com.racas.black.coop.DirectTest "$out/test-identity.p12"
           timeout 35s java -ea -cp "$out/classes" com.racas.black.coop.SessionTest "$out/test-identity.p12"
           timeout 60s java -ea -cp "$out/classes" com.racas.black.coop.RoomFourHumanOriginalStageTlsTest "$out/test-identity.p12"
+          timeout 60s java -ea -cp "$out/classes" com.racas.black.coop.RoomObjectEventTlsTest "$out/test-identity.p12"
           timeout 60s java -ea -cp "$out/classes" com.racas.black.coop.RoomNpcWorldTlsTest "$out/test-identity.p12"
           timeout 60s java -ea -cp "$out/classes" com.racas.black.coop.RoomFirstStageFourHumanStartTlsTest "$out/test-identity.p12"
           timeout 60s java -ea -cp "$out/classes" com.racas.black.coop.RoomTwoPhoneFirstStageStartTlsTest "$out/test-identity.p12"

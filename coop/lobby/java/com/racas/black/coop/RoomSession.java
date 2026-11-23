@@ -704,6 +704,39 @@ public final class RoomSession implements AutoCloseable {
             return t!=null&&world!=null&&world.matches(t)?world:null;
         }
     }
+    /**
+     * To be called ONLY from independently verified original BLACK host
+     * object-transition hook with stable, non-pointer object identity.
+     * No such hook is connected yet. This method is a safe TLS bridge.
+     */
+    public boolean offerOriginalHostObjectEventFromGameThread(
+           int episode,int sequence,int tick,long stableKey,int kind,int state){
+        synchronized(lock){
+            if(closed||!validStoryThread()||phase!=Phase.HOSTING||
+               host==null||!host.isRunning()||!host.storyCommitted()||
+               episode<=0||lastSourceStage==null||
+               lastSourceStage.originalEpisode!=episode||
+               System.nanoTime()-lastSourceStageAtNs>3000000000L||
+               originalRunningReadyTicket==null)return false;
+            RoomStoryWire.Ticket t=host.storyTicket();
+            if(t==null||!t.same(originalRunningReadyTicket)||
+               t.mission!=lastSourceStage.level||t.stage!=lastSourceStage.stage)
+                return false;
+            try{
+                return host.offerObjectEvent(new RoomObjectEventWire.Event(
+                    t,sequence,tick,stableKey,kind,state));
+            }catch(IOException unavailable){return false;}
+        }
+    }
+    /** Guest consumes one signed change; never writes guest BLACK memory. */
+    public RoomObjectEventWire.Event pollHostObjectEventFromGameThread(){
+        synchronized(lock){
+            if(closed||!validStoryThread()||phase!=Phase.JOINED||
+               client==null||!client.isRunning()||!client.storyCommitted())
+                return null;
+            return client.pollHostObjectEvent();
+        }
+    }
     /** Host scene unload/cancel invalidates its prepared ticket. */
     public boolean cancelStoryFromGameThread(){
         synchronized(lock){
