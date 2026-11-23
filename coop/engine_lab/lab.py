@@ -33,7 +33,14 @@ USB_ANCHOR = '''    out[0] = 0;
 def parse_aggregate(text):
     if len(text) > 8192:
         raise ValueError('oversized aggregate')
-    data = json.loads(text)
+    def reject_duplicate_keys(pairs):
+        obj = {}
+        for key, value in pairs:
+            if key in obj:
+                raise ValueError('duplicate aggregate field')
+            obj[key] = value
+        return obj
+    data = json.loads(text, object_pairs_hook=reject_duplicate_keys)
     if not isinstance(data, dict) or set(data) != FIELDS:
         raise ValueError('non-aggregate field')
     if any(type(v) is not int or not 0 <= v <= 100000000 for v in data.values()):
