@@ -86,5 +86,16 @@ public:
     bool HasPlayer(uint8_t id,uint64_t now)const noexcept{
         return Fresh(now)&&id>=1&&id<=4&&actors_[id].id==id;
     }
+    // Exact set of host-authenticated humans from the latest original
+    // scene snapshot. An extra, unrostered avatar cannot be drawn as a
+    // valid participant; a missing member cannot silently be ignored.
+    uint8_t PlayerMask(uint64_t now)const noexcept{
+        if(!Fresh(now))return 0u;
+        uint8_t mask=0;
+        for(uint8_t id=1;id<=4;id++)
+            if(actors_[id].id==id)
+                mask=static_cast<uint8_t>(mask|(1u<<(id-1u)));
+        return mask;
+    }
 };
 } // namespace blackcoop

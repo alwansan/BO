@@ -1,0 +1,11 @@
+# Session128 — original shared HOST roster exactness and expiring native world evidence
+
+### Session128 (2026-11-23): strict canonical HOST roster and expiring source proof for all original guest engines
+
+- Parallel source preflight of Session127 already passed new original `1E0E40` P2/P3/P4 setup lifecycle guard with ASan/UBSan. Main CI: source 45254204050, parallel 45254204082, UDP 45254204006 and Android 45254203965 must be rechecked for final status. Original Windows P1+P2 real engine 45239818055 SUCCESS remains only ORIGINAL runtime multiplayer proof. No Android 2–4 original engine multiplayer yet.
+- Found a real cross-player synchronization gap: `OriginalGuestCanonicalSourceBarrier` used to require only that signed roster members appeared, but would also accept an unauthenticated **extra avatar** outside the roster. Add `OriginalGuestHostWorldInbox::PlayerMask(now)` derived from the actual fresh original host world snapshot; enforce **equality** with signed original guest roster mask 0x3 / 0x7 / 0xF. Extra or missing players fail closed, not silently accepted.
+- Found a stale world-coherence footgun: former no-argument `SourceCoherent()` could remain true indefinitely after the last success if no later original game-thread observation occurred. Change it to `SourceCoherent(now)` with explicit last-observed timestamp and 100 ms read validity, additionally clearing it upon source/roster mismatch. Regression cases include 2-/3-/4-human masks, stale freshness, cross-thread rejection, unexpected fourth player in signed 3-human room, subsequent recovery on a strictly newer host snapshot, no everlasting ready.
+- This is a source-only canonical world acceptance hardening (no host NPC/door/object engine apply). P2/P3/P4 actual original Android actor allocations/camera/animation/banks/FX/physics, reversible call of `1E0E40` and guest original authoritative NPC/objectives remain ongoing independent parallel tracks. No user microtests, no raw ISO/XBE/saves, only `experiment/black-coop`.
+
+
+The barrier verifies signed original roster membership exactly and bounds source freshness even when `Observe()` isn't called; it does not write original game guest NPC/door/object memory or certify a co-op mission.

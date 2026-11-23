@@ -17,6 +17,8 @@ int main(){
     assert(!guest.ReadRemote(1,1000,remote));
     assert(guest.Ingest(valid,22,1000));
     assert(guest.Scene()==17);
+    assert(guest.PlayerMask(1000)==7u);
+    assert(guest.PlayerMask(1351)==0u);
     assert(guest.ReadRemote(1,1000,remote)&&remote.x==100&&remote.y==200);
     assert(guest.ReadRemote(2,1010,remote)&&remote.flags==1);
     assert(!guest.ReadRemote(3,1000,remote)); // original first-person self
@@ -51,6 +53,7 @@ int main(){
     assert(guest.Scene()==18);
     assert(guest.ReadRemote(2,1400,remote));
     assert(guest.HasPlayer(3,1400)&&guest.Self()==3&&guest.Tick()==1);
+    assert(guest.PlayerMask(1400)==7u);
     assert(!guest.Ingest(valid,22,1401)); // old scene 17 cannot rewind 18
     assert(guest.Scene()==18);
     assert(!guest.Ingest(&invalid,1,1500));

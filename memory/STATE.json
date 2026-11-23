@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-127-original-1e0e40-multi-tick.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-128-canonical-exact-roster-ttl.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3892,5 +3892,16 @@
     "originalEngineGuestCallEnabled": false,
     "originalP2P3P4NativeActorReady": false,
     "guestHostNpcDoorsObjectivesApplied": false
+  },
+  "session128CanonicalHostRosterAndFreshness": {
+    "status": "original_guest_canonical_host_roster_exact_and_source_proof_ttl",
+    "previous": "16e28c4922dcd62068429a1b3a929049be9039c7",
+    "source": "coop/room_network/room_original_guest_canonical_source_barrier.hpp",
+    "rosterPolicy": "exact full signed host participant mask 3/7/15; not subset",
+    "coherentFreshnessMs": 100,
+    "sourceOnly": true,
+    "originalGuestEngineApplied": false,
+    "originalAndroidNativeP2P4Live": false,
+    "userPhoneMicrotest": false
   }
 }

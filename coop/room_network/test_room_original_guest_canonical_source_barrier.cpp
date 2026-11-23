@@ -17,11 +17,25 @@ int main(){
  assert(!gate.Observe(key,0x100000,world,npc,1001));
  assert(!gate.Observe(key,0x100000,world,npc,1002));
  assert(gate.Observe(key,0x100000,world,npc,1003));
- assert(gate.SourceCoherent()&&!gate.OriginalGuestEngineApplied());
+ assert(gate.SourceCoherent(1003)&&!gate.OriginalGuestEngineApplied());
+ assert(!gate.SourceCoherent(1104)); // no perpetual source readiness
+ int32_t unexpected[]={23,10,3,4,
+  1,100,200,300,0,0,2,120,200,300,0,0,
+  3,130,200,300,0,0,4,150,200,300,0,0};
+ assert(world.Ingest(unexpected,28,1010));
+ assert(world.PlayerMask(1010)==15u);
+ assert(!gate.Observe(key,0x100000,world,npc,1011)); // guest room mask 7
+ avatars[1]=11;
+ assert(world.Ingest(avatars,22,1020));
+ assert(!gate.Observe(key,0x100000,world,npc,1021));
+ assert(!gate.Observe(key,0x100000,world,npc,1022));
+ assert(gate.Observe(key,0x100000,world,npc,1023));
+ assert(gate.SourceCoherent(1023)&&!gate.SourceCoherent(1124));
  bool foreign=true;std::thread t([&]{
   foreign=gate.Observe(key,0x100000,world,npc,1003);
  });t.join();assert(!foreign);
  assert(!gate.Observe(key,0x100000,world,npc,1351));
+ assert(!gate.SourceCoherent(1351));
  avatars[0]=24;avatars[1]=1;enemies[0]=24;enemies[1]=1;
  assert(world.Ingest(avatars,22,1400)&&npc.Ingest(enemies,9,1400));
  auto newer=key;newer.sceneEpoch=24;newer.tokenLo=100;
