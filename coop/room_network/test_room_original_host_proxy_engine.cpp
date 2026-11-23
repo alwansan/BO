@@ -5,10 +5,12 @@
 #include <vector>
 #include <thread>
 #include <iostream>
+#include <stdexcept>
 struct Engine {
  uint64_t scene=7;std::map<uint32_t,uint32_t> words;std::map<uint32_t,uint8_t> flags;
  struct Op{uint32_t fn,ebx,arg;};std::vector<Op> calls;
  bool badReturn=false,changeWorld=false,failRelease=false,reuse=false;
+ bool throwAcquire=false,throwRelease=false;
  static constexpr uint32_t world=0x10000,physics=0x20000,actor=0x40000,pool=0x60000,collider=0x80000;
  Engine(){words[0x2D45D4]=world;words[0x2D45F4]=physics;words[0x2D1980]=pool;
   words[actor]=0x28CFE0;words[actor+0xC4]=2;words[actor+0x354]=collider;words[actor+0x374]=9;words[actor+0xB4]=0;
@@ -24,9 +26,11 @@ struct Engine {
   if(fn==0xDF400){assert(arg==actor);unsigned i=0;while(i<20&&flags[physics+0x2960+i])++i;assert(i<20);
    auto proxy=physics+0x2320+i*0x50;flags[physics+0x2960+i]=1;words[actor+0xB4]=proxy;words[proxy+0x30]=reuse?actor+0x1000:actor;
    if(changeWorld)words[0x2D45F4]=physics+0x10000;
+   if(throwAcquire)throw std::runtime_error("partial original allocation");
    result=badReturn?0:0xABCD0001;return true;
   }
   assert(fn==0xDBBE0);assert(arg==words[actor+0xB4]);
+  if(throwRelease)throw std::runtime_error("original release may have partially completed");
   if(!failRelease){flags[physics+0x2960+(arg-physics-0x2320)/0x50]=0;words[arg+0x30]=0;words[actor+0xB4]=0;}
   result=0xBAD;return true;
  }
@@ -37,7 +41,7 @@ int main(){
   auto h=adapter.Handle();assert(h.proxy==Engine::physics+0x2320);
   assert(e.calls.size()==1&&e.calls[0].fn==0xDF400&&e.calls[0].arg==Engine::actor);
   assert(adapter.Release(e)==OriginalProxyStatus::Released);assert(e.calls.size()==2&&e.calls[1].arg==h.proxy);
-  assert(!adapter.Handle().proxy);}
+  assert(!adapter.Handle().proxy);assert(!adapter.RequiresEngineCleanup());}
  for(unsigned k=0;k<8;k++){Engine e;OriginalHostProxyEngine a;auto bad=b;
   if(k==0) bad.setupComplete=false;
   if(k==1) e.scene++;
@@ -57,14 +61,28 @@ int main(){
  {Engine e;OriginalHostProxyEngine a;auto bad=b;bad.actor=Engine::physics+0x1000;
   for(auto off:{0u,0xC4u,0x354u,0x374u,0xB4u})e.words[bad.actor+off]=e.words[Engine::actor+off];
   assert(a.Acquire(e,bad)==OriginalProxyStatus::Rejected);assert(e.calls.empty());}
- {Engine e;OriginalHostProxyEngine a;e.badReturn=true;assert(a.Acquire(e,b)==OriginalProxyStatus::RolledBack);assert(e.calls.size()==2&&!a.Handle().proxy);}
- {Engine e;OriginalHostProxyEngine a;e.badReturn=true;e.failRelease=true;assert(a.Acquire(e,b)==OriginalProxyStatus::RollbackFailed);assert(a.Handle().proxy);}
- {Engine e;OriginalHostProxyEngine a;e.changeWorld=true;assert(a.Acquire(e,b)==OriginalProxyStatus::ScopeLost);assert(e.calls.size()==1);}
- {Engine e;OriginalHostProxyEngine a;e.reuse=true;assert(a.Acquire(e,b)==OriginalProxyStatus::OwnershipLost);assert(e.calls.size()==1);}
+ {Engine e;OriginalHostProxyEngine a;e.badReturn=true;assert(a.Acquire(e,b)==OriginalProxyStatus::RolledBack);assert(e.calls.size()==2&&!a.Handle().proxy);assert(!a.RequiresEngineCleanup());}
+ {Engine e;OriginalHostProxyEngine a;e.badReturn=true;e.failRelease=true;assert(a.Acquire(e,b)==OriginalProxyStatus::RollbackFailed);assert(a.Handle().proxy);assert(a.RequiresEngineCleanup());
+  e.failRelease=false;assert(a.Release(e)==OriginalProxyStatus::Rejected);assert(e.calls.size()==2);}
+ {Engine e;OriginalHostProxyEngine a;e.changeWorld=true;assert(a.Acquire(e,b)==OriginalProxyStatus::ScopeLost);assert(e.calls.size()==1);
+  e.words[0x2D45F4]=Engine::physics;e.words[Engine::actor+0xB4]=0;
+  assert(a.RequiresEngineCleanup());assert(a.Acquire(e,b)==OriginalProxyStatus::Rejected);assert(e.calls.size()==1);}
+ {Engine e;OriginalHostProxyEngine a;e.reuse=true;assert(a.Acquire(e,b)==OriginalProxyStatus::OwnershipLost);assert(e.calls.size()==1);
+  e.words[Engine::actor+0xB4]=0;assert(a.RequiresEngineCleanup());
+  assert(a.Acquire(e,b)==OriginalProxyStatus::Rejected);assert(e.calls.size()==1);}
  {Engine e;OriginalHostProxyEngine a;assert(a.Acquire(e,b)==OriginalProxyStatus::Owned);e.words[Engine::actor+0x374]++;assert(a.Release(e)==OriginalProxyStatus::OwnershipLost);assert(e.calls.size()==1);}
- {Engine e;OriginalHostProxyEngine a;assert(a.Acquire(e,b)==OriginalProxyStatus::Owned);e.scene++;assert(a.Release(e)==OriginalProxyStatus::ScopeLost);assert(e.calls.size()==1);}
+ {Engine e;OriginalHostProxyEngine a;assert(a.Acquire(e,b)==OriginalProxyStatus::Owned);e.scene++;assert(a.Release(e)==OriginalProxyStatus::ScopeLost);assert(e.calls.size()==1);
+  assert(a.RequiresEngineCleanup());e.scene--;assert(a.Release(e)==OriginalProxyStatus::Rejected);assert(e.calls.size()==1);}
  {Engine e;OriginalHostProxyEngine a;assert(a.Acquire(e,b)==OriginalProxyStatus::Owned);auto h=a.Handle();e.words[h.proxy+0x30]=Engine::actor+0x1000;assert(a.Release(e)==OriginalProxyStatus::OwnershipLost);assert(e.calls.size()==1);}
  {Engine e;OriginalHostProxyEngine a;assert(a.Acquire(e,b)==OriginalProxyStatus::Owned);auto h=a.Handle();e.flags[Engine::physics+0x2960+(h.proxy-Engine::physics-0x2320)/0x50]=0;assert(a.Release(e)==OriginalProxyStatus::OwnershipLost);assert(e.calls.size()==1);}
  {Engine e;OriginalHostProxyEngine a;assert(a.Acquire(e,b)==OriginalProxyStatus::Owned);OriginalProxyStatus status{};std::thread t([&]{status=a.Release(e);});t.join();assert(status==OriginalProxyStatus::Rejected);assert(e.calls.size()==1);assert(a.Release(e)==OriginalProxyStatus::Released);}
+ {Engine e;OriginalHostProxyEngine a;e.throwAcquire=true;
+  assert(a.Acquire(e,b)==OriginalProxyStatus::OwnershipLost);assert(a.RequiresEngineCleanup());
+  e.throwAcquire=false;e.words[Engine::actor+0xB4]=0;
+  assert(a.Acquire(e,b)==OriginalProxyStatus::Rejected);assert(e.calls.size()==1);}
+ {Engine e;OriginalHostProxyEngine a;assert(a.Acquire(e,b)==OriginalProxyStatus::Owned);
+  e.throwRelease=true;assert(a.Release(e)==OriginalProxyStatus::RollbackFailed);
+  assert(a.RequiresEngineCleanup());e.throwRelease=false;
+  assert(a.Release(e)==OriginalProxyStatus::Rejected);assert(e.calls.size()==2);}
  std::cout<<"ORIGINAL_PROXY_ENGINE_PASS: original acquire/release operations, ownership, cancellation scopes and rollback\n";
 }
