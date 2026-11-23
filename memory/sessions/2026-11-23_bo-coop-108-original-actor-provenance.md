@@ -17,3 +17,9 @@ P0: inspect bounded Dashboard error category when private engine completes; fix 
 - اختبار مصدر Android [45205630356](https://github.com/alwansan/BO/actions/runs/45205630356) **SUCCESS**؛ اختبار بناء APK الأصلي [45205630319](https://github.com/alwansan/BO/actions/runs/45205630319) كان قيد التنفيذ عند آخر قراءة. لا تعلن نجاح native C++ Android قبل اكتمال `candidate-probe`.
 - مواصفات الأمان: ليس مسموحاً استخدام base kernel IO الذي يرفض `OwnsActor` أو إنشاء `OriginalProxySceneLedger` جديد للخروج من الحجر، ولا تفعيل الإنشاء بدون actor setup/scene lifetime/physics+AI proven. مصدر Android الأساسي باقٍ دون تعديل.
 
+
+### Session108 Android candidate validation and exact allowlist recovery
+
+- Original Android full-build [45205630319](https://github.com/alwansan/BO/actions/runs/45205630319) **FAILED before native compilation** at the strict `reference/src/coop` file-name equality check. All Python source transformations/tests passed; error was **four newly staged reviewed headers missing from the workflow's strict allowlist**. This is not an NDK C++ compile error or game runtime result.
+- Fixed strictly in [242fa976](https://github.com/alwansan/BO/commit/242fa976716961f2c2eacb459de64ca9bba0229c): add EXACTLY the four reviewed original host proxy/storage header names to `.github/workflows/black-coop-room-network-apk.yml` allowlist; preserve existing native gameplay file allowlist and fail-closed policy. Retest [45206563984](https://github.com/alwansan/BO/actions/runs/45206563984) IN_PROGRESS on initial check.
+- Verified **pinned** Android SDK `TGP482/XboxXBERecomp@99078b119b5d5e0d1d6afb1390e29437c0c984c0` contains `mem::AllocSystem,FreeSystem,AllocationSize,IsCommitted` and `kernel::CallGuest` declarations. Actual Android compiler still must pass. No game actors initialized, no shared-world gameplay.
