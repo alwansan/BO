@@ -19,9 +19,23 @@ class AcceptanceTest(unittest.TestCase):
         self.assertEqual(evaluate(lines(REQUIRED_HOST | {"STORY_HOST_COMMITTED"}), lines(REQUIRED_GUEST))["status"], "not_ready")
 
     def test_all_contracts_is_only_preflight(self):
-        result = evaluate(lines(REQUIRED_HOST | {"STORY_HOST_COMMITTED"}), lines(REQUIRED_GUEST | {"STORY_GUEST_COMMITTED"}))
+        result = evaluate(lines(["STORY_HOST_COMMITTED"]) + lines(REQUIRED_HOST), lines(["STORY_GUEST_COMMITTED"]) + lines(REQUIRED_GUEST))
         self.assertEqual(result["status"], "ready_for_combined_phone_validation")
         self.assertIn("not_runtime_proof", result["scope"])
+
+    def test_contracts_before_commit_cannot_pass(self):
+        self.assertEqual(evaluate(lines(REQUIRED_HOST) + lines(["STORY_HOST_COMMITTED"]),
+                                  lines(REQUIRED_GUEST) + lines(["STORY_GUEST_COMMITTED"]))["status"], "not_ready")
+
+    def test_abort_invalidates_previous_evidence(self):
+        host = lines(["STORY_HOST_COMMITTED"]) + lines(REQUIRED_HOST)
+        guest = lines(["STORY_GUEST_COMMITTED"]) + lines(REQUIRED_GUEST)
+        self.assertEqual(evaluate(host, guest + lines(["STORY_ABORTED"]))["status"], "not_ready")
+
+    def test_new_session_cannot_reuse_old_contracts(self):
+        host = lines(["STORY_HOST_COMMITTED"]) + lines(REQUIRED_HOST)
+        guest = lines(["STORY_GUEST_COMMITTED"]) + lines(REQUIRED_GUEST)
+        self.assertEqual(evaluate(host + lines(["STORY_HOST_COMMITTED"]), guest)["status"], "not_ready")
 
     def test_no_sensitive_line_content_is_returned(self):
         result = evaluate("1795378511993 STORY_HOST_COMMITTED secret=private-ip\n", "bad")
