@@ -55,9 +55,14 @@ int main(void) {
     GUEST32(0x8000+0x29C)=0xB100;
     bo_lab_before(); bo_lab_after();
     assert(bo_lab.mission_ticks==1 && bo_lab.restored_ticks==1 && bo_lab.distinct_proxy_ticks==1);
+    assert(bo_lab.restored_immutable_ticks==1 && bo_lab.p2_distinct_physical_ticks==1);
+    assert(bo_lab.p2_playing_ticks==1);
     bo_lab_before(); GUEST8(0x1030+0x50)=1; bo_lab_after();
     assert(bo_lab.restore_failures==1 && bo_lab.restore_actor_grid_failures==1);
     assert(bo_lab.restore_grid_node_failures==1 && bo_lab.restore_grid_other_failures==0);
+    assert(bo_lab.restored_immutable_ticks==2 && bo_lab.restore_grid_only_ticks==1);
+    assert(bo_lab.grid_region_links_ticks==1);
+    assert(bo_lab.grid_region_head_ticks==0 && bo_lab.grid_region_cell_ticks==0);
     bo_lab_before(); GUEST8(0x1030+0x298)=1; bo_lab_after();
     assert(bo_lab.restore_failures==2 && bo_lab.restore_actor_weapon_failures==1);
     assert(bo_lab.restore_scope_failures==0 && bo_lab.restore_actor_motion_failures==0);
@@ -70,7 +75,10 @@ int main(void) {
     memset(memory+0x20000+0x2960,1,20); bo_lab_after();
     assert(bo_lab.proxy_pool_low_ticks==1);
     bo_lab_before(); GUEST8(0x7000+0x821)=1; bo_lab_after();
-    assert(bo_lab.scripted_control_ticks>=1);
+    assert(bo_lab.scripted_control_ticks>=1 && bo_lab.scripted_owner_ticks>=1);
+    assert(bo_lab.scripted_actor_ticks==0);
+    assert(bo_lab.scripted_unheld_ticks>=1);
+    assert(bo_lab.p2_playing_ticks==bo_lab.mission_ticks);
     /* Earlier intentional missing-proxy cases already counted failures.
      * Assert the final duplicate-proxy rejection adds exactly ONE. */
     const unsigned prior_proxy_failures = bo_lab.proxy_failures;

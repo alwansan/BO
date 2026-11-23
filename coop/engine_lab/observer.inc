@@ -20,6 +20,11 @@ typedef struct BoLabCounts {
     unsigned p1_proxy_missing_ticks, p1_body_missing_ticks;
     unsigned p2_proxy_missing_ticks, p2_body_missing_ticks;
     unsigned proxy_pool_low_ticks, proxy_pool_unknown_ticks, scripted_control_ticks;
+    /* SECONDARY diagnostic: does NOT alter the strict original game pass. */
+    unsigned restored_immutable_ticks, restore_grid_only_ticks;
+    unsigned grid_region_head_ticks, grid_region_cell_ticks, grid_region_links_ticks;
+    unsigned p2_distinct_physical_ticks, p2_setup_wait_ticks, p2_playing_ticks;
+    unsigned scripted_owner_ticks, scripted_actor_ticks, scripted_both_ticks, scripted_unheld_ticks;
     unsigned p1_move_mm, p2_move_mm, p1_idle_mm, p2_idle_mm;
     unsigned p1_body_move_mm, p2_body_move_mm, p1_shots, p2_shots;
 } BoLabCounts;
@@ -72,6 +77,12 @@ static void bo_lab_write(void)
         "\"p2_proxy_missing_ticks\":%u,\"p2_body_missing_ticks\":%u,"
         "\"proxy_pool_low_ticks\":%u,\"proxy_pool_unknown_ticks\":%u,"
         "\"scripted_control_ticks\":%u,"
+        "\"restored_immutable_ticks\":%u,\"restore_grid_only_ticks\":%u,"
+        "\"grid_region_head_ticks\":%u,\"grid_region_cell_ticks\":%u,"
+        "\"grid_region_links_ticks\":%u,\"p2_distinct_physical_ticks\":%u,"
+        "\"p2_setup_wait_ticks\":%u,\"p2_playing_ticks\":%u,"
+        "\"scripted_owner_ticks\":%u,\"scripted_actor_ticks\":%u,"
+        "\"scripted_both_ticks\":%u,\"scripted_unheld_ticks\":%u,"
         "\"epoch_changes\":%u,\"invalid_samples\":%u,"
         "\"p1_move_mm\":%u,\"p2_move_mm\":%u,\"p1_idle_mm\":%u,\"p2_idle_mm\":%u,"
         "\"p1_body_move_mm\":%u,\"p2_body_move_mm\":%u,\"p1_shots\":%u,\"p2_shots\":%u,"
@@ -89,6 +100,12 @@ static void bo_lab_write(void)
         bo_lab.p2_proxy_missing_ticks, bo_lab.p2_body_missing_ticks,
         bo_lab.proxy_pool_low_ticks, bo_lab.proxy_pool_unknown_ticks,
         bo_lab.scripted_control_ticks,
+        bo_lab.restored_immutable_ticks, bo_lab.restore_grid_only_ticks,
+        bo_lab.grid_region_head_ticks, bo_lab.grid_region_cell_ticks,
+        bo_lab.grid_region_links_ticks, bo_lab.p2_distinct_physical_ticks,
+        bo_lab.p2_setup_wait_ticks, bo_lab.p2_playing_ticks,
+        bo_lab.scripted_owner_ticks, bo_lab.scripted_actor_ticks,
+        bo_lab.scripted_both_ticks, bo_lab.scripted_unheld_ticks,
         bo_lab.epoch_changes, bo_lab.invalid_samples,
         bo_lab.p1_move_mm, bo_lab.p2_move_mm, bo_lab.p1_idle_mm, bo_lab.p2_idle_mm,
         bo_lab.p1_body_move_mm, bo_lab.p2_body_move_mm, bo_lab.p1_shots, bo_lab.p2_shots,
@@ -160,6 +177,8 @@ static void bo_lab_after_impl(void)
     ++bo_lab.mission_ticks;
     if (!bo_lab_epoch) bo_lab_epoch = core;
     if (bo_lab_epoch != core) ++bo_lab.epoch_changes;
+    if (black_p2_state == 1) ++bo_lab.p2_setup_wait_ticks;
+    if (black_p2_state == 2) ++bo_lab.p2_playing_ticks;
     if (bo_lab_before_valid) {
         /* A failed restore MUST remain a failure, even after categorization. */
         if (core != bo_lab_before_core || GUEST32(0x002D12B8u) != bo_lab_before_owner || black_p2_in) {
@@ -168,6 +187,16 @@ static void bo_lab_after_impl(void)
         } else {
             const uint8_t *const after = (const uint8_t *)(uintptr_t)g_xbox_mem_offset + core + BLACK_ACTOR_AT;
             const uint8_t *const before = bo_lab_before_actor;
+            /* Pinned PC black_p2_find_links excludes +0x20..+0x57 from
+             * actor swapping. Observe this independently; never pretend a
+             * full-actor restore passed just because those bytes changed. */
+            const int immutable_diff = memcmp(before, after, 0x20u) ||
+                memcmp(before+0x58u, after+0x58u, BLACK_ACTOR_BYTES-0x58u);
+            const int node_diff = memcmp(before+0x20u, after+0x20u, 0x38u);
+            if (!immutable_diff) {
+                ++bo_lab.restored_immutable_ticks;
+                if (node_diff) ++bo_lab.restore_grid_only_ticks;
+            }
             if (memcmp(before, after, BLACK_ACTOR_BYTES) == 0) ++bo_lab.restored_ticks;
             else {
                 ++bo_lab.restore_failures;
@@ -176,7 +205,12 @@ static void bo_lab_after_impl(void)
                     /* Original PC black_p2_find_links excludes 0x20..0x57:
                      * distinguish this known world-owned region without
                      * hiding it from the strict P1 restoration acceptance. */
-                    if (memcmp(before + 0x020u, after + 0x020u, 0x038u)) ++bo_lab.restore_grid_node_failures;
+                    if (memcmp(before + 0x020u, after + 0x020u, 0x038u)) {
+                        ++bo_lab.restore_grid_node_failures;
+                        if (memcmp(before + 0x020u, after + 0x020u, 0x010u)) ++bo_lab.grid_region_head_ticks;
+                        if (memcmp(before + 0x030u, after + 0x030u, 0x00Cu)) ++bo_lab.grid_region_cell_ticks;
+                        if (memcmp(before + 0x03Cu, after + 0x03Cu, 0x01Cu)) ++bo_lab.grid_region_links_ticks;
+                    }
                     if (memcmp(before, after, 0x020u) ||
                         memcmp(before + 0x058u, after + 0x058u, 0x028u))
                         ++bo_lab.restore_grid_other_failures;
@@ -212,12 +246,17 @@ static void bo_lab_after_impl(void)
     }
     {
         const uint32_t owner = GUEST32(0x002D12B8u);
-        if ((black_pc_ram_span(owner, 0x822u) && GUEST8(owner + 0x821u)) ||
-            GUEST32(actors[0] + 0x324u) == actors[0] + 0x800u)
-            ++bo_lab.scripted_control_ticks;
+        const int heldOwner = black_pc_ram_span(owner, 0x822u) && GUEST8(owner + 0x821u) != 0;
+        const int heldActor = GUEST32(actors[0] + 0x324u) == actors[0] + 0x800u;
+        if (heldOwner) ++bo_lab.scripted_owner_ticks;
+        if (heldActor) ++bo_lab.scripted_actor_ticks;
+        if (heldOwner && heldActor) ++bo_lab.scripted_both_ticks;
+        if (!heldOwner && !heldActor) ++bo_lab.scripted_unheld_ticks;
+        if (heldOwner || heldActor) ++bo_lab.scripted_control_ticks;
     }
     physical = proxies[0] && proxies[1] && proxies[0] != proxies[1] && proxies[1] == black_p2_proxy &&
         bodies[0] && bodies[1] && bodies[0] != bodies[1];
+    if (physical) ++bo_lab.p2_distinct_physical_ticks;
     /* Camera control must have returned from the mission's original scripted intro. */
     ready = physical && black_pc_ram_span(GUEST32(0x002D12B8u), 0x822u) &&
         GUEST8(GUEST32(0x002D12B8u) + 0x821u) == 0 &&

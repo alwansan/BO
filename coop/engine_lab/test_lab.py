@@ -66,6 +66,18 @@ class LabTests(unittest.TestCase):
         self.assertFalse(lab.evaluate(x)['passed'])
         self.assertEqual(lab.evaluate(x)['blocker'],'p2_not_ready')
 
+    def test_world_grid_node_and_scripted_control_counters_are_not_acceptance(self):
+        lab=self.module()
+        secondary=["restored_immutable_ticks","restore_grid_only_ticks","grid_region_head_ticks","grid_region_cell_ticks","grid_region_links_ticks","p2_distinct_physical_ticks","p2_setup_wait_ticks","p2_playing_ticks","scripted_owner_ticks","scripted_actor_ticks","scripted_both_ticks","scripted_unheld_ticks"]
+        self.assertTrue(set(secondary).issubset(lab.FIELDS))
+        candidate={'mission_ticks':900,'restored_immutable_ticks':900,
+                   'restore_grid_only_ticks':900,'p2_distinct_physical_ticks':900,
+                   'scripted_both_ticks':900,'p2_ready_ticks':0}
+        observed=lab.evaluate(candidate)
+        self.assertFalse(observed['passed'])
+        self.assertIn('p2_not_ready',observed['failed_checks'])
+        self.assertIn('p1_context_not_restored',observed['failed_checks'])
+
     def test_aggregate_parser_rejects_extra_fields(self):
         lab = self.module()
         with self.assertRaises(ValueError):

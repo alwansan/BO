@@ -4,7 +4,7 @@ on:
     inputs:
       run_seconds:
         description: Bounded real-engine runtime (60..1800 seconds)
-        default: '300'
+        default: '1200'
         required: true
   push:
     branches: [experiment/black-coop]
@@ -72,7 +72,7 @@ jobs:
       - name: Generate, build and execute owner engine privately
         shell: pwsh
         env:
-          BO_ENGINE_RUN_SECONDS: ${{ inputs.run_seconds || '300' }}
+          BO_ENGINE_RUN_SECONDS: ${{ inputs.run_seconds || '1200' }}
         run: |
           python bo/coop/engine_lab/lab.py execute --bo bo --pc engine --out safe-engine-lab --seconds $env:BO_ENGINE_RUN_SECONDS
           exit $LASTEXITCODE
