@@ -58,7 +58,9 @@ public final class RoomHostHumanKinematicsTest {
         int reconciled=find(host.remotePoses(first),2).xCm;
         ok(reconciled>preSource&&reconciled-preSource<=73);
         ok(!host.reconcileOriginalGuestFeet(first,2,realFeet,10110000000L));
-        ok(!host.reconcileOriginalGuestFeet(first,3,realFeet,10110000000L));
+        // Slot3 is legitimately present in the 4-player ticket. Sender-to-
+        // slot identity is asserted by the real TLS server, not the Eye wire.
+        ok(host.reconcileOriginalGuestFeet(first,3,realFeet,10110000000L));
         ok(host.acceptAuthenticated(first,2,
             input(first,4,-1000,0,100,false,true),10110000000L));
         ok(find(host.remotePoses(first),2).xCm==reconciled);
