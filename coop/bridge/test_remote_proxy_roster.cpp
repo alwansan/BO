@@ -79,8 +79,6 @@ int main() {
     assert(roster.ApplyTrustedSnapshot(Snap(1,{{1,0,0},{2,4,9}}),18,600));
     assert(roster.Read(2,600,view) && view.tick==1);
     assert(view.generation!=previousGeneration);
-    std::cout<<"PASS ACTOR value-only remote roster: owner, epoch, generation, stale, validation
-";
-    std::cout<<"No guest model, player2 actor, or secure network session exists
-";
+    std::cout<<"PASS ACTOR value-only remote roster: owner, epoch, generation, stale, validation\n";
+    std::cout<<"No guest model, player2 actor, or secure network session exists\n";
 }
