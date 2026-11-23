@@ -1,6 +1,7 @@
 // Copyright 2026 BO-COOP contributors. SPDX-License-Identifier: MIT
 #pragma once
 #include <cstdint>
+#include <array>
 #include <thread>
 namespace blackcoop {
 // Caller must bind this to its independently verified committed HOST scene
@@ -18,7 +19,88 @@ enum class OriginalProxyStatus {Rejected,Owned,Released,RolledBack,RollbackFaile
 // committed host scene token; Call executes the real entry synchronously on
 // this game thread, returning the C++ CallGuest result, NOT restored ctx.eax.
 // No mutex: all operations, including construction/Handle, are game-thread only.
+
+// Host-owned scene-lifetime record, deliberately shared by ALL additional
+// original human actor adapters in one committed original engine scene.
+// Not a per-adapter guard: dropping an adapter cannot erase an ambiguous
+// engine CallGuest side effect. Keep this ledger alive beyond every adapter.
+// No arbitrary Clear/Reset method: a new ledger requires PROVEN engine scene
+// teardown, never only a network room/epoch change.
+class OriginalProxySceneLedger {
+ struct Entry {uint32_t actor=0, proxy=0;};
+ enum class Pending {None,Acquire,Release};
+ const std::thread::id thread_=std::this_thread::get_id();
+ std::array<Entry,3> entries_{};
+ uint64_t scene_=0;
+ uint32_t world_=0,physics_=0,actor_=0,proxy_=0;
+ Pending pending_=Pending::None;
+ bool poisoned_=false;
+ bool owner()const noexcept{return std::this_thread::get_id()==thread_;}
+ bool same(const OriginalHostProxyBinding& b)const noexcept{
+  return scene_&&scene_==b.scene&&world_==b.world&&physics_==b.physics;
+ }
+ bool bind(const OriginalHostProxyBinding& b)noexcept{
+  if(!owner()||poisoned_||pending_!=Pending::None||
+     !b.scene||!b.world||!b.physics||!b.actor||!b.setupComplete)return false;
+  if(!scene_){scene_=b.scene;world_=b.world;physics_=b.physics;}
+  return same(b);
+ }
+public:
+ OriginalProxySceneLedger()=default;
+ OriginalProxySceneLedger(const OriginalProxySceneLedger&)=delete;
+ OriginalProxySceneLedger& operator=(const OriginalProxySceneLedger&)=delete;
+ bool Quarantined()const noexcept{return owner()&&(poisoned_||pending_!=Pending::None);}
+ unsigned ActiveCount()const noexcept{
+  if(!owner())return 0;
+  unsigned n=0;for(const auto& e:entries_)if(e.actor)++n;return n;
+ }
+ void Poison()noexcept{poisoned_=true;}
+ bool HasOwned(const OriginalHostProxyBinding& b,uint32_t proxy)const noexcept{
+  if(!owner()||poisoned_||pending_!=Pending::None||!same(b)||!proxy)return false;
+  for(const auto& e:entries_)if(e.actor==b.actor&&e.proxy==proxy)return true;
+  return false;
+ }
+ bool BeginAcquire(const OriginalHostProxyBinding& b)noexcept{
+  if(!bind(b))return false;
+  bool free=false;
+  for(const auto& e:entries_){
+   if(e.actor==b.actor)return false;
+   if(!e.actor)free=true;
+  }
+  if(!free)return false;
+  actor_=b.actor;proxy_=0;pending_=Pending::Acquire;
+  return true;
+ }
+ bool ConfirmAcquire(const OriginalHostProxyBinding& b,uint32_t proxy)noexcept{
+  if(!owner()||poisoned_||pending_!=Pending::Acquire||!same(b)||
+     actor_!=b.actor||!proxy)return false;
+  for(const auto& e:entries_)
+   if(e.actor==b.actor||(e.proxy&&e.proxy==proxy))return false;
+  for(auto& e:entries_)if(!e.actor){
+   e={b.actor,proxy};pending_=Pending::None;actor_=proxy_=0;return true;
+  }
+  return false;
+ }
+ bool ConfirmRolledBack(const OriginalHostProxyBinding& b)noexcept{
+  if(!owner()||poisoned_||pending_!=Pending::Acquire||!same(b)||actor_!=b.actor)return false;
+  pending_=Pending::None;actor_=proxy_=0;return true;
+ }
+ bool BeginRelease(const OriginalHostProxyBinding& b,uint32_t proxy)noexcept{
+  if(!HasOwned(b,proxy))return false;
+  actor_=b.actor;proxy_=proxy;pending_=Pending::Release;
+  return true;
+ }
+ bool ConfirmRelease(const OriginalHostProxyBinding& b,uint32_t proxy)noexcept{
+  if(!owner()||poisoned_||pending_!=Pending::Release||!same(b)||
+     actor_!=b.actor||proxy_!=proxy)return false;
+  for(auto& e:entries_)if(e.actor==b.actor&&e.proxy==proxy){
+   e={};pending_=Pending::None;actor_=proxy_=0;return true;
+  }
+  return false;
+ }
+};
 class OriginalHostProxyEngine {
+ OriginalProxySceneLedger& ledger_;
  std::thread::id owner_=std::this_thread::get_id();
  OriginalHostProxyHandle handle_{};
  // A native call can have side effects even if it throws/returns false.
@@ -75,7 +157,9 @@ class OriginalHostProxyEngine {
   handle_={};uncertain_=false;return true;
  }
 public:
- OriginalHostProxyEngine()=default;
+ explicit OriginalHostProxyEngine(OriginalProxySceneLedger& ledger):ledger_(ledger){}
+ ~OriginalHostProxyEngine(){if(handle_.proxy||uncertain_)ledger_.Poison();}
+ OriginalHostProxyEngine()=delete;
  OriginalHostProxyEngine(const OriginalHostProxyEngine&)=delete;
  OriginalHostProxyEngine& operator=(const OriginalHostProxyEngine&)=delete;
  OriginalHostProxyHandle Handle()const noexcept{return owner()?handle_:OriginalHostProxyHandle{};}
@@ -94,6 +178,7 @@ public:
   // The original DF400 may allocate before its return value or failure.
   // Quarantine immediately before touching the engine; later failures must
   // not permit another DF400 against the possibly occupied slot.
+  if(!ledger_.BeginAcquire(b))return OriginalProxyStatus::Rejected;
   uncertain_=true;
   uint32_t result=0;bool called=false;
   try{called=io.Call(0xDF400,b.physics,b.actor,result);}
@@ -104,18 +189,28 @@ public:
   OriginalHostProxyHandle candidate{b,proxy};
   if(!owned(io,candidate))return OriginalProxyStatus::OwnershipLost;
   handle_=candidate;
-  if(called&&(result&255u)==1u&&proxy==expected){uncertain_=false;return OriginalProxyStatus::Owned;}
+  if(called&&(result&255u)==1u&&proxy==expected){
+   if(!ledger_.ConfirmAcquire(b,proxy)){ledger_.Poison();return OriginalProxyStatus::OwnershipLost;}
+   uncertain_=false;return OriginalProxyStatus::Owned;
+  }
   // Even a failed result may have acquired a native object. Release only an
   // exact same-scene slot whose owner/backlink is still exclusively ours.
-  return release(io)?OriginalProxyStatus::RolledBack:OriginalProxyStatus::RollbackFailed;
+  if(release(io)&&ledger_.ConfirmRolledBack(b))return OriginalProxyStatus::RolledBack;
+  ledger_.Poison();uncertain_=true;return OriginalProxyStatus::RollbackFailed;
  }
  template<class IO>OriginalProxyStatus Release(IO& io){
   if(!owner()||uncertain_||!handle_.proxy)return OriginalProxyStatus::Rejected;
-  if(!scope(io,handle_.binding)){uncertain_=true;return OriginalProxyStatus::ScopeLost;}
-  if(!actor(io,handle_.binding)||!owned(io,handle_)){uncertain_=true;return OriginalProxyStatus::OwnershipLost;}
+  if(!scope(io,handle_.binding)){uncertain_=true;ledger_.Poison();return OriginalProxyStatus::ScopeLost;}
+  if(!actor(io,handle_.binding)||!owned(io,handle_)||
+     !ledger_.HasOwned(handle_.binding,handle_.proxy)){
+   uncertain_=true;ledger_.Poison();return OriginalProxyStatus::OwnershipLost;
+  }
+  const auto binding=handle_.binding;const uint32_t proxy=handle_.proxy;
+  if(!ledger_.BeginRelease(binding,proxy))return OriginalProxyStatus::Rejected;
   // Even destructor failure/throw can release a proxy before reporting status.
   uncertain_=true;
-  return release(io)?OriginalProxyStatus::Released:OriginalProxyStatus::RollbackFailed;
+  if(release(io)&&ledger_.ConfirmRelease(binding,proxy))return OriginalProxyStatus::Released;
+  ledger_.Poison();uncertain_=true;return OriginalProxyStatus::RollbackFailed;
  }
 };
 }
