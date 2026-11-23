@@ -76,6 +76,12 @@ jobs:
         run: |
           g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread -fsanitize=address,undefined bo/coop/room_network/test_room_original_host_player_shadow_plan.cpp -o "$RUNNER_TEMP/test_original_player_shadow"
           "$RUNNER_TEMP/test_original_player_shadow"
+      - name: Source-accurate original P1 grid and dynamic neighbor link exchange (read-only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread -fsanitize=address,undefined bo/coop/room_network/test_room_original_host_player_link_exchange.cpp -o "$RUNNER_TEMP/test_original_player_link_exchange"
+          "$RUNNER_TEMP/test_original_player_link_exchange"
       - name: Original soldier real clone ownership regression
         run: |
           g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -fsanitize=address,undefined bo/coop/room_network/test_original_soldier_copy.cpp -o "$RUNNER_TEMP/test_soldier_copy"
