@@ -2946,6 +2946,18 @@
     "sourcePreflightRun": 45093109118,
     "roomOnlyAndroidRun": 45093109167,
     "ciAtLastCheck": "IN_PROGRESS_UNVERIFIED",
-    "ownerConstraint": "CI first, only one major phone trial when true shared world works"
+    "ownerConstraint": "CI first, only one major phone trial when true shared world works",
+    "v9RealTlsRun": 45093109148,
+    "v9RealTlsResult": "SUCCESS",
+    "v9Android29Run": 45093109200,
+    "v9Android29Result": "SUCCESS",
+    "v9SourcePreflightRun": 45093109118,
+    "v9SourcePreflightResult": "SUCCESS",
+    "packagingMetadataRepairCommit": "0aa5bc1ba25ddd06eeaf28a5b403d3122586e02f",
+    "correctedV9AndroidApkRun": 45093547238,
+    "correctedV9AndroidApkAtLastCheck": "PENDING_NOT_VERIFIED",
+    "hourlyAgentId": "6b03909067548191a740f2121625a041",
+    "hourlyAgentEnabledVerified": true,
+    "originalSharedWorldPhoneAcceptance": false
   }
 }
