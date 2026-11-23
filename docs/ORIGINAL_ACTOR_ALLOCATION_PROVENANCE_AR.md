@@ -23,3 +23,11 @@
 ## الخطوة القادمة
 
 استخراج فئة Dashboard error الدقيقة دون تسريب launch path/titleid/guest stack، ثم إصلاح native boot على أساس الدليل؛ تفعيل actor2–4 وسلاحهم وتحريكهم وفيزيائهم وAI ومزامنة host original NPC/mission + guest original state على خيط اللعبة الحقيقي؛ وبعد نجاح التكامل فقط تجربة كبيرة على هاتفين أو أكثر. لا تعديل `main` أو `CL` أو `biso` أو محتويات المالك الأصلية.
+
+### Session108 — إعداد اختبار الدمج الأصلي داخل Android
+
+- فحص مصدر Android الأصل المثبت `RanggaCasper/Black-Android@f3754d6985a8c35204e7df071546e586b10f1806` أظهر أنه يستخدم SDK مختلفاً عن مختبر Windows: `TGP482/XboxXBERecomp` مع `runtime/kernel/memory.h` و`runtime/cpu/x86_context.h` و`runtime/kernel/kernel.h`. تمت مراجعة واجهات `mem::AllocSystem/AllocationSize/FreeSystem/IsCommitted` و`kernel::CallGuest` من المصدر العام، لكن **مطابقة API ليست دليلاً على صحة آلية إنشاء actor داخل Android**.
+- Commit [10e546bf](https://github.com/alwansan/BO/commit/10e546bf2b978b00d086ed7554c71081624dc023) يضيف ملفات `room_original_host_proxy_engine.hpp` و`room_original_host_proxy_kernel.hpp` و`room_original_host_player_storage.hpp` و`room_original_host_player_storage_kernel.hpp` إلى مرحلة `prepare_room_network.py`، ويضيف `#include` ضمن `src/game/cheats.cpp` الخاص باللعبة الحقيقية **للتجميع فقط دون إنشاء أي actor أو استعمال CallGuest إضافي**.
+- اختبار مصدر Android [45205630356](https://github.com/alwansan/BO/actions/runs/45205630356) **SUCCESS**؛ اختبار بناء APK الأصلي [45205630319](https://github.com/alwansan/BO/actions/runs/45205630319) كان قيد التنفيذ عند آخر قراءة. لا تعلن نجاح native C++ Android قبل اكتمال `candidate-probe`.
+- مواصفات الأمان: ليس مسموحاً استخدام base kernel IO الذي يرفض `OwnsActor` أو إنشاء `OriginalProxySceneLedger` جديد للخروج من الحجر، ولا تفعيل الإنشاء بدون actor setup/scene lifetime/physics+AI proven. مصدر Android الأساسي باقٍ دون تعديل.
+
