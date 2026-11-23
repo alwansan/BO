@@ -117,7 +117,7 @@ class OriginalHostProxyEngine {
  }
  template<class IO>static bool actor(IO& io,const OriginalHostProxyBinding& b){
   uint32_t table=0,kind=0,serial=0,collider=0,pool=0;
-  if(!b.setupComplete||!range(b.actor,0x900)||!io.Span(b.actor,0x900)||b.actor==b.world+0x30||
+  if(!b.setupComplete||!io.OwnsActor(b.actor,0x900)||!range(b.actor,0x900)||!io.Span(b.actor,0x900)||b.actor==b.world+0x30||
    !io.Read32(0x2D1980,pool)||!range(pool,0x8540))return false;
   // Never accept any address in the original NPC allocation, not just starts.
   if(uint64_t(b.actor)<uint64_t(pool)+0x8540&&uint64_t(b.actor)+0x900>pool)return false;

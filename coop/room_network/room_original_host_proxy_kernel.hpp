@@ -16,6 +16,9 @@ public:
  OriginalHostProxyKernelIO(X86Context& context,uint64_t (*scene)()noexcept)
   :context_(context),scene_(scene){}
  uint64_t Scene()const noexcept{return scene_?scene_():0;}
+ // The generic kernel bridge cannot prove a second actor's allocation.
+ // Only an explicit tracked original guest storage IO may permit it.
+ bool OwnsActor(uint32_t,uint32_t)const noexcept{return false;}
  bool Span(uint32_t address,uint32_t size)const noexcept{
   if(address<0x10000u||!size||uint64_t(address)+size>0x100000000ull)return false;
   const uint64_t end=(uint64_t(address)+size-1u)&~uint64_t{0xFFF};

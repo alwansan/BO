@@ -11,7 +11,7 @@ struct Engine {
  uint64_t scene=7;std::map<uint32_t,uint32_t> words;std::map<uint32_t,uint8_t> flags;
  struct Op{uint32_t fn,ebx,arg;};std::vector<Op> calls;
  bool badReturn=false,changeWorld=false,failRelease=false,reuse=false;
- bool throwAcquire=false,throwRelease=false;
+ bool throwAcquire=false,throwRelease=false,revokeActorOwnership=false;
  static constexpr uint32_t world=0x10000,physics=0x20000,actor=0x40000,pool=0x60000,collider=0x80000;
  static constexpr uint32_t actor2=0x50000,actor3=0x90000,actor4=0xA0000;
  Engine(){words[0x2D45D4]=world;words[0x2D45F4]=physics;words[0x2D1980]=pool;
@@ -25,6 +25,10 @@ struct Engine {
   }
  }
  uint64_t Scene()const{return scene;}
+ bool OwnsActor(uint32_t p,uint32_t n)const noexcept{
+  return !revokeActorOwnership&&n==0x900u&&
+    (p==actor||p==actor2||p==actor3||p==actor4);
+ }
  bool Span(uint32_t p,uint32_t n)const{return p>=0x10000&&uint64_t(p)+n<0x400000;}
  bool Read32(uint32_t p,uint32_t& v){if(!Span(p,4))return false;auto i=words.find(p);if(i==words.end())return false;v=i->second;return true;}
  bool Read8(uint32_t p,uint8_t& v){auto i=flags.find(p);if(i==flags.end())return false;v=i->second;return true;}
@@ -61,6 +65,20 @@ int main(){
   if(k==6)e.words[Engine::actor+0xB4]=Engine::physics+0x2320;
   if(k==7)for(unsigned i=0;i<19;i++)e.flags[Engine::physics+0x2960+i]=1;
   assert(a.Acquire(e,bad)==OriginalProxyStatus::Rejected);assert(e.calls.empty());}
+ // Forging the entire original actor header in unrelated committed memory
+ // is not proof of original-human allocation ownership.
+ {Engine e;OriginalProxySceneLedger ledger;OriginalHostProxyEngine a(ledger);
+  auto fake=b;fake.actor=0xB0000;
+  for(auto off:{0u,0xC4u,0x354u,0x374u,0xB4u})
+   e.words[fake.actor+off]=e.words[Engine::actor+off];
+  assert(a.Acquire(e,fake)==OriginalProxyStatus::Rejected);
+  assert(e.calls.empty()&&!ledger.Quarantined());
+ }
+ {Engine e;OriginalProxySceneLedger ledger;OriginalHostProxyEngine a(ledger);
+  e.revokeActorOwnership=true;
+  assert(a.Acquire(e,b)==OriginalProxyStatus::Rejected);
+  assert(e.calls.empty()&&!ledger.Quarantined());
+ }
  // A valid-looking kind-2 object elsewhere INSIDE the live original core is
  // not an independently allocated shadow. PC original tick spans 0x5CC0.
  {Engine e;OriginalProxySceneLedger ledger;OriginalHostProxyEngine a(ledger);auto bad=b;bad.actor=Engine::world+0x1000;
@@ -147,6 +165,13 @@ int main(){
   OriginalHostProxyEngine fresh(ledger);
   assert(fresh.Acquire(e,next)==OriginalProxyStatus::Rejected);
   assert(e.calls.size()==2);
+ }
+ {Engine e;OriginalProxySceneLedger ledger;OriginalHostProxyEngine a(ledger);
+  assert(a.Acquire(e,b)==OriginalProxyStatus::Owned);
+  e.revokeActorOwnership=true;
+  assert(a.Release(e)==OriginalProxyStatus::OwnershipLost);
+  assert(ledger.Quarantined()&&a.RequiresEngineCleanup());
+  assert(e.calls.size()==1);
  }
  std::cout<<"ORIGINAL_PROXY_ENGINE_PASS: original acquire/release operations, ownership, cancellation scopes and rollback\n";
 }

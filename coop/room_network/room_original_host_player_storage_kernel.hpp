@@ -29,6 +29,10 @@ public:
    return address&&mem::AllocationSize(address)>=size;
   return false;
  }
+ // Reconcile with real original storage's tracked owner, not committed pages.
+ bool OwnsActor(uint32_t address,uint32_t size)const noexcept{
+  return size==0x900u&&Owns(address,size);
+ }
  bool Free(uint32_t address){
   for(auto& record:allocations_)if(address&&record.address==address){
    if(!Owns(address,record.size))return false;
