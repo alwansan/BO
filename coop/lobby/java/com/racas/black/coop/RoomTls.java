@@ -74,7 +74,7 @@ public final class RoomTls {
         private final Map<Integer,Integer> storySlots=new HashMap<>();
         private int storyReadyMask;
         private boolean storyCommitted;
-        private int lastWorldSnapshotTick,lastNpcSnapshotTick,lastObjectEventSequence;
+        private int lastWorldSnapshotTick,lastNpcSnapshotTick,lastObjectEventSequence,lastObjectEventTick;
         // Pre-JOIN handshake diagnostics only; never store PINs or peer identities.
         private volatile String handshakeFailureKind="none";
         public String handshakeFailureKind(){return handshakeFailureKind;}
@@ -170,7 +170,8 @@ public final class RoomTls {
                 if(closed||story==null||!storyCommitted||
                    revision!=story.rosterRevision||evt==null||
                    !evt.matches(story)||lastObjectEventSequence==Integer.MAX_VALUE||
-                   evt.sequence!=lastObjectEventSequence+1)return false;
+                   (evt.sequence!=lastObjectEventSequence+1||
+                   evt.tick<lastObjectEventTick))return false;
                 byte[] frame=RoomObjectEventWire.encode(evt);
                 for(Peer p:peers.values()){
                     if(p.dead.get()||p.outbound.remainingCapacity()<1){
@@ -183,6 +184,7 @@ public final class RoomTls {
                     throw new IOException("Original object event fanout failed");
                 }
                 lastObjectEventSequence=evt.sequence;
+                lastObjectEventTick=evt.tick;
                 return true;
             }
         }
@@ -296,7 +298,7 @@ public final class RoomTls {
                         throw new IOException("Peer story prepare queue unexpectedly filled");
                 }
                 story=ticket;storyReadyMask=0;storyCommitted=false;
-                lastWorldSnapshotTick=lastNpcSnapshotTick=lastObjectEventSequence=0;
+                lastWorldSnapshotTick=lastNpcSnapshotTick=lastObjectEventSequence=lastObjectEventTick=0;
                 for(Peer p:peers.values()){
                     p.lastInputSequence=0;p.latestInput=null;p.latestWorldFrame.set(null);p.latestNpcFirst.set(null);p.latestNpcSecond.set(null);
                     p.lastEyeSequence=0;p.latestEye=null;p.latestEyeAt=0;
@@ -342,7 +344,7 @@ public final class RoomTls {
         private void abortStoryLocked(){
             RoomStoryWire.Ticket old=story;
             story=null;storyReadyMask=0;storyCommitted=false;storySlots.clear();
-            lastWorldSnapshotTick=lastNpcSnapshotTick=lastObjectEventSequence=0;
+            lastWorldSnapshotTick=lastNpcSnapshotTick=lastObjectEventSequence=lastObjectEventTick=0;
             for(Peer p:peers.values()){
                 p.lastInputSequence=0;p.latestInput=null;p.latestWorldFrame.set(null);p.latestNpcFirst.set(null);p.latestNpcSecond.set(null);
                     p.lastEyeSequence=0;p.latestEye=null;p.latestEyeAt=0;
@@ -560,7 +562,7 @@ public final class RoomTls {
         private volatile RoomWorldSnapshotWire.Snapshot worldSnapshot;
         private volatile RoomNpcWorldWire.World npcWorld;
         private RoomNpcWorldWire.Chunk pendingNpc;
-        private int lastNpcTick,lastObjectEventSequence;
+        private int lastNpcTick,lastObjectEventSequence,lastObjectEventTick;
         // FIFO, not latest-only. Overflow rejects the peer rather than
         // dropping a destruction event and leaving two world states apart.
         private final ArrayDeque<RoomObjectEventWire.Event> objectEvents=
@@ -788,7 +790,7 @@ public final class RoomTls {
                                 lastQueuedInputSequence=0;inputFrames.clear();firstHumanInputSent.set(false);
                                 lastQueuedEyeSequence=0;cameraFrames.clear();firstCameraEyeSent.set(false);
                                 worldSnapshot=null;lastWorldSnapshotTick=0;lastWorldSnapshotAt=0;
-                                npcWorld=null;pendingNpc=null;lastNpcTick=0;lastNpcAt=0;objectEvents.clear();lastObjectEventSequence=0;
+                                npcWorld=null;pendingNpc=null;lastNpcTick=0;lastNpcAt=0;objectEvents.clear();lastObjectEventSequence=lastObjectEventTick=0;
                                 record("STORY_GUEST_PREPARED");
                             }
                         }
@@ -812,7 +814,7 @@ public final class RoomTls {
                                 lastQueuedInputSequence=0;inputFrames.clear();firstHumanInputSent.set(false);
                                 lastQueuedEyeSequence=0;cameraFrames.clear();firstCameraEyeSent.set(false);
                                 worldSnapshot=null;lastWorldSnapshotTick=0;lastWorldSnapshotAt=0;
-                                npcWorld=null;pendingNpc=null;lastNpcTick=0;lastNpcAt=0;objectEvents.clear();lastObjectEventSequence=0;
+                                npcWorld=null;pendingNpc=null;lastNpcTick=0;lastNpcAt=0;objectEvents.clear();lastObjectEventSequence=lastObjectEventTick=0;
                                 record("STORY_GUEST_ABORTED");
                             }
                         }
@@ -852,12 +854,14 @@ public final class RoomTls {
                             if(closed.get()||!storyCommitted||story==null||
                                current==null||current.revision!=story.rosterRevision||
                                !event.matches(story)||lastObjectEventSequence==Integer.MAX_VALUE||
-                               event.sequence!=lastObjectEventSequence+1)
+                               (event.sequence!=lastObjectEventSequence+1||
+                                event.tick<lastObjectEventTick))
                                 throw new IOException("Stale or missing original world event");
                             if(objectEvents.size()>=64)
                                 throw new IOException("Original world object FIFO overflow");
                             objectEvents.addLast(event);
                             lastObjectEventSequence=event.sequence;
+                            lastObjectEventTick=event.tick;
                         }
                         continue;
                     }
@@ -897,7 +901,7 @@ public final class RoomTls {
                             lastQueuedInputSequence=0;inputFrames.clear();firstHumanInputSent.set(false);
                                 lastQueuedEyeSequence=0;cameraFrames.clear();firstCameraEyeSent.set(false);
                                 worldSnapshot=null;lastWorldSnapshotTick=0;lastWorldSnapshotAt=0;
-                                npcWorld=null;pendingNpc=null;lastNpcTick=0;lastNpcAt=0;objectEvents.clear();lastObjectEventSequence=0;
+                                npcWorld=null;pendingNpc=null;lastNpcTick=0;lastNpcAt=0;objectEvents.clear();lastObjectEventSequence=lastObjectEventTick=0;
                             record("STORY_GUEST_ROSTER_INVALIDATED");
                         }
                     }
@@ -912,7 +916,7 @@ public final class RoomTls {
                 lastQueuedInputSequence=0;inputFrames.clear();firstHumanInputSent.set(false);
                                 lastQueuedEyeSequence=0;cameraFrames.clear();firstCameraEyeSent.set(false);
                                 worldSnapshot=null;lastWorldSnapshotTick=0;lastWorldSnapshotAt=0;
-                                npcWorld=null;pendingNpc=null;lastNpcTick=0;lastNpcAt=0;objectEvents.clear();lastObjectEventSequence=0;
+                                npcWorld=null;pendingNpc=null;lastNpcTick=0;lastNpcAt=0;objectEvents.clear();lastObjectEventSequence=lastObjectEventTick=0;
             }
             readyWriter.shutdownNow();
             closeSocket(socket);heartbeat.shutdownNow();reader.interrupt();inputWriter.interrupt();

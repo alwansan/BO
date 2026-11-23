@@ -14,6 +14,63 @@ public final class RoomObjectEventTlsTest {
    Thread.sleep(12);
   }
  }
+  /** Full RoomSession -> real TLS -> guest ORIGINAL GAME-THREAD JNI
+   * frame; native scene signals are synthetic here, never a BLACK engine.
+   * Ensures -1 abort, 0 no-event and exact 10-int host frame. */
+  static void sessionBridge(String identityPath)throws Exception {
+   SSLContext context=TlsRoomTest.host(Paths.get(identityPath));
+   byte[] fingerprint=TlsRoomTest.fingerprint(Paths.get(identityPath));
+   RoomSession.IdentitySource identity=()->
+       new RoomSession.HostIdentity(context,fingerprint);
+   InetAddress loop=InetAddress.getByName("127.0.0.1");
+   try(RoomSession host=RoomSession.create();
+       RoomSession guest=RoomSession.create()){
+    host.startHost(identity,loop,0,"Host","First");
+    until(()->host.snapshot().phase==RoomSession.Phase.HOSTING);
+    RoomSession.Status endpoint=host.snapshot();
+    guest.join("127.0.0.1:"+endpoint.port,endpoint.fingerprint,"Guest");
+    until(()->guest.snapshot().phase==RoomSession.Phase.JOINED&&
+               guest.snapshot().roster.players.size()==2&&
+               host.snapshot().roster.players.size()==2);
+    yes(host.bindStoryGameThread()&&guest.bindStoryGameThread());
+    yes(guest.pollOriginalHostObjectEventFrameFromGameThread()[0]==-1);
+    yes(host.requestTwoPhoneFirstStageFromLobby());
+    RoomStoryWire.Ticket ticket=host.storyStatus().ticket;
+    until(()->guest.storyStatus().ticket!=null);
+    yes(host.observeOriginalStageIdentityFromGameThread(55,0,1));
+    yes(guest.observeOriginalStageIdentityFromGameThread(61,0,1));
+    yes(host.attestOriginalRunningSceneFromGameThread(55,0,1,0,0,0,0,0)==1);
+    yes(guest.attestOriginalRunningSceneFromGameThread(
+         61,0,1,ticket.sceneEpoch,(int)ticket.rosterRevision,
+         (int)(ticket.token>>>32),(int)ticket.token,2)==2);
+    until(()->host.storyStatus().committed&&guest.storyStatus().committed);
+    yes(guest.pollOriginalHostObjectEventFrameFromGameThread()[0]==0);
+    yes(!host.offerOriginalHostObjectEventFromGameThread(
+         56,1,1,77L,RoomObjectEventWire.DESTROYED,1));
+    yes(host.offerOriginalHostObjectEventFromGameThread(
+         55,1,1,77L,RoomObjectEventWire.DESTROYED,1));
+    final int[][] received=new int[1][];
+    until(()->{
+     int[] frame=guest.pollOriginalHostObjectEventFrameFromGameThread();
+     if(frame.length==10)received[0]=frame;
+     return received[0]!=null;
+    });
+    int[] frame=received[0];
+    yes(frame[0]==ticket.sceneEpoch&&frame[1]==ticket.rosterRevision&&
+        frame[2]==(int)(ticket.token>>>32)&&frame[3]==(int)ticket.token&&
+        frame[4]==1&&frame[5]==1&&frame[6]==0&&frame[7]==77&&
+        frame[8]==RoomObjectEventWire.DESTROYED&&frame[9]==1);
+    yes(guest.pollOriginalHostObjectEventFrameFromGameThread()[0]==0);
+    final boolean[] foreign={true};
+    Thread worker=new Thread(()->{
+     foreign[0]=guest.pollOriginalHostObjectEventFrameFromGameThread()[0]!=-1;
+    });
+    worker.start();worker.join();yes(!foreign[0]);
+    yes(host.cancelStoryFromGameThread());
+    until(()->guest.storyStatus().ticket==null);
+    yes(guest.pollOriginalHostObjectEventFrameFromGameThread()[0]==-1);
+   }
+  }
  public static void main(String[]args)throws Exception{
   SSLContext hostTls=TlsRoomTest.host(Paths.get(args[0]));
   SSLContext guestTls=RoomTls.pinnedContext(TlsRoomTest.fingerprint(Paths.get(args[0])));
@@ -58,11 +115,27 @@ public final class RoomObjectEventTlsTest {
     return next[0]!=null&&next[1]!=null&&next[2]!=null;
    });
    for(RoomObjectEventWire.Event e:next)yes(e.sequence==2&&e.objectKey==102L);
+   // An event with a valid next sequence but a time-travelled source
+   // tick must be rejected BEFORE any encrypted packet is sent.
+   yes(!host.offerObjectEvent(new RoomObjectEventWire.Event(
+       t,3,1,103L,RoomObjectEventWire.ACTIVATED,1)));
+   yes(host.offerObjectEvent(new RoomObjectEventWire.Event(
+       t,3,3,103L,RoomObjectEventWire.ACTIVATED,1)));
+   final RoomObjectEventWire.Event[] third=new RoomObjectEventWire.Event[3];
+   until(()->{
+    if(third[0]==null)third[0]=g2.pollHostObjectEvent();
+    if(third[1]==null)third[1]=g3.pollHostObjectEvent();
+    if(third[2]==null)third[2]=g4.pollHostObjectEvent();
+    return third[0]!=null&&third[1]!=null&&third[2]!=null;
+   });
+   for(RoomObjectEventWire.Event e:third)
+    yes(e.sequence==3&&e.tick==3&&e.objectKey==103L);
    yes(host.cancelStory());
    until(()->g2.storyTicket()==null&&g3.storyTicket()==null&&g4.storyTicket()==null);
    yes(g2.pollHostObjectEvent()==null);
    yes(!host.offerObjectEvent(new RoomObjectEventWire.Event(t,3,3,103L,1,1)));
   }
+  sessionBridge(args[0]);
   System.out.println("OBJECT_EVENT_REAL_TLS_PASS: 4 players exact host-only FIFO, replay+scene abort; no engine door/physics changes");
  }
 }
