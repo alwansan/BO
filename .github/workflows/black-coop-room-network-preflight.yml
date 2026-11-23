@@ -50,6 +50,7 @@ jobs:
           cat > "$RUNNER_TEMP/original_actor_header_smoke.cpp" <<'CPP'
           #include "room_original_host_player_storage_kernel.hpp"
           #include "room_original_host_player_shadow_plan.hpp"
+          #include "room_original_host_player_link_exchange.hpp"
           #include <type_traits>
           static_assert(std::is_base_of_v<blackcoop::OriginalHostProxyKernelIO,
                                           blackcoop::OriginalPlayerStorageKernelIO>);
@@ -72,6 +73,8 @@ jobs:
             // CopyIntoOwned is private: only the quarantined Stage may call it.
             blackcoop::OriginalHostPlayerStage staged;
             (void) staged.MaterializeOwned(owned);
+            blackcoop::OriginalPlayerLinkExchangePlan linkScope;
+            (void) staged.PrepareReadOnlyOriginalLinks(owned,linkScope);
           }
           CPP
           g++ -std=c++20 -pthread -fsyntax-only \

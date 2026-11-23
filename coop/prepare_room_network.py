@@ -335,7 +335,8 @@ def prepare(root: pathlib.Path):
                  'room_original_host_proxy_kernel.hpp',
                  'room_original_host_player_storage.hpp',
                  'room_original_host_player_storage_kernel.hpp',
-                 'room_original_host_player_shadow_plan.hpp'):
+                 'room_original_host_player_link_exchange.hpp',
+                  'room_original_host_player_shadow_plan.hpp'):
         pending['src/coop/' + name] = (HERE / 'room_network' / name).read_text(encoding='utf-8')
     pending['src/coop/room_original_host_extra_actor_contract.hpp'] = (HERE / 'room_network/room_original_host_extra_actor_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_host_extra_actor_witness.hpp'] = (HERE / 'room_network/room_original_host_extra_actor_witness.hpp').read_text(encoding='utf-8')

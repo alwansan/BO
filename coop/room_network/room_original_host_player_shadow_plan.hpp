@@ -4,6 +4,7 @@
 // edits original AI/physics, or certifies playable co-op.
 #pragma once
 #include "room_original_host_player_storage.hpp"
+#include "room_original_host_player_link_exchange.hpp"
 #include <array>
 #include <cstdint>
 #include <cstring>
@@ -290,6 +291,14 @@ public:
  // No destructor-driven guest free: owning game thread must release resources.
  bool Ready()const noexcept{return onThread()&&!touched_&&shadow_.Ready()&&storage_.View().actor!=0;}
  bool Materialized()const noexcept{return onThread()&&touched_&&materialized_;}
+ // Only an independently materialized P2 guest actor may be inspected for
+ // original world-owned grid links. Does NOT swap P1 or enable gameplay.
+ template<class IO>bool PrepareReadOnlyOriginalLinks(
+     IO& io,OriginalPlayerLinkExchangePlan& links)noexcept{
+  if(!Materialized()||io.Scene()!=binding_.scene)return false;
+  const auto view=storage_.View();
+  return view.actor&&links.Prepare(io,binding_,view.actor);
+ }
  bool ModelIsolated()const noexcept{return Ready()&&shadow_.ModelIsolated();}
  bool InputIsolated()const noexcept{return Ready()&&shadow_.InputIsolated();}
  OriginalPlayerStorageView View()const noexcept{

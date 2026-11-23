@@ -34,6 +34,7 @@ struct ShadowIO {
  bool Read32(uint32_t p,uint32_t& out)const{if(!Span(p,4))return false;std::memcpy(&out,memory.data()+p,4);return true;}
  bool CopyGuest(uint32_t p,void* dst,uint32_t n)const{if(copyFailure||(modelCopyFailure&&p==0x210000&&n==0x200)||(inputCopyFailure&&p==0x230000&&n==0x40)||!dst||!Span(p,n))return false;std::memcpy(dst,memory.data()+p,n);return true;}
  bool Owns(uint32_t p,uint32_t n)const{auto i=owned.find(p);return i!=owned.end()&&i->second==n;}
+ bool OwnsActor(uint32_t p,uint32_t n)const{return n==0x900u&&Owns(p,n);}
  uint32_t Alloc(uint32_t size){
   static constexpr uint32_t addresses[]={0x500000,0x503000,0x504000,0x505000,0x506000};
   static constexpr uint32_t sizes[]={0x16C0,0x900,0x40,0x40,0x630};
@@ -185,16 +186,27 @@ int main(){
   io.set(b.core+0x30+0x274u,0x230000);io.set(b.core+0x5AE0u,0x1Cu);
   OriginalHostPlayerStage stage;
   assert(stage.Prepare(io,b)==OriginalHostPlayerStageStatus::Prepared);
+  OriginalPlayerLinkExchangePlan beforeLink;
+  assert(!stage.PrepareReadOnlyOriginalLinks(io,beforeLink));
   const auto prior=io.memory;
   assert(stage.Ready()&&stage.ModelIsolated()&&stage.InputIsolated());
   assert(stage.MaterializeOwned(io)==OriginalHostPlayerStageStatus::Materialized);
   assert(stage.Materialized()&&!stage.Ready()&&io.ownedWrites==5);
+  OriginalPlayerLinkExchangePlan afterLink;
+  const unsigned priorLinkWrites=io.ownedWrites;
+  assert(stage.PrepareReadOnlyOriginalLinks(io,afterLink));
+  assert(afterLink.Ready()&&afterLink.WorldNodeWords()==14u&&
+         afterLink.ProtectedWord(0x34u)&&afterLink.PreviewRoundTrip());
+  assert(afterLink.SourceStillCurrent(io));
+  assert(io.ownedWrites==priorLinkWrites); // read only
   uint32_t word=0;
   assert(io.Read32(t.actor+0x320u,word)&&word==t.parts+0x430u);
   assert(io.Read32(t.actor+0x274u,word)&&word==t.input);
   assert(io.Read32(t.parts+0x430u,word)&&word==0xDEADBEEFu);
   assert(io.Read32(t.input+0x0Cu,word)&&word==0x0BADF00Du);
   assert(io.Read32(t.weapons,word)&&word==0);
+  io.set(t.actor+0x620u,0xABCDEF01u);
+  assert(!afterLink.SourceStillCurrent(io));
   assert(std::memcmp(prior.data()+b.core,io.memory.data()+b.core,0x5CC0u)==0);
   assert(std::memcmp(prior.data()+b.owner,io.memory.data()+b.owner,0x16C0u)==0);
   assert(std::memcmp(prior.data()+b.physics,io.memory.data()+b.physics,0x2974u)==0);
