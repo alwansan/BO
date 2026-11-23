@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-85-native-guest-world-object-inbox.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-86-host-physics-proxy-readiness.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -2984,5 +2984,26 @@
     "ciAtLastCheck": "IN_PROGRESS_NOT_A_PLAYABLE_SHARED_GAME",
     "originalNpcSameSlotAcrossPhonesIsStableId": false,
     "ownerRequest": "continue until same host-authoritative original world and 2-4 human physics with synced destructibles and combat, no micro phone trials"
+  },
+  "session86": {
+    "date": "2026-11-23",
+    "branch": "experiment/black-coop",
+    "commit": "f8edb2fbbe73483f78ed8f3939ba5cb29283305c",
+    "ownerGoal": "2-4 shared original BLACK world host authority",
+    "originalPhysicsPoolReadOnlyMeasuredOnPhone": false,
+    "originalPhysicsPoolBoundedSourceWitness": true,
+    "sourcePreflightRun": 45094581462,
+    "sourcePreflightStatus": "SUCCESS",
+    "udpRun": 45094581480,
+    "udpStatus": "SUCCESS",
+    "latestWindowsApkRun": 45094581459,
+    "latestWindowsApkStatusAtLastCheck": "IN_PROGRESS_NON_GAMEPLAY",
+    "hostExtraOriginalActors": false,
+    "hostExtraHumanPhysicsProxies": false,
+    "originalAISharedTargets": false,
+    "originalDoorObjectSync": false,
+    "guestNativeDoorApply": false,
+    "ownerPhoneTrialReady": false,
+    "ownerTestPolicy": "CI FIRST ONLY ONE LARGER PHONE TEST"
   }
 }
