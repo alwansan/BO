@@ -2290,7 +2290,7 @@
     "safeDiagnosticsJvmStatus": "SUCCESS_ROOM_SCAN_GATE_PASS",
     "sourcePreflightStatus": "SUCCESS",
     "android29ShellGuardCommit": "c8c734bcba402a996157f6040b6d4ecde890901e",
-    "latestAndroid29PassedRun": 44956919973,
+    "latestAndroid29PassedRun": 45091101809,
     "latestAndroid29PassedMarkers": [
       "BO_TLS_ANDROID_PACKAGE_INSTALL_PASS",
       "TLS_PLATFORM_PASS"
@@ -2632,7 +2632,9 @@
     "session64RemoteVisibleHumanActorVerified": false,
     "session64OwnerRestoreAlwaysUpdate": true,
     "originalNPCWorldAppliedOnGuest": false,
-    "originalDoorDestructionReplicated": false
+    "originalDoorDestructionReplicated": false,
+    "newAndroid29OverlayGateStatus": "SUCCESS",
+    "newJavaTlsStatus": "SUCCESS"
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
@@ -2880,15 +2882,18 @@
     "newAndroidRoomOnlyRun": 45091112880,
     "newAndroidRoomOnlyStatusAtLastCheck": "IN_PROGRESS_NO_GAMEPLAY",
     "android29Run": 45091101809,
-    "android29StatusAtLastCheck": "IN_PROGRESS",
+    "android29StatusAtLastCheck": "SUCCESS",
     "realTlsRun": 45091101849,
-    "realTlsStatusAtLastCheck": "IN_PROGRESS",
+    "realTlsStatusAtLastCheck": "SUCCESS",
     "originalHostExtraActors": false,
     "originalAiTargetsAllHumans": false,
     "authoritativeNpcGuestApplication": false,
     "authoritativeDestructibleDoors": false,
     "authoritativeMission": false,
     "sharedOriginalCampaignVerified": false,
-    "ownerPhoneMajorTestReady": false
+    "ownerPhoneMajorTestReady": false,
+    "pcReference": "portingpete/Black-2006-Recomp@b2512fafd3:docs/plans/split-screen-coop.md",
+    "pcSecondActorMilestone": "experimental_PC_only_enemy_aggro_missing",
+    "originalActorSingletonVerified": true
   }
 }
