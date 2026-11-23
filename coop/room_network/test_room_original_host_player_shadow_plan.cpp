@@ -4,8 +4,18 @@
 #include <iostream>
 #include <map>
 #include <thread>
+#include <type_traits>
+#include <utility>
 #include <vector>
 using namespace blackcoop;
+struct ShadowIO; // C++20 access check needs only a type, not its implementation
+template<class T,class IO>
+concept CanWriteShadowDirectly = requires(T& stage,IO& io,
+  const OriginalPlayerStorageScene& scene,const OriginalPlayerStorageView& view) {
+  stage.CopyIntoOwned(io,scene,view);
+};
+static_assert(!CanWriteShadowDirectly<OriginalHostPlayerShadowPlan,ShadowIO>,
+              "P2 memory must only be materialized via quarantined Stage");
 struct ShadowIO {
  std::vector<uint8_t> memory=std::vector<uint8_t>(0x700000);
  std::map<uint32_t,uint32_t> owned;

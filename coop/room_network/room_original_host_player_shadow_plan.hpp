@@ -220,6 +220,11 @@ public:
          std::memcmp(parts.data(),parts_.data(),0x630u)==0&&
          std::memcmp(controller.data(),input_.data(),0x40u)==0;
  }
+private:
+ // Only Stage may write into P2 guest allocations, because it must first
+ // transition original owned storage to EngineTouched / quarantine. The
+ // public ShadowPlan may prepare and inspect but must NEVER copy directly.
+ friend class OriginalHostPlayerStage;
  // Explicit opt-in, NEVER called by current Android gameplay. Writes only
  // five exact, separately tracked P2 allocations. Caller must mark the
  // storage engine-touched BEFORE entering: a partial write requires cleanup.

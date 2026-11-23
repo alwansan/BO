@@ -41,6 +41,10 @@ public:
   std::memcpy(destination,kernel::HostPtr(address),length);
   return true;
  }
+private:
+ // The ShadowPlan is the only guest writer: other callers must enter through
+ // OriginalHostPlayerStage::MaterializeOwned, which quarantines first.
+ friend class OriginalHostPlayerShadowPlan;
  // Only tracked exact allocation bases, never P1/core/world/NPC or any
  // arbitrary committed guest page. Used by opt-in P2 materialization only.
  bool WriteOwned(uint32_t address,const void* source,uint32_t bytes)noexcept{
@@ -48,6 +52,7 @@ public:
   std::memcpy(kernel::HostPtr(address),source,bytes);
   return true;
  }
+public:
  bool Free(uint32_t address){
   for(auto& record:allocations_)if(address&&record.address==address){
    if(!Owns(address,record.size))return false;

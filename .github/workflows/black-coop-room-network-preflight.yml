@@ -53,6 +53,11 @@ jobs:
           #include <type_traits>
           static_assert(std::is_base_of_v<blackcoop::OriginalHostProxyKernelIO,
                                           blackcoop::OriginalPlayerStorageKernelIO>);
+          template<class IO>
+          concept CanWriteP2GuestDirectly = requires(IO& io){
+            io.WriteOwned(0x10000u,static_cast<const void*>(nullptr),0x40u);
+          };
+          static_assert(!CanWriteP2GuestDirectly<blackcoop::OriginalPlayerStorageKernelIO>);
           void compile_only(X86Context& ctx, uint64_t (*scene)() noexcept) {
             blackcoop::OriginalPlayerStorageKernelIO owned(ctx, scene);
             blackcoop::OriginalProxySceneLedger ledger;
@@ -63,7 +68,8 @@ jobs:
             blackcoop::OriginalPlayerStorageScene binding{};
             blackcoop::OriginalPlayerStorageView buffers{};
             (void) plan.Prepare(owned,binding,buffers);
-            (void) plan.CopyIntoOwned(owned,binding,buffers);
+            (void) plan.SourceStillCurrent(owned);
+            // CopyIntoOwned is private: only the quarantined Stage may call it.
             blackcoop::OriginalHostPlayerStage staged;
             (void) staged.MaterializeOwned(owned);
           }
