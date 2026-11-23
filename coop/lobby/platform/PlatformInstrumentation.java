@@ -124,6 +124,35 @@ public final class PlatformInstrumentation extends Instrumentation {
                       hosting.snapshot().roster.players.size()!=2) {
                     check(System.nanoTime()<until);Thread.sleep(20);
                 }
+                // OWNER regression: joining guest retained a blocking room
+                // overlay after HOST START even though BLACK loaded behind it.
+                // Authenticate the same first-stage ticket over real Android
+                // TLS and close ONLY the guest UI, not the connection.
+                RoomWire.State waiting=joining.snapshot().roster;
+                check(!RoomOverlay.shouldDismissGuestOnAuthenticatedFirstStage(
+                    RoomSession.Phase.JOINED,null,waiting));
+                check(hosting.requestTwoPhoneFirstStageFromLobby());
+                until=System.nanoTime()+7_000_000_000L;
+                while(joining.storyStatus().ticket==null){
+                    check(System.nanoTime()<until);Thread.sleep(20);
+                }
+                RoomStoryWire.Ticket prepared=joining.storyStatus().ticket;
+                RoomWire.State joined=joining.snapshot().roster;
+                check(RoomOverlay.shouldDismissGuestOnAuthenticatedFirstStage(
+                    RoomSession.Phase.JOINED,prepared,joined));
+                check(!RoomOverlay.shouldDismissGuestOnAuthenticatedFirstStage(
+                    RoomSession.Phase.HOSTING,prepared,joined));
+                check(!RoomOverlay.shouldDismissGuestOnAuthenticatedFirstStage(
+                    RoomSession.Phase.JOINED,
+                    new RoomStoryWire.Ticket(prepared.session(),prepared.token,
+                        prepared.rosterRevision,0,2,prepared.sceneEpoch,
+                        prepared.participants),joined));
+                check(!RoomOverlay.shouldDismissGuestOnAuthenticatedFirstStage(
+                    RoomSession.Phase.JOINED,
+                    new RoomStoryWire.Ticket(prepared.session(),prepared.token,
+                        prepared.rosterRevision+1,0,1,prepared.sceneEpoch,
+                        prepared.participants),joined));
+                check(joining.snapshot().phase==RoomSession.Phase.JOINED);
                 joining.stop();hosting.stop();
                 check(joining.snapshot().phase==RoomSession.Phase.IDLE);
             }
