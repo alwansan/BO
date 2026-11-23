@@ -218,6 +218,52 @@ class LabTests(unittest.TestCase):
                                         firmware_kind_2=True))
         self.assertNotIn('PRIVATE', str(progress))
 
+    def test_private_original_dvd_media_breadcrumbs_are_bounded_only(self):
+        lab = self.module()
+        progress = {}
+        for line in (
+            r'  [FILE] \Device\CdRom0 -> synthetic DVD device handle',
+            r'  [FILE] \??\Device\CdRom0 -> synthetic DVD device handle',
+            '  [FILE] DVD MODE SENSE(10) page 0x3E, 32 bytes -> authentication page',
+            '  [FILE] DVD device IOCTL 0x4D014 (in=44 out=0) -> STATUS_SUCCESS',
+            r'  [FILE] NtCreateFile FAILED: C:\PRIVATE\game.bin (err=2)',
+        ):
+            lab.collect_boot_media_hints(line, progress)
+        self.assertEqual(progress, dict(dvd_device_opened=True, dvd_mode_sense_seen=True,
+                                         dvd_other_ioctl_seen=True, file_open_failed_seen=True))
+        for private in ('PRIVATE', 'game.bin', '0x4D014', '0x3E', 'err=2'):
+            self.assertNotIn(private, str(progress))
+
+    def test_private_media_hints_reject_forged_paths_and_arbitrary_data(self):
+        lab = self.module()
+        progress = {}
+        for line in (
+            r'  [FILE] \PRIVATE\CdRom0 -> synthetic DVD device handle',
+            r'  [FILE] \Device\CdRom0\SECRET -> synthetic DVD device handle',
+            '  [FILE] DVD MODE SENSE(10) page PRIVATE, 30 bytes -> authentication page',
+            '  [FILE] DVD device IOCTL INVALID (in=1 out=1) -> STATUS_SUCCESS',
+            '  [FILE] DVD MODE SENSE(10) page 0x3E, 12 bytes -> authentication page: EXTRA',
+            'NtCreateFile FAILED: ' + 'PRIVATE' * 2000,
+        ):
+            lab.collect_boot_media_hints(line, progress)
+        self.assertEqual(progress, {})
+
+    def test_private_call_classifies_media_before_quickreboot_without_leaks(self):
+        lab = self.module()
+        private_lines = [
+            r'  [FILE] \Device\CdRom0 -> synthetic DVD device handle',
+            '  [FILE] DVD MODE SENSE(10) page 0x3E, 32 bytes -> authentication page',
+            r'  [FILE] NtCreateFile FAILED: C:\PRIVATE\internal.dat (err=2)',
+            'BO_ENGINE_FIRMWARE_KIND_2',
+        ]
+        progress = {}
+        script = 'for line in ' + repr(private_lines) + ': print(line)'
+        code = lab.private_call([sys.executable, '-c', script], HERE, 5, progress=progress)
+        self.assertEqual(code, 0)
+        self.assertEqual(progress, dict(dvd_device_opened=True, dvd_mode_sense_seen=True,
+                                         file_open_failed_seen=True, firmware_kind_2=True))
+        self.assertNotIn('PRIVATE', str(progress))
+
     def test_truncated_aggregate_cannot_pass(self):
         lab = self.module()
         with self.assertRaises(ValueError):
