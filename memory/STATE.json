@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-81-original-host-npc-tls-v8.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-82-two-phone-guest-overlay-original-world-p0.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -2245,9 +2245,9 @@
   },
   "integrationRoadmap": "docs/COOP_INTEGRATION_ROADMAP_AR.md",
   "currentWork": {
-    "session": 56,
-    "task": "Pinned original BLACK XBE second-hop mission-launch static call graph + source-proven WORD-width mission field correction in native game observer; real guest stage loader not yet found.",
-    "status": "Window Android ROOM-ONLY APK44976590182 SUCCESS (not co-op); pinned owner XBE source widths44977857722 PASS, corrected native 16-bit A/B + third C in12e7f2fc; full Android source preflight44978058718 SUCCESS; synthetic four-peer TLS44978058696 SUCCESS; Android29 TLS44978058836 SUCCESS. Current Android full diagnostic build44978058766 IN_PROGRESS (no gameplay). Original host selected mission/guest same-stage engine loader/remote bot still not proven.",
+    "session": 82,
+    "task": "Guest overlay authenticated automatic dismissal + actual host extra player/world-authority P0",
+    "status": "Guest overlay code and Android TLS regression added; source preflight green; newest full Android and Android29 testing still pending. Two original single-player engines remain independent.",
     "sourceCi": 44951425780,
     "sourceCode": "9938283748ad1bdb06f15259d7e4fcb791a47574",
     "latestOwnerTestedAndroidApkRun": 44946597973,
@@ -2268,7 +2268,7 @@
     "actualSharedStory": false,
     "gameActorSpawned": false,
     "phoneV3Tested": false,
-    "sourceCommit": "5370dcaed04fab156f807a63dc86dd827d5ae16f",
+    "sourceCommit": "135193288c168995f2c63141c07417679aef136e",
     "androidRapidRehostRun": 44953176054,
     "androidRapidRehostStatus": "PASS_ANDROID29_RUN44953176054",
     "actorCreated": false,
@@ -2308,13 +2308,13 @@
     "latestReadyAsyncAndroid29Run": 44960451936,
     "latestRoomLogAsyncAndroid29Run": 44961110132,
     "latestRoomLogAsyncAndroid29Status": "SUCCESS_ROOM_LOG_ASYNC_PASS_AND_TLS",
-    "currentRoomOnlyApkRun": 44967448414,
+    "currentRoomOnlyApkRun": 45091112880,
     "actualSceneLoadedEngineHook": false,
     "remoteHumanFullBodyRendered": false,
     "phoneTestRequiredNow": false,
-    "latestSourcePreflightRun": 44961110163,
+    "latestSourcePreflightRun": 45091112896,
     "latestSourcePreflightStatus": "SUCCESS",
-    "currentRoomOnlyApkStatus": "SUCCESS_NO_GAMEPLAY",
+    "currentRoomOnlyApkStatus": "IN_PROGRESS_NO_GAMEPLAY",
     "originalWorldWriterFlowRun": 44961768279,
     "originalWorldWriterFlowStatus": "SUCCESS_PRIVATE_PINNED_OWNER_IMAGE",
     "originalWorldWriterFlowSafeArtifact": 14729429674,
@@ -2630,7 +2630,9 @@
     "session64RoomEventsForRecordedVideoInCl": false,
     "session64OriginalMissionGuestLaunchVerified": false,
     "session64RemoteVisibleHumanActorVerified": false,
-    "session64OwnerRestoreAlwaysUpdate": true
+    "session64OwnerRestoreAlwaysUpdate": true,
+    "originalNPCWorldAppliedOnGuest": false,
+    "originalDoorDestructionReplicated": false
   },
   "actorFactoryDiagnostic": {
     "package": "org.bocoop.black.factoryroom",
@@ -2863,5 +2865,30 @@
     "previousV7ApkSuccess": 45072167791,
     "hostNpcSlotsAreGuestActors": false,
     "nextBigTrial": "Only after real original host-owned physics actors AI combat quest and client reconciliation"
+  },
+  "session82": {
+    "date": "2026-11-23",
+    "sourceBranchHeadBeforeNotes": "135193288c168995f2c63141c07417679aef136e",
+    "ownerObservation": "START launches two separate original local campaign simulations; guest dialog remains until Back; no remote human body/door sync",
+    "clHostProbe": "black log/logs/BLACK-Probe-20261123-033320-753",
+    "clGuestProbe": "black log/من الهاتف الثاني/BLACK-Probe-20261123-033544-725",
+    "fixGuestDialogCommit": "dd11c771245bb6946697d1e5a2c16363332905cc",
+    "androidPlatformTestCommit": "fe8cf0db796da1443919a0dd67654f3aa5149ee2",
+    "stagingTestCommit": "135193288c168995f2c63141c07417679aef136e",
+    "sourcePreflightRun": 45091112896,
+    "sourcePreflightStatus": "SUCCESS",
+    "newAndroidRoomOnlyRun": 45091112880,
+    "newAndroidRoomOnlyStatusAtLastCheck": "IN_PROGRESS_NO_GAMEPLAY",
+    "android29Run": 45091101809,
+    "android29StatusAtLastCheck": "IN_PROGRESS",
+    "realTlsRun": 45091101849,
+    "realTlsStatusAtLastCheck": "IN_PROGRESS",
+    "originalHostExtraActors": false,
+    "originalAiTargetsAllHumans": false,
+    "authoritativeNpcGuestApplication": false,
+    "authoritativeDestructibleDoors": false,
+    "authoritativeMission": false,
+    "sharedOriginalCampaignVerified": false,
+    "ownerPhoneMajorTestReady": false
   }
 }
