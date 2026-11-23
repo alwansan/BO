@@ -11,6 +11,7 @@
 #pragma once
 #include "coop/room_other_human_body_source_witness.hpp"
 #include "coop/room_original_bot_pool_witness.hpp"
+#include "coop/room_original_remote_human_motion_contract.hpp"
 #include "game/layout.h"
 #include "kernel/kernel.h"
 #include "kernel/memory.h"
@@ -35,12 +36,43 @@ class OriginalHumanBotVisual {
     uint64_t nextCreateTryMs_=0;
     bool logged_=false;
     uint8_t assignedPeer_=0;
+    OriginalRemoteHumanMotionPlan clipPlan_{};
+    uint32_t clipNames_=0;
+    unsigned activeClip_=0;
+    void applyOriginalSoldierAnimation(X86Context& ctx,
+        const OriginalOtherHumanBody& body,uint64_t now)noexcept{
+        clipPlan_.Observe(body.epoch,body.revision,body.tick,
+                          body.x,body.z,now);
+        const unsigned desired=clipPlan_.DesiredClip();
+        // The PC original BLACK soldier's animation-entry ABI is pinned:
+        // eax=character model instance; stack word=clip-name guest pointer.
+        // Never try another source function or play an unverified clip.
+        if(!desired||desired==activeClip_||
+           !dispatch::Find(0x0017E130u)||!replicaInstance_)return;
+        static constexpr char kSoldierClips[32]=
+            "TM_AR_S_001\0\0\0\0\0TM_AR_S_MOV\0";
+        if(!clipNames_||!OriginalGuestSpanCommitted(clipNames_,32u)){
+            clipNames_=mem::AllocSystem(sizeof(kSoldierClips),16u);
+            if(!clipNames_||!OriginalGuestSpanCommitted(clipNames_,32u)){
+                clipNames_=0;return;
+            }
+            std::memcpy(kernel::HostPtr(clipNames_),
+                        kSoldierClips,sizeof(kSoldierClips));
+        }
+        X86Context saved=ctx;
+        ctx.eax=replicaInstance_;
+        kernel::CallGuest(ctx,0x0017E130u,
+                          {clipNames_+(desired==2u?16u:0u)});
+        ctx=saved;
+        activeClip_=desired; // changes only for genuine source motion
+    }
     static uint32_t fp(float v)noexcept{
         uint32_t bits=0;std::memcpy(&bits,&v,sizeof(bits));return bits;
     }
     void purgeEvidence()noexcept{
         sourceWorld_=sourceEpisode_=replica_=replicaTemplate_=replicaInstance_=replicaEpoch_=0;
         sourceAtMs_=nextCreateTryMs_=0;attempted_=logged_=false;
+        clipPlan_.Reset();activeClip_=0;
     }
     static bool read(uint32_t at,uint32_t& out)noexcept{
         if(!OriginalGuestSpanCommitted(at,4))return false;
@@ -193,6 +225,10 @@ public:
             kernel::W32(replica_+off,v);
             kernel::W32(replica_+off+0x60u,v);
         }
+        // One genuine source-sampled idle/walk transition controls only
+        // this detached original soldier's animations. It still has no AI
+        // brain, physics proxy, weapons, collision or mission authority.
+        applyOriginalSoldierAnimation(ctx,body,now);
         X86Context saved=ctx;
         ctx.eax=replicaInstance_;
         kernel::CallGuest(ctx,0x001801B0u,{fp(1.0f/30.0f),0});

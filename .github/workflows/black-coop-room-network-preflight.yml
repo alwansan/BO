@@ -65,6 +65,9 @@ jobs:
           g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -fsanitize=undefined \
             bo/coop/room_network/test_room_original_host_physics_proxy_contract.cpp -o "$RUNNER_TEMP/test_original_host_physics_pool"
           "$RUNNER_TEMP/test_original_host_physics_pool"
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -fsanitize=undefined \
+            bo/coop/room_network/test_room_original_remote_human_motion_contract.cpp -o "$RUNNER_TEMP/test_original_human_motion"
+          "$RUNNER_TEMP/test_original_human_motion"
           g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread -fsanitize=undefined \
             bo/coop/room_network/test_room_original_trusted_input_contract.cpp -o "$RUNNER_TEMP/test_tls_human_inbox"
           "$RUNNER_TEMP/test_tls_human_inbox"

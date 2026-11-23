@@ -298,6 +298,7 @@ def prepare(root: pathlib.Path):
     pending['src/coop/original_all_other_humans_contract.hpp'] = (HERE / 'room_network/original_all_other_humans_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_other_human_body_source_witness.hpp'] = (HERE / 'room_network/room_other_human_body_source_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_live_remote_bot.hpp'] = (HERE / 'room_network/room_original_live_remote_bot.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_remote_human_motion_contract.hpp'] = (HERE / 'room_network/room_original_remote_human_motion_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_ai_target_contract.hpp'] = (HERE / 'room_network/room_original_ai_target_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_ai_target_witness.hpp'] = (HERE / 'room_network/room_original_ai_target_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_host_physics_proxy_contract.hpp'] = (HERE / 'room_network/room_original_host_physics_proxy_contract.hpp').read_text(encoding='utf-8')
