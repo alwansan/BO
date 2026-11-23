@@ -105,6 +105,11 @@ def prepare(root: pathlib.Path):
     public int coopHostAppearancePeerMaskFromGameThread() {
         return com.racas.black.coop.RoomAppRooms.hostAppearancePeerMaskFromGameThread();
     }
+    // Signed by HOST TLS COMMIT and independently matched original stage.
+    // No remote packet may provide or override this value.
+    public int coopHostCommittedOriginalSceneEpochFromGameThread() {
+        return com.racas.black.coop.RoomAppRooms.hostCommittedOriginalSceneEpochFromGameThread();
+    }
     // Pinned original BLACK FRONTEND tick polls the verified host's
     // PREPARE without any local player body. Bounded 8 ints; no loader.
     public int[] coopPollGuestPreparedStoryFromOriginalFrontend() {

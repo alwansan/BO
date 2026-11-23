@@ -12,7 +12,7 @@
 namespace blackcoop {
 inline void ObserveOriginalHostExtraActorGate(uint32_t episode,uint32_t world,
  uint32_t localOriginalPlayer,uint8_t authenticatedMask,
- bool verifiedOriginalSource)noexcept{
+ uint32_t signedHostSceneEpoch,bool verifiedOriginalSource)noexcept{
  static uint32_t lastEpisode=0,lastWorld=0;
  static uint8_t lastMask=0,reported=0;
  static uint64_t lastAt=0;
@@ -30,7 +30,9 @@ inline void ObserveOriginalHostExtraActorGate(uint32_t episode,uint32_t world,
  inputs.originalEpisode=episode;inputs.originalWorld=world;
  inputs.sourceMatched=verifiedOriginalSource;
  inputs.authenticatedOtherMask=authenticatedMask;
- inputs.signedStoryEpoch=OriginalHostHumanInputs().Epoch();
+ // This must be an INDEPENDENT HOST ticket validated by Java's original
+ // stage and COMMIT gates; never equate two reads of the input epoch.
+ inputs.signedStoryEpoch=signedHostSceneEpoch;
  inputs.inputEpoch=OriginalHostHumanInputs().Epoch();
  // Peer IDs are assigned by signed TLS server host roster, never by
  // guest-provided packet fields. A live command must match current epoch.

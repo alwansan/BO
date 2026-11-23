@@ -101,6 +101,26 @@ public final class RoomSession implements AutoCloseable {
             }
         }
     }
+    /**
+     * Independently signed HOST story epoch for original-game-thread actor
+     * readiness. A roster mask or incoming remote input cannot prove COMMIT.
+     * The native host actor gate compares this epoch with its TLS input inbox.
+     * Does NOT permit allocating or updating an original BLACK actor yet.
+     */
+    public int hostCommittedOriginalSceneEpochFromGameThread(){
+        synchronized(lock){
+            if(closed||!validStoryThread()||phase!=Phase.HOSTING||
+               host==null||!host.isRunning()||!host.storyCommitted()||
+               originalRunningReadyTicket==null||lastSourceStage==null||
+               System.nanoTime()-lastSourceStageAtNs>3000000000L)
+                return 0;
+            RoomStoryWire.Ticket t=host.storyTicket();
+            if(t==null||!t.same(originalRunningReadyTicket)||
+               t.sceneEpoch<=0||t.mission!=lastSourceStage.level||
+               t.stage!=lastSourceStage.stage)return 0;
+            return t.sceneEpoch;
+        }
+    }
     boolean observeOriginalStageIdentityFromGameThread(int episode,int level,int stage){
         synchronized(lock){
             if(closed||!validStoryThread()||

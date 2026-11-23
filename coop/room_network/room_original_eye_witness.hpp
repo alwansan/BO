@@ -203,6 +203,18 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
                 }
             }
         }
+        int signedHostEpoch=0;
+        if(peerMask!=0&&originalLocalSceneRunning&&lookSourceMatched){
+            jmethodID epochMethod=env->GetMethodID(cls,
+               "coopHostCommittedOriginalSceneEpochFromGameThread","()I");
+            if(env->ExceptionCheck())env->ExceptionClear();
+            else if(epochMethod){
+                signedHostEpoch=env->CallIntMethod(activity,epochMethod);
+                if(env->ExceptionCheck()){
+                    env->ExceptionClear();signedHostEpoch=0;
+                }
+            }
+        }
         ObserveOriginalHumanLookPlanHint(coreEpisode,world,
             lookSourceMatched,static_cast<uint8_t>(peerMask));
         // Passive REAL original host physics pool check. The game can have
@@ -216,6 +228,7 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
         // ownership lifecycle are separately implemented and proven.
         ObserveOriginalHostExtraActorGate(coreEpisode,world,original_player,
             static_cast<uint8_t>(peerMask),
+            static_cast<uint32_t>(signedHostEpoch>0?signedHostEpoch:0),
             originalLocalSceneRunning&&lookSourceMatched);
         // Actually fetch the other REAL human's HOST-owned feet for a future
         // independent original-bot draw. Still NO original actor memory write.

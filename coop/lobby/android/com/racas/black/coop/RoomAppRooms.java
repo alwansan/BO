@@ -92,6 +92,11 @@ public final class RoomAppRooms {
  // Matched original core/stream identity only; cannot assert scene READY.
  // Host TLS roster ordinal slots only; original game thread guard is in
  // RoomSession. Returning 0 is NOT a scene-loaded or actor failure.
+ public static int hostCommittedOriginalSceneEpochFromGameThread(){
+  RoomSession session;
+  synchronized(RoomAppRooms.class){session=active;}
+  return session==null?0:session.hostCommittedOriginalSceneEpochFromGameThread();
+ }
  public static int hostAppearancePeerMaskFromGameThread(){
   RoomSession session;
   synchronized(RoomAppRooms.class){session=active;}

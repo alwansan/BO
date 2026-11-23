@@ -110,6 +110,7 @@ public final class RoomFourHumanOriginalStageTlsTest {
                 if(i<2)ok(!host.storyStatus().committed);
             }
             until(()->allCommitted(host,guests));
+            ok(host.hostCommittedOriginalSceneEpochFromGameThread()==ticket.sceneEpoch);
             ok(host.attestOriginalRunningSceneFromGameThread(
                 90,2,0,0,0,0,0,0)==0); // duplicate source cannot rearm READY
             // NOW source-based host first-person body feet seeds three
