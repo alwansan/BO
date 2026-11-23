@@ -3327,5 +3327,29 @@
     "ownerPhoneTrialReady": false,
     "warning": "new adapter instance cannot be used to defeat previous native quarantine",
     "next": "review latest engine firmware mode; fix real boot, original actor/weapon/audio/physics/AI ownership, host NPC/objectives and guest application"
+  },
+  "session105": {
+    "date": "2026-11-23",
+    "verifiedOriginalEngineRun": 45193373405,
+    "originalEngineBuildSuccess": true,
+    "ownerFilesExtracted": 574,
+    "firmwareKind": "2_HalQuickRebootRoutine",
+    "runtimeMs": 202,
+    "usbPolled": false,
+    "frontendPolled": false,
+    "missionObserved": false,
+    "originalGameplayAccepted": false,
+    "quickRebootLaunchDataParsed": "private_bounded_categories_only",
+    "launchClassifierCommit": "476410fb1c025075f32c98171305f0f9b4e8b136",
+    "launchClassifierRealRun": 45197279738,
+    "launchClassifierRealRunConclusion": "pending_when_checked",
+    "sourceProxyRegressionRun": 45195066451,
+    "sourceProxyRegression": "success",
+    "androidRoomOnlyRun": 45195066473,
+    "androidRoomOnlyConclusion": "success_no_gameplay",
+    "originalHostExtraActorImplemented": false,
+    "sharedWorldProven": false,
+    "ownerPhoneTrialReady": false,
+    "next": "inspect actual private launch page presence/type and source-backed reboot reason; fix boot; implement original host P2-4 actors/physics/weapon/AI and authoritative original world"
   }
 }
