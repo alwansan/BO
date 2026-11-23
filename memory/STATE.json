@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-83-real-guest-feet-host-world.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-84-object-events-ordered-host-tls-v9.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -2923,5 +2923,29 @@
     "completeCoopApkReady": false,
     "ownerPhoneTrialRequested": false,
     "automationId": "6b03909067548191a740f2121625a041"
+  },
+  "session84": {
+    "date": "2026-11-23",
+    "branch": "experiment/black-coop",
+    "transportCommit": "101b3ec9e8d575936b9afbbc9300f88c888c2a3e",
+    "protocolVersion": 9,
+    "protocolProfile": 9,
+    "authenticatedFourPlayerObjectEventTransport": true,
+    "hostOriginalObjectHookDiscovered": false,
+    "hostOriginalObjectEventProducedOnPhone": false,
+    "guestNativeObjectMutationApplied": false,
+    "stableCrossDeviceObjectIdentityResolved": false,
+    "originalHostExtraHumanEngineActors": false,
+    "hostPhysicsProxyForAllHumans": false,
+    "enemiesTargetAllPlayers": false,
+    "sharedDestructibleDoors": false,
+    "sharedOriginalCampaignVerified": false,
+    "nextPhysicalPhoneTrialApproved": false,
+    "realTlsRun": 45093109148,
+    "android29Run": 45093109200,
+    "sourcePreflightRun": 45093109118,
+    "roomOnlyAndroidRun": 45093109167,
+    "ciAtLastCheck": "IN_PROGRESS_UNVERIFIED",
+    "ownerConstraint": "CI first, only one major phone trial when true shared world works"
   }
 }
