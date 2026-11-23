@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-112-p1-restore-regions.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-113-p2-model-detached-isolation.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3589,6 +3589,19 @@
     "acceptanceRelaxed": false,
     "realLabRecheckPending": true,
     "androidGameplayCoopVerified": false,
+    "ownerTrialRequiredNow": false
+  },
+  "session113P2ModelDetachedIsolation": {
+    "pinnedOriginalModelBytes": 512,
+    "detachedPartsBytes": 1584,
+    "originalShadowModelSourceReadOnly": true,
+    "independentTargetModelPointerRebased": true,
+    "modelIsolatedRequiredForSubsequentModelReady": true,
+    "newStageSourceCiVerified": false,
+    "androidPlayer2ActorInitialized": false,
+    "originalP2PhysicsAiAndWeaponAvailable": false,
+    "hostOriginalSharedWorld": false,
+    "guestOriginalStateApplication": false,
     "ownerTrialRequiredNow": false
   }
 }

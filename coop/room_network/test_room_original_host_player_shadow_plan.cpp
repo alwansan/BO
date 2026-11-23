@@ -9,7 +9,7 @@ using namespace blackcoop;
 struct ShadowIO {
  std::vector<uint8_t> memory=std::vector<uint8_t>(0x700000);
  std::map<uint32_t,uint32_t> owned;
- uint64_t scene=9;unsigned writes=0;bool copyFailure=false,cameraFails=false;
+ uint64_t scene=9;unsigned writes=0;bool copyFailure=false,cameraFails=false,modelCopyFailure=false;
  unsigned allocs=0,frees=0,cameraCalls=0;
  ShadowIO(){
   owned={{0x500000,0x16C0},{0x503000,0x900},{0x504000,0x40},{0x505000,0x40},{0x506000,0x630}};
@@ -22,7 +22,7 @@ struct ShadowIO {
  }
  bool Span(uint32_t p,uint32_t n)const{return p>=0x10000&&uint64_t(p)+n<=memory.size();}
  bool Read32(uint32_t p,uint32_t& out)const{if(!Span(p,4))return false;std::memcpy(&out,memory.data()+p,4);return true;}
- bool CopyGuest(uint32_t p,void* dst,uint32_t n)const{if(copyFailure||!dst||!Span(p,n))return false;std::memcpy(dst,memory.data()+p,n);return true;}
+ bool CopyGuest(uint32_t p,void* dst,uint32_t n)const{if(copyFailure||(modelCopyFailure&&p==0x210000&&n==0x200)||!dst||!Span(p,n))return false;std::memcpy(dst,memory.data()+p,n);return true;}
  bool Owns(uint32_t p,uint32_t n)const{auto i=owned.find(p);return i!=owned.end()&&i->second==n;}
  uint32_t Alloc(uint32_t size){
   static constexpr uint32_t addresses[]={0x500000,0x503000,0x504000,0x505000,0x506000};
@@ -63,6 +63,36 @@ int main(){
   assert(p.PreviewOwnerWord(4,w)&&w==t.owner+0x800);
   assert(!p.PreviewActorWord(0x8FF,w));
   p.Reset();assert(!p.Ready()&&!p.PreviewActorWord(0,w));
+ }
+ {ShadowIO io;io.set(b.core+0x30+0x320,0x210000);
+  io.set(0x210000,0x1234ABCD);io.set(0x210000+0x1FC,0xABCD1234);
+  const auto source=io.memory;const unsigned writes=io.writes;
+  OriginalHostPlayerShadowPlan p;uint32_t w=0;
+  assert(p.Prepare(io,b,t)&&p.Ready()&&p.ModelIsolated());
+  assert(p.PreviewActorWord(0x320,w)&&w==t.parts+0x430);
+  assert(p.PreviewModelWord(0,w)&&w==0x1234ABCD);
+  assert(p.PreviewModelWord(0x1FC,w)&&w==0xABCD1234);
+  assert(!p.PreviewModelWord(0x200,w));
+  assert(io.memory==source&&io.writes==writes);
+  p.Reset();assert(!p.ModelIsolated()&&!p.PreviewModelWord(0,w));
+ }
+ {ShadowIO io;io.set(b.core+0x30+0x320,0x210000);io.modelCopyFailure=true;
+  OriginalHostPlayerShadowPlan p;
+  assert(!p.Prepare(io,b,t)&&!p.Ready()&&!p.ModelIsolated());
+ }
+ {ShadowIO io;io.set(b.core+0x30+0x320,t.parts+0x430u);
+  OriginalHostPlayerShadowPlan p;assert(!p.Prepare(io,b,t));
+ }
+ {ShadowIO io;io.set(b.core+0x30+0x320,0xFFFFFFF0u);
+  OriginalHostPlayerShadowPlan p;assert(!p.Prepare(io,b,t));
+ }
+ {ShadowIO io;io.set(b.core+0x30+0x320,0x210000);
+  OriginalHostPlayerStage stage;uint32_t w=0;
+  assert(stage.Prepare(io,b)==OriginalHostPlayerStageStatus::Prepared);
+  assert(stage.Ready()&&stage.ModelIsolated());
+  assert(stage.PreviewActorWord(0x320,w)&&w==stage.View().parts+0x430u);
+  assert(stage.ReleaseConstructorOnly(io)==OriginalStorageStatus::Released);
+  assert(io.frees==5&&io.owned.empty());
  }
  {ShadowIO io;OriginalHostPlayerShadowPlan p;auto wrong=b;wrong.scene++;assert(!p.Prepare(io,wrong,t));}
  {ShadowIO io;OriginalHostPlayerShadowPlan p;auto wrong=t;wrong.actor=t.weapons;assert(!p.Prepare(io,b,wrong));}

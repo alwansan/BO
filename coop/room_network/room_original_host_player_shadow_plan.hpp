@@ -13,8 +13,9 @@ class OriginalHostPlayerShadowPlan final {
  std::thread::id thread_=std::this_thread::get_id();
  std::array<uint8_t,0x900> actor_{};
  std::array<uint8_t,0x16C0> owner_{};
- std::array<uint8_t,0x430> parts_{};
+ std::array<uint8_t,0x630> parts_{}; // +0x430..+0x62F: separate 0x200 model workspace
  bool ready_=false;
+ bool modelIsolated_=false;
  static bool range(uint32_t p,uint32_t n)noexcept{
   return p>=0x10000u&&n&&uint64_t(p)+n<=0x100000000ull;
  }
@@ -33,9 +34,16 @@ public:
  ~OriginalHostPlayerShadowPlan(){if(onThread())Reset();}
  void Reset()noexcept{
   if(!onThread())return;
-  actor_.fill(0);owner_.fill(0);parts_.fill(0);ready_=false;
+  actor_.fill(0);owner_.fill(0);parts_.fill(0);ready_=false;modelIsolated_=false;
  }
  bool Ready()const noexcept{return onThread()&&ready_;}
+ // A separate donor model copy is an additional invariant; Ready alone does
+ // not authorize original engine actor setup or native model ownership.
+ bool ModelIsolated()const noexcept{return Ready()&&modelIsolated_;}
+ bool PreviewModelWord(uint32_t off,uint32_t& v)const noexcept{
+  if(!ModelIsolated()||off>0x1FCu||(off&3u))return false;
+  v=get(parts_.data()+0x430u+off);return true;
+ }
  // Preview only already-sanitized stage data; never output it to JNI/logs.
  bool PreviewActorWord(uint32_t off,uint32_t& v)const noexcept{
   if(!Ready()||off>0x8FCu||(off&3u))return false;
@@ -73,20 +81,38 @@ public:
      !io.Span(b.core,0x5CC0)||!io.Span(b.owner,0x16C0)||
      !io.Span(b.physics,0x2974)||!io.Span(b.npcs,0x8540))return false;
   const uint32_t local=b.core+0x30u;
-  uint32_t table=0,kind=0,partA=0,partB=0;
+  uint32_t table=0,kind=0,partA=0,partB=0,sourceModel=0;
   if(!io.Read32(local,table)||table!=0x28CFE0u||
      !io.Read32(local+0xC4,kind)||kind!=2u||
      !io.Read32(local+0x34C,partA)||!io.Read32(local+0x350,partB)||
+     !io.Read32(local+0x320,sourceModel)||
      !range(partA,0x70)||!range(partB,0x3C0)||
      !io.Span(partA,0x70)||!io.Span(partB,0x3C0))return false;
   for(unsigned i=0;i<5;i++)
    if(overlap(partA,0x70,targets[i],sizes[i])||
       overlap(partB,0x3C0,targets[i],sizes[i]))return false;
+  // Pinned MIT PC black_p2_swap isolates the original first-person model
+  // at actor+0x320 into parts+0x430 (exactly 0x200 bytes). Do it only in
+  // detached local bytes; NEVER keep a pointer into another player's model
+  // in a model-isolated result. Absent model means partial staging only.
+  if(sourceModel){
+   if((sourceModel&3u)||!range(sourceModel,0x200)||!io.Span(sourceModel,0x200))return false;
+   for(unsigned i=0;i<5;i++)
+    if(overlap(sourceModel,0x200,targets[i],sizes[i]))return false;
+  }
   if(!io.CopyGuest(local,actor_.data(),0x900)||
      !io.CopyGuest(b.owner,owner_.data(),0x16C0)||
      !io.CopyGuest(partA,parts_.data(),0x70)||
-     !io.CopyGuest(partB,parts_.data()+0x70,0x3C0)){
+     !io.CopyGuest(partB,parts_.data()+0x70,0x3C0)||
+     (sourceModel&&!io.CopyGuest(sourceModel,parts_.data()+0x430,0x200))){
    Reset();return false;
+  }
+  if(get(actor_.data()+0x320)!=sourceModel){Reset();return false;}
+  // Full 0x200 model bytes are independently owned in the proposed P2
+  // parts allocation, but their internal runtime references remain unproven.
+  if(sourceModel){
+   put(actor_.data()+0x320,t.parts+0x430u);
+   modelIsolated_=true;
   }
   // Pinned PC black_p2_start fields, isolated in HOST-only bytes.
   put(actor_.data()+0x30,0);
@@ -110,9 +136,12 @@ public:
    if(uint64_t(v)>=lo&&uint64_t(v)<hi)
     put(actor_.data()+off,t.owner+(v-b.owner));
   }
-  uint32_t sameWorld=0,sameOwner=0;
+  uint32_t sameWorld=0,sameOwner=0,sameModel=0,samePartA=0,samePartB=0;
   if(io.Scene()!=b.scene||!io.Read32(0x2D45D4,sameWorld)||sameWorld!=b.core||
-     !io.Read32(0x2D12B8,sameOwner)||sameOwner!=b.owner){
+     !io.Read32(0x2D12B8,sameOwner)||sameOwner!=b.owner||
+     !io.Read32(local+0x320,sameModel)||sameModel!=sourceModel||
+     !io.Read32(local+0x34C,samePartA)||samePartA!=partA||
+     !io.Read32(local+0x350,samePartB)||samePartB!=partB){
    Reset();return false;
   }
   ready_=true;return true;
@@ -136,6 +165,7 @@ public:
  OriginalHostPlayerStage& operator=(const OriginalHostPlayerStage&)=delete;
  // No destructor-driven guest free: owning game thread must release resources.
  bool Ready()const noexcept{return onThread()&&shadow_.Ready()&&storage_.View().actor!=0;}
+ bool ModelIsolated()const noexcept{return Ready()&&shadow_.ModelIsolated();}
  OriginalPlayerStorageView View()const noexcept{
   return Ready()?storage_.View():OriginalPlayerStorageView{};
  }
