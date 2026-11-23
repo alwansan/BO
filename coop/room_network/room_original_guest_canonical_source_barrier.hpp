@@ -60,7 +60,8 @@ public:
   epoch_=key.sceneEpoch;revision_=key.rosterRevision;
   token_=token;originalScene_=nativeScene;
   worldTick_=players.Tick();npcTick_=npcs.Tick();
-  lastObservedAt_=now;
+  // Replaying the same authenticated frame must not renew freshness.
+  if(advanced)lastObservedAt_=now;
   if(advanced&&stable_<3u)++stable_;
   return stable_>=3u;
  }

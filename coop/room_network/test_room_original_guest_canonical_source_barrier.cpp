@@ -22,7 +22,8 @@ int main(){
  avatars[1]=11;assert(world.Ingest(avatars,22,1006));
  assert(gate.Observe(key,0x100000,world,npc,1007));
  assert(gate.SourceCoherent(1007)&&!gate.OriginalGuestEngineApplied());
- assert(!gate.SourceCoherent(1104)); // no perpetual source readiness
+ assert(gate.Observe(key,0x100000,world,npc,1050)); // replay does not refresh proof
+ assert(!gate.SourceCoherent(1108)); // last distinct host frame was at 1007
  int32_t unexpected[]={23,17,3,4,
   1,100,200,300,0,0,2,120,200,300,0,0,
   3,130,200,300,0,0,4,150,200,300,0,0};

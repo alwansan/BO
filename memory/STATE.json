@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-128-canonical-exact-roster-ttl.md",
+  "lastSession": "memory/sessions/2026-11-24_bo-coop-129-source-replay-freshness-ci.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3619,7 +3619,10 @@
     "ownerTrialRequiredNow": false
   },
   "session115OwnedGuestP2Materialization": {
-    "codeCommits": ["a7113623abf1dd627dd67c4a08a3c741e584f298", "c31c58aed88cf4c809e163a1bac8bd0c914632ca"],
+    "codeCommits": [
+      "a7113623abf1dd627dd67c4a08a3c741e584f298",
+      "c31c58aed88cf4c809e163a1bac8bd0c914632ca"
+    ],
     "stage": "opt_in_cpp_native_write_to_five_exact_tracked_guest_P2_allocations",
     "originalP1MemoryWritePermitted": false,
     "initializationRequiresOriginalPhase1C": true,
@@ -3629,7 +3632,13 @@
     "engineCleanupImplemented": false,
     "productionCallEnabled": false,
     "nativeOriginalP2SetupDone": false,
-    "sourcePreflightVerified": true, "sourcePreflightRun": 45225086457, "sourcePreflightStatus": "pass_native_sanitizer_and_pinned_sdk_compile_only", "udpRun": 45225086329, "udpStatus": "success", "androidRun": 45225086434, "androidAtCheck": "candidate_probe_in_progress",
+    "sourcePreflightVerified": true,
+    "sourcePreflightRun": 45225086457,
+    "sourcePreflightStatus": "pass_native_sanitizer_and_pinned_sdk_compile_only",
+    "udpRun": 45225086329,
+    "udpStatus": "success",
+    "androidRun": 45225086434,
+    "androidAtCheck": "candidate_probe_in_progress",
     "physicalProxyAiWeaponReady": false,
     "originalHostCanonicalWorld": false,
     "originalGuestCanonicalApply": false,
@@ -3652,7 +3661,17 @@
     "pcOriginalUsb0Reports": 5650,
     "pcOriginalUsb1Reports": 5589,
     "pcOriginalHddAndFrontendReached": true,
-    "nextCounterProbe": ["restore_grid_node_failures","restore_grid_other_failures","p1_proxy_missing_ticks","p1_body_missing_ticks","p2_proxy_missing_ticks","p2_body_missing_ticks","proxy_pool_low_ticks","proxy_pool_unknown_ticks","scripted_control_ticks"],
+    "nextCounterProbe": [
+      "restore_grid_node_failures",
+      "restore_grid_other_failures",
+      "p1_proxy_missing_ticks",
+      "p1_body_missing_ticks",
+      "p2_proxy_missing_ticks",
+      "p2_body_missing_ticks",
+      "proxy_pool_low_ticks",
+      "proxy_pool_unknown_ticks",
+      "scripted_control_ticks"
+    ],
     "acceptanceRelaxed": false,
     "originalAndroidP2Active": false,
     "originalHostCanonicalSharedMission": false,
@@ -3663,7 +3682,14 @@
     "sourceCommit": "6968f2d7d3f3a9dcf91b08bbde58b9785ebde1f6",
     "sourceOriginalActorBytesRetained": 2304,
     "sourceOriginalOwnerBytesRetained": 5824,
-    "checkedSources": ["originalGridAndActor", "cameraOwner", "partsA", "partsB", "firstPersonModel", "controllerSource"],
+    "checkedSources": [
+      "originalGridAndActor",
+      "cameraOwner",
+      "partsA",
+      "partsB",
+      "firstPersonModel",
+      "controllerSource"
+    ],
     "sourceBytesEverExported": false,
     "preflightBeforeEngineTouched": true,
     "noP2WritesOnStaleSource": true,
@@ -3708,7 +3734,11 @@
   "session119OriginalP1GridDynamicExchangePreview": {
     "sourcePin": "portingpete/Black-2006-Recomp@b2512fafd3e181e4febfb298f297245b845ef628",
     "linkRuleSource": "black_p2_find_links + black_p2_swap",
-    "codeCommits": ["dfab01ef988a5164e4035815190edc95c60ca139", "75fde0c6ae2f062ae8dd476102cd8c80712751e2", "e607b7bbff146424b5313afc8a3fdd0ed7f7e59e"],
+    "codeCommits": [
+      "dfab01ef988a5164e4035815190edc95c60ca139",
+      "75fde0c6ae2f062ae8dd476102cd8c80712751e2",
+      "e607b7bbff146424b5313afc8a3fdd0ed7f7e59e"
+    ],
     "worldNodeProtectedWords": 14,
     "dynamicExternalListLinkProtected": true,
     "neighborWitnessIdentityRequired": true,
@@ -3773,7 +3803,11 @@
   "session121OriginalPostFrameAndRemotePadPorts": {
     "sourceCommitRemoteXboxPortPlan": "406197d975feedb97ce30255e6145f6df6c91122",
     "sourceCommitOriginalAndroidPost1F1080Frame": "4b4a03a810a12f415e33de8f6b74cd0170c8b4db",
-    "remoteHumanPeerToOriginalXboxPort": {"2": 1,"3": 2,"4": 3},
+    "remoteHumanPeerToOriginalXboxPort": {
+      "2": 1,
+      "3": 2,
+      "4": 3
+    },
     "remotePadSourcePreflightRun": 45242784463,
     "remotePadSourcePreflightConclusion": "success",
     "originalPostFrameSourcePreflightRun": 45243553430,
@@ -3903,5 +3937,15 @@
     "originalGuestEngineApplied": false,
     "originalAndroidNativeP2P4Live": false,
     "userPhoneMicrotest": false
+  },
+  "latestSourceFreshnessFix": {
+    "scope": "source_only_not_android_gameplay",
+    "previousHead": "4afb5f063100672a35f4f7e46400e7f502fdc5f4",
+    "failedSourceRun": 45266674268,
+    "failedParallelRun": 45266674076,
+    "androidLobbyRun": 45266674118,
+    "androidLobbyArtifact": 14863104326,
+    "udpRun": 45266674179,
+    "verification": "pending_new_ci"
   }
 }
