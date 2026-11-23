@@ -1,3 +1,11 @@
+### Session106 — 2026-11-23 — real shared original physics ledger for P2–P4
+
+- New [81e623fc](https://github.com/alwansan/BO/commit/81e623fc1768e151e6671db9538eede91cc868de) makes `OriginalHostProxyEngine` require an external **shared original scene ledger** `OriginalProxySceneLedger`, preventing the previous per-adapter workaround. The ledger supports three additional actor/proxy identities at once, enforces same original world/scene/physics, and quarantines ambiguous native calls or destroyed adapters with unreleased original proxies. Never reconstruct ledger within still-live original scene; safe teardown witness still unimplemented.
+- New [50b1d0e2](https://github.com/alwansan/BO/commit/50b1d0e2ec7ad91557798240508ca678907f3086) tests 3 extra native actor/proxy identities, capacity rejection, verified release/slot reuse, recreation after ownership loss or exception. Source CI [45199349609](https://github.com/alwansan/BO/actions/runs/45199349609) SUCCESS (C++ sanitizers), **not** real in-game host player2 or Android co-op. Reference `docs/ORIGINAL_HOST_PROXY_QUARANTINE_AR.md` and new Session106 file.
+- Real Windows original engine remains blocked by HalQuickRebootRoutine after 202ms, before mission. Latest private classifier run 45197279738 pending/in-progress as checked; verify outcome before inferring launcher path. Android TLS lobby APK 45195066473 SUCCESS but explicitly NO GAMEPLAY.
+- P0 next: original boot cause -> true host2–4 actor, animation/camera/weapon/audio/physics/AI lifecycles + teardown witness -> host original enemy/objectives/doors state + guest engine apply -> one significant two/multi-phone trial.
+- Write only experiment/black-coop, protect owner raw bytes/ISO/XBE/saves, main, CL, biso; maintain all state and session files.
+
 ### Session105 — 2026-11-23 — original Xbox Quick Reboot root-cause classification
 
 - Windows original engine run [45193373405](https://github.com/alwansan/BO/actions/runs/45193373405) verified owner XBE / 574 owner files / real engine build, yet requested HalQuickRebootRoutine (firmware_kind_2) after 202ms before USB, frontend or mission. Runtime gameplay acceptance FAILED. Exit code zero is not success.
