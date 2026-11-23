@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-118-original-grid-and-cinematic-gates.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-119-original-p1-grid-linked-exchange-preview.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3704,5 +3704,31 @@
     "authoritativeHostCanonicalWorldProven": false,
     "realGuestOriginalWorldApply": false,
     "phoneOwnerTestNeededNow": false
+  },
+  "session119OriginalP1GridDynamicExchangePreview": {
+    "sourcePin": "portingpete/Black-2006-Recomp@b2512fafd3e181e4febfb298f297245b845ef628",
+    "linkRuleSource": "black_p2_find_links + black_p2_swap",
+    "codeCommits": ["dfab01ef988a5164e4035815190edc95c60ca139", "75fde0c6ae2f062ae8dd476102cd8c80712751e2", "e607b7bbff146424b5313afc8a3fdd0ed7f7e59e"],
+    "worldNodeProtectedWords": 14,
+    "dynamicExternalListLinkProtected": true,
+    "neighborWitnessIdentityRequired": true,
+    "ownedP2ActorAndRealSceneRequired": true,
+    "sourcePreflightPreviousRun": 45236281197,
+    "sourcePreflightPreviousPassed": true,
+    "sourcePreflightCurrentRun": 45236523923,
+    "sourcePreflightCurrentResult": "pending",
+    "androidCurrentRun": 45236523964,
+    "androidCurrentStatus": "pending_compile_only",
+    "udpCurrentRun": 45236523873,
+    "udpCurrentStatus": "success",
+    "longOriginalPcLabRun": 45233723518,
+    "longOriginalPcLabStatus": "running",
+    "originalGuestMemoryMutated": false,
+    "realP1P2ActorSwapExecuted": false,
+    "realSecondAndroidPlayerSetup": false,
+    "safeNativeEngineTeardownImplemented": false,
+    "originalHostCanonicalWorld": false,
+    "originalGuestCanonicalStateApply": false,
+    "ownerPhoneTrialRequested": false
   }
 }
