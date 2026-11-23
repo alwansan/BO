@@ -9,7 +9,7 @@ using namespace blackcoop;
 struct ShadowIO {
  std::vector<uint8_t> memory=std::vector<uint8_t>(0x700000);
  std::map<uint32_t,uint32_t> owned;
- uint64_t scene=9;unsigned writes=0;bool copyFailure=false,cameraFails=false,modelCopyFailure=false;
+ uint64_t scene=9;unsigned writes=0;bool copyFailure=false,cameraFails=false,modelCopyFailure=false,inputCopyFailure=false;
  unsigned allocs=0,frees=0,cameraCalls=0;
  ShadowIO(){
   owned={{0x500000,0x16C0},{0x503000,0x900},{0x504000,0x40},{0x505000,0x40},{0x506000,0x630}};
@@ -22,7 +22,7 @@ struct ShadowIO {
  }
  bool Span(uint32_t p,uint32_t n)const{return p>=0x10000&&uint64_t(p)+n<=memory.size();}
  bool Read32(uint32_t p,uint32_t& out)const{if(!Span(p,4))return false;std::memcpy(&out,memory.data()+p,4);return true;}
- bool CopyGuest(uint32_t p,void* dst,uint32_t n)const{if(copyFailure||(modelCopyFailure&&p==0x210000&&n==0x200)||!dst||!Span(p,n))return false;std::memcpy(dst,memory.data()+p,n);return true;}
+ bool CopyGuest(uint32_t p,void* dst,uint32_t n)const{if(copyFailure||(modelCopyFailure&&p==0x210000&&n==0x200)||(inputCopyFailure&&p==0x230000&&n==0x40)||!dst||!Span(p,n))return false;std::memcpy(dst,memory.data()+p,n);return true;}
  bool Owns(uint32_t p,uint32_t n)const{auto i=owned.find(p);return i!=owned.end()&&i->second==n;}
  uint32_t Alloc(uint32_t size){
   static constexpr uint32_t addresses[]={0x500000,0x503000,0x504000,0x505000,0x506000};
@@ -91,6 +91,40 @@ int main(){
   assert(stage.Prepare(io,b)==OriginalHostPlayerStageStatus::Prepared);
   assert(stage.Ready()&&stage.ModelIsolated());
   assert(stage.PreviewActorWord(0x320,w)&&w==stage.View().parts+0x430u);
+  assert(stage.ReleaseConstructorOnly(io)==OriginalStorageStatus::Released);
+  assert(io.frees==5&&io.owned.empty());
+ }
+ {ShadowIO io;io.set(b.core+0x354u,0x220000);
+  io.set(0x220000+0xA8,0x230000);io.set(0x230000+0x0C,0x1234ABCD);
+  io.set(0x230000+0x3C,0xABCD1234);io.set(b.core+0x30+0x274,0x230000);
+  const auto source=io.memory;const unsigned writes=io.writes;
+  OriginalHostPlayerShadowPlan p;uint32_t w=0;
+  assert(p.Prepare(io,b,t)&&p.Ready()&&p.InputIsolated());
+  assert(p.PreviewInputWord(0x0C,w)&&w==0x1234ABCD);
+  assert(p.PreviewInputWord(0x3C,w)&&w==0xABCD1234);
+  assert(p.PreviewActorWord(0x274,w)&&w==t.input);
+  assert(!p.PreviewInputWord(0x40,w));
+  assert(io.memory==source&&io.writes==writes);
+  p.Reset();assert(!p.InputIsolated()&&!p.PreviewInputWord(0,w));
+ }
+ {ShadowIO io;io.set(b.core+0x354u,0x220000);
+  io.set(0x220000+0xA8,0x230000);io.inputCopyFailure=true;
+  OriginalHostPlayerShadowPlan p;
+  assert(!p.Prepare(io,b,t)&&!p.Ready()&&!p.InputIsolated());
+ }
+ {ShadowIO io;io.set(b.core+0x354u,0x220000);
+  io.set(0x220000+0xA8,t.input);
+  OriginalHostPlayerShadowPlan p;assert(!p.Prepare(io,b,t));
+ }
+ {ShadowIO io;io.set(b.core+0x354u,0x220000);
+  io.set(0x220000+0xA8,0xFFFFFFE0u);
+  OriginalHostPlayerShadowPlan p;assert(!p.Prepare(io,b,t));
+ }
+ {ShadowIO io;io.set(b.core+0x354u,0x220000);
+  io.set(0x220000+0xA8,0x230000);
+  OriginalHostPlayerStage stage;
+  assert(stage.Prepare(io,b)==OriginalHostPlayerStageStatus::Prepared);
+  assert(stage.Ready()&&stage.InputIsolated());
   assert(stage.ReleaseConstructorOnly(io)==OriginalStorageStatus::Released);
   assert(io.frees==5&&io.owned.empty());
  }
