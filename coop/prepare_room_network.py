@@ -199,6 +199,10 @@ def prepare(root: pathlib.Path):
         else if (code == 99) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_AI_TARGET_POOL_THREE_OR_MORE_FREE_SLOTS_NO_ACTOR");
         else if (code == 102) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_GUEST_HOST_NPC_VALUES_FIRST_TLS_RECEIVED_NOT_SHARED_AI");
         else if (code == 103) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_GUEST_HOST_OBJECT_EVENT_INBOX_NOT_NATIVE_DOOR_APPLIED");
+        else if (code == 2100) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_PHYSICS_POOL_UNREADABLE_NO_ACTOR");
+        else if (code == 2101) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_LOCAL_PHYSICS_PROXY_NOT_VERIFIED");
+        else if (code == 2102) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_PHYSICS_POOL_INSUFFICIENT_RESERVED_FREE_SLOTS");
+        else if (code == 2103) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_PHYSICS_PROXY_CAPACITY_SOURCE_ELIGIBLE_NO_NEW_ACTOR");
         else if (code == 20) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_EASY_NOT_MISSION");
         else if (code == 21) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_NORMAL_NOT_MISSION");
         else if (code == 22) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_HARD_NOT_MISSION");
@@ -296,6 +300,8 @@ def prepare(root: pathlib.Path):
     pending['src/coop/room_original_live_remote_bot.hpp'] = (HERE / 'room_network/room_original_live_remote_bot.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_ai_target_contract.hpp'] = (HERE / 'room_network/room_original_ai_target_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_ai_target_witness.hpp'] = (HERE / 'room_network/room_original_ai_target_witness.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_host_physics_proxy_contract.hpp'] = (HERE / 'room_network/room_original_host_physics_proxy_contract.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_host_physics_proxy_witness.hpp'] = (HERE / 'room_network/room_original_host_physics_proxy_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_host_npc_source_witness.hpp'] = (HERE / 'room_network/room_original_host_npc_source_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_guest_host_npc_contract.hpp'] = (HERE / 'room_network/room_original_guest_host_npc_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_guest_host_npc_witness.hpp'] = (HERE / 'room_network/room_original_guest_host_npc_witness.hpp').read_text(encoding='utf-8')

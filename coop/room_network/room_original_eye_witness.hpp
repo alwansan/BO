@@ -18,6 +18,7 @@
 #include "coop/room_other_human_body_source_witness.hpp"
 #include "coop/room_original_live_remote_bot.hpp"
 #include "coop/room_original_ai_target_witness.hpp"
+#include "coop/room_original_host_physics_proxy_witness.hpp"
 #include "coop/room_original_host_npc_source_witness.hpp"
 #include "coop/room_original_guest_host_npc_witness.hpp"
 #include "coop/room_original_guest_host_object_witness.hpp"
@@ -194,6 +195,11 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
         }
         ObserveOriginalHumanLookPlanHint(coreEpisode,world,
             lookSourceMatched,static_cast<uint8_t>(peerMask));
+        // Passive REAL original host physics pool check. The game can have
+        // fewer than 3 safe proxies during NPC spawns; NEVER allocate here.
+        ObserveOriginalHostPhysicsProxyReadiness(coreEpisode,
+            original_player,static_cast<uint8_t>(peerMask),
+            originalLocalSceneRunning&&lookSourceMatched);
         // Actually fetch the other REAL human's HOST-owned feet for a future
         // independent original-bot draw. Still NO original actor memory write.
         PollOriginalOtherHumanBodySource(env,activity,cls,
