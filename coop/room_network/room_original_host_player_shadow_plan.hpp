@@ -287,6 +287,10 @@ public:
   if(touched_)return OriginalHostPlayerStageStatus::CleanupRequired;
   if(!Ready()||!ModelIsolated()||!InputIsolated())
    return OriginalHostPlayerStageStatus::Incomplete;
+  uint32_t phase=0;
+  if(io.Scene()!=binding_.scene||
+     !io.Read32(binding_.core+0x5AE0u,phase)||phase!=0x1Cu)
+   return OriginalHostPlayerStageStatus::Incomplete;
   if(!storage_.BeginOriginalSetup(io))return OriginalHostPlayerStageStatus::StorageRejected;
   touched_=true;
   try{

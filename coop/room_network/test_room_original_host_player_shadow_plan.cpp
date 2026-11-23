@@ -216,7 +216,8 @@ int main(){
   io.set(b.core+0x354u,0x220000);io.set(0x220000+0xA8u,0x230000);
   OriginalHostPlayerStage stage;
   assert(stage.Prepare(io,b)==OriginalHostPlayerStageStatus::Prepared);
-  assert(stage.MaterializeOwned(io)==OriginalHostPlayerStageStatus::StorageRejected);
+  assert(stage.MaterializeOwned(io)==OriginalHostPlayerStageStatus::Incomplete);
+  assert(io.ownedWrites==0);
   assert(stage.ReleaseConstructorOnly(io)==OriginalStorageStatus::Released);
  }
  std::cout<<"ORIGINAL_HOST_PLAYER_SHADOW_PLAN_PASS: no original writes, isolated camera/actor/weapon/parts plan, safe scope/thread\n";
