@@ -47,10 +47,10 @@ public final class RoomAppRooms {
   * remote players. This is original local CAMERA eye, not actor body root.
   */
  public static void originalPlayerEyeFromGameThread(int x,int y,int z,
-                                                     int bx,int by,int bz){
+                                                     int bx,int by,int bz,int sourceYaw){
   RoomSession session;
   synchronized(RoomAppRooms.class){session=active;}
-  if(session!=null&&session.observeOriginalEyeFromGameThread(x,y,z,bx,by,bz)&&
+  if(session!=null&&session.observeOriginalEyeFromGameThread(x,y,z,bx,by,bz,sourceYaw)&&
      localEyeLogged.compareAndSet(false,true))
    RoomDiagnostics.event("ORIGINAL_LOCAL_CAMERA_EYE_AND_BODY_FEET_VALIDATED");
  }

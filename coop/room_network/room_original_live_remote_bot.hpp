@@ -12,6 +12,7 @@
 #include "coop/room_other_human_body_source_witness.hpp"
 #include "coop/room_original_bot_pool_witness.hpp"
 #include "coop/room_original_remote_human_motion_contract.hpp"
+#include "coop/room_original_eye_contract.hpp"
 #include "game/layout.h"
 #include "kernel/kernel.h"
 #include "kernel/memory.h"
@@ -224,6 +225,26 @@ public:
             if(off==0xA8u)v=fp(body.z/100.0f);
             kernel::W32(replica_+off,v);
             kernel::W32(replica_+off+0x60u,v);
+        }
+        // The original forward +0xF0 also drives first-person ballistics.
+        // Rotate the detached soldier's source matrix horizontal basis into
+        // the other human's signed source yaw, instead of showing everybody
+        // looking in the local player's direction. No model/AI ownership.
+        int32_t localYaw=0;
+        if(OriginalGuestSpanCommitted(player+0xF0u,12u)&&
+           QuantizeOriginalForwardYaw(
+             kernel::G<float>(player+0xF0u),kernel::G<float>(player+0xF8u),localYaw)){
+            for(uint32_t off=0x70u;off<=0x90u;off+=0x10u){
+                float nx=0,nz=0;
+                if(!RotateOriginalSoldierHorizontalBasis(
+                     kernel::G<float>(player+off),
+                     kernel::G<float>(player+off+8u),
+                     localYaw,body.yaw,nx,nz))break;
+                kernel::W32(replica_+off,fp(nx));
+                kernel::W32(replica_+off+8u,fp(nz));
+                kernel::W32(replica_+off+0x60u,fp(nx));
+                kernel::W32(replica_+off+0x68u,fp(nz));
+            }
         }
         // One genuine source-sampled idle/walk transition controls only
         // this detached original soldier's animations. It still has no AI

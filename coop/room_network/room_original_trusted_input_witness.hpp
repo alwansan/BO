@@ -62,7 +62,7 @@ inline void PollOriginalHostHumanInputs(JNIEnv* env,jobject activity,jclass cls)
 // Unlike the original camera diagnostics (10Hz), human movement ingress is
 // sampled from the same ORIGINAL player game-thread hook at <=40Hz. This is
 // transport intake only; no original character/body or mission writes.
-inline void ObserveOriginalHostInputTick()noexcept{
+inline void ObserveOriginalHostInputTick(uint32_t originalPlayer)noexcept{
     static std::atomic<uint64_t> lastPollMs{0};
     const uint64_t now=static_cast<uint64_t>(SDL_GetTicks());
     uint64_t last=lastPollMs.load(std::memory_order_relaxed);
@@ -76,7 +76,7 @@ inline void ObserveOriginalHostInputTick()noexcept{
     if(cls){
         PollOriginalHostHumanInputs(env,activity,cls);
         PollOriginalGuestHostWorld(env,activity,cls);
-        OfferOriginalGuestController(env,activity,cls);
+        OfferOriginalGuestController(env,activity,cls,originalPlayer);
         env->DeleteLocalRef(cls);
     }else if(env->ExceptionCheck())env->ExceptionClear();
     env->DeleteLocalRef(activity);

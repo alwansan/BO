@@ -56,10 +56,10 @@ public final class RoomSession implements AutoCloseable {
     private Thread storyGameThread;
     // Read-only original first-person CAMERA EYE; never a remote actor root.
     public static final class LocalEye {
-        public final int xCm,yCm,zCm;
+        public final int xCm,yCm,zCm,yawCentiDeg;
         private final long atNs;
-        private LocalEye(int x,int y,int z,long at){
-            xCm=x;yCm=y;zCm=z;atNs=at;
+        private LocalEye(int x,int y,int z,int yaw,long at){
+            xCm=x;yCm=y;zCm=z;yawCentiDeg=yaw;atNs=at;
         }
     }
     private LocalEye lastEye;
@@ -365,18 +365,20 @@ public final class RoomSession implements AutoCloseable {
             return lastStageResourceFolder;
         }
     }
-    boolean observeOriginalEyeFromGameThread(int x,int y,int z,int bx,int by,int bz){
+    boolean observeOriginalEyeFromGameThread(int x,int y,int z,int bx,int by,int bz,
+                                              int sourceYaw){
         synchronized(lock){
             if(closed||(phase!=Phase.HOSTING&&phase!=Phase.JOINED)||
                x< -20000000||x>20000000||y< -20000000||y>20000000||
                z< -20000000||z>20000000||
                bx< -20000000||bx>20000000||by< -20000000||by>20000000||
-               bz< -20000000||bz>20000000)return false;
+               bz< -20000000||bz>20000000||
+               sourceYaw< -18000||sourceYaw>18000)return false;
             // This original player's native update is an actual game-thread
             // entry point, but does NOT prove a mission scene has loaded.
             if(storyGameThread==null)storyGameThread=Thread.currentThread();
             if(!validStoryThread())return false;
-            lastEye=new LocalEye(x,y,z,System.nanoTime());
+            lastEye=new LocalEye(x,y,z,sourceYaw,System.nanoTime());
             // This is a genuine source-validated original PLAYER CAMERA sample,
             // not a confirmed body transform, remote game actor or stage proof.
             // Story still requires a separately verified engine scene-loaded
@@ -390,7 +392,7 @@ public final class RoomSession implements AutoCloseable {
                     java.util.List<RoomWorldSnapshotWire.Avatar> avatars=
                         new java.util.ArrayList<>(4);
                     // The real original actor's +0xA0 BODY FEET, not eye +0x100.
-                    avatars.add(new RoomWorldSnapshotWire.Avatar(1,bx,by,bz,0,0));
+                    avatars.add(new RoomWorldSnapshotWire.Avatar(1,bx,by,bz,sourceYaw,0));
                     // The host owns the canonical positions: the guest's
                     // original-game body feet arrive over an authenticated
                     // TLS socket, and move the host VISUAL pose only through

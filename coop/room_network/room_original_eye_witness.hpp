@@ -51,6 +51,14 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
     if(!QuantizeOriginalBodyFeet(kernel::G<float>(original_player+0xA0),
                                   kernel::G<float>(original_player+0xA4),
                                   kernel::G<float>(original_player+0xA8),body))return;
+    // Pinned original Xbox gameplay uses player+0xF0 forward to fire.
+    // Read both feet and look on the same authenticated ORIGINAL thread.
+    // An invalid original forward must never fabricate yaw from touch delta.
+    if(!OriginalGuestSpanCommitted(original_player+0xF0u,12u))return;
+    int32_t sourceYaw=0;
+    if(!QuantizeOriginalForwardYaw(
+          kernel::G<float>(original_player+0xF0u),
+          kernel::G<float>(original_player+0xF8u),sourceYaw))return;
     // Same frontend state predicate as pinned original exit_menu.cpp.
     // A stable non-frontend original player is a diagnostic candidate only.
     // DO NOT send STORY_READY, PREPARE, COMMIT or modify original game state.
@@ -133,11 +141,12 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
     if(!env||!activity)return;
     jclass cls=env->GetObjectClass(activity);
     if(cls){
-        jmethodID method=env->GetMethodID(cls,"coopRecordOriginalPlayerEye","(IIIIII)V");
+        jmethodID method=env->GetMethodID(cls,"coopRecordOriginalPlayerEye","(IIIIIII)V");
         if(method)env->CallVoidMethod(activity,method,
             static_cast<jint>(result.x),static_cast<jint>(result.y),
             static_cast<jint>(result.z),static_cast<jint>(body.x),
-            static_cast<jint>(body.y),static_cast<jint>(body.z));
+            static_cast<jint>(body.y),static_cast<jint>(body.z),
+            static_cast<jint>(sourceYaw));
         if(env->ExceptionCheck())env->ExceptionClear();
         // Only a source-matched ORIGINAL stage may become a value-only hint
         // for the room, never a scene-loaded report or STORY_READY.

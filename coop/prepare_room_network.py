@@ -62,8 +62,8 @@ def prepare(root: pathlib.Path):
     // Called by genuine original local player update, NOT by Android UI,
     // NOT proof of loaded scene; safe, bounded camera eye coordinates only.
     public void coopRecordOriginalPlayerEye(int xCm,int yCm,int zCm,
-                                            int bx,int by,int bz) {
-        com.racas.black.coop.RoomAppRooms.originalPlayerEyeFromGameThread(xCm,yCm,zCm,bx,by,bz);
+                                            int bx,int by,int bz,int yawCentiDeg) {
+        com.racas.black.coop.RoomAppRooms.originalPlayerEyeFromGameThread(xCm,yCm,zCm,bx,by,bz,yawCentiDeg);
     }
     // Bounded <=20-int read-only ingress: actual TLS authenticated room peer
     // commands are consumed on the genuine BLACK game thread, NEVER UI.
@@ -199,6 +199,7 @@ def prepare(root: pathlib.Path):
         else if (code == 99) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_AI_TARGET_POOL_THREE_OR_MORE_FREE_SLOTS_NO_ACTOR");
         else if (code == 102) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_GUEST_HOST_NPC_VALUES_FIRST_TLS_RECEIVED_NOT_SHARED_AI");
         else if (code == 103) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_GUEST_HOST_OBJECT_EVENT_INBOX_NOT_NATIVE_DOOR_APPLIED");
+        else if (code == 104) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_GUEST_SOURCE_FORWARD_YAW_NOT_AVAILABLE_USING_NEUTRAL");
         else if (code == 2100) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_PHYSICS_POOL_UNREADABLE_NO_ACTOR");
         else if (code == 2101) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_LOCAL_PHYSICS_PROXY_NOT_VERIFIED");
         else if (code == 2102) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_PHYSICS_POOL_INSUFFICIENT_RESERVED_FREE_SLOTS");
@@ -398,7 +399,7 @@ X86_FUNC(sub_000D1500) {
         blackcoop::ObserveOriginalPlayerEye(me);
         // Authenticated commands are polled at 40Hz on original game thread.
         // This does NOT dispatch commands to bots or create an actor.
-        blackcoop::ObserveOriginalHostInputTick();
+        blackcoop::ObserveOriginalHostInputTick(me);
     }
     __imp__sub_001E5FA0(ctx, base);''',cheat)
     pending[cheat]=game
