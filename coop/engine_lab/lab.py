@@ -127,6 +127,91 @@ void sub_001F1080(void)
     }
     if (pad) {''')
         return 'extern int bo_lab_pad_report(int, unsigned char *);\n' + text
+    if kind == 'hdd_file':
+        # Pin the Windows backend only, never touch POSIX/XBE/guest code.
+        checks = (
+            '#if defined(_WIN32)\n/* ====================  Win32 backend',
+            '    /* A partition device opened as a directory.',
+            '    if (h == INVALID_HANDLE_VALUE) {\n        DWORD err = GetLastError();',
+            '    *FileHandle = h;\n    if (IoStatusBlock) {',
+            '    if (result || GetLastError() == ERROR_HANDLE_EOF) {',
+            '    XBOX_TRACE(XBOX_LOG_FILE, "NtClose(handle=%p)", Handle);',
+            '    switch (FsInformationClass) {',
+        )
+        if any(text.count(anchor) != 1 for anchor in checks):
+            raise ValueError('pinned Xbox Windows harddrive I/O source drift')
+        text = text.replace('#if defined(_WIN32)\n/* ====================  Win32 backend',
+            r'''#if defined(_WIN32)
+static HANDLE bo_hdd_partition0_handle = INVALID_HANDLE_VALUE;
+/* ====================  Win32 backend''')
+        text = text.replace('    /* A partition device opened as a directory.',
+            r'''    /* BO: private lab only; original NTSTATUS/guest bytes unchanged. */
+    const BOOL bo_hdd0_path = wcsstr(win_path, L"\\Partition0.img") != NULL;
+    if (bo_hdd0_path) {
+        fputs("BO_ENGINE_HDD_PART0_OPEN_TRIED\n", stderr);
+        if (CreateOptions & XBOX_FILE_DIRECTORY_FILE)
+            fputs("BO_ENGINE_HDD_PART0_DIRECTORY_OPEN\n", stderr);
+    }
+    /* A partition device opened as a directory.''')
+        text = text.replace('    if (h == INVALID_HANDLE_VALUE) {\n        DWORD err = GetLastError();',
+            r'''    if (h == INVALID_HANDLE_VALUE) {
+        if (bo_hdd0_path)
+            fputs("BO_ENGINE_HDD_PART0_OPEN_FAILED\n", stderr);
+        DWORD err = GetLastError();''')
+        text = text.replace('    *FileHandle = h;\n    if (IoStatusBlock) {',
+            r'''    *FileHandle = h;
+    if (bo_hdd0_path) {
+        bo_hdd_partition0_handle = h;
+        fputs("BO_ENGINE_HDD_PART0_OPEN_OK\n", stderr);
+    }
+    if (IoStatusBlock) {''')
+        text = text.replace('    if (result || GetLastError() == ERROR_HANDLE_EOF) {',
+            r'''    if (bo_hdd_partition0_handle != INVALID_HANDLE_VALUE &&
+        FileHandle == bo_hdd_partition0_handle && ByteOffset &&
+        ByteOffset->QuadPart == 0x800 && Length >= 512) {
+        fputs("BO_ENGINE_HDD_PART0_SECTOR4_READ\n", stderr);
+        if (result && bytes_read >= 512 &&
+            memcmp(Buffer, "****PARTINFO****", 16) == 0)
+            fputs("BO_ENGINE_HDD_PART0_SECTOR4_VALID\n", stderr);
+        else
+            fputs("BO_ENGINE_HDD_PART0_SECTOR4_INVALID\n", stderr);
+    }
+    if (result || GetLastError() == ERROR_HANDLE_EOF) {''', 1)
+        text = text.replace('    XBOX_TRACE(XBOX_LOG_FILE, "NtClose(handle=%p)", Handle);',
+            r'''    if (Handle == bo_hdd_partition0_handle)
+        bo_hdd_partition0_handle = INVALID_HANDLE_VALUE;
+    XBOX_TRACE(XBOX_LOG_FILE, "NtClose(handle=%p)", Handle);''', 1)
+        text = text.replace('    switch (FsInformationClass) {',
+            r'''    if (FsInformationClass == XboxFileFsSizeInformation)
+        fputs("BO_ENGINE_HDD_FS_SIZE_QUERY\n", stderr);
+    switch (FsInformationClass) {''', 1)
+        return text
+    if kind == 'hdd_path':
+        checks = (
+            '    DWORD written;\n',
+            '    if (h == INVALID_HANDLE_VALUE)\n        return;',
+            '    if (SetFilePointerEx(h, off, NULL, FILE_BEGIN))\n'
+            '        WriteFile(h, sector, sizeof(sector), &written, NULL);',
+        )
+        if any(text.count(anchor) != 1 for anchor in checks):
+            raise ValueError('pinned Xbox partition-table source drift')
+        text = text.replace('    DWORD written;\n', '    DWORD written = 0;\n')
+        text = text.replace('    if (h == INVALID_HANDLE_VALUE)\n        return;',
+            r'''    if (h == INVALID_HANDLE_VALUE) {
+        fputs("BO_ENGINE_HDD_TABLE_CREATE_FAILED\n", stderr);
+        return;
+    }
+    fputs("BO_ENGINE_HDD_TABLE_CREATE_OK\n", stderr);''')
+        text = text.replace(
+            '    if (SetFilePointerEx(h, off, NULL, FILE_BEGIN))\n'
+            '        WriteFile(h, sector, sizeof(sector), &written, NULL);',
+            r'''    if (SetFilePointerEx(h, off, NULL, FILE_BEGIN))
+        WriteFile(h, sector, sizeof(sector), &written, NULL);
+    if (written == sizeof(sector))
+        fputs("BO_ENGINE_HDD_TABLE_WRITE_OK\n", stderr);
+    else
+        fputs("BO_ENGINE_HDD_TABLE_WRITE_FAILED\n", stderr);''')
+        return text
     raise ValueError('unknown patch kind')
 
 
@@ -142,7 +227,9 @@ def prepare(pc):
     sources = [(pc / 'src/recomp_manual.c', 'manual'),
                (pc / 'src/black_native_menu.inc', 'menu'),
                (pc / 'third_party/xboxrecomp/src/usb/usb_gamepad.c', 'usb'),
-               (pc / 'third_party/xboxrecomp/src/kernel/kernel_hal.c', 'hal')]
+               (pc / 'third_party/xboxrecomp/src/kernel/kernel_hal.c', 'hal'),
+               (pc / 'third_party/xboxrecomp/src/kernel/kernel_file.c', 'hdd_file'),
+               (pc / 'third_party/xboxrecomp/src/kernel/kernel_path.c', 'hdd_path')]
     patched = [(path, patch_text(path.read_text(encoding='utf-8'), kind)) for path, kind in sources]
     for path, text in patched:
         path.write_text(text, encoding='utf-8')
@@ -303,6 +390,26 @@ def collect_boot_media_hints(line, progress):
         return
     if re.search(r'\bNtCreateFile FAILED: [^\r\n]{1,512} \(err=\d{1,10}\)$', line):
         progress['file_open_failed_seen'] = True
+
+    # Only markers emitted by our disposable, pinned original-PC kernel.
+    # Do not forward any partition path, guest address, OS error or disk data.
+    known = {
+        'BO_ENGINE_HDD_TABLE_CREATE_OK': 'hdd_table_created',
+        'BO_ENGINE_HDD_TABLE_CREATE_FAILED': 'hdd_table_create_failed',
+        'BO_ENGINE_HDD_TABLE_WRITE_OK': 'hdd_table_written',
+        'BO_ENGINE_HDD_TABLE_WRITE_FAILED': 'hdd_table_write_failed',
+        'BO_ENGINE_HDD_PART0_OPEN_TRIED': 'hdd_partition0_open_tried',
+        'BO_ENGINE_HDD_PART0_DIRECTORY_OPEN': 'hdd_partition0_directory_open',
+        'BO_ENGINE_HDD_PART0_OPEN_OK': 'hdd_partition0_open_ok',
+        'BO_ENGINE_HDD_PART0_OPEN_FAILED': 'hdd_partition0_open_failed',
+        'BO_ENGINE_HDD_PART0_SECTOR4_READ': 'hdd_partition0_sector4_read',
+        'BO_ENGINE_HDD_PART0_SECTOR4_VALID': 'hdd_partition0_sector4_valid',
+        'BO_ENGINE_HDD_PART0_SECTOR4_INVALID': 'hdd_partition0_sector4_invalid',
+        'BO_ENGINE_HDD_FS_SIZE_QUERY': 'hdd_fs_size_query_seen',
+    }
+    if line in known:
+        progress[known[line]] = True
+
 
 
 def private_call(argv, cwd, timeout, env=None, progress=None, diagnostics=None):
