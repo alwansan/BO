@@ -48,7 +48,7 @@ class AcceptanceTest(unittest.TestCase):
         host = lines(["STORY_HOST_COMMITTED"]) + lines(REQUIRED_HOST)
         guest = lines(["STORY_GUEST_COMMITTED"]) + lines(REQUIRED_GUEST)
         # A later line with an earlier clock value starts an untrusted capture segment.
-        host += "1795378511000 ROOM_HOSTING\\n"
+        host += "1795378511000 ROOM_HOSTING\n"
         self.assertEqual(evaluate(host, guest)["status"], "not_ready")
         self.assertFalse(evaluate(host, guest)["host_commit_witnessed_both_devices"])
 
