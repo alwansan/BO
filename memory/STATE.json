@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-109-original-hdd-sector-trace.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-110-original-p2-shadow-plan.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3534,5 +3534,31 @@
     "androidGameNativeOriginalActorReady": false,
     "androidOriginalHostAuthorityWithOriginalNPC": false,
     "androidGuestOriginalSharedWorldApplied": false
+  },
+  "session110": {
+    "date": "2026-11-23",
+    "branch": "experiment/black-coop",
+    "originalPcFixCommit": "737bc70f7eeef0185eb6047284b2a5b790399fdf",
+    "originalPcFixNativeRun": 45213250944,
+    "originalPcFixNativeStatus": "in_progress_at_last_check",
+    "originalPcBootFixedVerified": false,
+    "androidShadowCodeCommit": "edd782765b5774cdb0c140b4f0b4db60beaa88bf",
+    "androidShadowTestsCommit": "181cba15b9f17f6340547b21e8f97daf0324f5ee",
+    "androidShadowNativeWiringCommit": "816803a0a8057a19fa5ad681c7918f5dfbe193b6",
+    "androidSourcePreflightRun": 45216969474,
+    "androidSourcePreflightResult": "success",
+    "androidPinnedSdkTemplateCompilation": "success",
+    "androidNativeShadowSanitizerRegression": "success",
+    "androidFullCandidateRun": 45216969800,
+    "androidFullCandidateStatus": "in_progress_at_last_check",
+    "originalActorShadowPlanPreparedReadOnly": true,
+    "originalGameMemoryModifiedByShadowPlan": false,
+    "actualOriginalP2ActorSpawned": false,
+    "actualP3P4ActorSpawned": false,
+    "originalHostCanonicalWorld": false,
+    "originalGuestCanonicalApply": false,
+    "ownerTrialRequiredNow": false,
+    "doc": "docs/ORIGINAL_HOST_P2_SHADOW_PLAN_AR.md",
+    "next": "verify Windows original game save-path fix and native Android APK; implement original P2 camera+actor storage and complete source-verified context setup/swap, then physics/AI/weapon and host canonical guest world"
   }
 }
