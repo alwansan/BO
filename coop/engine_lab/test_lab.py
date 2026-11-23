@@ -354,6 +354,7 @@ class LabTests(unittest.TestCase):
     def test_xbox_virtual_hdd_partition_table_probe_never_replaces_disk_bytes(self):
         lab = self.module()
         fixture = '''    DWORD written;
+        SHCreateDirectoryExW(NULL, s_save_dir, NULL);
     if (h == INVALID_HANDLE_VALUE)
         return;
     memcpy(sector, "****PARTINFO****", 16);
@@ -363,6 +364,12 @@ class LabTests(unittest.TestCase):
 '''
         patched = lab.patch_text(fixture, 'hdd_path')
         self.assertIn('DWORD written = 0;', patched)
+        self.assertIn('GetFullPathNameW(s_save_dir, MAX_PATH, bo_absolute_save, NULL)', patched)
+        self.assertIn('wcscpy_s(s_save_dir, MAX_PATH, bo_absolute_save)', patched)
+        self.assertIn('BO_ENGINE_HDD_SAVE_DIR_CREATED', patched)
+        self.assertIn('BO_ENGINE_HDD_SAVE_DIR_FAILED', patched)
+        self.assertLess(patched.index('GetFullPathNameW('), patched.index('SHCreateDirectoryExW('))
+        self.assertIn('bo_mkdir == ERROR_ALREADY_EXISTS', patched)
         self.assertIn('BO_ENGINE_HDD_TABLE_CREATE_FAILED', patched)
         self.assertIn('BO_ENGINE_HDD_TABLE_WRITE_OK', patched)
         self.assertIn('memcpy(sector, "****PARTINFO****", 16)', patched)
@@ -375,6 +382,8 @@ class LabTests(unittest.TestCase):
     def test_original_private_virtual_hdd_probe_only_exports_boolean_categories(self):
         lab = self.module()
         allowed = (
+            'BO_ENGINE_HDD_SAVE_PATH_NORMALIZED',
+            'BO_ENGINE_HDD_SAVE_DIR_CREATED',
             'BO_ENGINE_HDD_TABLE_CREATE_OK',
             'BO_ENGINE_HDD_TABLE_WRITE_OK',
             'BO_ENGINE_HDD_PART0_OPEN_TRIED',
@@ -392,6 +401,7 @@ class LabTests(unittest.TestCase):
                               progress=progress)
         self.assertEqual(rc, 0)
         self.assertEqual(progress, dict(
+            hdd_save_path_normalized=True, hdd_save_dir_created=True,
             hdd_table_created=True, hdd_table_written=True,
             hdd_partition0_open_tried=True, hdd_partition0_open_ok=True,
             hdd_partition0_sector4_read=True, hdd_partition0_sector4_valid=True,
@@ -399,6 +409,22 @@ class LabTests(unittest.TestCase):
         self.assertNotIn('PRIVATE', str(progress))
         self.assertNotIn('SECRET', str(progress))
         self.assertNotIn('default.xbe', str(progress))
+
+    def test_original_save_directory_fix_fails_closed_on_source_drift(self):
+        lab = self.module()
+        source = '''    DWORD written;
+        SHCreateDirectoryExW(NULL, s_save_dir, NULL);
+    if (h == INVALID_HANDLE_VALUE)
+        return;
+    if (SetFilePointerEx(h, off, NULL, FILE_BEGIN))
+        WriteFile(h, sector, sizeof(sector), &written, NULL);
+'''
+        self.assertIn('BO_ENGINE_HDD_SAVE_PATH_NORMALIZED',
+                      lab.patch_text(source, 'hdd_path'))
+        with self.assertRaisesRegex(ValueError, 'source drift'):
+            lab.patch_text(source.replace('SHCreateDirectoryExW', 'UnsafeCreateDirectory'), 'hdd_path')
+        with self.assertRaisesRegex(ValueError, 'source drift'):
+            lab.patch_text(source.replace('    DWORD written;', '    DWORD private;'), 'hdd_path')
 
     def test_truncated_aggregate_cannot_pass(self):
         lab = self.module()
