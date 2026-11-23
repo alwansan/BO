@@ -174,6 +174,50 @@ class LabTests(unittest.TestCase):
             HERE, 5, progress=other)
         self.assertEqual(other, dict(firmware_kind_other=True))
 
+    def test_original_quick_reboot_launch_page_categories_exclude_raw_data(self):
+        lab = self.module()
+        progress = {}
+        # Exact pinned runtime log shape; private paths, title IDs and values
+        # must NEVER be materialized in public evidence.
+        records = [
+            "  [KERNEL] launch data page 0x00200000: type=2 titleid=0xAABBCCDD path='D:\\PRIVATE\\game.xbe'",
+            "  [KERNEL]   launch data: 00000007 DEADBEEF CAFEBABE 00000000 00000000 00000000 00000000 00000000",
+        ]
+        for record in records:
+            lab.collect_launch_hints(record, progress)
+        self.assertEqual(progress, dict(launch_page_present=True, launch_type_2=True,
+                                        launch_path_present=True, launch_word0_other=True))
+        self.assertNotIn('PRIVATE', str(progress))
+        self.assertNotIn('AABBCCDD', str(progress))
+        self.assertNotIn('DEADBEEF', str(progress))
+
+    def test_quick_reboot_launch_absence_and_malformed_lines_fail_closed(self):
+        lab = self.module()
+        progress = {}
+        for bad in ("  [KERNEL] launch data page PRIVATE TYPE titleid PRIVATE",
+                    "  [KERNEL]   launch data: 99999999", "PRIVATE_GAME_DATA",
+                    "  [KERNEL] launch data page 0x00INVALID: type=1 titleid=0x00000000 path=''",
+                    "  [KERNEL]   launch data: " + "FFFFFFFF " * 100):
+            lab.collect_launch_hints(bad, progress)
+        self.assertEqual(progress, {})
+        lab.collect_launch_hints("  [KERNEL] no launch data page set", progress)
+        self.assertEqual(progress, dict(launch_page_absent=True))
+
+    def test_private_original_kernel_log_is_streamed_into_fixed_launch_flags(self):
+        lab = self.module()
+        progress = {}
+        program = (
+            "print('  [KERNEL] launch data page 0x000A1000: type=1 titleid=0x1234ABCD path=\\'\\\\\\\\PRIVATE\\\\\\\\xbe.xbe\\'');"
+            "print('  [KERNEL]   launch data: 00000002 00000000 00000000 00000000 00000000 00000000 00000000 00000000');"
+            "print('BO_ENGINE_FIRMWARE_KIND_2'); print('PRIVATE_RAW_BYTES')"
+        )
+        code = lab.private_call([sys.executable, '-c', program], HERE, 5, progress=progress)
+        self.assertEqual(code, 0)
+        self.assertEqual(progress, dict(launch_page_present=True, launch_type_1=True,
+                                        launch_path_present=True, launch_word0_2=True,
+                                        firmware_kind_2=True))
+        self.assertNotIn('PRIVATE', str(progress))
+
     def test_truncated_aggregate_cannot_pass(self):
         lab = self.module()
         with self.assertRaises(ValueError):

@@ -239,6 +239,38 @@ def collect_diagnostics(line, result):
         errors.append(entry)
 
 
+def collect_launch_hints(line, progress):
+    """Allowlisted, bounded categories from the pinned private Xbox kernel log.
+
+    Never store launch paths, title IDs, raw guest values, or call stacks.
+    The first launch-data word is not always a dashboard reason; label it
+    neutrally until the original source path is independently identified.
+    """
+    if len(line) > 8192:
+        return
+    line = line.rstrip('\r\n')
+    if line == '  [KERNEL] no launch data page set':
+        progress['launch_page_absent'] = True
+        return
+    m = re.fullmatch(
+        r"  \[KERNEL\] launch data page 0x[0-9A-Fa-f]{8}: "
+        r"type=(\d{1,10}) titleid=0x[0-9A-Fa-f]{8} "
+        r"path='([^'\r\n]{0,63})'",
+        line)
+    if m:
+        kind = int(m.group(1))
+        progress['launch_page_present'] = True
+        progress['launch_type_' + (str(kind) if kind <= 3 else 'other')] = True
+        progress['launch_path_present' if m.group(2) else 'launch_path_empty'] = True
+        return
+    prefix = '  [KERNEL]   launch data:'
+    if line.startswith(prefix):
+        words = line[len(prefix):].split()
+        if len(words) == 8 and all(re.fullmatch(r'[0-9A-Fa-f]{8}', w) for w in words):
+            kind = int(words[0], 16)
+            progress['launch_word0_' + (str(kind) if kind <= 3 else 'other')] = True
+
+
 def private_call(argv, cwd, timeout, env=None, progress=None, diagnostics=None):
     """Drain child output without publishing it or allowing an unbounded logfile."""
     proc = subprocess.Popen([str(a) for a in argv], cwd=cwd, env=env,
@@ -267,14 +299,22 @@ def private_call(argv, cwd, timeout, env=None, progress=None, diagnostics=None):
         while True:
             chunk = proc.stdout.read(65536)
             if not chunk:
-                if diagnostics is not None and pending:
-                    collect_diagnostics(pending.decode('utf-8', errors='replace'), diagnostics)
+                if pending and (diagnostics is not None or progress is not None):
+                    remaining = pending.decode('utf-8', errors='replace')
+                    if diagnostics is not None:
+                        collect_diagnostics(remaining, diagnostics)
+                    if progress is not None:
+                        collect_launch_hints(remaining, progress)
                 break
-            if diagnostics is not None:
+            if diagnostics is not None or progress is not None:
                 lines = (pending + chunk).split(b'\n')
                 pending = lines.pop()[-8192:]
                 for line in lines:
-                    collect_diagnostics(line.decode('utf-8', errors='replace'), diagnostics)
+                    decoded = line.decode('utf-8', errors='replace')
+                    if diagnostics is not None:
+                        collect_diagnostics(decoded, diagnostics)
+                    if progress is not None:
+                        collect_launch_hints(decoded, progress)
             if progress is not None:
                 window = tail + chunk
                 for marker, key in markers.items():
