@@ -16,7 +16,9 @@ struct LinkIO {
  void set(uint32_t p,uint32_t v){assert(p+4<=bytes.size());std::memcpy(bytes.data()+p,&v,4);}
  bool Span(uint32_t p,uint32_t n)const{return p>=0x10000u&&n&&uint64_t(p)+n<=bytes.size();}
  bool Read32(uint32_t p,uint32_t& v)const{
-  if(!Span(p,4))return false;std::memcpy(&v,bytes.data()+p,4);return true;
+  if(!Span(p,4))return false;
+  std::memcpy(&v,bytes.data()+p,4);
+  return true;
  }
  bool CopyGuest(uint32_t p,void* dst,uint32_t n)const{
   if(failCopy||!dst||!Span(p,n))return false;
