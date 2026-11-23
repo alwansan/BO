@@ -3287,9 +3287,10 @@
     "originalEngineExecutableBuilt": true,
     "originalEngineMissionObserved": false,
     "actualSharedWorld": false,
-    "animationContext": "local_review_in_progress",
+    "animationContext": "implemented_reviewed_local_asan_pass_not_native_enabled",
     "audioBankLifecycle": "original_cleanup_callgraph_under_verification",
     "allToolsAndRestorationRequested": true,
-    "ownerPhoneTrialReady": false
+    "ownerPhoneTrialReady": false,
+    "animationNativeProvenanceHook": false
   }
 }

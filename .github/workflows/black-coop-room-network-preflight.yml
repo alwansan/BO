@@ -49,6 +49,10 @@ jobs:
         run: |
           g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread -fsanitize=address,undefined bo/coop/room_network/test_room_original_host_player_storage.cpp -o "$RUNNER_TEMP/test_player_storage"
           "$RUNNER_TEMP/test_player_storage"
+      - name: Original animation context exchange and ownership regression
+        run: |
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread -fsanitize=address,undefined bo/coop/room_network/test_room_original_animation_context.cpp -o "$RUNNER_TEMP/test_original_animation_context"
+          "$RUNNER_TEMP/test_original_animation_context"
       - name: Native original first-person camera eye quantization guards
         shell: bash
         run: |
