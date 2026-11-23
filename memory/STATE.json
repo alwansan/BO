@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-117-stale-donor-gate.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-118-original-grid-and-cinematic-gates.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3678,5 +3678,31 @@
     "hostOriginalSharedWorldProven": false,
     "guestCanonicalOriginalWorldApplied": false,
     "ownerPhoneTestNeededNow": false
+  },
+  "session118PcOriginalGridAndCinematicGates": {
+    "actualOriginalPcRun": 45227027742,
+    "pcGameplayPassed": false,
+    "pcOriginalMissionTicks": 249,
+    "pcGridNodeOnlyRestoreMismatches": 243,
+    "pcOtherP1RestoreMismatches": 0,
+    "pcP1ProxyMissingTicks": 0,
+    "pcP1BodyMissingTicks": 0,
+    "pcP2ProxyMissingTicks": 0,
+    "pcP2BodyMissingTicks": 0,
+    "pcLowPhysicsPoolTicks": 0,
+    "pcScriptedControlTicks": 244,
+    "pcP2ReadyTicks": 0,
+    "pcStrictAcceptanceRelaxed": false,
+    "privatePcBoundSeconds": 1200,
+    "newSourceCodeCommit": "3fd362da61d33cb1c9e2875e954e741413356073",
+    "pcHarnessRun": 45233723518,
+    "pcHarnessResult": "success",
+    "pcActualOriginalEngineResult": "pending",
+    "androidPreviousCandidateRun": 45227692658,
+    "androidPreviousCandidateResult": "success_no_original_multiplayer_gameplay",
+    "nativeAndroidOriginalPlayer2Active": false,
+    "authoritativeHostCanonicalWorldProven": false,
+    "realGuestOriginalWorldApply": false,
+    "phoneOwnerTestNeededNow": false
   }
 }
