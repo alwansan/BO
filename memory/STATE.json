@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-116-grid-and-proxy-diagnostics.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-117-stale-donor-gate.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3658,5 +3658,25 @@
     "originalHostCanonicalSharedMission": false,
     "guestOriginalWorldApplied": false,
     "ownerTrialRequiredNow": false
+  },
+  "session117OriginalP1DonorStalenessGate": {
+    "sourceCommit": "6968f2d7d3f3a9dcf91b08bbde58b9785ebde1f6",
+    "sourceOriginalActorBytesRetained": 2304,
+    "sourceOriginalOwnerBytesRetained": 5824,
+    "checkedSources": ["originalGridAndActor", "cameraOwner", "partsA", "partsB", "firstPersonModel", "controllerSource"],
+    "sourceBytesEverExported": false,
+    "preflightBeforeEngineTouched": true,
+    "noP2WritesOnStaleSource": true,
+    "sourcePreflightRun": 45227692500,
+    "sourcePreflightResult": "pending",
+    "androidBuildRun": 45227692658,
+    "androidBuildResult": "pending",
+    "pcOriginalLabRun": 45227027742,
+    "pcOriginalLabHarness": "success",
+    "pcOriginalLabEngine": "running_at_check",
+    "originalAndroidPlayer2Activated": false,
+    "hostOriginalSharedWorldProven": false,
+    "guestCanonicalOriginalWorldApplied": false,
+    "ownerPhoneTestNeededNow": false
   }
 }
