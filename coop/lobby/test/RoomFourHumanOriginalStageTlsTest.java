@@ -172,6 +172,26 @@ public final class RoomFourHumanOriginalStageTlsTest {
                 ok(world.avatars.get(actualSlots[2]-1).xCm<
                    initial.avatars.get(actualSlots[2]-1).xCm);
             }
+            // Real encrypted sockets now deliver the original second
+            // phone's actual BLACK character BODY FEET as source samples.
+            // HOST clamps/reconciles them before broadcasting its canonical
+            // visual pose; neither this nor TLS is a physics engine actor.
+            int oldSecondX=second.readHostWorldFromGameThread()
+                .avatars.get(actualSlots[0]-1).xCm;
+            ok(second.observeOriginalEyeFromGameThread(
+                0,2000,0,oldSecondX+500,12000,14000));
+            until(()->{
+                host.observeOriginalEyeFromGameThread(
+                    1200,1400,1700,10000,12000,14000);
+                RoomWorldSnapshotWire.Snapshot canonical=
+                    second.readHostWorldFromGameThread();
+                return canonical!=null&&canonical.avatars.size()==4&&
+                    canonical.avatars.get(actualSlots[0]-1).xCm>oldSecondX;
+            });
+            int reconciledSecondX=second.readHostWorldFromGameThread()
+                .avatars.get(actualSlots[0]-1).xCm;
+            ok(reconciledSecondX>oldSecondX&&
+               reconciledSecondX-oldSecondX<=73);
             int priorWireId=fourth.snapshot().roster.self;
             fourth.stop(); // network leave must ABORT all committed worlds
             until(()->host.snapshot().roster.players.size()==3&&
