@@ -52,6 +52,20 @@ class LabTests(unittest.TestCase):
         self.assertFalse(result['passed'])
         self.assertIn('p1_context_not_restored', result['failed_checks'])
 
+    def test_original_proxy_prerequisite_counters_are_private_diagnostics(self):
+        lab = self.module()
+        categories = ["restore_grid_node_failures","restore_grid_other_failures","p1_proxy_missing_ticks","p1_body_missing_ticks","p2_proxy_missing_ticks","p2_body_missing_ticks","proxy_pool_low_ticks","proxy_pool_unknown_ticks","scripted_control_ticks"]
+        self.assertTrue(set(categories).issubset(lab.FIELDS))
+        self.assertNotIn('actor_ptr',lab.FIELDS)
+        self.assertNotIn('physics_ptr',lab.FIELDS)
+        self.assertNotIn('slot_address',lab.FIELDS)
+        # Real gameplay acceptance remains mandatory: diagnostic counters
+        # cannot make an original two-player mission pass.
+        x = {'mission_ticks': 1000, 'p2_ready_ticks': 0, 'phases_completed': 0,
+             'p2_proxy_missing_ticks': 900, 'restore_grid_node_failures': 170}
+        self.assertFalse(lab.evaluate(x)['passed'])
+        self.assertEqual(lab.evaluate(x)['blocker'],'mission_not_reached')
+
     def test_aggregate_parser_rejects_extra_fields(self):
         lab = self.module()
         with self.assertRaises(ValueError):

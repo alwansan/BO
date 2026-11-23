@@ -15,6 +15,11 @@ typedef struct BoLabCounts {
     unsigned restore_scope_failures, restore_actor_grid_failures;
     unsigned restore_actor_motion_failures, restore_actor_weapon_failures;
     unsigned restore_actor_model_failures, restore_actor_tail_failures;
+    /* Source 0x20..0x57: original grid-node links are world-owned. */
+    unsigned restore_grid_node_failures, restore_grid_other_failures;
+    unsigned p1_proxy_missing_ticks, p1_body_missing_ticks;
+    unsigned p2_proxy_missing_ticks, p2_body_missing_ticks;
+    unsigned proxy_pool_low_ticks, proxy_pool_unknown_ticks, scripted_control_ticks;
     unsigned p1_move_mm, p2_move_mm, p1_idle_mm, p2_idle_mm;
     unsigned p1_body_move_mm, p2_body_move_mm, p1_shots, p2_shots;
 } BoLabCounts;
@@ -62,6 +67,11 @@ static void bo_lab_write(void)
         "\"restore_scope_failures\":%u,\"restore_actor_grid_failures\":%u,"
         "\"restore_actor_motion_failures\":%u,\"restore_actor_weapon_failures\":%u,"
         "\"restore_actor_model_failures\":%u,\"restore_actor_tail_failures\":%u,"
+        "\"restore_grid_node_failures\":%u,\"restore_grid_other_failures\":%u,"
+        "\"p1_proxy_missing_ticks\":%u,\"p1_body_missing_ticks\":%u,"
+        "\"p2_proxy_missing_ticks\":%u,\"p2_body_missing_ticks\":%u,"
+        "\"proxy_pool_low_ticks\":%u,\"proxy_pool_unknown_ticks\":%u,"
+        "\"scripted_control_ticks\":%u,"
         "\"epoch_changes\":%u,\"invalid_samples\":%u,"
         "\"p1_move_mm\":%u,\"p2_move_mm\":%u,\"p1_idle_mm\":%u,\"p2_idle_mm\":%u,"
         "\"p1_body_move_mm\":%u,\"p2_body_move_mm\":%u,\"p1_shots\":%u,\"p2_shots\":%u,"
@@ -74,6 +84,11 @@ static void bo_lab_write(void)
         bo_lab.restore_scope_failures, bo_lab.restore_actor_grid_failures,
         bo_lab.restore_actor_motion_failures, bo_lab.restore_actor_weapon_failures,
         bo_lab.restore_actor_model_failures, bo_lab.restore_actor_tail_failures,
+        bo_lab.restore_grid_node_failures, bo_lab.restore_grid_other_failures,
+        bo_lab.p1_proxy_missing_ticks, bo_lab.p1_body_missing_ticks,
+        bo_lab.p2_proxy_missing_ticks, bo_lab.p2_body_missing_ticks,
+        bo_lab.proxy_pool_low_ticks, bo_lab.proxy_pool_unknown_ticks,
+        bo_lab.scripted_control_ticks,
         bo_lab.epoch_changes, bo_lab.invalid_samples,
         bo_lab.p1_move_mm, bo_lab.p2_move_mm, bo_lab.p1_idle_mm, bo_lab.p2_idle_mm,
         bo_lab.p1_body_move_mm, bo_lab.p2_body_move_mm, bo_lab.p1_shots, bo_lab.p2_shots,
@@ -156,7 +171,16 @@ static void bo_lab_after_impl(void)
             if (memcmp(before, after, BLACK_ACTOR_BYTES) == 0) ++bo_lab.restored_ticks;
             else {
                 ++bo_lab.restore_failures;
-                if (memcmp(before + 0x000u, after + 0x000u, 0x080u)) ++bo_lab.restore_actor_grid_failures;
+                if (memcmp(before + 0x000u, after + 0x000u, 0x080u)) {
+                    ++bo_lab.restore_actor_grid_failures;
+                    /* Original PC black_p2_find_links excludes 0x20..0x57:
+                     * distinguish this known world-owned region without
+                     * hiding it from the strict P1 restoration acceptance. */
+                    if (memcmp(before + 0x020u, after + 0x020u, 0x038u)) ++bo_lab.restore_grid_node_failures;
+                    if (memcmp(before, after, 0x020u) ||
+                        memcmp(before + 0x058u, after + 0x058u, 0x028u))
+                        ++bo_lab.restore_grid_other_failures;
+                }
                 if (memcmp(before + 0x080u, after + 0x080u, 0x100u)) ++bo_lab.restore_actor_motion_failures;
                 if (memcmp(before + 0x180u, after + 0x180u, 0x180u)) ++bo_lab.restore_actor_weapon_failures;
                 if (memcmp(before + 0x300u, after + 0x300u, 0x100u)) ++bo_lab.restore_actor_model_failures;
@@ -170,6 +194,28 @@ static void bo_lab_after_impl(void)
     ++bo_lab.distinct_actor_ticks;
     proxies[0] = GUEST32(actors[0] + 0xB4u); proxies[1] = GUEST32(actors[1] + 0xB4u);
     bodies[0] = black_proxy_motion(proxies[0]); bodies[1] = black_proxy_motion(proxies[1]);
+    /* Never export an engine pointer or pool slot; emit fixed integer
+     * failure categories for the real original DF400/DBBE0 prerequisites. */
+    if (!proxies[0]) ++bo_lab.p1_proxy_missing_ticks;
+    if (!bodies[0]) ++bo_lab.p1_body_missing_ticks;
+    if (!proxies[1]) ++bo_lab.p2_proxy_missing_ticks;
+    if (!bodies[1]) ++bo_lab.p2_body_missing_ticks;
+    {
+        const uint32_t world = GUEST32(0x002D45F4u);
+        if (!black_pc_ram_span(world, 0x2974u)) ++bo_lab.proxy_pool_unknown_ticks;
+        else {
+            unsigned free_slots = 0, slot;
+            for (slot = 0; slot < 20u; ++slot)
+                if (!GUEST8(world + 0x2960u + slot)) ++free_slots;
+            if (free_slots < 2u) ++bo_lab.proxy_pool_low_ticks;
+        }
+    }
+    {
+        const uint32_t owner = GUEST32(0x002D12B8u);
+        if ((black_pc_ram_span(owner, 0x822u) && GUEST8(owner + 0x821u)) ||
+            GUEST32(actors[0] + 0x324u) == actors[0] + 0x800u)
+            ++bo_lab.scripted_control_ticks;
+    }
     physical = proxies[0] && proxies[1] && proxies[0] != proxies[1] && proxies[1] == black_p2_proxy &&
         bodies[0] && bodies[1] && bodies[0] != bodies[1];
     /* Camera control must have returned from the mission's original scripted intro. */

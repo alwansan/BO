@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-115-owned-guest-p2-materialization.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-116-grid-and-proxy-diagnostics.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3633,6 +3633,24 @@
     "physicalProxyAiWeaponReady": false,
     "originalHostCanonicalWorld": false,
     "originalGuestCanonicalApply": false,
+    "ownerTrialRequiredNow": false
+  },
+  "session116OriginalPcGridProxy": {
+    "latestPcRun": 45222127349,
+    "latestPcGameplayPassed": false,
+    "latestPcMissionTicks": 176,
+    "latestPcP1RestoreFailures": 170,
+    "allRestoreFailuresGridRegion": true,
+    "pcOriginalDistinctProxyTicks": 0,
+    "pcOriginalP2ReadyTicks": 0,
+    "pcOriginalUsb0Reports": 5650,
+    "pcOriginalUsb1Reports": 5589,
+    "pcOriginalHddAndFrontendReached": true,
+    "nextCounterProbe": ["restore_grid_node_failures","restore_grid_other_failures","p1_proxy_missing_ticks","p1_body_missing_ticks","p2_proxy_missing_ticks","p2_body_missing_ticks","proxy_pool_low_ticks","proxy_pool_unknown_ticks","scripted_control_ticks"],
+    "acceptanceRelaxed": false,
+    "originalAndroidP2Active": false,
+    "originalHostCanonicalSharedMission": false,
+    "guestOriginalWorldApplied": false,
     "ownerTrialRequiredNow": false
   }
 }
