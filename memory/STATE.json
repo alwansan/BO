@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-86-host-physics-proxy-readiness.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-87-original-remote-soldier-animation-and-host-actor-abi.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3005,5 +3005,32 @@
     "guestNativeDoorApply": false,
     "ownerPhoneTrialReady": false,
     "ownerTestPolicy": "CI FIRST ONLY ONE LARGER PHONE TEST"
+  },
+  "session87": {
+    "date": "2026-11-23",
+    "branch": "experiment/black-coop",
+    "commits": {
+      "nativeRemoteHumanAnimation": "7951e38158e8c71c169e48f43bc826c531fce523",
+      "ownerActorAbiCandidates": "22c8a07cda4751d2b547be6558a5c66b514ff637"
+    },
+    "visualOriginalSoldierIdleWalkNativeHook": true,
+    "visualAnimationVerifiedOnPhone": false,
+    "remoteHumanOriginalPhysicalActorExists": false,
+    "originalHostExtraActor2to4": false,
+    "ownerPinnedActorSetupExecutableCandidateVerified": true,
+    "androidActorCreateCallAbiVerified": false,
+    "sourcePreflightRun": 45095381428,
+    "sourcePreflightResult": "SUCCESS",
+    "originalOwnerActorAbiPrivateRun": 45095558435,
+    "originalOwnerActorAbiPrivateResult": "SUCCESS",
+    "originalRoomAndroidApkRun": 45095381425,
+    "originalRoomAndroidApkStatusAtCheck": "IN_PROGRESS_NO_COOP_GAMEPLAY",
+    "allRemoteWeaponsHostAuthoritative": false,
+    "originalEnemyAiTargetingAllHumans": false,
+    "sharedDoorNativeEventProducer": false,
+    "guestDoorNativeApply": false,
+    "originalWorldHostAuthoritative": false,
+    "ownerMajorPhoneTrialReady": false,
+    "nextGate": "Host original scene: independent shadow actor+camera+weapons+physics proxy+AI target, game-thread verified"
   }
 }
