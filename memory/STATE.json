@@ -3245,11 +3245,16 @@
       "udp": 45145126909,
       "privacy": 45145127078
     },
-    "newCodeCiVerified": false,
+    "newCodeCiVerified": true,
     "originalHostExtraActorImplemented": false,
     "sharedWorldProven": false,
     "latestHostEvent": "ROOM_HOSTING",
     "latestGuestEvent": "ROOM_JOINED",
-    "next": "Wire session reset to actual disconnect and create original host-owned player2 actor/physics/weapon/AI with guest authoritative world consumption"
+    "next": "Wire session reset to actual disconnect and create original host-owned player2 actor/physics/weapon/AI with guest authoritative world consumption",
+    "verifiedNewRuns": {
+      "bridge": 45151218679,
+      "originalContracts": 45151218818,
+      "udp": 45151218720
+    }
   }
 }
