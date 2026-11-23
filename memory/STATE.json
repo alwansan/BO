@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-106-shared-original-scene-ownership.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-107-dashboard-error-classification.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3377,5 +3377,35 @@
     "sharedOriginalMissionVerified": false,
     "ownerPhoneTrialReady": false,
     "next": "inspect launch-page result and root-cause quick reboot, then original actor/camera/animation/weapon/audio/physics lifecycle and canonical host/guest world integration"
+  },
+  "session107": {
+    "date": "2026-11-23",
+    "verifiedOriginalEngineRun": 45197279738,
+    "engineBuildSuccess": true,
+    "originalXbeVerified": true,
+    "ownerFilesExtracted": 574,
+    "engineRuntimeMs": 484,
+    "firmwareKind": "2_HalQuickRebootRoutine",
+    "launchPagePresent": true,
+    "launchType": 1,
+    "launchTypeMeaning": "switch_to_dashboard",
+    "launchReasonWord0": 1,
+    "launchReasonMeaning": "error",
+    "launchPathEmpty": true,
+    "errorParameter0Category": "not_yet_observed",
+    "frontendPolled": false,
+    "usbPadPolled": false,
+    "missionReady": false,
+    "secondOriginalHostActorReady": false,
+    "originalAndroidCoopReady": false,
+    "sourceMediaProbeCommit": "95c01225497bcbdcbbb8bc756157582a94f92078",
+    "sourceHarnessRun": 45201724219,
+    "sourceHarnessConclusion": "success",
+    "dashboardErrorCategoryCommit": "83d7d566e4520ada649b4eeb3114ebcb70e76b2c",
+    "dashboardErrorCategoryRun": 45202073768,
+    "categoryRunConclusion": "pending_at_initial_review",
+    "androidRoomOnlySuccessRun": 45199349662,
+    "p2PhysicsSourceTestSuccessRun": 45199349609,
+    "next": "check private dashboard_error_* category and DVD probes; fix original early Dashboard error; integrate real original host P2-4 actors, weapons, physics/AI, world and guest original consumer"
   }
 }
