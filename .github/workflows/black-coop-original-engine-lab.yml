@@ -1,0 +1,92 @@
+name: BLACK original engine private two-player lab
+on:
+  workflow_dispatch:
+    inputs:
+      run_seconds:
+        description: Bounded real-engine runtime (60..1800 seconds)
+        default: '300'
+        required: true
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/engine_lab/**'
+      - '.github/workflows/black-coop-original-engine-lab.yml'
+permissions:
+  contents: read
+concurrency:
+  group: black-original-engine-lab
+  cancel-in-progress: false
+jobs:
+  harness-checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop/engine_lab
+          persist-credentials: false
+      - name: Check harness accounting (not engine acceptance)
+        run: |
+          python3 -m unittest discover -s coop/engine_lab -p 'test_*.py' -v
+          cc -std=c11 -Wall -Wextra -Werror coop/engine_lab/test_schedule.c -o "$RUNNER_TEMP/schedule-test"
+          "$RUNNER_TEMP/schedule-test"
+          cc -std=c11 -Wall -Wextra -Werror -Wno-unused-function coop/engine_lab/test_observer.c -lm -o "$RUNNER_TEMP/observer-test"
+          "$RUNNER_TEMP/observer-test"
+  original-engine:
+    needs: harness-checks
+    runs-on: windows-2025
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: bo
+          sparse-checkout: |
+            /coop/
+            /BLACK_FILE_MANIFEST.json
+            /BLACK-Arabic_src/assets/bundle/game.iso/
+          sparse-checkout-cone-mode: false
+          lfs: false
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: portingpete/Black-2006-Recomp
+          ref: b2512fafd3e181e4febfb298f297245b845ef628
+          path: engine
+          submodules: false
+          persist-credentials: false
+      - name: Initialize fail-closed toolchain summary
+        shell: python
+        run: |
+          import json, pathlib
+          out = pathlib.Path('safe-engine-lab')
+          out.mkdir()
+          (out / 'summary.json').write_text(json.dumps({'schema': 1, 'passed': False, 'blocker': 'runner_toolchain_setup_failed', 'android_runtime_verified': False, 'four_players_verified': False}), encoding='utf-8')
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: ilammy/msvc-dev-cmd@v1
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: 1.98.1
+          target: x86_64-pc-windows-msvc
+      - name: Generate, build and execute owner engine privately
+        shell: pwsh
+        env:
+          BO_ENGINE_RUN_SECONDS: ${{ inputs.run_seconds || '300' }}
+        run: |
+          python bo/coop/engine_lab/lab.py execute --bo bo --pc engine --out safe-engine-lab --seconds $env:BO_ENGINE_RUN_SECONDS
+          exit $LASTEXITCODE
+      - name: Retain only allowlisted aggregate summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: original-engine-lab-aggregate
+          path: safe-engine-lab/summary.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Remove runner-private engine and owner inputs
+        if: always()
+        shell: pwsh
+        run: |
+          Remove-Item -LiteralPath engine -Recurse -Force -ErrorAction SilentlyContinue
+          Remove-Item -LiteralPath bo/BLACK-Arabic_src -Recurse -Force -ErrorAction SilentlyContinue

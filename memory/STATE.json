@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-23_bo-coop-91-actual-two-phone-logs-and-reference-review.md",
+  "lastSession": "memory/sessions/2026-11-23_bo-coop-92-real-engine-lab-and-soldier-ownership.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3146,5 +3146,14 @@
     "sharedCombatAndDoorsExists": false,
     "readyForMajorOwnerPhoneTrial": false,
     "nextPriority": "Real host-owned original player2 shadow actor, physics, weapons, AI target and replicated original world; no phone microtests"
+  },
+  "session92": {
+    "base": "58955883939ec12a07e21afd557d85d2b0263b6d",
+    "anyOriginalSoldierAppearanceAccepted": true,
+    "originalEngineLab": "pending_first_real_CI",
+    "soldierOwnershipRegression": "local_pass",
+    "actualHostExtraActor": false,
+    "sharedOriginalPhysicalWorld": false,
+    "phoneTrialReady": false
   }
 }

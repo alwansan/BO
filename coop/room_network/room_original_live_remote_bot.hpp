@@ -13,6 +13,7 @@
 #include "coop/room_original_bot_pool_witness.hpp"
 #include "coop/room_original_remote_human_motion_contract.hpp"
 #include "coop/room_original_eye_contract.hpp"
+#include "coop/room_original_soldier_copy.hpp"
 #include "game/layout.h"
 #include "kernel/kernel.h"
 #include "kernel/memory.h"
@@ -30,6 +31,8 @@ class OriginalHumanBotVisual {
     uint32_t sourceWorld_=0,sourceEpisode_=0;
     uint32_t replica_=0,replicaTemplate_=0,replicaInstance_=0;
     uint32_t replicaEpoch_=0;
+    OriginalSoldierSlotIdentity slotIdentity_{};
+    OriginalSoldierAttemptLifetime cloneLifetime_{};
     uint64_t sourceAtMs_=0;
     std::thread::id gameThread_{};
     bool owner_=false;
@@ -90,6 +93,7 @@ class OriginalHumanBotVisual {
     void purgeEvidence()noexcept{
         sourceWorld_=sourceEpisode_=replica_=replicaTemplate_=replicaInstance_=replicaEpoch_=0;
         sourceAtMs_=nextCreateTryMs_=0;attempted_=logged_=false;
+        slotIdentity_={};
         clipPlan_.Reset();activeClip_=0;
     }
     static bool read(uint32_t at,uint32_t& out)noexcept{
@@ -100,13 +104,16 @@ class OriginalHumanBotVisual {
         return root+kFirst+kStride*slot;
     }
     bool valid(uint32_t root)const noexcept{
-        if(!replica_||!replicaTemplate_||!replicaInstance_||
+        if(!slotIdentity_.InPool(root)||!replica_||!replicaTemplate_||!replicaInstance_||
            !OriginalGuestSpanCommitted(root+kFirst,kStride*32u))return false;
-        uint32_t model=0,ctrl=0,inst=0;
+        uint32_t model=0,ctrl=0,inst=0,serial=0,member=0,owner=0;
         return read(replica_+0x320,model)&&model==replicaTemplate_&&
                read(replica_+0x324,ctrl)&&!ctrl&&
                read(replica_+0x328,inst)&&inst==replicaInstance_&&
-               OriginalGuestSpanCommitted(inst,0x240u);
+               read(replica_+0x374u,serial)&&read(replica_+0x250u,member)&&
+               slotIdentity_.Matches(root,serial,member,inst)&&
+               OriginalGuestSpanCommitted(inst,0x240u)&&
+               read(inst,owner)&&owner==replica_;
     }
     // Makes exactly ONE appearance-only character, in a vacant original slot,
     // and never inserts that slot into original world AI/collision lists.
@@ -131,7 +138,8 @@ class OriginalHumanBotVisual {
         for(uint32_t i=0;i<32u;i++)if(OriginalLookSource(slots[i])){
             donor=character(root,i);break;
         }
-        for(uint32_t i=32u;i-->0;)if(OriginalLookEmpty(slots[i])){
+        for(uint32_t i=32u;i-->0;)if(OriginalLookEmpty(slots[i])&&
+           OriginalFreeSoldierSlot(read,root,character(root,i))){
             blank=character(root,i);break;
         }
         if(!donor||!blank||blank==donor){
@@ -167,22 +175,20 @@ class OriginalHumanBotVisual {
             reportVisualGate(2208);return false;
         }
         // One last read-only vacancy check immediately before any writes.
-        uint32_t currentModel=0,controller=0,currentInst=0;
-        if(!read(blank+0x320,currentModel)||currentModel||
+        uint32_t currentModel=0,controller=0,currentInst=0,slotSerial=0,stillRoot=0;
+        if(!read(kPool,stillRoot)||stillRoot!=root||
+           !OriginalFreeSoldierSlot(read,root,blank)||
+           !read(blank+0x374u,slotSerial)||
+           !read(blank+0x320,currentModel)||currentModel||
            !read(blank+0x324,controller)||controller||
            !read(blank+0x328,currentInst)||currentInst!=dstInst){
             reportVisualGate(2206);return false;
         }
         attempted_=true; // irreversible original guest-memory mutation below
         // Do not copy list/proxy/weapon/buffers that the blank slot owns.
-        for(uint32_t off=0;off<kStride;off+=4u){
-            const bool own=(off>=0x20u&&off<0x58u)||
-                  off==0xB0u||off==0xB4u||
-                  (off>=0x298u&&off<0x2A4u)||
-                  off==0x328u||off==0x34Cu||off==0x350u||
-                  off==0x37Cu;
-            if(!own)kernel::W32(blank+off,kernel::R32(donor+off));
-        }
+        CopyOriginalSoldierLookWords(
+            [donor](uint32_t off){return kernel::R32(donor+off);},
+            [blank](uint32_t off,uint32_t value){kernel::W32(blank+off,value);});
         kernel::W32(blank+0x30u,0);
         kernel::W32(blank+0x34u,blank+0x34u);
         kernel::W32(blank+0x38u,blank+0x34u);
@@ -198,9 +204,11 @@ class OriginalHumanBotVisual {
         kernel::CallGuest(call,0x0017E420u,{static_cast<uint32_t>(argsAddr)});
         replica_=blank;replicaTemplate_=model;replicaInstance_=dstInst;
         replicaEpoch_=epoch;
+        slotIdentity_={root,blank,slotSerial,dstInst};
         if(!valid(root)){
             // The original guest function may have changed an object after
             // our irreversible clone; do not retry a partially owned slot.
+            cloneLifetime_.Poison();
             reportVisualGate(2209);return false;
         }
         return true;
@@ -216,6 +224,7 @@ public:
             sourceWorld_=sourceEpisode_=0;sourceAtMs_=0;
             return;
         }
+        cloneLifetime_.Observe(episode,world);
         if(sourceWorld_!=world||sourceEpisode_!=episode){
             purgeEvidence();visualCodesReported_=0;
         }
@@ -223,6 +232,7 @@ public:
         sourceAtMs_=static_cast<uint64_t>(SDL_GetTicks());
     }
     void Draw(X86Context& ctx,uint32_t grid)noexcept{
+        if(cloneLifetime_.Failed())return;
         if(!assignedPeer_||!owner_||!sourceWorld_||!sourceEpisode_)
             return;
         if(gameThread_!=std::this_thread::get_id()){

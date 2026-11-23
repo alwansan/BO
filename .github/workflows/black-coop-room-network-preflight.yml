@@ -37,6 +37,10 @@ jobs:
           python3 -m unittest discover -s bo/coop -p room_network_prepare_checks.py -v
           python3 -m unittest discover -s bo/coop -p room_ui_prepare_checks.py -v
           echo 'ROOM_NET_STAGE_PASS: in-game Flash -> Android source transformation is atomic; NO game APK/gameplay claimed'
+      - name: Original soldier real clone ownership regression
+        run: |
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -fsanitize=address,undefined bo/coop/room_network/test_original_soldier_copy.cpp -o "$RUNNER_TEMP/test_soldier_copy"
+          "$RUNNER_TEMP/test_soldier_copy"
       - name: Native original first-person camera eye quantization guards
         shell: bash
         run: |
