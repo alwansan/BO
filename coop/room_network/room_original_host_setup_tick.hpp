@@ -89,6 +89,13 @@ public:
   return attempts_==600u?OriginalSetupState::TimedOut:OriginalSetupState::Waiting;
  }
  bool ReadyForPhysics()const noexcept{return onOwner()&&bound_&&finished_&&!poisoned_;}
+ template<class IO>bool ReadyForPhysicsNow(IO& io){
+  if(!ReadyForPhysics())return false;
+  try{
+   if(live(io)&&io.FullP1Restored(scope_))return true;
+  }catch(...){}
+  poisoned_=true;return false;
+ }
  unsigned Attempts()const noexcept{return onOwner()?attempts_:0;}
  bool Quarantined()const noexcept{return onOwner()&&poisoned_;}
  // Network leave, epoch change or C++ object destruction is NOT proof of

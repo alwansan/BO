@@ -53,7 +53,7 @@ int main(){
   assert(ticker->Tick(e,1)==OriginalSetupState::Rejected);
   assert(ticker->Tick(e,2)==OriginalSetupState::Waiting);
   assert(ticker->Tick(e,3)==OriginalSetupState::SetupFinished);
-  assert(ticker->ReadyForPhysics()&&e.calls==3&&e.left==3);
+  assert(ticker->ReadyForPhysics()&&ticker->ReadyForPhysicsNow(e)&&e.calls==3&&e.left==3);
   assert(ticker->Tick(e,4)==OriginalSetupState::SetupFinished&&e.calls==3);
   auto different=s;different.ownedActor+=16;
   assert(!ticker->Bind(e,different)&&ticker->Quarantined());
@@ -88,6 +88,11 @@ int main(){
   outsider.join();
   e.words[0x2D12B8]=0xA00000u;
   assert(t.Tick(e,1)==OriginalSetupState::Quarantined&&e.calls==0);
+ }
+ {MockEngine e;const auto s=scoped(2);e.actor=s.ownedActor;e.owner=s.ownedOwner;
+  e.completeAt=1;OriginalHumanSetupTick t;assert(t.Bind(e,s));
+  assert(t.Tick(e,1)==OriginalSetupState::SetupFinished&&t.ReadyForPhysicsNow(e));
+  e.fullOk=false;assert(!t.ReadyForPhysicsNow(e)&&t.Quarantined());
  }
  std::cout<<"ORIGINAL_BLACK_P2_P3_P4_MULTIFRAME_SETUP_CONTRACT_PASS_NO_LIVE_GUEST_CALL\n";
 }

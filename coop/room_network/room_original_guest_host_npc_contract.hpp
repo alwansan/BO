@@ -73,4 +73,76 @@ public:
          now>=receivedAt_&&now-receivedAt_<=350u;
  }
 };
+// A host slot is not an original object identity. IO must independently
+// corroborate the stable original identity and lifetime before mutation.
+// No production resolver or original callback is enabled.
+enum class OriginalNpcApplyStatus:uint8_t {
+ Rejected, AlreadyApplied, WaitingForIdentity, Applied, Quarantined
+};
+class OriginalGuestNpcApplyBatch final {
+ const std::thread::id thread_=std::this_thread::get_id();
+ uint64_t scene_=0;uint32_t epoch_=0,lastTick_=0;
+ bool poisoned_=false;
+ struct Target {OriginalNpcValue value{};uint32_t actor=0;uint64_t generation=0;};
+public:
+ template<class IO>OriginalNpcApplyStatus Apply(IO& io,const OriginalGuestHostNpcInbox& inbox,
+    uint64_t nativeScene,uint32_t signedEpoch,uint64_t now){
+  if(thread_!=std::this_thread::get_id())return OriginalNpcApplyStatus::Rejected;
+  if(poisoned_)return OriginalNpcApplyStatus::Quarantined;
+  if(!nativeScene||!signedEpoch||inbox.Epoch()!=signedEpoch||!inbox.Fresh(now))
+   return OriginalNpcApplyStatus::Rejected;
+  if(scene_&&(scene_!=nativeScene||epoch_!=signedEpoch)){
+   poisoned_=true;return OriginalNpcApplyStatus::Quarantined;
+  }
+  const auto tick=inbox.Tick();
+  if(tick<=lastTick_)return OriginalNpcApplyStatus::AlreadyApplied;
+  std::array<Target,32> targets{};unsigned count=0;
+  bool attempted=false;
+  try{
+   if(io.OriginalScene()!=nativeScene)return OriginalNpcApplyStatus::Rejected;
+   for(uint8_t slot=0;slot<32;++slot){
+    OriginalNpcValue value{};
+    if(!inbox.Read(slot,now,value))continue;
+    Target target{};target.value=value;
+    if(!io.ResolveOriginalNpc(slot,target.actor,target.generation)||
+       target.actor<0x10000u||!target.generation||
+       !io.StillOwnsOriginalNpc(slot,target.actor,target.generation))
+     return OriginalNpcApplyStatus::WaitingForIdentity;
+    for(unsigned j=0;j<count;++j)
+     if(targets[j].actor==target.actor)return OriginalNpcApplyStatus::WaitingForIdentity;
+    targets[count++]=target;
+   }
+   if(io.OriginalScene()!=nativeScene)return OriginalNpcApplyStatus::Rejected;
+   for(unsigned i=0;i<count;++i){
+    const auto& t=targets[i];
+    if(!io.StillOwnsOriginalNpc(t.value.slot,t.actor,t.generation))
+     return OriginalNpcApplyStatus::WaitingForIdentity;
+   }
+   for(unsigned i=0;i<count;++i){
+    const auto& t=targets[i];
+    if(io.OriginalScene()!=nativeScene||
+       !io.StillOwnsOriginalNpc(t.value.slot,t.actor,t.generation)){
+     if(!attempted)return OriginalNpcApplyStatus::WaitingForIdentity;
+     poisoned_=true;return OriginalNpcApplyStatus::Quarantined;
+    }
+    attempted=true;
+    if(!io.ApplyOriginalNpc(t.actor,t.value)||
+       io.OriginalScene()!=nativeScene||
+       !io.StillOwnsOriginalNpc(t.value.slot,t.actor,t.generation)||
+       !io.VerifyOriginalNpc(t.actor,t.value)){
+     poisoned_=true;return OriginalNpcApplyStatus::Quarantined;
+    }
+   }
+  }catch(...){
+   if(attempted){poisoned_=true;return OriginalNpcApplyStatus::Quarantined;}
+   return OriginalNpcApplyStatus::Rejected;
+  }
+  scene_=nativeScene;epoch_=signedEpoch;lastTick_=tick;
+  return OriginalNpcApplyStatus::Applied;
+ }
+ bool AfterVerifiedEngineTeardown(bool verified)noexcept{
+  if(thread_!=std::this_thread::get_id()||!verified)return false;
+  scene_=0;epoch_=lastTick_=0;poisoned_=false;return true;
+ }
+};
 }
