@@ -686,4 +686,46 @@ public:
   return OriginalWeaponBankLayout::Build(e.base,OriginalWeaponBankLayout::Total,layout);
  }
 };
+// Real allocator backing owner for the source-reviewed weapon/sound
+// layout. Allocator operations are supplied separately so the actual SDK
+// allocator can be exercised without an original game executable.
+// No destructor frees guest memory. Once handed to original constructors,
+// engine teardown is necessary before the allocation can be released.
+template<class Allocator>class OriginalWeaponBackingOwner final {
+ Allocator& allocator_;
+ const std::thread::id thread_=std::this_thread::get_id();
+ uint32_t base_=0;uint64_t generation_=0;
+ bool touched_=false;
+ bool owner()const noexcept{return thread_==std::this_thread::get_id();}
+public:
+ explicit OriginalWeaponBackingOwner(Allocator& a):allocator_(a){}
+ OriginalWeaponBackingOwner(const OriginalWeaponBackingOwner&)=delete;
+ OriginalWeaponBackingOwner& operator=(const OriginalWeaponBackingOwner&)=delete;
+ bool Live()const noexcept{
+  return owner()&&base_&&generation_&&
+    allocator_.Generation(base_,OriginalWeaponBankLayout::Total)==generation_;
+ }
+ bool Allocate(OriginalWeaponBankLayout& layout){
+  if(!owner()||base_||touched_)return false;
+  base_=allocator_.Allocate(OriginalWeaponBankLayout::Total);
+  if(!base_)return false;
+  generation_=allocator_.Generation(base_,OriginalWeaponBankLayout::Total);
+  // Fail closed: preserve an uncertain allocation for inspection.
+  if(!Live()||!OriginalWeaponBankLayout::Build(base_,OriginalWeaponBankLayout::Total,layout))return false;
+  return true;
+ }
+ uint64_t Generation(uint32_t base,uint32_t size)const noexcept{
+  return base==base_&&size==OriginalWeaponBankLayout::Total&&Live()?generation_:0;
+ }
+ bool MarkEngineTouched()noexcept{
+  if(!Live()||touched_)return false;
+  touched_=true;return true;
+ }
+ bool Release(bool originalTeardownVerified){
+  if(!Live()||(touched_&&!originalTeardownVerified))return false;
+  allocator_.Free(base_);
+  if(allocator_.Generation(base_,OriginalWeaponBankLayout::Total))return false;
+  base_=0;generation_=0;touched_=false;return true;
+ }
+};
 } // namespace blackcoop
