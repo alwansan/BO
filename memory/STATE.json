@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-24_bo-coop-147-actor-input-aliases.md",
+  "lastSession": "memory/sessions/2026-11-24_bo-coop-148-weapon-manager-image.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3949,13 +3949,12 @@
     "verification": "pending_new_ci"
   },
   "latestSourceHardening": {
-    "session": 147,
-    "code": "1afe0e3aa8efa0654f4c789b159a75e10f2785cb",
+    "session": 148,
+    "code": "e23256548a608ed844edb9ed883198a94aadc09f",
     "status": "new_source_CI_unverified",
     "tracks": [
-      "original actor input/pad alias repair",
-      "protected original world links",
-      "separate setup and human entry",
+      "detached original weapon manager initialization",
+      "independent weapon heap and bank references",
       "preserve original AI"
     ],
     "originalAndroidHostP2P3P4ActorsLive": false,
