@@ -728,6 +728,61 @@ public:
   base_=0;generation_=0;touched_=false;return true;
  }
 };
+// Detached original weapon-manager initialization from black_p2_banks_take.
+// The caller supplies a fresh verified P1 snapshot and independently
+// constructed banks. No live game writes, heap installation or audio calls.
+class OriginalWeaponManagerImage final {
+public:
+ using Manager=std::array<uint8_t,0xD0u>;
+ using Pool=std::array<uint8_t,0x1330u>;
+private:
+ static uint32_t get(const uint8_t* p)noexcept{
+  uint32_t v=0;std::memcpy(&v,p,4u);return v;
+ }
+ static void put(uint8_t* p,uint32_t v)noexcept{std::memcpy(p,&v,4u);}
+ static bool range(uint32_t p,uint32_t n)noexcept{
+  return p>=0x10000u&&!(p&3u)&&uint64_t(p)+n<=0x100000000ull;
+ }
+ static bool overlap(uint32_t a,uint32_t n,uint32_t b,uint32_t m)noexcept{
+  return uint64_t(a)<uint64_t(b)+m&&uint64_t(b)<uint64_t(a)+n;
+ }
+public:
+ static bool Build(const Manager& donor,const Pool& pool,uint32_t firstManager,
+   uint32_t extraManager,const std::array<uint32_t,2>& extraBanks,
+   const std::array<uint32_t,2>& heaps,Manager& result)noexcept{
+  if(!donor[0xC4u]||get(pool.data()+0x130Cu)!=9u||
+     !range(firstManager,0xD0u)||!range(extraManager,0xD0u)||
+     overlap(firstManager,0xD0u,extraManager,0xD0u)||
+     heaps[0]>255u||heaps[1]>255u||heaps[0]==heaps[1]||
+     heaps[0]==13u||heaps[0]==14u||heaps[1]==13u||heaps[1]==14u)return false;
+  const std::array<uint32_t,2> firstBanks{get(pool.data()),get(pool.data()+0x10u)};
+  for(unsigned i=0;i<2;i++){
+   if(!range(firstBanks[i],0xC0u)||!range(extraBanks[i],0xC0u)||
+      overlap(extraBanks[i],0xC0u,firstManager,0xD0u)||
+      overlap(extraBanks[i],0xC0u,extraManager,0xD0u))return false;
+   for(unsigned j=0;j<2;j++)if(overlap(extraBanks[i],0xC0u,firstBanks[j],0xC0u))return false;
+  }
+  if(overlap(extraBanks[0],0xC0u,extraBanks[1],0xC0u)||
+     overlap(firstBanks[0],0xC0u,firstBanks[1],0xC0u))return false;
+  Manager next=donor;
+  for(uint32_t off:{0x7Cu,0x80u}){
+   const auto v=get(next.data()+off);
+   if(uint32_t(v-firstManager)<0xD0u)put(next.data()+off,extraManager+(v-firstManager));
+   else if(v)return false; // no unexplained borrowed record pointer
+  }
+  for(unsigned k=0;k<2;k++){
+   auto* rec=next.data()+8u+k*0x38u;
+   const auto had=get(rec+0x10u);
+   if(had&&had!=firstBanks[0]&&had!=firstBanks[1])return false;
+   put(rec,heaps[k]);put(rec+4u,0);put(rec+0x10u,0);
+   for(unsigned j=0;j<2;j++)if(had==firstBanks[j])put(rec+0x10u,extraBanks[j]);
+   put(rec+0x14u,0);put(rec+0x18u,0);put(rec+0x1Cu,0);
+   std::memset(rec+0x20u,0,0x12u);
+  }
+  put(next.data()+0x78u,0);
+  result=next;return true;
+ }
+};
 // Exact nine-word descriptor initialization from pinned PC black_p2_banks_take.
 // Only the reserved pair can be installed; original P1 heaps 13/14 never
 // written. Native IO currently knows only source-reviewed P2 slots 16/18.

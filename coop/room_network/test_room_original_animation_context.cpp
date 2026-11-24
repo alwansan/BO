@@ -345,6 +345,30 @@ int main() {
     io.w(a+0x10,layout.weapon[0]+16u);assert(install.Live(io,backing));
     io.w(b+8,0);assert(!install.Live(io,backing));
   }
+  {
+    OriginalWeaponManagerImage::Manager donor{},out{};
+    OriginalWeaponManagerImage::Pool pool{};
+    auto put=[](auto& image,unsigned off,uint32_t v){std::memcpy(image.data()+off,&v,4u);};
+    auto get=[](const auto& image,unsigned off){uint32_t v=0;std::memcpy(&v,image.data()+off,4u);return v;};
+    const uint32_t first=0x180000u,extra=0x181000u;
+    const std::array<uint32_t,2> banks{0x1B0000u,0x1B1000u},heaps{16u,18u};
+    donor[0xC4u]=1;
+    put(pool,0,0x190000u);put(pool,0x10u,0x191000u);put(pool,0x130Cu,9);
+    put(donor,0x7Cu,first+8);put(donor,0x80u,first+0x40u);
+    put(donor,0x18u,0x190000u);put(donor,0x50u,0x191000u);
+    put(donor,0xCu,77);put(donor,0x24u,99);put(donor,0x28u,88);
+    const auto saved=donor;
+    assert(OriginalWeaponManagerImage::Build(donor,pool,first,extra,banks,heaps,out));
+    assert(donor==saved);
+    assert(get(out,8)==16u&&get(out,0x40u)==18u);
+    assert(get(out,0x18u)==banks[0]&&get(out,0x50u)==banks[1]);
+    assert(get(out,0x7Cu)==extra+8&&get(out,0x80u)==extra+0x40u);
+    assert(get(out,0xCu)==0&&get(out,0x24u)==0&&get(out,0x28u)==0);
+    const auto ready=out;
+    assert(!OriginalWeaponManagerImage::Build(donor,pool,first,extra,{banks[0],banks[0]},heaps,out)&&out==ready);
+    put(donor,0x18u,0x199000u);
+    assert(!OriginalWeaponManagerImage::Build(donor,pool,first,extra,banks,heaps,out)&&out==ready);
+  }
   std::cout
       << "ORIGINAL_ANIMATION_CONTEXT_PASS: real memory exchange, original "
          "cache reset, resource separation and preflight atomicity\n";
