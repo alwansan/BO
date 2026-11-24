@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-24_bo-coop-139-setup-scheduler-heaps-canonical-apply.md",
+  "lastSession": "memory/sessions/2026-11-24_bo-coop-140-contiguous-backing-guest-lifecycle.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3949,18 +3949,18 @@
     "verification": "pending_new_ci"
   },
   "latestSourceHardening": {
-    "session": 139,
-    "code": "4cd106b8dddef8751d87bf4b078c98c91186b737",
-    "setupCode": "4236a993ccbb9dadd7149eee4bf6ccb74262033a",
-    "previousSourceRun": 45314034321,
-    "previousParallelRun": 45314034386,
-    "previousUdpRun": 45314034276,
-    "previousAndroidRun": 45314034267,
+    "session": 140,
+    "code": "adeaaf83508e26afdbd297ed4ebf18f38e3d20c5",
+    "allocatorCode": "211d78152d415f8793906312a5fc8d7360064677",
+    "previousSourceRun": 45314353972,
+    "previousParallelRun": 45314353995,
+    "previousUdpRun": 45314353984,
+    "previousAndroidRun": 45314353931,
     "status": "new_source_CI_unverified",
     "tracks": [
-      "P2-P4 same frame setup scheduling",
-      "independent weapon bank layout and reservations",
-      "guest canonical NPC/object application frame"
+      "real SDK contiguous allocation generation",
+      "live weapon backing reservation validation",
+      "full guest apply lifecycle scope"
     ],
     "originalCoreHeapLifetimeVerified": false,
     "realP3P4WeaponHeapIdsVerified": false,

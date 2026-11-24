@@ -1,3 +1,10 @@
+### Session140 (2026-11-24): real contiguous backing lifetime and guest apply lifecycle
+
+- Session139 4cd106b8 source 45314353972 and UDP 45314353984 SUCCESS; all three parallel jobs in 45314353995 SUCCESS. Android 45314353931 initially building.
+- 211d78152d415f8793906312a5fc8d7360064677 extends the disposable pinned Xbox SDK memory patch to real AllocContiguous/FreeContiguous lifecycle; exact canonical physical allocation base and size get a generation, aliases/interior pointers do not. Adds actual allocator test of physical backing release/address reuse. Weapon reservation ReadyForConstruction rechecks actual backing generation and still-unused heap descriptor evidence. adeaaf83508e26afdbd297ed4ebf18f38e3d20c5 corrects declaration escaping and uses exact 0x293000 per-player bank backing bytes. Full new CI pending; no real bank construction or heap-table mutation yet.
+- adeaaf835 also pins guest canonical apply to full launch identity and native scene before any callbacks, checks object queue launch before NPC mutation, and requires verified engine teardown before reuse. Fixture adds teardown checks; full revision-transition regression still needed. Native NPC/object resolver and callbacks not yet implemented.
+- Next parallel tracks: real original core/camera and animation provenance; source-backed actual weapon heap IDs and audio constructors, connect exact contiguous allocator generation; native presentation IO; original post-frame setup scheduler and live physics/AI/body/input; original guest NPC/door/objective callback integration. No phone microtests. Only experiment/black-coop writable; preserve main, CL, biso, original XBE/ISO/saves/private logs. No claim of Android gameplay.
+
 ### Session139 (2026-11-24): three-player setup scheduling, independent weapon heaps, canonical guest apply frame
 
 - Session138 f610d382 source 45314034321, parallel 45314034386, UDP 45314034276 all SUCCESS; Android 45314034267 building at first inspection.
