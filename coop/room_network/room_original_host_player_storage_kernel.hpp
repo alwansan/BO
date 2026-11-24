@@ -2,6 +2,8 @@
 #pragma once
 #include "room_original_host_player_storage.hpp"
 #include "room_original_host_proxy_kernel.hpp"
+#include "room_original_host_player_link_exchange.hpp"
+#include "room_original_host_setup_tick.hpp"
 #include <cstring>
 namespace blackcoop {
 // One adapter per storage owner. Keep it alive until storage is safely
@@ -147,6 +149,130 @@ private:
  uint8_t* MapOriginalActor(uint32_t p,uint32_t n)const noexcept{
   if(!ActorGeneration(p,n)||!storage_.Span(p,n))return nullptr;
   return static_cast<uint8_t*>(kernel::HostPtr(p));
+ }
+};
+// Original camera singleton mapping, separate from actor IO (which requires
+// P1 owner restored). All writable access restricted to camera scope.
+class OriginalCameraKernelIO final {
+ OriginalPlayerStorageKernelIO& storage_;
+ OriginalPlayerStorageScene binding_{};
+ uint32_t extra_=0;
+ using LifetimeSource=uint64_t(*)(uint32_t,uint32_t)noexcept;
+ LifetimeSource lifetime_;
+ const std::thread::id thread_=std::this_thread::get_id();
+ uint64_t coreGen_=0;
+ bool live()const noexcept{
+  uint32_t core=0,physics=0,npcs=0;
+  return thread_==std::this_thread::get_id()&&lifetime_&&coreGen_&&
+    binding_.scene&&storage_.Scene()==binding_.scene&&
+    storage_.Read32(0x2D45D4u,core)&&core==binding_.core&&
+    lifetime_(core,0x5CC0u)==coreGen_&&
+    storage_.Read32(0x2D45F4u,physics)&&physics==binding_.physics&&
+    storage_.Read32(0x2D1980u,npcs)&&npcs==binding_.npcs;
+ }
+public:
+ OriginalCameraKernelIO(OriginalPlayerStorageKernelIO& storage,
+    const OriginalPlayerStorageScene& binding,uint32_t extra,
+    LifetimeSource lifetime)noexcept
+  :storage_(storage),binding_(binding),extra_(extra),lifetime_(lifetime){
+  if(lifetime_&&binding_.core)coreGen_=lifetime_(binding_.core,0x5CC0u);
+ }
+ uint64_t CameraScene()const noexcept{return live()?binding_.scene:0;}
+ uint64_t CameraGeneration(uint32_t p,uint32_t n)const noexcept{
+  if(!live()||n!=0x16C0u||(p!=binding_.owner&&p!=extra_)||
+     !storage_.Span(p,n)||(p==extra_&&!storage_.Owns(p,n)))return 0;
+  return lifetime_(p,n);
+ }
+ bool OwnsExtraCamera(uint32_t p,uint32_t n)const noexcept{
+  return p==extra_&&CameraGeneration(p,n)!=0;
+ }
+private:
+ friend class OriginalCameraOwnerScope;
+ uint8_t* MapCameraOwnerRoot()const noexcept{
+  if(!live()||!storage_.Span(0x2D12B8u,4u))return nullptr;
+  return static_cast<uint8_t*>(kernel::HostPtr(0x2D12B8u));
+ }
+};
+
+// Exact original 1E0E40 setup ABI. A full presentation context provider
+// must isolate/restore original animation, banks, weapons, FX and audio,
+// including partial entry recovery. It is not implemented in production.
+// Do not call this adapter from current Android gameplay.
+template<class Presentation>class OriginalSetupKernelIO final {
+ OriginalPlayerStorageKernelIO& storage_;
+ OriginalPlayerStorageScene binding_;
+ OriginalPlayerStorageView view_;
+ OriginalActorExchangeKernelIO actorIo_;
+ OriginalCameraKernelIO cameraIo_;
+ OriginalPlayerLinkExchangePlan actor_;
+ OriginalCameraOwnerScope camera_;
+ Presentation& presentation_;
+ X86Context& ctx_;
+ const std::thread::id thread_=std::this_thread::get_id();
+ bool attempted_=false,entered_=false,presentationAttempted_=false,
+      restored_=false,poisoned_=false;
+ bool owner()const noexcept{return thread_==std::this_thread::get_id();}
+ bool match(const OriginalSetupScene& s)const noexcept{
+  return owner()&&s.nativeScene==binding_.scene&&s.world==binding_.core&&
+   s.p1Actor==binding_.core+0x30u&&s.p1Owner==binding_.owner&&
+   s.ownedActor==view_.actor&&s.ownedOwner==view_.owner&&s.peer>=2&&s.peer<=4;
+ }
+public:
+ OriginalSetupKernelIO(X86Context& ctx,OriginalPlayerStorageKernelIO& storage,
+     const OriginalPlayerStorageScene& binding,const OriginalPlayerStorageView& materialized,
+     uint64_t(*lifetime)(uint32_t,uint32_t)noexcept,Presentation& presentation)
+  :storage_(storage),binding_(binding),view_(materialized),
+   actorIo_(storage,binding,materialized.actor,lifetime),
+   cameraIo_(storage,binding,materialized.owner,lifetime),
+   presentation_(presentation),ctx_(ctx){}
+ uint64_t OriginalScene()const noexcept{return owner()?storage_.Scene():0;}
+ bool Read32(uint32_t p,uint32_t& v)const noexcept{return owner()&&storage_.Read32(p,v);}
+ uint32_t CorePhase(uint32_t core)const noexcept{
+  uint32_t phase=0;return core==binding_.core&&Read32(core+0x5AE0u,phase)?phase:0;
+ }
+ bool OwnsMaterializedActor(uint32_t p,uint32_t n)const noexcept{
+  return owner()&&p==view_.actor&&storage_.OwnsActor(p,n);
+ }
+ bool OwnsOriginalCamera(uint32_t p,uint32_t n)const noexcept{
+  return owner()&&p==view_.owner&&n==0x16C0u&&storage_.Owns(p,n);
+ }
+ bool EnterOwnedOriginalContext(const OriginalSetupScene& s){
+  if(!match(s)||attempted_||poisoned_)return false;
+  attempted_=true;restored_=false;
+  if(!presentation_.CanEnterOriginal(s)||!actor_.Prepare(actorIo_,binding_,view_.actor)||
+     !actor_.EnterActorOnly(actorIo_)||
+     !camera_.Enter(cameraIo_,binding_.scene,binding_.owner,view_.owner))return false;
+  presentationAttempted_=true;
+  if(!presentation_.EnterOriginal(s)||!presentation_.OriginalContextActive(s))return false;
+  entered_=true;return true;
+ }
+ bool GuestSetup1E0E40(uint32_t world,uint32_t eax,uint32_t& result){
+  uint32_t current=0;
+  if(!owner()||poisoned_||!entered_||!actor_.Entered()||!camera_.Entered()||
+     world!=binding_.core||eax||!dispatch::Find(0x1E0E40u)||
+     !Read32(0x2D12B8u,current)||current!=view_.owner)return false;
+  X86Context call=ctx_;
+  call.eax=0;call.edx=world;call.ecx=call.ebx=call.esi=call.edi=0;
+  result=kernel::CallGuest(call,0x1E0E40u,{});
+  return true;
+ }
+ bool RestoreOriginalP1(const OriginalSetupScene& s){
+  if(!match(s)||!attempted_||poisoned_)return false;
+  bool ok=true;
+  // Try each applicable restoration exactly once, even after a failed or
+  // throwing presentation restore. Never attempt the setup call again.
+  if(presentationAttempted_){
+   try{ok=presentation_.RestoreOriginal(s);}catch(...){ok=false;}
+  }
+  if(camera_.Entered()&&!camera_.Restore(cameraIo_))ok=false;
+  if(actor_.Entered()&&!actor_.RestoreActorOnly(actorIo_))ok=false;
+  attempted_=entered_=presentationAttempted_=false;
+  restored_=ok&&actorIo_.Live()&&!actor_.Entered()&&!camera_.Entered();
+  poisoned_=!restored_;return restored_;
+ }
+ bool FullP1Restored(const OriginalSetupScene& s){
+  return match(s)&&restored_&&!poisoned_&&actorIo_.Live()&&
+    presentation_.OriginalP1Restored(s);
  }
 };
 }

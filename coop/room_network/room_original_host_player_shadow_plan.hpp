@@ -299,6 +299,17 @@ public:
   const auto view=storage_.View();
   return view.actor&&links.Prepare(io,binding_,view.actor);
  }
+ // Materialized storage is not exposed as a proof of actor gameplay.
+ // This accessor only hands exact still-owned buffers to the opt-in
+ // original setup adapter on the owning game thread.
+ template<class IO>OriginalPlayerStorageView MaterializedView(IO& io)const noexcept{
+  if(!Materialized()||io.Scene()!=binding_.scene)return {};
+  const auto v=storage_.View();
+  if(!io.Owns(v.actor,0x900u)||!io.Owns(v.owner,0x16C0u)||
+     !io.Owns(v.input,0x40u)||!io.Owns(v.weapons,0x40u)||
+     !io.Owns(v.parts,0x630u))return {};
+  return v;
+ }
  bool ModelIsolated()const noexcept{return Ready()&&shadow_.ModelIsolated();}
  bool InputIsolated()const noexcept{return Ready()&&shadow_.InputIsolated();}
  OriginalPlayerStorageView View()const noexcept{
