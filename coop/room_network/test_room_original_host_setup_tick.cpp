@@ -11,6 +11,7 @@ struct MockEngine {
    {0x3000F4u,2u}};
  uint32_t actor=0,owner=0,completeAt=3u;unsigned calls=0,entered=0,left=0;
  bool enterOk=true,callOk=true,restoreOk=true,fullOk=true,throwing=false;
+ bool enterThrows=false,restoreThrows=false;
  uint64_t OriginalScene()const{return scene;}
  uint32_t CorePhase(uint32_t)const{return corePhase;}
  bool OwnsMaterializedActor(uint32_t a,uint32_t n)const{
@@ -24,14 +25,17 @@ struct MockEngine {
   v=i->second;return true;
  }
  bool EnterOwnedOriginalContext(const OriginalSetupScene& s){
-  ++entered;return enterOk&&s.ownedActor==actor&&s.ownedOwner==owner;
+  ++entered;if(enterThrows)throw 2;
+  return enterOk&&s.ownedActor==actor&&s.ownedOwner==owner;
  }
  bool GuestSetup1E0E40(uint32_t world,uint32_t eax,uint32_t& out){
   assert(world==0x300000u&&eax==0);++calls;
   if(throwing)throw 1;
   out=calls>=completeAt?1u:0u;return callOk;
  }
- bool RestoreOriginalP1(const OriginalSetupScene&){++left;return restoreOk;}
+ bool RestoreOriginalP1(const OriginalSetupScene&){
+  ++left;if(restoreThrows)throw 3;return restoreOk;
+ }
  bool FullP1Restored(const OriginalSetupScene&){return fullOk;}
 };
 static OriginalSetupScene scoped(uint8_t peer){
@@ -57,7 +61,7 @@ int main(){
   assert(!ticker->AfterVerifiedEngineTeardown(false));
   assert(ticker->AfterVerifiedEngineTeardown(true));
  }
- for(int mode=0;mode<5;mode++){
+ for(int mode=0;mode<7;mode++){
   MockEngine e;const auto s=scoped(2);e.actor=s.ownedActor;e.owner=s.ownedOwner;
   OriginalHumanSetupTick t;assert(t.Bind(e,s));
   if(mode==0)e.enterOk=false;
@@ -65,7 +69,10 @@ int main(){
   if(mode==2)e.restoreOk=false;
   if(mode==3)e.fullOk=false;
   if(mode==4)e.throwing=true;
+  if(mode==5)e.enterThrows=true;
+  if(mode==6)e.restoreThrows=true;
   assert(t.Tick(e,1)==OriginalSetupState::Quarantined);
+  assert(e.left==1); // even after partial/throwing entry; no blind restore retry
   assert(t.Quarantined()&&!t.ReadyForPhysics());
  }
  {MockEngine e;const auto s=scoped(2);e.actor=s.ownedActor;e.owner=s.ownedOwner;

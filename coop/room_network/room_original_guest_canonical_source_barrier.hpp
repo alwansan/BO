@@ -11,20 +11,24 @@
 namespace blackcoop {
 class OriginalGuestCanonicalSourceBarrier final {
  const std::thread::id thread_=std::this_thread::get_id();
- uint32_t epoch_=0,revision_=0,worldTick_=0,npcTick_=0;
+ uint32_t episode_=0,epoch_=0,revision_=0,worldTick_=0,npcTick_=0;
+ uint8_t level_=0,stage_=0,self_=0,participants_=0;
  uint64_t token_=0,originalScene_=0,lastObservedAt_=0;
  unsigned stable_=0;
  bool owner()const noexcept{return thread_==std::this_thread::get_id();}
 public:
  void Reset()noexcept{
   if(!owner())return;
-  epoch_=revision_=worldTick_=npcTick_=0;
+  episode_=epoch_=revision_=worldTick_=npcTick_=0;
+  level_=stage_=self_=participants_=0;
   token_=originalScene_=lastObservedAt_=0;stable_=0;
  }
  bool Observe(const OriginalGuestLaunchMatchKey& key,uint64_t nativeScene,
               const OriginalGuestHostWorldInbox& players,
               const OriginalGuestHostNpcInbox& npcs,uint64_t now)noexcept{
-  if(!owner()||!nativeScene||!key.originalEpisode||!key.sceneEpoch||
+  // A foreign caller must not mutate game-thread-owned quorum.
+  if(!owner())return false;
+  if(!nativeScene||!key.originalEpisode||!key.sceneEpoch||
      !key.rosterRevision||(key.tokenHi==0&&key.tokenLo==0)||
      key.selfSlot<2||key.selfSlot>4||
      (key.participants!=3&&key.participants!=7&&key.participants!=15)||
@@ -43,7 +47,9 @@ public:
       key.rosterRevision<revision_)){
     stable_=0;lastObservedAt_=0;return false;
    }
-   if(key.sceneEpoch!=epoch_||key.rosterRevision!=revision_||
+   if(key.originalEpisode!=episode_||key.level!=level_||
+      key.stage!=stage_||key.selfSlot!=self_||key.participants!=participants_||
+      key.sceneEpoch!=epoch_||key.rosterRevision!=revision_||
       token!=token_||nativeScene!=originalScene_){
     Reset();return false; // new original engine requires explicit scene rebind
    }
@@ -59,7 +65,8 @@ public:
   // Three confirmations require three distinct authenticated host frames,
   // not three render callbacks replaying the same packet pair.
   const bool advanced=players.Tick()>worldTick_||npcs.Tick()>npcTick_;
-  epoch_=key.sceneEpoch;revision_=key.rosterRevision;
+  episode_=key.originalEpisode;epoch_=key.sceneEpoch;revision_=key.rosterRevision;
+  level_=key.level;stage_=key.stage;self_=key.selfSlot;participants_=key.participants;
   token_=token;originalScene_=nativeScene;
   worldTick_=players.Tick();npcTick_=npcs.Tick();
   // Replaying the same authenticated frame must not renew freshness.

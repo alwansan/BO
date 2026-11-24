@@ -65,13 +65,20 @@ public:
   if(attempts_>=600u)return OriginalSetupState::TimedOut;
   lastFrame_=originalFrame;
   bool entered=false,called=false,left=false;
+  bool enterAttempted=false,restoreAttempted=false;
   uint32_t result=0;
   try{
+   enterAttempted=true;
    entered=io.EnterOwnedOriginalContext(scope_);
    if(entered)called=io.GuestSetup1E0E40(scope_.world,0u,result);
-   if(entered)left=io.RestoreOriginalP1(scope_);
+   // Enter may fail after modifying P1. The adapter must support recovery
+   // after every attempted entry, including a failed or partial entry.
+   restoreAttempted=true;
+   left=io.RestoreOriginalP1(scope_);
   }catch(...){
-   if(entered)try{(void)io.RestoreOriginalP1(scope_);}catch(...){}
+   if(enterAttempted&&!restoreAttempted)
+    try{(void)io.RestoreOriginalP1(scope_);}catch(...){}
+   // Never blindly repeat a throwing restore; quarantine uncertain state.
    poisoned_=true;return OriginalSetupState::Quarantined;
   }
   ++attempts_;

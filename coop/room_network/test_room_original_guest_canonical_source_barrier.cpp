@@ -43,6 +43,7 @@ int main(){
  bool foreign=true;std::thread t([&]{
   foreign=gate.Observe(key,0x100000,world,npc,1003);
  });t.join();assert(!foreign);
+ assert(gate.SourceCoherent(1028)); // foreign callers do not revoke quorum
  assert(!gate.Observe(key,0x100000,world,npc,1351));
  assert(!gate.SourceCoherent(1351));
  avatars[0]=24;avatars[1]=1;enemies[0]=24;enemies[1]=1;
@@ -78,5 +79,22 @@ int main(){
  lateAvatars[1]=35;assert(lateWorld.Ingest(lateAvatars,22,2111));
  assert(lateGate.Observe(key,0x100000,lateWorld,lateNpc,2112));
  assert(lateGate.SourceCoherent(2112));
+ // Changing the original episode/level/stage while retaining the signed
+ // epoch and token must never inherit a previous local launch's quorum.
+ for(int variant=0;variant<3;variant++){
+  OriginalGuestCanonicalSourceBarrier exact;
+  const uint64_t t=2120u+static_cast<uint64_t>(variant)*10u;
+  assert(!exact.Observe(key,0x100000,lateWorld,lateNpc,t));
+  ++lateAvatars[1];assert(lateWorld.Ingest(lateAvatars,22,t+1u));
+  assert(!exact.Observe(key,0x100000,lateWorld,lateNpc,t+2u));
+  ++lateAvatars[1];assert(lateWorld.Ingest(lateAvatars,22,t+3u));
+  assert(exact.Observe(key,0x100000,lateWorld,lateNpc,t+4u));
+  auto altered=key;
+  if(variant==0)++altered.originalEpisode;
+  if(variant==1)++altered.level;
+  if(variant==2)++altered.stage;
+  assert(!exact.Observe(altered,0x100000,lateWorld,lateNpc,t+5u));
+  assert(!exact.SourceCoherent(t+5u));
+ }
  std::cout<<"ORIGINAL_GUEST_HOST_NPC_AVATAR_BARRIER_PASS_NO_ENGINE_APPLY\n";
 }
