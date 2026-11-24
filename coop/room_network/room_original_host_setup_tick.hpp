@@ -167,6 +167,64 @@ public:
   entered_=false;return true;
  }
 };
+// Original source +C points at its own input component. Pinned PC
+// black_p2_update proves manager+98, P2 stride 120. For every candidate,
+// including P3/P4, require the actual vtable, port index and shared input
+// records from original sub_000C5A80 before any owned-source write.
+class OriginalHumanPadBinding final {
+ const std::thread::id thread_=std::this_thread::get_id();
+ uint64_t generation_=0;
+ uint32_t input_=0;uint8_t peer_=0;
+ bool poisoned_=false;
+ bool owner()const noexcept{return thread_==std::this_thread::get_id();}
+ template<class IO>static bool topology(IO& io,uint8_t peer,uint32_t& first,uint32_t& pad){
+  uint32_t manager=0,v=0,records=0,other=0,port=0,kind=0;
+  if(peer<2||peer>4||!io.Read32(0x2D45E8u,manager)||manager<0x10000u||
+     uint64_t(manager)+0x98u+0x120u*peer>0x100000000ull)return false;
+  first=manager+0x98u;pad=first+0x120u*(peer-1u);
+  if(!io.Read32(first,v)||v!=0x28CE00u||
+     !io.Read32(first+0x11Cu,port)||port!=0||
+     !io.Read32(first+0x118u,records)||records<0x10000u||
+     uint64_t(records)+128u>0x100000000ull||
+     !io.Read32(pad,v)||v!=0x28CE00u||
+     !io.Read32(pad+0x11Cu,port)||port!=peer-1u||
+     !io.Read32(pad+0x118u,other)||other!=records||
+     !io.Read32(records+32u*port,kind)||kind!=2u)return false;
+  return true;
+ }
+public:
+ OriginalHumanPadBinding()=default;
+ OriginalHumanPadBinding(const OriginalHumanPadBinding&)=delete;
+ OriginalHumanPadBinding& operator=(const OriginalHumanPadBinding&)=delete;
+ bool Quarantined()const noexcept{return owner()&&poisoned_;}
+ template<class IO>bool Bind(IO& io,uint32_t input,uint8_t peer){
+  if(!owner()||poisoned_||peer<2||peer>4||input<0x10000u||
+     input>0xFFFFFFC0u||(input&3u)||!io.OwnsHumanInput(input))return false;
+  const auto gen=io.InputGeneration(input);
+  if(!gen)return false;
+  if(generation_&&(input_!=input||peer_!=peer||generation_!=gen)){
+   poisoned_=true;return false;
+  }
+  uint32_t first=0,pad=0,current=0,checkFirst=0,checkPad=0;
+  if(!topology(io,peer,first,pad)||!io.Read32(input+0xCu,current)||
+     (current!=first&&current!=pad))return false;
+  auto* word=io.MapOwnedPadWord(input);
+  if(!word||io.InputGeneration(input)!=gen||!io.OwnsHumanInput(input)||
+     !topology(io,peer,checkFirst,checkPad)||first!=checkFirst||pad!=checkPad||
+     !io.Read32(input+0xCu,current)||(current!=first&&current!=pad))return false;
+  input_=input;peer_=peer;generation_=gen;
+  *word=pad;
+  if(!io.Read32(input+0xCu,current)||current!=pad||
+     io.InputGeneration(input)!=gen){poisoned_=true;return false;}
+  return true;
+ }
+ template<class IO>bool Active(IO& io,uint32_t input,uint8_t peer)const{
+  uint32_t first=0,pad=0,current=0;
+  return owner()&&!poisoned_&&generation_&&input==input_&&peer==peer_&&
+   io.OwnsHumanInput(input)&&io.InputGeneration(input)==generation_&&
+   topology(io,peer,first,pad)&&io.Read32(input+0xCu,current)&&current==pad;
+ }
+};
 // Original extra-human update after the genuine 1F1080 world tick.
 // The original enemy/ally AI is untouched. The shared world is never
 // stepped twice. IO must provide the original controller/actor methods,

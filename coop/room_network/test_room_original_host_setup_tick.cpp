@@ -196,5 +196,42 @@ int main(){
   ++io.firstGen;
   assert(!scope.Restore(io)&&scope.Quarantined()&&io.source==0x800000u);
  }
+ {
+  struct PadIO {
+   std::map<uint32_t,uint32_t> words;
+   uint32_t input=0x900000u;
+   uint64_t generation=7;
+   bool Read32(uint32_t a,uint32_t& v){
+    auto it=words.find(a);if(it==words.end())return false;v=it->second;return true;
+   }
+   bool OwnsHumanInput(uint32_t p){return p==input;}
+   uint64_t InputGeneration(uint32_t p){return p==input?generation:0;}
+   uint32_t* MapOwnedPadWord(uint32_t p){return p==input?&words.at(p+0xCu):nullptr;}
+  } io;
+  const uint32_t manager=0x700000u,first=manager+0x98u,records=0x800000u;
+  io.words[0x2D45E8u]=manager;
+  for(uint32_t port=0;port<4;port++){
+   const uint32_t pad=first+port*0x120u;
+   io.words[pad]=0x28CE00u;io.words[pad+0x118u]=records;
+   io.words[pad+0x11Cu]=port;io.words[records+port*32u]=2u;
+  }
+  for(uint8_t peer=2;peer<=4;peer++){
+   OriginalHumanPadBinding bind;io.input=0x900000u+peer*0x100u;
+   io.words[io.input+0xCu]=first;
+   const uint32_t pad=first+(peer-1u)*0x120u;
+   io.words[pad+0x11Cu]=0;
+   assert(!bind.Bind(io,io.input,peer)&&io.words[io.input+0xCu]==first);
+   io.words[pad+0x11Cu]=peer-1u;
+   assert(bind.Bind(io,io.input,peer)&&bind.Active(io,io.input,peer));
+   assert(io.words[io.input+0xCu]==pad);
+   assert(bind.Bind(io,io.input,peer));
+   io.words[pad+0x118u]=records+0x100u;
+   assert(!bind.Active(io,io.input,peer));
+   io.words[pad+0x118u]=records;
+   ++io.generation;
+   assert(!bind.Bind(io,io.input,peer)&&bind.Quarantined());
+  }
+  assert(io.words[first+0x11Cu]==0);
+ }
  std::cout<<"ORIGINAL_BLACK_P2_P3_P4_MULTIFRAME_SETUP_CONTRACT_PASS_NO_LIVE_GUEST_CALL\n";
 }

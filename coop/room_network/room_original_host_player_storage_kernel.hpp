@@ -208,6 +208,7 @@ template<class Presentation>class OriginalSetupKernelIO final {
  OriginalCameraOwnerScope camera_;
  Presentation& presentation_;
  OriginalHumanControllerSource controllerSource_;
+ OriginalHumanPadBinding padBinding_;
  uint64_t(*lifetime_)(uint32_t,uint32_t)noexcept;
  X86Context& ctx_;
  const std::thread::id thread_=std::this_thread::get_id();
@@ -220,6 +221,7 @@ template<class Presentation>class OriginalSetupKernelIO final {
    s.ownedActor==view_.actor&&s.ownedOwner==view_.owner&&s.peer>=2&&s.peer<=4;
  }
  friend class OriginalHumanControllerSource;
+ friend class OriginalHumanPadBinding;
  uint64_t ControllerGeneration(uint32_t ctl)const noexcept{
   uint32_t current=0,core=0,camera=0;
   if(!owner()||!lifetime_||!entered_||!actor_.Entered()||!camera_.Entered()||
@@ -235,6 +237,10 @@ template<class Presentation>class OriginalSetupKernelIO final {
  }
  bool OwnsHumanInput(uint32_t p)const noexcept{
   return owner()&&p==view_.input&&storage_.Owns(p,0x40u);
+ }
+ uint32_t* MapOwnedPadWord(uint32_t p)const noexcept{
+  return OwnsHumanInput(p)&&InputGeneration(p)&&storage_.Span(p,0x40u)?
+   static_cast<uint32_t*>(kernel::HostPtr(p+0xCu)):nullptr;
  }
  uint32_t* MapControllerSource(uint32_t ctl)const noexcept{
   return ControllerGeneration(ctl)?static_cast<uint32_t*>(kernel::HostPtr(ctl+0xA8u)):nullptr;
@@ -296,7 +302,9 @@ public:
      !Read32(cv,cf)||!Read32(av,af)||!Read32(av+0x10u,post)||
      post!=0x1E5FA0u||!dispatch::Find(cf)||!dispatch::Find(af)||
      !dispatch::Find(post))return false;
-  if(!controllerSource_.Enter(*this,ctl,view_.input)||
+  if(!padBinding_.Bind(*this,view_.input,s.peer)||
+     !padBinding_.Active(*this,view_.input,s.peer)||
+     !controllerSource_.Enter(*this,ctl,view_.input)||
      !Read32(ctl+0xA8u,source)||
      !presentation_.OriginalHumanInputActive(s,frame,ctl,source))return false;
   // Exact thiscall ABI: controller receives ESI=actor; actor methods
@@ -323,7 +331,7 @@ public:
   if(controllerSource_.Entered()){
    try{if(!controllerSource_.Restore(*this))ok=false;}catch(...){ok=false;}
   }
-  if(controllerSource_.Quarantined())ok=false;
+  if(controllerSource_.Quarantined()||padBinding_.Quarantined())ok=false;
   if(presentationAttempted_){
    try{if(!presentation_.RestoreOriginal(s))ok=false;}catch(...){ok=false;}
   }
