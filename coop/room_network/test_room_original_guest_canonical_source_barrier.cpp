@@ -22,6 +22,10 @@ int main(){
  avatars[1]=11;assert(world.Ingest(avatars,22,1006));
  assert(gate.Observe(key,0x100000,world,npc,1007));
  assert(gate.SourceCoherent(1007)&&!gate.OriginalGuestEngineApplied());
+ assert(gate.MatchesForApplication(key,0x100000,world,npc,1007));
+ assert(!gate.MatchesForApplication(key,0x200000,world,npc,1007));
+ auto badKey=key;++badKey.tokenLo;
+ assert(!gate.MatchesForApplication(badKey,0x100000,world,npc,1007));
  assert(gate.Observe(key,0x100000,world,npc,1050)); // replay does not refresh proof
  assert(!gate.SourceCoherent(1108)); // last distinct host frame was at 1007
  int32_t unexpected[]={23,17,3,4,
@@ -29,6 +33,7 @@ int main(){
   3,130,200,300,0,0,4,150,200,300,0,0};
  assert(world.Ingest(unexpected,28,1010));
  assert(world.PlayerMask(1010)==15u);
+ assert(!gate.MatchesForApplication(key,0x100000,world,npc,1010));
  assert(!gate.Observe(key,0x100000,world,npc,1011)); // guest room mask 7
  avatars[1]=18;
  assert(world.Ingest(avatars,22,1020));
