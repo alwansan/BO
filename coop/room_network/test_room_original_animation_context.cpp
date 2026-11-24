@@ -11,6 +11,8 @@ struct IO {
   uint32_t blocked = 0;
   bool OwnsCompletePresentation(const OriginalSetupScene& s)const {return s.nativeScene==scene;}
   bool VerifyRestoredPresentation(const OriginalSetupScene& s)const {return s.nativeScene==scene;}
+  bool VerifiedUnusedOriginalWeaponHeap(uint32_t id)const{return id==16||id==18||id==20||id==21||id==22||id==23;}
+  uint64_t IndependentWeaponBackingGeneration(uint32_t,uint32_t)const{return generation;}
   uint64_t Scene() const { return scene; }
   bool OwnsEffectsActorPair(uint32_t first,uint32_t extra) const {
     return first==0x100030u&&extra==0x180000u;
@@ -302,6 +304,18 @@ int main() {
     ++io.generation;
     assert(!tx.RestoreOriginal(scope)&&!arbiter.Available(7,4));
     assert(!arbiter.AfterVerifiedEngineTeardown(false));
+  }
+  {
+    IO io;OriginalWeaponHeapReservations heaps;OriginalWeaponBankLayout p2{},p3{},p4{};
+    constexpr auto bytes=OriginalWeaponBankLayout::Total;
+    assert(!heaps.Reserve(io,2,13,18,0x1000000u,bytes,p2));
+    assert(heaps.Reserve(io,2,16,18,0x1000000u,bytes,p2));
+    assert(p2.weapon[0]==0x1000000u&&p2.weapon[1]==p2.weapon[0]+OriginalWeaponBankLayout::WeaponBytes);
+    assert(p2.bank[1]+OriginalWeaponBankLayout::BankBytes==0x1000000u+bytes);
+    assert(!heaps.Reserve(io,3,16,20,0x2000000u,bytes,p3));
+    assert(!heaps.Reserve(io,3,20,21,0x1001000u,bytes,p3));
+    assert(heaps.Reserve(io,3,20,21,0x2000000u,bytes,p3));
+    assert(heaps.Reserve(io,4,22,23,0x3000000u,bytes,p4));
   }
   std::cout
       << "ORIGINAL_ANIMATION_CONTEXT_PASS: real memory exchange, original "

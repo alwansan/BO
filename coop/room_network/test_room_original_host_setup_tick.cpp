@@ -94,5 +94,34 @@ int main(){
   assert(t.Tick(e,1)==OriginalSetupState::SetupFinished&&t.ReadyForPhysicsNow(e));
   e.fullOk=false;assert(!t.ReadyForPhysicsNow(e)&&t.Quarantined());
  }
+ {
+  OriginalSetupFrameScheduler scheduler;
+  std::array<MockEngine,3> engines{};
+  std::array<MockEngine*,3> io{&engines[0],&engines[1],&engines[2]};
+  for(uint8_t p=2;p<=4;p++){
+   auto s=scoped(p);auto& e=engines[p-2];e.actor=s.ownedActor;e.owner=s.ownedOwner;
+   e.completeAt=p;
+   assert(scheduler.Bind(e,s,15));
+  }
+  for(uint32_t frame=1;frame<=4;frame++){
+   auto result=scheduler.Tick(io,frame);
+   assert(result==(frame==4?OriginalSetupState::SetupFinished:OriginalSetupState::Waiting));
+  }
+  assert(engines[0].calls==2&&engines[1].calls==3&&engines[2].calls==4);
+  assert(scheduler.Tick(io,4)==OriginalSetupState::Rejected);
+  engines[1].fullOk=false;
+  assert(scheduler.Tick(io,5)==OriginalSetupState::Quarantined&&scheduler.Quarantined());
+ }
+ {
+  OriginalSetupFrameScheduler scheduler;std::array<MockEngine,3> engines{};
+  std::array<MockEngine*,3> io{&engines[0],&engines[1],&engines[2]};
+  for(uint8_t p=2;p<=4;p++){
+   auto s=scoped(p);auto& e=engines[p-2];e.actor=s.ownedActor;e.owner=s.ownedOwner;
+   assert(scheduler.Bind(e,s,15));
+  }
+  engines[0].restoreOk=false;
+  assert(scheduler.Tick(io,1)==OriginalSetupState::Quarantined);
+  assert(engines[1].calls==0&&engines[2].calls==0);
+ }
  std::cout<<"ORIGINAL_BLACK_P2_P3_P4_MULTIFRAME_SETUP_CONTRACT_PASS_NO_LIVE_GUEST_CALL\n";
 }

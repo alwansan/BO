@@ -629,4 +629,48 @@ public:
     io_.VerifyRestoredPresentation(s);
  }
 };
+// Source-reviewed layout from black_p2_banks_make/take. No assumption
+// that P3/P4 may reuse the two PC P2 heap IDs (16,18). Each lane needs
+// two independently verified unused original descriptors and its own
+// backing memory. This planner does not write heap tables.
+struct OriginalWeaponBankLayout {
+ uint32_t weapon[2]{},sound[4]{},bank[2]{};
+ static constexpr uint32_t WeaponBytes=0xE1800u,SoundBytes=0x18000u,
+  BankBytes=0x38000u,Total=2*WeaponBytes+4*SoundBytes+2*BankBytes;
+ static bool Build(uint32_t base,uint32_t size,OriginalWeaponBankLayout& out)noexcept{
+  if(base<0x10000u||(base&0xFFFu)||size<Total||
+     uint64_t(base)+Total>0x100000000ull)return false;
+  OriginalWeaponBankLayout next{};
+  uint32_t at=base;
+  for(auto& p:next.weapon){p=at;at+=WeaponBytes;}
+  for(auto& p:next.sound){p=at;at+=SoundBytes;}
+  for(auto& p:next.bank){p=at;at+=BankBytes;}
+  out=next;return true;
+ }
+};
+class OriginalWeaponHeapReservations final {
+ struct Entry{uint32_t first=0,second=0,base=0;uint64_t generation=0;};
+ std::array<Entry,3> slots_{};
+ const std::thread::id thread_=std::this_thread::get_id();
+ uint64_t scene_=0;
+public:
+ template<class IO>bool Reserve(IO& io,uint8_t peer,uint32_t first,uint32_t second,
+    uint32_t base,uint32_t size,OriginalWeaponBankLayout& layout){
+  if(thread_!=std::this_thread::get_id()||peer<2||peer>4||
+     first==second||first==13||first==14||second==13||second==14||
+     slots_[peer-2].base||!io.Scene()||(scene_&&scene_!=io.Scene()))return false;
+  OriginalWeaponBankLayout next{};
+  if(!OriginalWeaponBankLayout::Build(base,size,next)||
+     !io.VerifiedUnusedOriginalWeaponHeap(first)||
+     !io.VerifiedUnusedOriginalWeaponHeap(second))return false;
+  const auto gen=io.IndependentWeaponBackingGeneration(base,OriginalWeaponBankLayout::Total);
+  if(!gen)return false;
+  for(const auto& e:slots_)if(e.base){
+   if(first==e.first||first==e.second||second==e.first||second==e.second||
+      (uint64_t(base)<uint64_t(e.base)+OriginalWeaponBankLayout::Total&&
+       uint64_t(e.base)<uint64_t(base)+OriginalWeaponBankLayout::Total))return false;
+  }
+  scene_=io.Scene();slots_[peer-2]={first,second,base,gen};layout=next;return true;
+ }
+};
 } // namespace blackcoop

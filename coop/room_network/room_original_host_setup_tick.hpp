@@ -113,4 +113,61 @@ public:
   return p>=2&&p<=4?&lanes_[p-2]:nullptr;
  }
 };
+// Runs the independently bound P2/P3/P4 setup lanes on the same original
+// post-world frame. Original singleton contexts must be visited serially,
+// not on concurrent threads. One failed restoration stops ALL lanes.
+class OriginalSetupFrameScheduler final {
+ const std::thread::id thread_=std::this_thread::get_id();
+ OriginalHumanSetupLanes lanes_;
+ std::array<OriginalSetupScene,3> scopes_{};
+ uint32_t frame_=0;uint8_t mask_=0;bool poisoned_=false;
+ bool owner()const noexcept{return thread_==std::this_thread::get_id();}
+ static bool overlaps(uint32_t a,uint32_t n,uint32_t b,uint32_t m)noexcept{
+  return uint64_t(a)<uint64_t(b)+m&&uint64_t(b)<uint64_t(a)+n;
+ }
+public:
+ template<class IO>bool Bind(IO& io,const OriginalSetupScene& s,uint8_t mask){
+  if(!owner()||poisoned_||frame_||s.peer<2||s.peer>4||
+     (mask!=3&&mask!=7&&mask!=15)||!(mask&(1u<<(s.peer-1)))||
+     (mask_&&mask_!=mask)||scopes_[s.peer-2].peer||
+     uint64_t(s.world)+0x30u!=s.p1Actor||
+     overlaps(s.ownedActor,0x900u,s.world,0x5CC0u)||
+     overlaps(s.ownedOwner,0x16C0u,s.world,0x5CC0u)||
+     overlaps(s.ownedActor,0x900u,s.p1Owner,0x16C0u)||
+     overlaps(s.ownedOwner,0x16C0u,s.p1Owner,0x16C0u)||
+     overlaps(s.ownedActor,0x900u,s.ownedOwner,0x16C0u))return false;
+  for(const auto& old:scopes_)if(old.peer){
+   if(old.nativeScene!=s.nativeScene||old.signedEpoch!=s.signedEpoch||
+      old.world!=s.world||old.p1Actor!=s.p1Actor||old.p1Owner!=s.p1Owner||
+      overlaps(s.ownedActor,0x900u,old.ownedActor,0x900u)||
+      overlaps(s.ownedActor,0x900u,old.ownedOwner,0x16C0u)||
+      overlaps(s.ownedOwner,0x16C0u,old.ownedActor,0x900u)||
+      overlaps(s.ownedOwner,0x16C0u,old.ownedOwner,0x16C0u))return false;
+  }
+  if(!lanes_.At(s.peer)->Bind(io,s))return false;
+  scopes_[s.peer-2]=s;mask_=mask;return true;
+ }
+ template<class IO>OriginalSetupState Tick(const std::array<IO*,3>& io,uint32_t frame){
+  if(!owner()||!mask_||!frame||frame<=frame_)return OriginalSetupState::Rejected;
+  if(poisoned_)return OriginalSetupState::Quarantined;
+  for(unsigned i=0;i<3;i++)if(mask_&(2u<<i))
+   if(!scopes_[i].peer||!io[i])return OriginalSetupState::Rejected;
+  frame_=frame;bool all=true;
+  for(unsigned i=0;i<3;i++)if(mask_&(2u<<i)){
+   auto& lane=*lanes_.At(static_cast<uint8_t>(i+2));
+   try{
+    const auto result=lane.Tick(*io[i],frame);
+    if(result==OriginalSetupState::TimedOut){poisoned_=true;return result;}
+    if(result==OriginalSetupState::Quarantined||result==OriginalSetupState::Rejected){
+     poisoned_=true;return OriginalSetupState::Quarantined;
+    }
+    if(result==OriginalSetupState::SetupFinished){
+     if(!lane.ReadyForPhysicsNow(*io[i])){poisoned_=true;return OriginalSetupState::Quarantined;}
+    }else all=false;
+   }catch(...){poisoned_=true;return OriginalSetupState::Quarantined;}
+  }
+  return all?OriginalSetupState::SetupFinished:OriginalSetupState::Waiting;
+ }
+ bool Quarantined()const noexcept{return owner()&&poisoned_;}
+};
 } // namespace blackcoop
