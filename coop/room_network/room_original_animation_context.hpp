@@ -672,5 +672,18 @@ public:
   }
   scene_=io.Scene();slots_[peer-2]={first,second,base,gen};layout=next;return true;
  }
+ // Recheck lifetime and the still-unused descriptors immediately before
+ // handing out the planned backing. No reservation alone grants writes.
+ template<class IO>bool ReadyForConstruction(IO& io,uint8_t peer,
+      OriginalWeaponBankLayout& layout)const{
+  if(thread_!=std::this_thread::get_id()||peer<2||peer>4||
+     !scene_||io.Scene()!=scene_)return false;
+  const auto& e=slots_[peer-2];
+  if(!e.base||!e.generation||
+     io.IndependentWeaponBackingGeneration(e.base,OriginalWeaponBankLayout::Total)!=e.generation||
+     !io.VerifiedUnusedOriginalWeaponHeap(e.first)||
+     !io.VerifiedUnusedOriginalWeaponHeap(e.second))return false;
+  return OriginalWeaponBankLayout::Build(e.base,OriginalWeaponBankLayout::Total,layout);
+ }
 };
 } // namespace blackcoop

@@ -32,5 +32,22 @@ int main(){
  assert(mem::Commit(page,0x1000));
  assert(!mem::CoopSystemAllocationGeneration(page,0x1000));
  mem::FreeSystem(page);
+ // Actual contiguous physical memory allocator: exact canonical base,
+ // no interior/write-combine alias and a new generation after address reuse.
+ constexpr uint32_t bankBytes=0x294000u;
+ auto physical=mem::AllocContiguous(bankBytes,0,0xffffffffu,0x1000u);
+ assert(physical);
+ auto pg=mem::CoopContiguousAllocationGeneration(physical,bankBytes);
+ assert(pg&&!mem::CoopSystemAllocationGeneration(physical,bankBytes));
+ assert(!mem::CoopContiguousAllocationGeneration(physical+0x1000u,bankBytes-0x1000u));
+ assert(!mem::CoopContiguousAllocationGeneration(
+   mem::kWriteCombineBase+(physical-mem::kContiguousBase),bankBytes));
+ mem::FreeContiguous(physical);
+ assert(!mem::CoopContiguousAllocationGeneration(physical,bankBytes));
+ auto again=mem::AllocContiguous(bankBytes,0,0xffffffffu,0x1000u);
+ assert(again==physical);
+ assert(mem::CoopContiguousAllocationGeneration(again,bankBytes)!=pg);
+ assert(mem::CoopContiguousAllocationGeneration(again,bankBytes));
+ mem::FreeContiguous(again);
  std::cout<<"PINNED_SDK_REAL_SYSTEM_ALLOCATOR_LIFETIME_PASS_NO_GAME_HEAP_PROOF\n";
 }

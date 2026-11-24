@@ -316,6 +316,9 @@ int main() {
     assert(!heaps.Reserve(io,3,20,21,0x1001000u,bytes,p3));
     assert(heaps.Reserve(io,3,20,21,0x2000000u,bytes,p3));
     assert(heaps.Reserve(io,4,22,23,0x3000000u,bytes,p4));
+    assert(heaps.ReadyForConstruction(io,2,p2)&&heaps.ReadyForConstruction(io,3,p3));
+    ++io.generation;
+    assert(!heaps.ReadyForConstruction(io,2,p2)&&!heaps.ReadyForConstruction(io,4,p4));
   }
   std::cout
       << "ORIGINAL_ANIMATION_CONTEXT_PASS: real memory exchange, original "

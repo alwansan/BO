@@ -80,6 +80,46 @@ uint64_t CoopSystemAllocationGeneration(uint32_t va, uint32_t size) noexcept {
         if (!IsCommitted(static_cast<uint32_t>(p))) return 0;
     return it->second.generation;
 }""")
+    hdr = once(hdr, "void FreeContiguous(uint32_t va);",
+        "void FreeContiguous(uint32_t va);\n"
+        "// Exact live physical allocator block, canonical VA only.\\n"
+        "uint64_t CoopContiguousAllocationGeneration(uint32_t va, uint32_t size) noexcept;")
+    cpp = once(cpp, """    Commit(a, size);
+    std::memset(g_base + a, 0, size);
+    return a;
+}
+
+void FreeContiguous(uint32_t va) {
+    std::lock_guard<std::recursive_mutex> lock(g_lock);
+    uint32_t size;
+    if (g_contig.Free(va, &size)) Decommit(va, size);
+}""", """    Commit(a, size);
+    std::memset(g_base + a, 0, size);
+    // Same generation namespace as system allocations, disjoint canonical
+    // address ranges. Never grant provenance to the write-combine alias.
+    CoopRecordSystemAllocation(a, size);
+    return a;
+}
+
+void FreeContiguous(uint32_t va) {
+    std::lock_guard<std::recursive_mutex> lock(g_lock);
+    uint32_t size;
+    if (g_contig.Free(va, &size)) {
+        g_coop_system_life.erase(va);
+        Decommit(va, size);
+    }
+}
+
+uint64_t CoopContiguousAllocationGeneration(uint32_t va, uint32_t size) noexcept {
+    std::lock_guard<std::recursive_mutex> lock(g_lock);
+    if (!size || va < kContiguousBase + kKernelDataSize ||
+        uint64_t(va)+size > uint64_t(kContiguousBase)+kPhysicalSize ||
+        g_coop_lifetime_disabled) return 0;
+    auto it = g_coop_system_life.find(va);
+    if (it == g_coop_system_life.end() || it->second.size != size ||
+        g_contig.SizeOf(va) != size) return 0;
+    return it->second.generation;
+}""")
     return cpp, hdr
 
 def prepare(sdk):
