@@ -464,4 +464,70 @@ public:
   entered_=!entered_;return true;
  }
 };
+// Pinned original black_p2_banks_swap: manager pointer at 2D12D8 and
+// first-person sound pool at [[2D0D60]+D3C8]+C. Initialization must be
+// performed separately via the original sound/bank constructors, never
+// by copying live P1 sound ownership into a new player.
+class OriginalWeaponSoundContext final {
+ const std::thread::id thread_=std::this_thread::get_id();
+ static constexpr uint32_t managerRoot_=0x2D12D8u, soundRoot_=0x2D0D60u;
+ static constexpr uint32_t bytes_=0x1330u;
+ uint64_t scene_=0,p1Gen_=0,extraGen_=0,poolGen_=0;
+ uint32_t first_=0,extra_=0,pool_=0;
+ std::array<uint8_t,bytes_> held_{};
+ bool bound_=false,entered_=false,poisoned_=false;
+ bool owner()const noexcept{return thread_==std::this_thread::get_id();}
+ static uint32_t word(const uint8_t* p){uint32_t v=0;std::memcpy(&v,p,4);return v;}
+ static bool span(uint32_t p,uint32_t n){return p>=0x10000u&&uint64_t(p)+n<=0x100000000ull;}
+ static bool overlap(uint32_t a,uint32_t n,uint32_t b,uint32_t m){
+  return uint64_t(a)<uint64_t(b)+m&&uint64_t(b)<uint64_t(a)+n;
+ }
+ template<class IO>static uint32_t resolve(IO& io){
+  auto* root=io.Map(soundRoot_,4u);if(!root)return 0;
+  uint32_t a=word(root);if(!span(a,0xD3CCu))return 0;
+  auto* second=io.Map(a+0xD3C8u,4u);if(!second)return 0;
+  uint32_t b=word(second);if(!span(b,16u))return 0;
+  auto* third=io.Map(b+0xCu,4u);return third?word(third):0;
+ }
+public:
+ OriginalWeaponSoundContext()=default;
+ OriginalWeaponSoundContext(const OriginalWeaponSoundContext&)=delete;
+ OriginalWeaponSoundContext& operator=(const OriginalWeaponSoundContext&)=delete;
+ bool Entered()const noexcept{return owner()&&entered_;}
+ bool Quarantined()const noexcept{return owner()&&poisoned_;}
+ template<class IO>bool Bind(IO& io,uint32_t extra,
+     const std::array<uint8_t,bytes_>& constructedPool){
+  if(!owner()||bound_||poisoned_||!io.Scene()||!span(extra,0xD0u))return false;
+  auto* root=io.Map(managerRoot_,4u);if(!root)return false;
+  auto first=word(root),pool=resolve(io);
+  if(!span(first,0xD0u)||!span(pool,bytes_)||
+     overlap(first,0xD0u,extra,0xD0u)||overlap(pool,bytes_,first,0xD0u)||
+     overlap(pool,bytes_,extra,0xD0u)||overlap(pool,bytes_,managerRoot_,4u)||
+     overlap(pool,bytes_,soundRoot_,4u)||!io.Map(pool,bytes_)||
+     !io.OwnsConstructedWeaponSoundContext(first,extra,pool,constructedPool))return false;
+  const auto a=io.Generation(first,0xD0u),b=io.Generation(extra,0xD0u),
+             c=io.Generation(pool,bytes_);
+  if(!a||!b||!c)return false;
+  scene_=io.Scene();first_=first;extra_=extra;pool_=pool;
+  p1Gen_=a;extraGen_=b;poolGen_=c;held_=constructedPool;bound_=true;return true;
+ }
+ template<class IO>bool Exchange(IO& io){
+  if(!owner()||!bound_||poisoned_)return false;
+  auto* root=io.Map(managerRoot_,4u);
+  auto* pool=io.Map(pool_,bytes_);
+  if(!root||!pool||io.Scene()!=scene_||resolve(io)!=pool_||
+     word(root)!=(entered_?extra_:first_)||
+     io.Generation(first_,0xD0u)!=p1Gen_||
+     io.Generation(extra_,0xD0u)!=extraGen_||
+     io.Generation(pool_,bytes_)!=poolGen_||
+     !io.OwnsLiveWeaponSoundContext(first_,extra_,pool_)){
+   if(entered_)poisoned_=true;
+   return false;
+  }
+  uint32_t next=entered_?first_:extra_;
+  std::memcpy(root,&next,4u);
+  for(unsigned i=0;i<held_.size();++i)std::swap(pool[i],held_[i]);
+  entered_=!entered_;return true;
+ }
+};
 } // namespace blackcoop

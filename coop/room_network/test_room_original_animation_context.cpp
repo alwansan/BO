@@ -13,6 +13,13 @@ struct IO {
   bool OwnsEffectsActorPair(uint32_t first,uint32_t extra) const {
     return first==0x100030u&&extra==0x180000u;
   }
+  bool OwnsConstructedWeaponSoundContext(uint32_t first,uint32_t extra,
+      uint32_t pool,const std::array<uint8_t,0x1330>& bytes) const {
+    return OwnsLiveWeaponSoundContext(first,extra,pool)&&bytes[0]==44u;
+  }
+  bool OwnsLiveWeaponSoundContext(uint32_t first,uint32_t extra,uint32_t pool) const {
+    return first==0x180000u&&extra==0x181000u&&pool==0x190000u;
+  }
   uint64_t Generation(uint32_t, uint32_t) const { return generation; }
   uint8_t *Map(uint32_t p, uint32_t n) {
     return p >= 0x10000 && uint64_t(p) + n <= m.size() &&
@@ -247,6 +254,24 @@ int main() {
     assert(effects.Exchange(fx)&&fx.r(flash)==33u&&fx.r(shell)==44u);
     fx.w(at+0x3458u,33u);before=fx.m;
     assert(!effects.Exchange(fx)&&effects.Quarantined()&&fx.m==before);
+  }
+  {
+    IO snd;OriginalWeaponSoundContext sound;
+    snd.w(0x2D12D8u,0x180000u);snd.w(0x2D0D60u,0x100000u);
+    snd.w(0x100000u+0xD3C8u,0x170000u);snd.w(0x17000Cu,0x190000u);
+    snd.w(0x190000u,11u);
+    std::array<uint8_t,0x1330> prepared{};
+    assert(!sound.Bind(snd,0x181000u,prepared));
+    prepared[0]=44u;
+    assert(sound.Bind(snd,0x181000u,prepared));
+    assert(sound.Exchange(snd)&&sound.Entered());
+    assert(snd.r(0x2D12D8u)==0x181000u&&snd.r(0x190000u)==44u);
+    snd.w(0x190000u,55u);
+    assert(sound.Exchange(snd)&&!sound.Entered());
+    assert(snd.r(0x2D12D8u)==0x180000u&&snd.r(0x190000u)==11u);
+    assert(sound.Exchange(snd)&&snd.r(0x190000u)==55u);
+    ++snd.generation;before=snd.m;
+    assert(!sound.Exchange(snd)&&sound.Quarantined()&&snd.m==before);
   }
   std::cout
       << "ORIGINAL_ANIMATION_CONTEXT_PASS: real memory exchange, original "
