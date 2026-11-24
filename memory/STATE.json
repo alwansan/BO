@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-24_bo-coop-136-native-setup-and-npc-batches.md",
+  "lastSession": "memory/sessions/2026-11-24_bo-coop-137-original-fx-weapon-sound-context.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3949,19 +3949,17 @@
     "verification": "pending_new_ci"
   },
   "latestSourceHardening": {
-    "session": 136,
-    "code": "ebfa63b86f429b078e9e7f0ee9e99e480d1c4d22",
-    "setupCode": "3dab5a986c1a6416393032e0c6e2b7b3db59bf05",
-    "previousSourceRun": 45312889262,
-    "previousParallelRun": 45312889392,
-    "previousUdpRun": 45312889376,
-    "previousAndroidRun": 45312889231,
+    "session": 137,
+    "code": "fddd76057cf1d40d47954179c1fa280e146b1941",
+    "effectsCode": "1b4d3d36123e33e1c10046be07e0044530ae35f0",
+    "previousParallelRun": 45313317862,
+    "previousSourceRun": 45313317764,
+    "previousUdpRun": 45313317747,
+    "previousAndroidRun": 45313318088,
     "status": "new_source_CI_unverified",
     "tracks": [
-      "native camera mapping",
-      "original setup ABI gated by presentation provider",
-      "live physics handoff",
-      "guest NPC batch apply contract"
+      "original FX ownership and flash/shell isolation",
+      "original weapon manager and audio pool exchange"
     ],
     "originalCoreHeapLifetimeVerified": false,
     "presentationProviderImplemented": false,
