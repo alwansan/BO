@@ -52,6 +52,13 @@ int main(){
   assert(io.npcCalls==1&&io.objectCalls==1&&objects.Pending()==0);
   assert(frame.Tick(io,gate,key,0x100000,world,npc,objects,1008)==OriginalCanonicalApplyStatus::Applied);
   assert(io.npcCalls==1&&io.objectCalls==1);
+  // A new authenticated revision with the same native scene must not
+  // reuse the apply batch's old per-tick success.
+  auto revised=key;++revised.rosterRevision;
+  OriginalGuestCanonicalSourceBarrier other;
+  assert(!other.Observe(revised,0x100000,world,npc,1008));
+  assert(!frame.AfterVerifiedEngineTeardown(false));
+  assert(frame.AfterVerifiedEngineTeardown(true));
  }
  assert(!gate.MatchesForApplication(key,0x200000,world,npc,1007));
  auto badKey=key;++badKey.tokenLo;

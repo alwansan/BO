@@ -106,7 +106,15 @@ enum class OriginalCanonicalApplyStatus:uint8_t {
 class OriginalGuestCanonicalApplyFrame final {
  const std::thread::id thread_=std::this_thread::get_id();
  OriginalGuestNpcApplyBatch batch_;
+ OriginalGuestLaunchMatchKey boundKey_{};
+ uint64_t nativeScene_=0;
  bool poisoned_=false;
+ static bool sameKey(const OriginalGuestLaunchMatchKey& a,const OriginalGuestLaunchMatchKey& b)noexcept{
+  return a.originalEpisode==b.originalEpisode&&a.level==b.level&&a.stage==b.stage&&
+   a.sceneEpoch==b.sceneEpoch&&a.rosterRevision==b.rosterRevision&&
+   a.tokenHi==b.tokenHi&&a.tokenLo==b.tokenLo&&a.selfSlot==b.selfSlot&&
+   a.participants==b.participants;
+ }
 public:
  template<class IO>OriginalCanonicalApplyStatus Tick(IO& io,
       const OriginalGuestCanonicalSourceBarrier& barrier,
@@ -117,7 +125,15 @@ public:
   if(poisoned_)return OriginalCanonicalApplyStatus::Quarantined;
   if(!barrier.MatchesForApplication(key,nativeScene,players,npcs,now))
    return OriginalCanonicalApplyStatus::Rejected;
-  if(objects.Poisoned()){poisoned_=true;return OriginalCanonicalApplyStatus::Quarantined;}
+  if(nativeScene_&&(nativeScene_!=nativeScene||!sameKey(boundKey_,key))){
+   poisoned_=true;return OriginalCanonicalApplyStatus::Quarantined;
+  }
+  if(objects.Poisoned()||!objects.CheckLocalLaunch(key)){
+   poisoned_=true;return OriginalCanonicalApplyStatus::Quarantined;
+  }
+  // Pin the full signed scope before the first possible native mutation,
+  // including when an NPC callback partially fails.
+  nativeScene_=nativeScene;boundKey_=key;
   auto npc=batch_.Apply(io,npcs,nativeScene,key.sceneEpoch,now);
   if(npc==OriginalNpcApplyStatus::Quarantined){
    poisoned_=true;return OriginalCanonicalApplyStatus::Quarantined;
@@ -137,6 +153,12 @@ public:
    if(object!=OriginalObjectApplyResult::Applied)return OriginalCanonicalApplyStatus::Waiting;
   }
   return objects.Pending()?OriginalCanonicalApplyStatus::Waiting:OriginalCanonicalApplyStatus::Applied;
+ }
+ // Network revocation alone cannot establish engine teardown.
+ bool AfterVerifiedEngineTeardown(bool verified)noexcept{
+  if(thread_!=std::this_thread::get_id()||!verified||
+     !batch_.AfterVerifiedEngineTeardown(verified))return false;
+  nativeScene_=0;boundKey_={};poisoned_=false;return true;
  }
 };
 } // namespace blackcoop

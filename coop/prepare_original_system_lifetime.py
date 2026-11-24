@@ -82,7 +82,7 @@ uint64_t CoopSystemAllocationGeneration(uint32_t va, uint32_t size) noexcept {
 }""")
     hdr = once(hdr, "void FreeContiguous(uint32_t va);",
         "void FreeContiguous(uint32_t va);\n"
-        "// Exact live physical allocator block, canonical VA only.\\n"
+        "// Exact live physical allocator block, canonical VA only.\n"
         "uint64_t CoopContiguousAllocationGeneration(uint32_t va, uint32_t size) noexcept;")
     cpp = once(cpp, """    Commit(a, size);
     std::memset(g_base + a, 0, size);

@@ -34,7 +34,7 @@ int main(){
  mem::FreeSystem(page);
  // Actual contiguous physical memory allocator: exact canonical base,
  // no interior/write-combine alias and a new generation after address reuse.
- constexpr uint32_t bankBytes=0x294000u;
+ constexpr uint32_t bankBytes=0x293000u;
  auto physical=mem::AllocContiguous(bankBytes,0,0xffffffffu,0x1000u);
  assert(physical);
  auto pg=mem::CoopContiguousAllocationGeneration(physical,bankBytes);
