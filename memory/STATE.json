@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-24_bo-coop-145-controller-source.md",
+  "lastSession": "memory/sessions/2026-11-24_bo-coop-146-original-pad-binding.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3949,12 +3949,13 @@
     "verification": "pending_new_ci"
   },
   "latestSourceHardening": {
-    "session": 145,
-    "code": "7a9c3ca6c4af4764e21b6a12f02ae6f085923afa",
+    "session": 146,
+    "code": "b06bf2b1faff2c2c7e2c9543856d593b4161ee29",
     "status": "new_source_CI_unverified",
     "tracks": [
-      "original human controller +A8 source exchange",
+      "original human input +C pad binding",
       "native SDK adapter",
+      "P3/P4 topology validation",
       "preserve original AI"
     ],
     "originalAndroidHostP2P3P4ActorsLive": false,
