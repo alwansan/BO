@@ -58,5 +58,28 @@ int main(){
  assert(inbox.Poisoned());
  assert(!inbox.Take(event));
  inbox.Reset();assert(inbox.Pending()==0&&!inbox.Poisoned());
+ // Revocation must happen even if the next poll has no object event.
+ for(int variant=0;variant<3;variant++){
+  OriginalGuestHostObjectInbox fresh;
+  msg[4]=1;msg[5]=1;
+  assert(fresh.Ingest(msg,10,key)&&fresh.Pending()==1);
+  auto altered=key;
+  if(variant==0)++altered.originalEpisode;
+  if(variant==1)++altered.level;
+  if(variant==2)++altered.stage;
+  assert(!fresh.CheckLocalLaunch(altered)&&fresh.Poisoned());
+  assert(!fresh.Take(event)&&fresh.Pending()==0);
+ }
+ {
+  OriginalGuestHostObjectInbox fresh;
+  assert(fresh.Ingest(msg,10,key));
+  auto next=key;++next.sceneEpoch;++next.tokenLo;
+  assert(fresh.CheckLocalLaunch(next)&&fresh.Pending()==0);
+  assert(!fresh.Take(event));
+  // A new signed scope can start from sequence 1, not inherit old events.
+  msg[0]=static_cast<int32_t>(next.sceneEpoch);
+  msg[3]=static_cast<int32_t>(next.tokenLo);
+  assert(fresh.Ingest(msg,10,next)&&fresh.Pending()==1);
+ }
  std::cout<<"ORIGINAL_GUEST_HOST_OBJECT_INBOX_PASS: native 64 FIFO, exact original stage/token, replay/overflow/cross-thread/abort; NO engine object write"<<std::endl;
 }

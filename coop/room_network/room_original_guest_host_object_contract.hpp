@@ -19,7 +19,8 @@ class OriginalGuestHostObjectInbox final {
  std::array<OriginalHostObjectEvent,kCapacity> queue_{};
  std::thread::id gameThread_{};
  bool bound_=false,scoped_=false,poisoned_=false;
- uint32_t epoch_=0,revision_=0,seq_=0,tick_=0;
+ uint32_t epoch_=0,revision_=0,seq_=0,tick_=0,episode_=0;
+ uint8_t level_=0,stage_=0,self_=0,participants_=0;
  uint64_t token_=0;
  size_t head_=0,count_=0;
  bool owner()const noexcept{
@@ -29,7 +30,26 @@ public:
  void Reset()noexcept{
   if(!owner())return;
   queue_={};scoped_=poisoned_=false;
-  epoch_=revision_=seq_=tick_=0;token_=0;head_=count_=0;
+  epoch_=revision_=seq_=tick_=episode_=0;token_=0;head_=count_=0;
+  level_=stage_=self_=participants_=0;
+ }
+ // The local original launch can change even with no new object packets.
+ // Revoke pending events for any mismatched launch. Same signed scope with
+ // a different original identity is poisoned until explicit teardown/reset.
+ bool CheckLocalLaunch(const OriginalGuestLaunchMatchKey& key)noexcept{
+  if(!owner()||poisoned_)return false;
+  if(!scoped_)return true;
+  const uint64_t token=(uint64_t(key.tokenHi)<<32)|key.tokenLo;
+  if(key.sceneEpoch!=epoch_||key.rosterRevision!=revision_||token!=token_){
+   // Discard old pending values, but retain replay watermarks until a
+   // strictly newer signed scope is accepted by Ingest.
+   queue_={};head_=count_=0;return true;
+  }
+  if(key.originalEpisode!=episode_||key.level!=level_||key.stage!=stage_||
+     key.selfSlot!=self_||key.participants!=participants_){
+   queue_={};head_=count_=0;poisoned_=true;return false;
+  }
+  return true;
  }
  // [epoch, revision, tokenHi, tokenLo, sequence, sourceTick,
  //  objectKeyHi, objectKeyLo, kind, state], exactly TEN signed JNI integers.
@@ -70,6 +90,7 @@ public:
       epoch_==matched.sceneEpoch&&revision_==matched.rosterRevision&&
       token_==token;
   if(sameScope){
+   if(!CheckLocalLaunch(matched))return false;
    if(seq_==0x7fffffffu||seq!=seq_+1u||tick<tick_){
     poisoned_=true;return false;
    }
@@ -83,7 +104,9 @@ public:
   }
   if(!bound_){gameThread_=std::this_thread::get_id();bound_=true;}
   scoped_=true;epoch_=matched.sceneEpoch;revision_=matched.rosterRevision;
-  token_=token;seq_=seq;tick_=tick;
+  token_=token;seq_=seq;tick_=tick;episode_=matched.originalEpisode;
+  level_=matched.level;stage_=matched.stage;self_=matched.selfSlot;
+  participants_=matched.participants;
   queue_[(head_+count_)%kCapacity]={
     matched.sceneEpoch,matched.rosterRevision,seq,tick,
     token,key,static_cast<uint8_t>(data[8]),static_cast<uint8_t>(data[9])};

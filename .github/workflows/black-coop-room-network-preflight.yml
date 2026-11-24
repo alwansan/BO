@@ -59,7 +59,13 @@ jobs:
             io.WriteOwned(0x10000u,static_cast<const void*>(nullptr),0x40u);
           };
           static_assert(!CanWriteP2GuestDirectly<blackcoop::OriginalPlayerStorageKernelIO>);
-          void compile_only(X86Context& ctx, uint64_t (*scene)() noexcept) {
+          template<class IO>
+          concept CanMapActorDirectly = requires(IO& io){
+            io.MapOriginalActor(0x10000u,0x900u);
+          };
+          static_assert(!CanMapActorDirectly<blackcoop::OriginalActorExchangeKernelIO>);
+          void compile_only(X86Context& ctx, uint64_t (*scene)() noexcept,
+                            uint64_t (*generation)(uint32_t,uint32_t) noexcept) {
             blackcoop::OriginalPlayerStorageKernelIO owned(ctx, scene);
             blackcoop::OriginalProxySceneLedger ledger;
             blackcoop::OriginalHostProxyEngine guard(ledger);
@@ -75,6 +81,11 @@ jobs:
             (void) staged.MaterializeOwned(owned);
             blackcoop::OriginalPlayerLinkExchangePlan linkScope;
             (void) staged.PrepareReadOnlyOriginalLinks(owned,linkScope);
+            blackcoop::OriginalActorExchangeKernelIO actorIo(owned,binding,
+                                                              buffers.actor,generation);
+            (void) linkScope.Prepare(actorIo,binding,buffers.actor);
+            (void) linkScope.EnterActorOnly(actorIo);
+            (void) linkScope.RestoreActorOnly(actorIo);
           }
           CPP
           g++ -std=c++20 -pthread -fsyntax-only \

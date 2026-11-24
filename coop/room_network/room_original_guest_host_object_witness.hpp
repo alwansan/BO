@@ -24,6 +24,7 @@ inline void PollHostObjectEventsOnOriginalGuestThread(
  if(!GuestOriginalLaunchMatch().ReadMatchedKey(key)){
   GuestOriginalHostObjects().Reset();return;
  }
+ if(!GuestOriginalHostObjects().CheckLocalLaunch(key))return;
  jmethodID method=env->GetMethodID(cls,
     "coopPollHostObjectEventFromGameThread","()[I");
  if(env->ExceptionCheck()){env->ExceptionClear();GuestOriginalHostObjects().Reset();return;}
