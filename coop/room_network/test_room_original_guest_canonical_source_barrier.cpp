@@ -3,6 +3,23 @@
 #include <iostream>
 #include <thread>
 using namespace blackcoop;
+struct ApplyIO {
+ unsigned npcCalls=0,objectCalls=0;bool ready=false;
+ uint64_t OriginalScene()const{return 0x100000u;}
+ bool ResolveOriginalNpc(uint8_t slot,uint32_t& actor,uint64_t& gen){
+  if(!ready)return false;
+  actor=0x300000u+slot*0x1000u;gen=1;return true;
+ }
+ bool StillOwnsOriginalNpc(uint8_t,uint32_t,uint64_t){return true;}
+ bool ApplyOriginalNpc(uint32_t,const OriginalNpcValue&){++npcCalls;return true;}
+ bool VerifyOriginalNpc(uint32_t,const OriginalNpcValue&){return true;}
+ bool ResolveOriginalObject(uint64_t,uint8_t,uint32_t& actor,uint64_t& gen){
+  actor=0x400000u;gen=2;return true;
+ }
+ bool StillOwnsOriginalObject(uint64_t,uint8_t,uint32_t,uint64_t){return true;}
+ bool ApplyOriginalHostState(uint32_t,uint8_t,uint8_t){++objectCalls;return true;}
+ bool VerifyOriginalHostState(uint32_t,uint8_t,uint8_t){return true;}
+};
 int main(){
  OriginalGuestHostWorldInbox world;OriginalGuestHostNpcInbox npc;
  OriginalGuestCanonicalSourceBarrier gate;
@@ -23,6 +40,19 @@ int main(){
  assert(gate.Observe(key,0x100000,world,npc,1007));
  assert(gate.SourceCoherent(1007)&&!gate.OriginalGuestEngineApplied());
  assert(gate.MatchesForApplication(key,0x100000,world,npc,1007));
+ {
+  OriginalGuestCanonicalApplyFrame frame;OriginalGuestHostObjectInbox objects;ApplyIO io;
+  int32_t event[]={23,6,2,99,1,7,0,123,1,1};
+  assert(objects.Ingest(event,10,key));
+  assert(frame.Tick(io,gate,key,0x200000,world,npc,objects,1007)==OriginalCanonicalApplyStatus::Rejected);
+  assert(frame.Tick(io,gate,key,0x100000,world,npc,objects,1007)==OriginalCanonicalApplyStatus::Waiting);
+  assert(io.npcCalls==0&&io.objectCalls==0&&objects.Pending()==1);
+  io.ready=true;
+  assert(frame.Tick(io,gate,key,0x100000,world,npc,objects,1007)==OriginalCanonicalApplyStatus::Applied);
+  assert(io.npcCalls==1&&io.objectCalls==1&&objects.Pending()==0);
+  assert(frame.Tick(io,gate,key,0x100000,world,npc,objects,1008)==OriginalCanonicalApplyStatus::Applied);
+  assert(io.npcCalls==1&&io.objectCalls==1);
+ }
  assert(!gate.MatchesForApplication(key,0x200000,world,npc,1007));
  auto badKey=key;++badKey.tokenLo;
  assert(!gate.MatchesForApplication(badKey,0x100000,world,npc,1007));

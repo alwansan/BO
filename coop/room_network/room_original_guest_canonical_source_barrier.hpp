@@ -5,6 +5,7 @@
 #pragma once
 #include "room_original_guest_host_world_contract.hpp"
 #include "room_original_guest_host_npc_contract.hpp"
+#include "room_original_guest_host_object_contract.hpp"
 #include "room_original_guest_launch_match_contract.hpp"
 #include <cstdint>
 #include <thread>
@@ -95,5 +96,47 @@ public:
  }
  // Source state is NOT equivalent to applying native NPCs, doors or quests.
  bool OriginalGuestEngineApplied()const noexcept{return false;}
+};
+// Coordinates original NPC batches and ordered object events only after the
+// exact current signed world source is authorized. IO remains an explicit
+// native resolver/callback provider; no production caller exists.
+enum class OriginalCanonicalApplyStatus:uint8_t {
+ Rejected, Waiting, Applied, Quarantined
+};
+class OriginalGuestCanonicalApplyFrame final {
+ const std::thread::id thread_=std::this_thread::get_id();
+ OriginalGuestNpcApplyBatch batch_;
+ bool poisoned_=false;
+public:
+ template<class IO>OriginalCanonicalApplyStatus Tick(IO& io,
+      const OriginalGuestCanonicalSourceBarrier& barrier,
+      const OriginalGuestLaunchMatchKey& key,uint64_t nativeScene,
+      const OriginalGuestHostWorldInbox& players,const OriginalGuestHostNpcInbox& npcs,
+      OriginalGuestHostObjectInbox& objects,uint64_t now){
+  if(thread_!=std::this_thread::get_id())return OriginalCanonicalApplyStatus::Rejected;
+  if(poisoned_)return OriginalCanonicalApplyStatus::Quarantined;
+  if(!barrier.MatchesForApplication(key,nativeScene,players,npcs,now))
+   return OriginalCanonicalApplyStatus::Rejected;
+  if(objects.Poisoned()){poisoned_=true;return OriginalCanonicalApplyStatus::Quarantined;}
+  auto npc=batch_.Apply(io,npcs,nativeScene,key.sceneEpoch,now);
+  if(npc==OriginalNpcApplyStatus::Quarantined){
+   poisoned_=true;return OriginalCanonicalApplyStatus::Quarantined;
+  }
+  if(npc!=OriginalNpcApplyStatus::Applied&&npc!=OriginalNpcApplyStatus::AlreadyApplied)
+   return OriginalCanonicalApplyStatus::Waiting;
+  // Bound original game-thread work. Never advance object events ahead of
+  // the accepted NPC source, and never silently discard unresolved events.
+  for(unsigned i=0;i<4;++i){
+   if(!barrier.MatchesForApplication(key,nativeScene,players,npcs,now))
+    return OriginalCanonicalApplyStatus::Waiting;
+   const auto object=objects.ApplyNext(io,key,nativeScene);
+   if(object==OriginalObjectApplyResult::Quarantined){
+    poisoned_=true;return OriginalCanonicalApplyStatus::Quarantined;
+   }
+   if(object==OriginalObjectApplyResult::Empty)return OriginalCanonicalApplyStatus::Applied;
+   if(object!=OriginalObjectApplyResult::Applied)return OriginalCanonicalApplyStatus::Waiting;
+  }
+  return objects.Pending()?OriginalCanonicalApplyStatus::Waiting:OriginalCanonicalApplyStatus::Applied;
+ }
 };
 } // namespace blackcoop
