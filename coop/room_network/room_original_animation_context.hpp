@@ -5,6 +5,7 @@
 // See room_original_animation_context.LICENSE. No original game bytes included.
 #pragma once
 #include <algorithm>
+#include <array>
 #include <cstdint>
 #include <cstring>
 #include <thread>
@@ -382,5 +383,85 @@ public:
     entered_ = !entered_;
     return true;
   }
+};
+// Pinned MIT black_p2_swap / black_fx_owners / black_flash_swap /
+// black_shells_swap. The IO must certify exact original FX regions and
+// lifetime, and map them on the original owner thread without yielding.
+// No original callback or production mapping is enabled here.
+class OriginalEffectsContext final {
+ static constexpr uint32_t root_=0x2D1990u;
+ static constexpr uint32_t fxOff_=0x65690u,flashOff_=0x4E1F0u+0xC0u,
+                           shellsOff_=0x506D0u;
+ const std::thread::id thread_=std::this_thread::get_id();
+ uint64_t scene_=0,fxGen_=0,flashGen_=0,shellGen_=0;
+ uint32_t base_=0,first_=0,extra_=0;
+ bool bound_=false,entered_=false,poisoned_=false;
+ std::array<uint8_t,12> flash_{};
+ std::array<uint8_t,0x730> shells_{};
+ static uint32_t read32(const uint8_t* p)noexcept{
+  uint32_t v=0;std::memcpy(&v,p,4);return v;
+ }
+ static uint16_t read16(const uint8_t* p)noexcept{
+  uint16_t v=0;std::memcpy(&v,p,2);return v;
+ }
+ static void put(uint8_t* p,uint32_t v)noexcept{std::memcpy(p,&v,4);}
+ bool owner()const noexcept{return thread_==std::this_thread::get_id();}
+ template<class IO>bool root(IO& io)const{
+  auto* p=io.Map(root_,4u);
+  return owner()&&scene_&&io.Scene()==scene_&&p&&read32(p)==base_;
+ }
+ template<class IO>bool mapAll(IO& io,uint8_t*& fx,uint8_t*& flash,uint8_t*& shells)const{
+  if(!root(io)||io.Generation(base_+fxOff_,0x3460u)!=fxGen_||
+     io.Generation(base_+flashOff_,12u)!=flashGen_||
+     io.Generation(base_+shellsOff_,0x730u)!=shellGen_)return false;
+  fx=io.Map(base_+fxOff_,0x3460u);
+  flash=io.Map(base_+flashOff_,12u);
+  shells=io.Map(base_+shellsOff_,0x730u);
+  if(!fx||!flash||!shells)return false;
+  const auto cap=read16(fx+0x344Au),used=read16(fx+0x3448u),
+             asked=read16(fx+0x3458u);
+  return cap<=0x50u&&used<=cap&&asked<=0x20u&&
+    io.Map(read32(fx+0x3440u),0xA0u)&&io.Map(read32(fx+0x3444u),0xA0u);
+ }
+ void swapOwner(uint8_t* p)const noexcept{
+  const auto value=read32(p);
+  if(value==first_)put(p,extra_);else if(value==extra_)put(p,first_);
+ }
+public:
+ OriginalEffectsContext()=default;
+ OriginalEffectsContext(const OriginalEffectsContext&)=delete;
+ OriginalEffectsContext& operator=(const OriginalEffectsContext&)=delete;
+ bool Entered()const noexcept{return owner()&&entered_;}
+ bool Quarantined()const noexcept{return owner()&&poisoned_;}
+ template<class IO>bool Bind(IO& io,uint32_t first,uint32_t extra){
+  if(!owner()||bound_||poisoned_||first<0x10000u||extra<0x10000u||first==extra||
+     !io.Scene()||!io.OwnsEffectsActorPair(first,extra))return false;
+  auto* p=io.Map(root_,4u);if(!p)return false;
+  const auto base=read32(p);
+  if(base<0x10000u||uint64_t(base)+fxOff_+0x3460u>0x100000000ull)return false;
+  scene_=io.Scene();base_=base;first_=first;extra_=extra;
+  fxGen_=io.Generation(base+fxOff_,0x3460u);
+  flashGen_=io.Generation(base+flashOff_,12u);
+  shellGen_=io.Generation(base+shellsOff_,0x730u);
+  uint8_t *fx=nullptr,*f=nullptr,*s=nullptr;
+  if(!fxGen_||!flashGen_||!shellGen_||!mapAll(io,fx,f,s))return false;
+  bound_=true;return true;
+ }
+ template<class IO>bool Exchange(IO& io){
+  if(!owner()||!bound_||poisoned_)return false;
+  uint8_t *fx=nullptr,*f=nullptr,*s=nullptr;
+  if(!io.OwnsEffectsActorPair(first_,extra_)||!mapAll(io,fx,f,s)){
+   if(entered_)poisoned_=true;
+   return false;
+  }
+  // All mappings validated before first write; only exchange the two
+  // selected actor identities, leaving every NPC and other human intact.
+  for(unsigned i=0;i<0x50u;++i)swapOwner(fx+0x2300u+4u*i);
+  for(unsigned i=0;i<read16(fx+0x3458u);++i)
+   swapOwner(fx+0x26C0u+i*0x60u+0x44u);
+  for(unsigned i=0;i<flash_.size();++i)std::swap(f[i],flash_[i]);
+  for(unsigned i=0;i<shells_.size();++i)std::swap(s[i],shells_[i]);
+  entered_=!entered_;return true;
+ }
 };
 } // namespace blackcoop

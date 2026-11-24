@@ -10,6 +10,9 @@ struct IO {
   uint64_t scene = 7, generation = 1;
   uint32_t blocked = 0;
   uint64_t Scene() const { return scene; }
+  bool OwnsEffectsActorPair(uint32_t first,uint32_t extra) const {
+    return first==0x100030u&&extra==0x180000u;
+  }
   uint64_t Generation(uint32_t, uint32_t) const { return generation; }
   uint8_t *Map(uint32_t p, uint32_t n) {
     return p >= 0x10000 && uint64_t(p) + n <= m.size() &&
@@ -218,6 +221,32 @@ int main() {
     before = alias.m;
     assert(!rejected.Capture(alias));
     assert(alias.m == before);
+  }
+  {
+    IO fx;OriginalEffectsContext effects;
+    constexpr uint32_t base=0x100000u,at=base+0x65690u,
+        flash=base+0x4E1F0u+0xC0u,shell=base+0x506D0u;
+    fx.w(0x2D1990u,base);
+    fx.w(at+0x3440u,0x190000u);fx.w(at+0x3444u,0x191000u);
+    fx.w(at+0x3448u,0x00500002u);fx.w(at+0x3458u,2u);
+    fx.w(at+0x2300u,0x100030u);fx.w(at+0x2304u,0x180000u);
+    fx.w(at+0x2308u,0x200000u);
+    fx.w(at+0x26C0u+0x44u,0x100030u);
+    fx.w(at+0x26C0u+0x60u+0x44u,0x200000u);
+    fx.w(flash,11u);fx.w(shell,22u);
+    assert(effects.Bind(fx,0x100030u,0x180000u));
+    assert(effects.Exchange(fx)&&effects.Entered());
+    assert(fx.r(at+0x2300u)==0x180000u&&fx.r(at+0x2304u)==0x100030u);
+    assert(fx.r(at+0x2308u)==0x200000u);
+    assert(fx.r(at+0x26C0u+0x44u)==0x180000u);
+    assert(fx.r(at+0x26C0u+0x60u+0x44u)==0x200000u);
+    assert(fx.r(flash)==0&&fx.r(shell)==0);
+    fx.w(flash,33u);fx.w(shell,44u);
+    assert(effects.Exchange(fx)&&!effects.Entered());
+    assert(fx.r(flash)==11u&&fx.r(shell)==22u);
+    assert(effects.Exchange(fx)&&fx.r(flash)==33u&&fx.r(shell)==44u);
+    fx.w(at+0x3458u,33u);before=fx.m;
+    assert(!effects.Exchange(fx)&&effects.Quarantined()&&fx.m==before);
   }
   std::cout
       << "ORIGINAL_ANIMATION_CONTEXT_PASS: real memory exchange, original "
