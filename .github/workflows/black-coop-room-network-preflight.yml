@@ -60,6 +60,7 @@ jobs:
           set -euo pipefail
           cat > "$RUNNER_TEMP/original_actor_header_smoke.cpp" <<'CPP'
           #include "room_original_host_player_storage_kernel.hpp"
+          #include "room_original_weapon_backing_kernel.hpp"
           #include "room_original_host_player_shadow_plan.hpp"
           #include "room_original_host_player_link_exchange.hpp"
           #include <type_traits>
@@ -108,6 +109,12 @@ jobs:
             blackcoop::OriginalActorExchangeKernelIO systemOnly(owned,binding,buffers.actor,
                 &mem::CoopSystemAllocationGeneration);
             (void) systemOnly.Live();
+            blackcoop::OriginalWeaponBackingKernelAllocator weaponAlloc;
+            blackcoop::OriginalWeaponBackingKernelOwner weaponOwner(weaponAlloc);
+            blackcoop::OriginalWeaponHeapKernelIO heapIO(scene,nullptr);
+            blackcoop::OriginalWeaponHeapInstall heapInstall;
+            blackcoop::OriginalWeaponBankLayout weaponLayout{};
+            (void) heapInstall.Install(heapIO,weaponOwner,2,16,18,weaponLayout);
             DisabledPresentation disabled;
             blackcoop::OriginalSetupKernelIO<DisabledPresentation> setupIo(
                 ctx,owned,binding,staged.MaterializedView(owned),generation,disabled);

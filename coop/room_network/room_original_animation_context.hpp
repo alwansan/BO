@@ -728,4 +728,73 @@ public:
   base_=0;generation_=0;touched_=false;return true;
  }
 };
+// Exact nine-word descriptor initialization from pinned PC black_p2_banks_take.
+// Only the reserved pair can be installed; original P1 heaps 13/14 never
+// written. Native IO currently knows only source-reviewed P2 slots 16/18.
+class OriginalWeaponHeapInstall final {
+ const std::thread::id thread_=std::this_thread::get_id();
+ uint64_t scene_=0,generation_=0;
+ uint32_t base_=0,ids_[2]{};
+ bool installed_=false,uncertain_=false;
+ static constexpr uint32_t table_=0x2D12ECu;
+ using Words=std::array<uint32_t,9>;
+ std::array<Words,2> before_{};
+ static Words descriptor(uint32_t p)noexcept{
+  return {1u,0u,p,p+OriginalWeaponBankLayout::WeaponBytes,p,4u,0u,0xFFFFFFFFu,p};
+ }
+ bool owner()const noexcept{return thread_==std::this_thread::get_id();}
+public:
+ OriginalWeaponHeapInstall()=default;
+ OriginalWeaponHeapInstall(const OriginalWeaponHeapInstall&)=delete;
+ OriginalWeaponHeapInstall& operator=(const OriginalWeaponHeapInstall&)=delete;
+ template<class IO,class Backing>bool Install(IO& io,Backing& backing,
+     uint8_t peer,uint32_t first,uint32_t second,
+     const OriginalWeaponBankLayout& layout){
+  if(!owner()||installed_||uncertain_||!io.Scene()||peer<2||peer>4||
+     first==second||first==13||first==14||second==13||second==14||
+     first>255||second>255)return false;
+  OriginalWeaponBankLayout exact{};
+  const auto base=layout.weapon[0];
+  if(!OriginalWeaponBankLayout::Build(base,OriginalWeaponBankLayout::Total,exact)||
+     std::memcmp(&exact,&layout,sizeof(exact))!=0)return false;
+  const auto gen=backing.Generation(base,OriginalWeaponBankLayout::Total);
+  if(!gen||!io.OwnsReservedHeapPair(peer,first,second,base,gen))return false;
+  const uint32_t ids[]={first,second};
+  std::array<uint8_t*,2> maps{};
+  for(unsigned i=0;i<2;++i){
+   if(!io.VerifiedUnusedOriginalWeaponHeap(ids[i]))return false;
+   maps[i]=io.MapHeapDescriptor(table_+ids[i]*0x24u,0x24u);
+   if(!maps[i])return false;
+   std::memcpy(before_[i].data(),maps[i],0x24u);
+   if(before_[i][0])return false;
+  }
+  if(maps[0]==maps[1]||!backing.MarkEngineTouched())return false;
+  uncertain_=true;scene_=io.Scene();generation_=gen;base_=base;
+  ids_[0]=first;ids_[1]=second;
+  for(unsigned i=0;i<2;++i){
+   const auto words=descriptor(layout.weapon[i]);
+   std::memcpy(maps[i],words.data(),0x24u);
+  }
+  installed_=true;
+  if(!Live(io,backing)){installed_=false;return false;}
+  uncertain_=false;return true;
+ }
+ template<class IO,class Backing>bool Live(IO& io,Backing& backing)const{
+  if(!owner()||!installed_||io.Scene()!=scene_||
+     backing.Generation(base_,OriginalWeaponBankLayout::Total)!=generation_)return false;
+  for(unsigned i=0;i<2;++i){
+   auto* p=io.MapHeapDescriptor(table_+ids_[i]*0x24u,0x24u);
+   if(!p)return false;
+   Words words{};std::memcpy(words.data(),p,0x24u);
+   const auto at=base_+i*OriginalWeaponBankLayout::WeaponBytes;
+   // Cursor/usage may evolve during original loads. Check ownership fields.
+   if(words[0]!=1u||words[2]!=at||words[3]!=at+OriginalWeaponBankLayout::WeaponBytes||
+      words[8]!=at)return false;
+  }
+  return true;
+ }
+ bool Quarantined()const noexcept{return owner()&&uncertain_;}
+ // No shallow undo: original weapon and sound teardown must be proven
+ // before any descriptor or backing may be reclaimed.
+};
 } // namespace blackcoop

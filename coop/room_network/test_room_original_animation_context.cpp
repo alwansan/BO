@@ -13,6 +13,10 @@ struct IO {
   bool VerifyRestoredPresentation(const OriginalSetupScene& s)const {return s.nativeScene==scene;}
   bool VerifiedUnusedOriginalWeaponHeap(uint32_t id)const{return id==16||id==18||id==20||id==21||id==22||id==23;}
   uint64_t IndependentWeaponBackingGeneration(uint32_t,uint32_t)const{return generation;}
+  bool OwnsReservedHeapPair(uint8_t p,uint32_t a,uint32_t b,uint32_t base,uint64_t g)const{
+    return p==2&&a==16&&b==18&&base==0x1000000u&&g==1;
+  }
+  uint8_t* MapHeapDescriptor(uint32_t p,uint32_t n){return Map(p,n);}
   uint64_t Scene() const { return scene; }
   bool OwnsEffectsActorPair(uint32_t first,uint32_t extra) const {
     return first==0x100030u&&extra==0x180000u;
@@ -319,6 +323,27 @@ int main() {
     assert(heaps.ReadyForConstruction(io,2,p2)&&heaps.ReadyForConstruction(io,3,p3));
     ++io.generation;
     assert(!heaps.ReadyForConstruction(io,2,p2)&&!heaps.ReadyForConstruction(io,4,p4));
+  }
+  {
+    IO io;OriginalWeaponHeapInstall install;
+    struct Backing {
+      bool touched=false;
+      uint64_t Generation(uint32_t p,uint32_t n)const{
+       return p==0x1000000u&&n==OriginalWeaponBankLayout::Total?1u:0u;
+      }
+      bool MarkEngineTouched(){if(touched)return false;touched=true;return true;}
+    } backing;
+    OriginalWeaponBankLayout layout{};
+    assert(OriginalWeaponBankLayout::Build(0x1000000u,OriginalWeaponBankLayout::Total,layout));
+    constexpr uint32_t a=0x2D12ECu+16u*0x24u,b=0x2D12ECu+18u*0x24u;
+    io.w(b,1);before=io.m;
+    assert(!install.Install(io,backing,2,16,18,layout)&&!backing.touched&&io.m==before);
+    io.w(b,0);
+    assert(install.Install(io,backing,2,16,18,layout)&&backing.touched&&install.Live(io,backing));
+    assert(io.r(a+8)==layout.weapon[0]&&io.r(b+8)==layout.weapon[1]);
+    assert(io.r(a+0xC)==layout.weapon[0]+OriginalWeaponBankLayout::WeaponBytes);
+    io.w(a+0x10,layout.weapon[0]+16u);assert(install.Live(io,backing));
+    io.w(b+8,0);assert(!install.Live(io,backing));
   }
   std::cout
       << "ORIGINAL_ANIMATION_CONTEXT_PASS: real memory exchange, original "

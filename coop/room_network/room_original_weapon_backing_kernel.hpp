@@ -17,4 +17,35 @@ struct OriginalWeaponBackingKernelAllocator {
  void Free(uint32_t p){mem::FreeContiguous(p);}
 };
 using OriginalWeaponBackingKernelOwner=OriginalWeaponBackingOwner<OriginalWeaponBackingKernelAllocator>;
+// Pinned PC source identifies P2 slots 16/18 only. No invented P3/P4
+// descriptors. Explicit reservation witness must establish exclusive ownership.
+class OriginalWeaponHeapKernelIO final {
+ using Proof=bool(*)(uint8_t,uint32_t,uint32_t,uint32_t,uint64_t)noexcept;
+ uint64_t(*scene_)()noexcept;
+ Proof proof_;
+ const std::thread::id thread_=std::this_thread::get_id();
+ bool owner()const noexcept{return thread_==std::this_thread::get_id();}
+ friend class OriginalWeaponHeapInstall;
+ uint8_t* MapHeapDescriptor(uint32_t at,uint32_t n)const noexcept{
+  if(!owner()||!Scene()||n!=0x24u||
+     (at!=0x2D12ECu+16u*0x24u&&at!=0x2D12ECu+18u*0x24u)||
+     !mem::IsCommitted(at)||!mem::IsCommitted(at+n-1u)||!mem::Base())return nullptr;
+  return mem::Base()+at;
+ }
+public:
+ OriginalWeaponHeapKernelIO(uint64_t(*scene)()noexcept,Proof proof):scene_(scene),proof_(proof){}
+ uint64_t Scene()const noexcept{return owner()&&scene_?scene_():0;}
+ bool VerifiedUnusedOriginalWeaponHeap(uint32_t id)const noexcept{
+  if(id!=16u&&id!=18u)return false;
+  auto* p=MapHeapDescriptor(0x2D12ECu+id*0x24u,0x24u);
+  uint32_t active=1;if(p)std::memcpy(&active,p,4);
+  return p&&active==0;
+ }
+ bool OwnsReservedHeapPair(uint8_t peer,uint32_t first,uint32_t second,
+       uint32_t base,uint64_t generation)const noexcept{
+  return Scene()&&peer==2&&first==16u&&second==18u&&proof_&&
+     proof_(peer,first,second,base,generation)&&
+     mem::CoopContiguousAllocationGeneration(base,OriginalWeaponBankLayout::Total)==generation;
+ }
+};
 }
