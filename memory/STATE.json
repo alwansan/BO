@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-24_bo-coop-131-original-scene-p1-recovery.md",
+  "lastSession": "memory/sessions/2026-11-24_bo-coop-132-original-actor-exchange-primitive.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3949,15 +3949,15 @@
     "verification": "pending_new_ci"
   },
   "latestSourceHardening": {
-    "session": 131,
-    "code": "9566d66a9fcf599ad77337c934fdb5bb04d402bb",
-    "baseHead": "831902374a970d3b0c3a85599b40edd504a679ec",
-    "previousSourceRun": 45282869178,
-    "previousParallelRun": 45282869264,
-    "previousUdpRun": 45282869333,
-    "previousAndroidRun": 45282869137,
+    "session": 132,
+    "code": "a0255f89df66e8230a565701a9ea1ab5b39d97d9",
+    "previousSourceRun": 45307881455,
+    "previousParallelRun": 45307881404,
+    "previousUdpRun": 45307881692,
+    "previousAndroidRun": 45307881349,
     "status": "new_source_CI_unverified",
-    "fix": "Exact original launch identity, foreign-thread nonmutation and attempted P1 recovery after failed context entry",
+    "fix": "Actor-only reversible mapped-word exchange with exact generation and original grid preservation",
+    "originalAndroidMappingImplemented": false,
     "originalAndroidHostP2P3P4ActorsLive": false,
     "originalGuestNPCDoorObjectivesApplied": false,
     "ownerPhoneMicrotest": false
