@@ -8,26 +8,38 @@ namespace blackcoop {
 // released; its fixed ledger never frees allocations implicitly. Quarantined
 // initialized resources require a separately proven engine cleanup lifecycle.
 class OriginalPlayerStorageKernelIO : public OriginalHostProxyKernelIO {
- struct Allocation {uint32_t address=0,size=0;};
+ struct Allocation {uint32_t address=0,size=0;uint64_t generation=0;};
  std::array<Allocation,5> allocations_{};
  X86Context& context_;
+ using LifetimeSource=uint64_t(*)(uint32_t,uint32_t)noexcept;
+ LifetimeSource lifetime_=nullptr;
+ const std::thread::id thread_=std::this_thread::get_id();
+ bool onOwner()const noexcept{return thread_==std::this_thread::get_id();}
 public:
- OriginalPlayerStorageKernelIO(X86Context& context,uint64_t (*scene)()noexcept)
-  :OriginalHostProxyKernelIO(context,scene),context_(context){}
+ OriginalPlayerStorageKernelIO(X86Context& context,uint64_t (*scene)()noexcept,
+     LifetimeSource lifetime=nullptr)
+  :OriginalHostProxyKernelIO(context,scene),context_(context),lifetime_(lifetime){}
  OriginalPlayerStorageKernelIO(const OriginalPlayerStorageKernelIO&)=delete;
  OriginalPlayerStorageKernelIO& operator=(const OriginalPlayerStorageKernelIO&)=delete;
  uint32_t Alloc(uint32_t size){
   // Only the reviewed storage sizes, all aligned without arithmetic overflow.
-  if(size!=0x16C0u&&size!=0x900u&&size!=0x40u&&size!=0x630u)return 0;
+  if(!onOwner()||!lifetime_||
+     (size!=0x16C0u&&size!=0x900u&&size!=0x40u&&size!=0x630u))return 0;
   for(auto& record:allocations_)if(!record.address){
    const uint32_t address=mem::AllocSystem(size,16);
-   if(address)record={address,size};return address;
+   if(!address)return 0;
+   const auto generation=lifetime_(address,size);
+   // A newly allocated block is not published without actual lifetime proof.
+   if(!generation){mem::FreeSystem(address);return 0;}
+   record={address,size,generation};return address;
   }
   return 0;
  }
  bool Owns(uint32_t address,uint32_t size)const noexcept{
+  if(!onOwner()||!lifetime_)return false;
   for(const auto& record:allocations_)if(record.address==address&&record.size==size)
-   return address&&mem::AllocationSize(address)>=size;
+   return address&&record.generation&&mem::AllocationSize(address)==size&&
+     lifetime_(address,size)==record.generation;
   return false;
  }
  // Reconcile with real original storage's tracked owner, not committed pages.
@@ -54,6 +66,7 @@ private:
  }
 public:
  bool Free(uint32_t address){
+  if(!onOwner())return false;
   for(auto& record:allocations_)if(address&&record.address==address){
    if(!Owns(address,record.size))return false;
    mem::FreeSystem(address);record={};return true;

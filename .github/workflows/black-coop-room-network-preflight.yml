@@ -77,7 +77,8 @@ jobs:
           static_assert(!CanMapActorDirectly<blackcoop::OriginalActorExchangeKernelIO>);
           void compile_only(X86Context& ctx, uint64_t (*scene)() noexcept,
                             uint64_t (*generation)(uint32_t,uint32_t) noexcept) {
-            blackcoop::OriginalPlayerStorageKernelIO owned(ctx, scene);
+            blackcoop::OriginalPlayerStorageKernelIO owned(ctx, scene,
+                &mem::CoopSystemAllocationGeneration);
             blackcoop::OriginalProxySceneLedger ledger;
             blackcoop::OriginalHostProxyEngine guard(ledger);
             (void) owned.OwnsActor(0x10000u,0x900u);

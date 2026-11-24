@@ -8,7 +8,7 @@
 using namespace blackcoop;
 struct LinkIO {
  std::vector<uint8_t> bytes=std::vector<uint8_t>(0x700000);
- uint64_t scene=7,sourceGeneration=1,targetGeneration=2;
+ uint64_t scene=7,sourceGeneration=1,targetGeneration=2,cameraGen=3,extraCameraGen=4;
  bool failCopy=false,failMap=false,aliasMap=false;
  LinkIO(){
   set(0x2D45D4u,0x100000u);set(0x2D12B8u,0x120000u);
@@ -27,6 +27,12 @@ struct LinkIO {
  }
  bool OwnsActor(uint32_t p,uint32_t n)const{return p==0x300000u&&n==0x900u;}
  uint64_t Scene()const{return scene;}
+ uint64_t CameraScene()const noexcept{return scene;}
+ uint64_t CameraGeneration(uint32_t p,uint32_t n)const noexcept{
+  return n!=0x16C0u?0:p==0x120000u?cameraGen:p==0x310000u?extraCameraGen:0;
+ }
+ bool OwnsExtraCamera(uint32_t p,uint32_t n)const noexcept{return p==0x310000u&&n==0x16C0u;}
+ uint8_t* MapCameraOwnerRoot()noexcept{return failMap?nullptr:bytes.data()+0x2D12B8u;}
  uint64_t ActorGeneration(uint32_t p,uint32_t n)const noexcept{
   if(n!=0x900u)return 0;
   if(p==0x100030u)return sourceGeneration;
@@ -112,6 +118,19 @@ int main(){
   assert(!plan.RestoreActorOnly(io)&&plan.Quarantined());
   assert(io.bytes==before&&plan.Entered());
   plan.Reset();assert(plan.Quarantined()&&!plan.Prepare(io,b,p2));
+ }
+ {
+  LinkIO io;OriginalPlayerLinkExchangePlan actorPlan;OriginalCameraOwnerScope camera;
+  assert(actorPlan.Prepare(io,b,p2)&&actorPlan.EnterActorOnly(io));
+  assert(camera.Enter(io,b.scene,b.owner,0x310000u));
+  uint32_t current=0;
+  assert(io.Read32(0x2D12B8u,current)&&current==0x310000u);
+  assert(camera.Restore(io)&&actorPlan.RestoreActorOnly(io));
+  assert(io.Read32(0x2D12B8u,current)&&current==b.owner);
+  assert(camera.Enter(io,b.scene,b.owner,0x310000u));
+  ++io.extraCameraGen;
+  const auto before=io.bytes;
+  assert(!camera.Restore(io)&&camera.Quarantined()&&io.bytes==before);
  }
  std::cout<<"ORIGINAL_P1_GRID_LINK_ACTOR_EXCHANGE_FIXTURE_PASS_NO_NATIVE_ACTIVATION\n";
 }

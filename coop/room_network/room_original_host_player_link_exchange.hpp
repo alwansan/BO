@@ -217,4 +217,55 @@ public:
   return first==first_&&second==second_;
  }
 };
+// Pinned PC black_p2_swap also exchanges the camera-owner singleton
+// 0x2D12B8. This scope models that separate step, after actor entry and
+// before actor restoration. No game callback or animation/audio activation.
+// IO must prove both actual original camera allocation lifetimes and the
+// fixed singleton word, not merely committed pages.
+class OriginalCameraOwnerScope final {
+ const std::thread::id thread_=std::this_thread::get_id();
+ uint64_t scene_=0,p1Gen_=0,extraGen_=0;
+ uint32_t first_=0,extra_=0;
+ bool entered_=false,poisoned_=false;
+ bool owner()const noexcept{return thread_==std::this_thread::get_id();}
+ template<class IO>bool live(IO& io)const noexcept{
+  return owner()&&scene_&&io.CameraScene()==scene_&&
+    io.CameraGeneration(first_,0x16C0u)==p1Gen_&&p1Gen_&&
+    io.CameraGeneration(extra_,0x16C0u)==extraGen_&&extraGen_;
+ }
+public:
+ OriginalCameraOwnerScope()=default;
+ OriginalCameraOwnerScope(const OriginalCameraOwnerScope&)=delete;
+ OriginalCameraOwnerScope& operator=(const OriginalCameraOwnerScope&)=delete;
+ bool Entered()const noexcept{return owner()&&entered_;}
+ bool Quarantined()const noexcept{return owner()&&poisoned_;}
+ template<class IO>bool Enter(IO& io,uint64_t scene,uint32_t p1,uint32_t extra)noexcept{
+  if(!owner()||entered_||poisoned_||!scene||p1<0x10000u||extra<0x10000u||
+    uint64_t(p1)+0x16C0u>0x100000000ull||
+    uint64_t(extra)+0x16C0u>0x100000000ull||
+    (uint64_t(p1)<uint64_t(extra)+0x16C0u&&uint64_t(extra)<uint64_t(p1)+0x16C0u))return false;
+  scene_=scene;first_=p1;extra_=extra;
+  p1Gen_=io.CameraGeneration(p1,0x16C0u);
+  extraGen_=io.CameraGeneration(extra,0x16C0u);
+  if(!live(io)||!io.OwnsExtraCamera(extra,0x16C0u))return false;
+  auto* root=io.MapCameraOwnerRoot();
+  uint32_t current=0;
+  if(!root||!live(io))return false;
+  std::memcpy(&current,root,4u);
+  if(current!=first_)return false;
+  std::memcpy(root,&extra_,4u);entered_=true;return true;
+ }
+ template<class IO>bool Restore(IO& io)noexcept{
+  if(!owner()||!entered_||poisoned_)return false;
+  if(!live(io)||!io.OwnsExtraCamera(extra_,0x16C0u)){
+   poisoned_=true;return false;
+  }
+  auto* root=io.MapCameraOwnerRoot();uint32_t current=0;
+  if(!root||!live(io)){poisoned_=true;return false;}
+  std::memcpy(&current,root,4u);
+  if(current!=extra_){poisoned_=true;return false;}
+  std::memcpy(root,&first_,4u);
+  entered_=false;return true;
+ }
+};
 } // namespace blackcoop
