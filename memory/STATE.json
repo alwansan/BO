@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-24_bo-coop-135-parallel-player-camera-world.md",
+  "lastSession": "memory/sessions/2026-11-24_bo-coop-136-native-setup-and-npc-batches.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3949,21 +3949,22 @@
     "verification": "pending_new_ci"
   },
   "latestSourceHardening": {
-    "session": 135,
-    "code": "9edc60aa238dea0b181c8893a38482002a42624c",
-    "playerCameraCode": "4ac1ef9709cae88ffa402fbc7a3bee56c0030421",
-    "previousSourceRun": 45312476702,
-    "previousParallelRun": 45312476707,
-    "previousUdpRun": 45312476680,
-    "previousAndroidRun": 45312476736,
+    "session": 136,
+    "code": "ebfa63b86f429b078e9e7f0ee9e99e480d1c4d22",
+    "setupCode": "3dab5a986c1a6416393032e0c6e2b7b3db59bf05",
+    "previousSourceRun": 45312889262,
+    "previousParallelRun": 45312889392,
+    "previousUdpRun": 45312889376,
+    "previousAndroidRun": 45312889231,
     "status": "new_source_CI_unverified",
     "tracks": [
-      "generation-bound owned allocation",
-      "camera owner scope",
-      "P2-P4 same frame quorum",
-      "transactional guest object apply IO"
+      "native camera mapping",
+      "original setup ABI gated by presentation provider",
+      "live physics handoff",
+      "guest NPC batch apply contract"
     ],
     "originalCoreHeapLifetimeVerified": false,
+    "presentationProviderImplemented": false,
     "originalAndroidHostP2P3P4ActorsLive": false,
     "originalGuestNPCDoorObjectivesApplied": false,
     "ownerPhoneMicrotest": false
