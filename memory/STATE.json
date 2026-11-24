@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-24_bo-coop-134-sdk-system-allocation-lifetime.md",
+  "lastSession": "memory/sessions/2026-11-24_bo-coop-135-parallel-player-camera-world.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3949,16 +3949,20 @@
     "verification": "pending_new_ci"
   },
   "latestSourceHardening": {
-    "session": 134,
-    "code": "10f4bea6035c9997e7cec78fcdc88794452638f6",
-    "previousSourceRun": 45308532969,
-    "previousParallelRun": 45308532925,
-    "previousUdpRun": 45308532910,
-    "previousAndroidRun": 45308533084,
-    "previousAllPassed": true,
+    "session": 135,
+    "code": "9edc60aa238dea0b181c8893a38482002a42624c",
+    "playerCameraCode": "4ac1ef9709cae88ffa402fbc7a3bee56c0030421",
+    "previousSourceRun": 45312476702,
+    "previousParallelRun": 45312476707,
+    "previousUdpRun": 45312476680,
+    "previousAndroidRun": 45312476736,
     "status": "new_source_CI_unverified",
-    "fix": "Actual pinned SDK AllocSystem/FreeSystem/Decommit exact allocation generation tracking",
-    "systemLifetimeProviderImplemented": true,
+    "tracks": [
+      "generation-bound owned allocation",
+      "camera owner scope",
+      "P2-P4 same frame quorum",
+      "transactional guest object apply IO"
+    ],
     "originalCoreHeapLifetimeVerified": false,
     "originalAndroidHostP2P3P4ActorsLive": false,
     "originalGuestNPCDoorObjectivesApplied": false,
