@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-24_bo-coop-141-real-weapon-backing-object-revocation.md",
+  "lastSession": "memory/sessions/2026-11-24_bo-coop-142-weapon-heap-install-ai-targets.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3949,17 +3949,18 @@
     "verification": "pending_new_ci"
   },
   "latestSourceHardening": {
-    "session": 141,
-    "code": "8da79728381eef04ea950d9c0868865da9c2db33",
-    "weaponBackingCode": "3f889d7c755293dad116495af3e2b2c8b47d3c5e",
-    "previousSourceRun": 45314653088,
-    "previousParallelRun": 45314653095,
-    "previousUdpRun": 45314653222,
-    "previousAndroidRun": 45314653285,
+    "session": 142,
+    "code": "c8cd507a2a97fb238f004b00dd07fe80b15363d2",
+    "weaponHeapCode": "8c4595ad46ebc9b93177a1526ce918a937793f59",
+    "previousSourceRun": 45314960140,
+    "previousParallelRun": 45314960212,
+    "previousUdpRun": 45314960165,
+    "previousAndroidRun": 45314960153,
     "status": "new_source_CI_unverified",
     "tracks": [
-      "actual SDK independent weapon backing owner",
-      "object stream launch revocation"
+      "source exact original heap descriptor installation",
+      "SDK P2 descriptor mapping compile only",
+      "AI target ownership ledger"
     ],
     "originalCoreHeapLifetimeVerified": false,
     "realP3P4WeaponHeapIdsVerified": false,
