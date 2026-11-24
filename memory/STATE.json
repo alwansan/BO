@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-24_bo-coop-138-presentation-transaction-canonical-apply.md",
+  "lastSession": "memory/sessions/2026-11-24_bo-coop-139-setup-scheduler-heaps-canonical-apply.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3949,21 +3949,21 @@
     "verification": "pending_new_ci"
   },
   "latestSourceHardening": {
-    "session": 138,
-    "code": "f610d382abb3d5c21fdfe5a5fc6f2194f32fd83a",
-    "presentationCode": "a9349ba92accfef824497171f823e17e3fccab25",
-    "previousSourceRun": 45313595634,
-    "previousParallelRun": 45313595708,
-    "previousUdpRun": 45313595666,
-    "previousAndroidRun": 45313595689,
+    "session": 139,
+    "code": "4cd106b8dddef8751d87bf4b078c98c91186b737",
+    "setupCode": "4236a993ccbb9dadd7149eee4bf6ccb74262033a",
+    "previousSourceRun": 45314034321,
+    "previousParallelRun": 45314034386,
+    "previousUdpRun": 45314034276,
+    "previousAndroidRun": 45314034267,
     "status": "new_source_CI_unverified",
     "tracks": [
-      "composed animation weapon sound FX transaction",
-      "shared P2-P4 presentation arbiter",
-      "exact canonical guest apply authorization"
+      "P2-P4 same frame setup scheduling",
+      "independent weapon bank layout and reservations",
+      "guest canonical NPC/object application frame"
     ],
     "originalCoreHeapLifetimeVerified": false,
-    "presentationTransactionSourceImplemented": true,
+    "realP3P4WeaponHeapIdsVerified": false,
     "nativePresentationProviderImplemented": false,
     "originalAndroidHostP2P3P4ActorsLive": false,
     "originalGuestNPCDoorObjectivesApplied": false,
