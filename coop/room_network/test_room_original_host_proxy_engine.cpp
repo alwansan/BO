@@ -25,12 +25,6 @@ struct Engine {
   }
  }
  uint64_t Scene()const{return scene;}
- uint64_t AiTableGeneration(uint32_t p,uint32_t n)const{return p==0x70000u+0xFACu&&n==384u?1u:0u;}
- uint64_t ActorGeneration(uint32_t p,uint32_t n)const{return OwnsActor(p,n)?2u:0u;}
- bool ReplaceOriginalAiTarget(uint32_t p,uint32_t old,uint32_t next,uint64_t gen){
-  if(gen!=1||words[p]!=old)return false;
-  words[p]=next;return true;
- }
  bool OwnsActor(uint32_t p,uint32_t n)const noexcept{
   return !revokeActorOwnership&&n==0x900u&&
     (p==actor||p==actor2||p==actor3||p==actor4);
@@ -178,26 +172,6 @@ int main(){
   assert(a.Release(e)==OriginalProxyStatus::OwnershipLost);
   assert(ledger.Quarantined()&&a.RequiresEngineCleanup());
   assert(e.calls.size()==1);
- }
- {
-  Engine e;OriginalAiTargetLedger targets;
-  constexpr uint32_t table=0x70000u+0xFACu;
-  e.words[0x2D1988u]=0x70000u;
-  e.words[Engine::world+0x30u+0x378u]=0;
-  e.words[Engine::actor+0x378u]=1;
-  e.words[table+12u+4u]=0;e.words[table+12u+8u]=Engine::world+0x30u;
-  assert(targets.BindAfterSetup(e,b,2));
-  assert(e.words[table+12u+8u]==Engine::actor);
-  assert(targets.BindAfterSetup(e,b,2));
-  auto other=b;other.actor=Engine::actor2;
-  e.words[Engine::actor2+0x378u]=1;
-  assert(!targets.BindAfterSetup(e,other,3));
-  e.words[Engine::actor2+0x378u]=0;
-  assert(!targets.BindAfterSetup(e,other,3));
-  e.words[Engine::actor2+0x378u]=2;
-  e.words[table+24u+4u]=0;e.words[table+24u+8u]=Engine::world+0x30u;
-  assert(targets.BindAfterSetup(e,other,3));
-  assert(e.words[table+24u+8u]==Engine::actor2);
  }
  std::cout<<"ORIGINAL_PROXY_ENGINE_PASS: original acquire/release operations, ownership, cancellation scopes and rollback\n";
 }

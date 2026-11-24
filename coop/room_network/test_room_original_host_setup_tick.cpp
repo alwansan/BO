@@ -123,5 +123,21 @@ int main(){
   assert(scheduler.Tick(io,1)==OriginalSetupState::Quarantined);
   assert(engines[1].calls==0&&engines[2].calls==0);
  }
+ {
+  struct UpdateIO:MockEngine {
+   bool ready=false;unsigned updates=0;
+   bool ReadyForOriginalHumanUpdate(const OriginalSetupScene&,uint32_t){return ready;}
+   bool CallOriginalHumanUpdate(const OriginalSetupScene&,uint32_t){++updates;return callOk;}
+  } e;
+  const auto s=scoped(2);e.actor=s.ownedActor;e.owner=s.ownedOwner;
+  OriginalHumanUpdateTick tick;
+  assert(tick.Tick(e,s,1)==OriginalHumanUpdateStatus::Rejected&&e.entered==0);
+  e.ready=true;
+  assert(tick.Tick(e,s,1)==OriginalHumanUpdateStatus::Updated&&e.updates==1&&e.left==1);
+  assert(tick.Tick(e,s,1)==OriginalHumanUpdateStatus::Rejected);
+  e.callOk=false;
+  assert(tick.Tick(e,s,2)==OriginalHumanUpdateStatus::Quarantined&&e.left==2);
+  assert(tick.Tick(e,s,3)==OriginalHumanUpdateStatus::Quarantined&&e.updates==2);
+ }
  std::cout<<"ORIGINAL_BLACK_P2_P3_P4_MULTIFRAME_SETUP_CONTRACT_PASS_NO_LIVE_GUEST_CALL\n";
 }

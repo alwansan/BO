@@ -170,4 +170,47 @@ public:
  }
  bool Quarantined()const noexcept{return owner()&&poisoned_;}
 };
+// Original extra-human update after the genuine 1F1080 world tick.
+// The original enemy/ally AI is untouched. The shared world is never
+// stepped twice. IO must provide the original controller/actor methods,
+// independent input, interaction context and verified physical proxy.
+enum class OriginalHumanUpdateStatus:uint8_t {Rejected,Updated,Quarantined};
+class OriginalHumanUpdateTick final {
+ const std::thread::id thread_=std::this_thread::get_id();
+ OriginalSetupScene binding_{};
+ uint32_t lastFrame_=0;
+ bool bound_=false,poisoned_=false;
+ bool owner()const noexcept{return thread_==std::this_thread::get_id();}
+ static bool same(const OriginalSetupScene& a,const OriginalSetupScene& b)noexcept{
+  return a.nativeScene==b.nativeScene&&a.signedEpoch==b.signedEpoch&&
+   a.world==b.world&&a.p1Actor==b.p1Actor&&a.p1Owner==b.p1Owner&&
+   a.ownedActor==b.ownedActor&&a.ownedOwner==b.ownedOwner&&a.peer==b.peer;
+ }
+public:
+ template<class IO>OriginalHumanUpdateStatus Tick(IO& io,
+      const OriginalSetupScene& scope,uint32_t frame){
+  if(!owner()||!frame||frame<=lastFrame_||!scope.nativeScene||
+     !scope.signedEpoch||scope.peer<2||scope.peer>4)return OriginalHumanUpdateStatus::Rejected;
+  if(poisoned_)return OriginalHumanUpdateStatus::Quarantined;
+  if(bound_&&!same(binding_,scope)){poisoned_=true;return OriginalHumanUpdateStatus::Quarantined;}
+  // No mutation before the original per-human setup, physical proxy,
+  // exact frame input and full restored P1 context are all proven.
+  try{if(!io.ReadyForOriginalHumanUpdate(scope,frame))return OriginalHumanUpdateStatus::Rejected;}
+  catch(...){return OriginalHumanUpdateStatus::Rejected;}
+  binding_=scope;bound_=true;lastFrame_=frame;
+  bool ok=false,restored=false,attempted=false,restoreAttempted=false;
+  try{
+   attempted=true;
+   if(io.EnterOwnedOriginalContext(scope))
+    ok=io.CallOriginalHumanUpdate(scope,frame);
+   restoreAttempted=true;
+   restored=io.RestoreOriginalP1(scope);
+   if(ok&&restored&&io.FullP1Restored(scope))return OriginalHumanUpdateStatus::Updated;
+  }catch(...){
+   if(attempted&&!restoreAttempted)try{(void)io.RestoreOriginalP1(scope);}catch(...){}
+  }
+  poisoned_=true;return OriginalHumanUpdateStatus::Quarantined;
+ }
+ bool Quarantined()const noexcept{return owner()&&poisoned_;}
+};
 } // namespace blackcoop
