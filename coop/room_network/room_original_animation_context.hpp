@@ -6,6 +6,7 @@
 #pragma once
 #include <algorithm>
 #include <array>
+#include "room_original_host_setup_tick.hpp"
 #include <cstdint>
 #include <cstring>
 #include <thread>
@@ -528,6 +529,104 @@ public:
   std::memcpy(root,&next,4u);
   for(unsigned i=0;i<held_.size();++i)std::swap(pool[i],held_[i]);
   entered_=!entered_;return true;
+ }
+};
+// One shared arbiter for all P2/P3/P4 presentation scopes in a scene.
+// Retain through original engine teardown. No parallel access to singleton
+// animation, weapon manager or FX pools, even though players are independent.
+class OriginalPresentationArbiter final {
+ const std::thread::id thread_=std::this_thread::get_id();
+ uint64_t scene_=0;
+ uint8_t active_=0;
+ bool poisoned_=false;
+ bool owner()const noexcept{return thread_==std::this_thread::get_id();}
+public:
+ bool Available(uint64_t scene,uint8_t peer)const noexcept{
+  return owner()&&!poisoned_&&!active_&&scene&&peer>=2&&peer<=4&&
+    (!scene_||scene_==scene);
+ }
+ bool Acquire(uint64_t scene,uint8_t peer)noexcept{
+  if(!Available(scene,peer))return false;
+  scene_=scene;active_=peer;return true;
+ }
+ bool Held(uint64_t scene,uint8_t peer)const noexcept{
+  return owner()&&!poisoned_&&scene_==scene&&active_==peer&&peer>=2&&peer<=4;
+ }
+ bool Release(uint64_t scene,uint8_t peer,bool restored)noexcept{
+  if(!Held(scene,peer))return false;
+  if(!restored){poisoned_=true;return false;}
+  active_=0;return true;
+ }
+ bool AfterVerifiedEngineTeardown(bool verified)noexcept{
+  if(!owner()||!verified)return false;
+  scene_=0;active_=0;poisoned_=false;return true;
+ }
+};
+// Composes all three independently prepared original presentation contexts.
+// IO still needs real allocator and constructor provenance. No production
+// caller or permissive default. Restore every entered component in reverse
+// order; uncertain side effects permanently bar the other human lanes.
+template<class IO>class OriginalPresentationTransaction final {
+ IO& io_;
+ OriginalPresentationArbiter& arbiter_;
+ OriginalAnimationContext& animation_;
+ OriginalWeaponSoundContext& sound_;
+ OriginalEffectsContext& effects_;
+ const OriginalSetupScene scope_;
+ const std::thread::id thread_=std::this_thread::get_id();
+ bool acquired_=false,attempted_=false,poisoned_=false;
+ bool matches(const OriginalSetupScene& s)const noexcept{
+  return thread_==std::this_thread::get_id()&&s.nativeScene==scope_.nativeScene&&
+    s.signedEpoch==scope_.signedEpoch&&s.peer==scope_.peer&&s.world==scope_.world&&
+    s.p1Actor==scope_.p1Actor&&s.p1Owner==scope_.p1Owner&&
+    s.ownedActor==scope_.ownedActor&&s.ownedOwner==scope_.ownedOwner;
+ }
+public:
+ OriginalPresentationTransaction(IO& io,OriginalPresentationArbiter& arbiter,
+    OriginalAnimationContext& animation,OriginalWeaponSoundContext& sound,
+    OriginalEffectsContext& effects,const OriginalSetupScene& scope)
+  :io_(io),arbiter_(arbiter),animation_(animation),sound_(sound),effects_(effects),scope_(scope){}
+ OriginalPresentationTransaction(const OriginalPresentationTransaction&)=delete;
+ OriginalPresentationTransaction& operator=(const OriginalPresentationTransaction&)=delete;
+ bool CanEnterOriginal(const OriginalSetupScene& s){
+  return matches(s)&&!attempted_&&!poisoned_&&io_.Scene()==s.nativeScene&&
+    arbiter_.Available(s.nativeScene,s.peer)&&!animation_.Entered()&&
+    !sound_.Entered()&&!effects_.Entered()&&!sound_.Quarantined()&&
+    !effects_.Quarantined()&&animation_.CanExchange(io_)&&
+    io_.OwnsCompletePresentation(s);
+ }
+ bool EnterOriginal(const OriginalSetupScene& s){
+  if(!CanEnterOriginal(s))return false;
+  if(!arbiter_.Acquire(s.nativeScene,s.peer))return false;
+  acquired_=attempted_=true;
+  // Exchange implementations do not call guest code. An exception is
+  // treated as uncertain even if all observable flags remain unchanged.
+  try{
+   return animation_.Exchange(io_)&&sound_.Exchange(io_)&&effects_.Exchange(io_);
+  }catch(...){poisoned_=true;return false;}
+ }
+ bool OriginalContextActive(const OriginalSetupScene& s){
+  return matches(s)&&!poisoned_&&acquired_&&arbiter_.Held(s.nativeScene,s.peer)&&
+    io_.Scene()==s.nativeScene&&animation_.Entered()&&sound_.Entered()&&effects_.Entered();
+ }
+ bool RestoreOriginal(const OriginalSetupScene& s){
+  if(!matches(s))return false;
+  if(!attempted_)return !poisoned_&&!acquired_&&!animation_.Entered()&&
+    !sound_.Entered()&&!effects_.Entered();
+  bool ok=!poisoned_;
+  try{if(effects_.Entered()&&!effects_.Exchange(io_))ok=false;}catch(...){ok=false;}
+  try{if(sound_.Entered()&&!sound_.Exchange(io_))ok=false;}catch(...){ok=false;}
+  try{if(animation_.Entered()&&!animation_.Exchange(io_))ok=false;}catch(...){ok=false;}
+  ok=ok&&!animation_.Entered()&&!sound_.Entered()&&!effects_.Entered()&&
+    !sound_.Quarantined()&&!effects_.Quarantined();
+  if(!arbiter_.Release(s.nativeScene,s.peer,ok))ok=false;
+  attempted_=acquired_=false;poisoned_=!ok;return ok;
+ }
+ bool OriginalP1Restored(const OriginalSetupScene& s){
+  return matches(s)&&!poisoned_&&!attempted_&&!acquired_&&
+    io_.Scene()==s.nativeScene&&!animation_.Entered()&&!sound_.Entered()&&
+    !effects_.Entered()&&arbiter_.Available(s.nativeScene,s.peer)&&
+    io_.VerifyRestoredPresentation(s);
  }
 };
 } // namespace blackcoop

@@ -9,6 +9,8 @@ struct IO {
   std::vector<uint8_t> m = std::vector<uint8_t>(0x700000);
   uint64_t scene = 7, generation = 1;
   uint32_t blocked = 0;
+  bool OwnsCompletePresentation(const OriginalSetupScene& s)const {return s.nativeScene==scene;}
+  bool VerifyRestoredPresentation(const OriginalSetupScene& s)const {return s.nativeScene==scene;}
   uint64_t Scene() const { return scene; }
   bool OwnsEffectsActorPair(uint32_t first,uint32_t extra) const {
     return first==0x100030u&&extra==0x180000u;
@@ -272,6 +274,34 @@ int main() {
     assert(sound.Exchange(snd)&&snd.r(0x190000u)==55u);
     ++snd.generation;before=snd.m;
     assert(!sound.Exchange(snd)&&sound.Quarantined()&&snd.m==before);
+  }
+  {
+    IO io;OriginalAnimationContext anim;OriginalWeaponSoundContext sound;
+    OriginalEffectsContext effects;OriginalPresentationArbiter arbiter;
+    assert(anim.ObserveOriginalCacheConstructor(io,0x600000)&&anim.Capture(io));
+    io.w(0x2D12D8u,0x180000u);io.w(0x2D0D60u,0x100000u);
+    io.w(0x100000u+0xD3C8u,0x170000u);io.w(0x17000Cu,0x190000u);
+    std::array<uint8_t,0x1330> prepared{};prepared[0]=44;
+    assert(sound.Bind(io,0x181000u,prepared));
+    constexpr uint32_t at=0x100000u+0x65690u;
+    io.w(0x2D1990u,0x100000u);
+    io.w(at+0x3440u,0x192000u);io.w(at+0x3444u,0x193000u);
+    assert(effects.Bind(io,0x100030u,0x180000u));
+    OriginalSetupScene scope{7,1,0x100000u,0x100030u,0x120000u,0x180000u,0x181000u,2};
+    OriginalPresentationTransaction tx(io,arbiter,anim,sound,effects,scope);
+    assert(tx.CanEnterOriginal(scope)&&tx.EnterOriginal(scope)&&tx.OriginalContextActive(scope));
+    assert(!arbiter.Acquire(7,3)&&!arbiter.Acquire(7,4));
+    assert(tx.RestoreOriginal(scope)&&tx.OriginalP1Restored(scope));
+    assert(arbiter.Acquire(7,3)&&arbiter.Release(7,3,true));
+    // Failed FX entry after animation/audio entry must unwind both.
+    io.w(at+0x3458u,33u);
+    assert(!tx.EnterOriginal(scope));
+    assert(tx.RestoreOriginal(scope)&&tx.OriginalP1Restored(scope));
+    io.w(at+0x3458u,0u);
+    assert(tx.EnterOriginal(scope));
+    ++io.generation;
+    assert(!tx.RestoreOriginal(scope)&&!arbiter.Available(7,4));
+    assert(!arbiter.AfterVerifiedEngineTeardown(false));
   }
   std::cout
       << "ORIGINAL_ANIMATION_CONTEXT_PASS: real memory exchange, original "

@@ -80,6 +80,19 @@ public:
   return owner()&&stable_>=3u&&lastObservedAt_&&now>=lastObservedAt_&&
          now-lastObservedAt_<=100u;
  }
+ // Require the exact currently accepted signed launch and frame pair before
+ // authorizing an application adapter. SourceCoherent alone is historical.
+ bool MatchesForApplication(const OriginalGuestLaunchMatchKey& key,uint64_t scene,
+      const OriginalGuestHostWorldInbox& players,const OriginalGuestHostNpcInbox& npcs,
+      uint64_t now)const noexcept{
+  return SourceCoherent(now)&&scene==originalScene_&&key.originalEpisode==episode_&&
+    key.level==level_&&key.stage==stage_&&key.selfSlot==self_&&key.participants==participants_&&
+    key.sceneEpoch==epoch_&&key.rosterRevision==revision_&&
+    ((uint64_t(key.tokenHi)<<32)|key.tokenLo)==token_&&
+    players.Scene()==epoch_&&players.Self()==self_&&players.PlayerMask(now)==participants_&&
+    npcs.Epoch()==epoch_&&players.Tick()==worldTick_&&npcs.Tick()==npcTick_&&
+    players.Fresh(now)&&npcs.Fresh(now);
+ }
  // Source state is NOT equivalent to applying native NPCs, doors or quests.
  bool OriginalGuestEngineApplied()const noexcept{return false;}
 };
