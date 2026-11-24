@@ -249,7 +249,7 @@ public:
   if(old.actor&&(old.actor!=b.actor||old.index!=index||old.actorGen!=ag)){
    poisoned_=true;return false;
   }
-  for(unsigned i=0;i<3;i++)if(i!=peer-2&&entries_[i].actor&&
+  for(unsigned i=0;i<3;i++)if(i!=static_cast<unsigned>(peer-2)&&entries_[i].actor&&
     (entries_[i].index==index||entries_[i].actor==b.actor))return false;
   if(target!=core+0x30u&&!(old.actor&&target==b.actor))return false;
   // Reserve identity BEFORE the original pointer write. Never retry an

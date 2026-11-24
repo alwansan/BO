@@ -1,3 +1,5 @@
+
+Session142 CI follow-up: source run 45315972119 failed solely at AI ledger signed/unsigned comparison (-Werror=sign-compare); corrected comparison to unsigned. Previous weapon heap source run 45315885688 SUCCESS. New combined run pending; no native activation.
 ### Session142 (2026-11-24): source-exact weapon heap installation and original AI target ownership
 
 - Session141 8da79728 source 45314960140, parallel 45314960212, UDP 45314960165 all SUCCESS; Android 45314960153 initially building. Actual pinned SDK physical backing allocator test for three independent owners passed.

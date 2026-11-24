@@ -3967,6 +3967,8 @@
     "nativePresentationProviderImplemented": false,
     "originalAndroidHostP2P3P4ActorsLive": false,
     "originalGuestNPCDoorObjectivesApplied": false,
-    "ownerPhoneMicrotest": false
+    "ownerPhoneMicrotest": false,
+    "failedSourceRun": 45315972119,
+    "failure": "AI ledger signedness; corrected in following commit"
   }
 }
