@@ -4,6 +4,7 @@ on:
     branches: [experiment/black-coop]
     paths:
       - 'coop/prepare_room_network.py'
+      - 'coop/prepare_original_system_lifetime.py'
       - 'coop/room_network_prepare_checks.py'
       - 'coop/room_network/**'
       - 'coop/lobby/**'
@@ -43,6 +44,16 @@ jobs:
           ref: 99078b119b5d5e0d1d6afb1390e29437c0c984c0
           path: android-sdk
           persist-credentials: false
+      - name: Verify actual pinned SDK system allocator lifetime reuse
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 bo/coop/prepare_original_system_lifetime.py --sdk android-sdk
+          g++ -std=c++20 -O1 -g -pthread -I android-sdk/runtime \
+            android-sdk/runtime/kernel/memory.cpp \
+            bo/coop/room_network/test_original_system_allocator_lifetime.cpp \
+            -o "$RUNNER_TEMP/test_system_allocator_lifetime"
+          "$RUNNER_TEMP/test_system_allocator_lifetime"
       - name: Compile original host proxy and player storage headers against pinned Android Xbox SDK
         shell: bash
         run: |
@@ -86,6 +97,9 @@ jobs:
             (void) linkScope.Prepare(actorIo,binding,buffers.actor);
             (void) linkScope.EnterActorOnly(actorIo);
             (void) linkScope.RestoreActorOnly(actorIo);
+            blackcoop::OriginalActorExchangeKernelIO systemOnly(owned,binding,buffers.actor,
+                &mem::CoopSystemAllocationGeneration);
+            (void) systemOnly.Live();
           }
           CPP
           g++ -std=c++20 -pthread -fsyntax-only \

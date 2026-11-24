@@ -142,6 +142,13 @@ jobs:
                                           text=True).splitlines()
           if tracked != ["runtime/kernel/files.cpp"]:
               raise SystemExit("Xbox SDK write outside pinned original file-open witness")
+          from prepare_original_system_lifetime import prepare as prepare_lifetime
+          assert prepare_lifetime(pathlib.Path("reference/sdk")) == [
+              "runtime/kernel/memory.cpp", "runtime/kernel/memory.h"]
+          tracked=subprocess.check_output(["git","-C","reference/sdk","diff","--name-only"],
+                                          text=True).splitlines()
+          if sorted(tracked) != ["runtime/kernel/files.cpp","runtime/kernel/memory.cpp","runtime/kernel/memory.h"]:
+              raise SystemExit("Xbox SDK write outside explicit resource/lifetime allowlist")
           if not pathlib.Path("reference/sdk/runtime/kernel/coop_stage_resource_contract.hpp").is_file():
               raise SystemExit("Missing isolated Xbox source witness header")
           print("BO_PINNED_STAGE_RESOURCE_FILE_OPEN_SOURCE_STAGED: no game saves/assets or actor writes")
