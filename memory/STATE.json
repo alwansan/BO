@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-24_bo-coop-140-contiguous-backing-guest-lifecycle.md",
+  "lastSession": "memory/sessions/2026-11-24_bo-coop-141-real-weapon-backing-object-revocation.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3949,18 +3949,17 @@
     "verification": "pending_new_ci"
   },
   "latestSourceHardening": {
-    "session": 140,
-    "code": "adeaaf83508e26afdbd297ed4ebf18f38e3d20c5",
-    "allocatorCode": "211d78152d415f8793906312a5fc8d7360064677",
-    "previousSourceRun": 45314353972,
-    "previousParallelRun": 45314353995,
-    "previousUdpRun": 45314353984,
-    "previousAndroidRun": 45314353931,
+    "session": 141,
+    "code": "8da79728381eef04ea950d9c0868865da9c2db33",
+    "weaponBackingCode": "3f889d7c755293dad116495af3e2b2c8b47d3c5e",
+    "previousSourceRun": 45314653088,
+    "previousParallelRun": 45314653095,
+    "previousUdpRun": 45314653222,
+    "previousAndroidRun": 45314653285,
     "status": "new_source_CI_unverified",
     "tracks": [
-      "real SDK contiguous allocation generation",
-      "live weapon backing reservation validation",
-      "full guest apply lifecycle scope"
+      "actual SDK independent weapon backing owner",
+      "object stream launch revocation"
     ],
     "originalCoreHeapLifetimeVerified": false,
     "realP3P4WeaponHeapIdsVerified": false,
