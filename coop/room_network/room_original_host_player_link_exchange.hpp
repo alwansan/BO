@@ -1,6 +1,7 @@
 // Copyright 2026 BO-COOP contributors. SPDX-License-Identifier: MIT
-// A SOURCE-FAITHFUL READ-ONLY preview of BLACK's world-owned P1 grid links.
-// NEVER performs a guest write, original game callback or context exchange.
+// Source-faithful BLACK world-owned P1 grid links and opt-in actor-only exchange.
+// Native use requires a separately proven exact actor mapping and generation IO.
+// No original game callback, camera/animation swap or production activation.
 #pragma once
 #include "room_original_host_player_storage.hpp"
 #include <array>
@@ -18,7 +19,8 @@ class OriginalPlayerLinkExchangePlan final {
  unsigned witnessCount_=0;
  OriginalPlayerStorageScene scene_{};
  uint32_t source_=0,target_=0;
- bool ready_=false;
+ bool ready_=false,entered_=false,poisoned_=false;
+ uint64_t sourceGeneration_=0,targetGeneration_=0;
  unsigned dynamic_=0;
  bool sameThread()const noexcept{return thread_==std::this_thread::get_id();}
  template<class IO>bool neighborLinksCurrent(IO& io)const noexcept{
@@ -57,13 +59,16 @@ public:
  OriginalPlayerLinkExchangePlan(const OriginalPlayerLinkExchangePlan&)=delete;
  OriginalPlayerLinkExchangePlan& operator=(const OriginalPlayerLinkExchangePlan&)=delete;
  void Reset()noexcept{
-  if(!sameThread())return;
+  if(!sameThread()||entered_||poisoned_)return;
   first_.fill(0);second_.fill(0);protected_.fill(0);
   witnesses_.fill({});witnessCount_=0;
   scene_={};source_=target_=0;dynamic_=0;ready_=false;
+  sourceGeneration_=targetGeneration_=0;
  }
  ~OriginalPlayerLinkExchangePlan(){Reset();}
- bool Ready()const noexcept{return sameThread()&&ready_;}
+ bool Ready()const noexcept{return sameThread()&&ready_&&!entered_&&!poisoned_;}
+ bool Entered()const noexcept{return sameThread()&&entered_;}
+ bool Quarantined()const noexcept{return sameThread()&&poisoned_;}
  unsigned WorldNodeWords()const noexcept{return Ready()?14u:0u;}
  unsigned DynamicLinkWords()const noexcept{return Ready()?dynamic_:0u;}
  bool ProtectedWord(uint32_t offset)const noexcept{
@@ -71,7 +76,7 @@ public:
  }
  template<class IO>bool Prepare(IO& io,const OriginalPlayerStorageScene& b,
                                  uint32_t independentlyOwnedP2Actor)noexcept{
-  if(!sameThread())return false;
+  if(!sameThread()||entered_||poisoned_)return false;
   Reset();
   if(!roots(io,b)||b.core>0xfffffff0u-0x30u)return false;
   const uint32_t original=b.core+0x30u,p2=independentlyOwnedP2Actor;
@@ -126,6 +131,68 @@ public:
    io.CopyGuest(target_,current.data(),kBytes)&&
    std::memcmp(current.data(),second_.data(),kBytes)==0;
  }
+ // IO must establish ORIGINAL allocation provenance and generation for the
+ // exact embedded P1 and separately owned P2 spans. Committed pages alone
+ // are insufficient. All mapping operations are on one original game thread.
+ // This primitive swaps actor words ONLY; the caller must coordinate the
+ // independently owned camera, animation, input, audio and weapon contexts.
+ template<class IO>bool EnterActorOnly(IO& io)noexcept{
+  if(!SourceStillCurrent(io))return false;
+  const auto sg=io.ActorGeneration(source_,kBytes);
+  const auto tg=io.ActorGeneration(target_,kBytes);
+  if(!sg||!tg)return false;
+  auto* a=io.MapOriginalActor(source_,kBytes);
+  auto* b=io.MapOriginalActor(target_,kBytes);
+  if(!a||!b||!disjointMappings(a,b)||!SourceStillCurrent(io)||
+     io.ActorGeneration(source_,kBytes)!=sg||
+     io.ActorGeneration(target_,kBytes)!=tg||
+     std::memcmp(a,first_.data(),kBytes)!=0||
+     std::memcmp(b,second_.data(),kBytes)!=0)return false;
+  sourceGeneration_=sg;targetGeneration_=tg;
+  swapUnprotected(a,b);
+  entered_=true;
+  return true;
+ }
+ // The external camera/owner context must already have been restored so
+ // roots() sees the original P1 owner. The world-owned grid words are
+ // never touched. A changed witness, generation or corrupted inactive P1
+ // makes restoration unsafe; quarantine rather than guess or free.
+ template<class IO>bool RestoreActorOnly(IO& io)noexcept{
+  if(!sameThread()||!entered_||poisoned_)return false;
+  if(!roots(io,scene_)||!io.OwnsActor(target_,kBytes)||
+     !neighborLinksCurrent(io)||
+     io.ActorGeneration(source_,kBytes)!=sourceGeneration_||
+     io.ActorGeneration(target_,kBytes)!=targetGeneration_){
+   poisoned_=true;return false;
+  }
+  auto* a=io.MapOriginalActor(source_,kBytes);
+  auto* b=io.MapOriginalActor(target_,kBytes);
+  if(!a||!b||!disjointMappings(a,b)||
+     io.ActorGeneration(source_,kBytes)!=sourceGeneration_||
+     io.ActorGeneration(target_,kBytes)!=targetGeneration_){
+   poisoned_=true;return false;
+  }
+  for(unsigned i=0;i<kWords;i++)if(!protected_[i]&&
+      std::memcmp(b+4u*i,first_.data()+4u*i,4u)!=0){
+   poisoned_=true;return false;
+  }
+  swapUnprotected(a,b);
+  entered_=false;ready_=false;
+  return true;
+ }
+private:
+ static bool disjointMappings(const uint8_t* a,const uint8_t* b)noexcept{
+  const auto x=reinterpret_cast<uintptr_t>(a),y=reinterpret_cast<uintptr_t>(b);
+  return x<y?y-x>=kBytes:x-y>=kBytes;
+ }
+ void swapUnprotected(uint8_t* a,uint8_t* b)const noexcept{
+  for(unsigned i=0;i<kWords;i++)if(!protected_[i]){
+   uint8_t w[4];std::memcpy(w,a+4u*i,4u);
+   std::memcpy(a+4u*i,b+4u*i,4u);
+   std::memcpy(b+4u*i,w,4u);
+  }
+ }
+public:
  // Synthetic, offline snapshot of what P1/P2 would contain on ENTER.
  // Never expose raw source words to logs or JNI in production.
  bool PreviewEnterWord(uint32_t offset,uint32_t& core,uint32_t& shadow)const noexcept{

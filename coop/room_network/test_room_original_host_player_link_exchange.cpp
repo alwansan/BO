@@ -8,7 +8,8 @@
 using namespace blackcoop;
 struct LinkIO {
  std::vector<uint8_t> bytes=std::vector<uint8_t>(0x700000);
- uint64_t scene=7;bool failCopy=false;
+ uint64_t scene=7,sourceGeneration=1,targetGeneration=2;
+ bool failCopy=false,failMap=false,aliasMap=false;
  LinkIO(){
   set(0x2D45D4u,0x100000u);set(0x2D12B8u,0x120000u);
   set(0x2D45F4u,0x140000u);set(0x2D1980u,0x150000u);
@@ -26,6 +27,16 @@ struct LinkIO {
  }
  bool OwnsActor(uint32_t p,uint32_t n)const{return p==0x300000u&&n==0x900u;}
  uint64_t Scene()const{return scene;}
+ uint64_t ActorGeneration(uint32_t p,uint32_t n)const noexcept{
+  if(n!=0x900u)return 0;
+  if(p==0x100030u)return sourceGeneration;
+  if(p==0x300000u)return targetGeneration;
+  return 0;
+ }
+ uint8_t* MapOriginalActor(uint32_t p,uint32_t n)noexcept{
+  if(failMap||!ActorGeneration(p,n)||!Span(p,n))return nullptr;
+  return bytes.data()+(aliasMap?0x100030u:p);
+ }
 };
 int main(){
  const OriginalPlayerStorageScene b{7,0x100000,0x120000,0x140000,0x150000};
@@ -68,5 +79,39 @@ int main(){
  {LinkIO io;OriginalPlayerLinkExchangePlan plan;bool fromForeign=true;
   std::thread thread([&]{fromForeign=plan.Prepare(io,b,p2);});thread.join();
   assert(!fromForeign&&!plan.Ready());}
- std::cout<<"ORIGINAL_P1_GRID_LINK_READONLY_EXCHANGE_PASS\n";
+ {
+  LinkIO io;OriginalPlayerLinkExchangePlan plan;
+  io.set(actor+0x34u,0x12345678u);io.set(p2+0x34u,0x87654321u);
+  io.set(actor+0x600u,11u);io.set(p2+0x600u,22u);
+  assert(plan.Prepare(io,b,p2));const auto before=io.bytes;
+  io.aliasMap=true;assert(!plan.EnterActorOnly(io)&&io.bytes==before);
+  io.aliasMap=false;io.failMap=true;
+  assert(!plan.EnterActorOnly(io)&&io.bytes==before);
+  io.failMap=false;
+  assert(plan.EnterActorOnly(io)&&plan.Entered()&&!plan.Ready());
+  uint32_t v=0;assert(io.Read32(actor+0x600u,v)&&v==22u);
+  assert(io.Read32(p2+0x600u,v)&&v==11u);
+  plan.Reset();assert(plan.Entered()&&!plan.Prepare(io,b,p2));
+  // Model an original P2 update while entered, including a live grid head.
+  io.set(actor+0x600u,33u);io.set(actor+0x34u,0x12345679u);
+  assert(plan.RestoreActorOnly(io)&&!plan.Entered());
+  assert(io.Read32(actor+0x600u,v)&&v==11u);
+  assert(io.Read32(p2+0x600u,v)&&v==33u);
+  assert(io.Read32(actor+0x34u,v)&&v==0x12345679u);
+  assert(io.Read32(p2+0x34u,v)&&v==0x87654321u);
+  assert(!plan.RestoreActorOnly(io)&&plan.Prepare(io,b,p2));
+ }
+ for(int mode=0;mode<3;mode++){
+  LinkIO io;OriginalPlayerLinkExchangePlan plan;
+  io.set(actor+0x600u,11u);io.set(p2+0x600u,22u);
+  assert(plan.Prepare(io,b,p2)&&plan.EnterActorOnly(io));
+  if(mode==0)++io.targetGeneration;
+  if(mode==1)io.set(p2+0x600u,99u);
+  if(mode==2)io.failMap=true;
+  const auto before=io.bytes;
+  assert(!plan.RestoreActorOnly(io)&&plan.Quarantined());
+  assert(io.bytes==before&&plan.Entered());
+  plan.Reset();assert(plan.Quarantined()&&!plan.Prepare(io,b,p2));
+ }
+ std::cout<<"ORIGINAL_P1_GRID_LINK_ACTOR_EXCHANGE_FIXTURE_PASS_NO_NATIVE_ACTIVATION\n";
 }
