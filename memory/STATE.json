@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-24_bo-coop-143-preserve-original-ai-human-update.md",
+  "lastSession": "memory/sessions/2026-11-24_bo-coop-144-human-frame-scheduler.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3949,15 +3949,13 @@
     "verification": "pending_new_ci"
   },
   "latestSourceHardening": {
-    "session": 143,
-    "code": "26f0ad222582d0eb5cce1c8f3df5be0879980330",
+    "session": 144,
+    "base": "b05fc6ab275dbace26ce1da68cf94eb28f370932",
     "status": "new_source_CI_unverified",
-    "previousSourceRun": 45316116744,
-    "previousParallelRun": 45316116553,
-    "previousUdpRun": 45316116567,
     "tracks": [
-      "human-only native frame update",
-      "preserve original enemy and ally AI"
+      "serial original human-only frame scheduler",
+      "all-participant readiness",
+      "preserve original AI"
     ],
     "originalAndroidHostP2P3P4ActorsLive": false,
     "originalGuestNPCDoorObjectivesApplied": false,

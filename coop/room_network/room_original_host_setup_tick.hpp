@@ -113,6 +113,49 @@ public:
   return p>=2&&p<=4?&lanes_[p-2]:nullptr;
  }
 };
+// Original extra-human update after the genuine 1F1080 world tick.
+// The original enemy/ally AI is untouched. The shared world is never
+// stepped twice. IO must provide the original controller/actor methods,
+// independent input, interaction context and verified physical proxy.
+enum class OriginalHumanUpdateStatus:uint8_t {Rejected,Updated,Quarantined};
+class OriginalHumanUpdateTick final {
+ const std::thread::id thread_=std::this_thread::get_id();
+ OriginalSetupScene binding_{};
+ uint32_t lastFrame_=0;
+ bool bound_=false,poisoned_=false;
+ bool owner()const noexcept{return thread_==std::this_thread::get_id();}
+ static bool same(const OriginalSetupScene& a,const OriginalSetupScene& b)noexcept{
+  return a.nativeScene==b.nativeScene&&a.signedEpoch==b.signedEpoch&&
+   a.world==b.world&&a.p1Actor==b.p1Actor&&a.p1Owner==b.p1Owner&&
+   a.ownedActor==b.ownedActor&&a.ownedOwner==b.ownedOwner&&a.peer==b.peer;
+ }
+public:
+ template<class IO>OriginalHumanUpdateStatus Tick(IO& io,
+      const OriginalSetupScene& scope,uint32_t frame){
+  if(!owner()||!frame||frame<=lastFrame_||!scope.nativeScene||
+     !scope.signedEpoch||scope.peer<2||scope.peer>4)return OriginalHumanUpdateStatus::Rejected;
+  if(poisoned_)return OriginalHumanUpdateStatus::Quarantined;
+  if(bound_&&!same(binding_,scope)){poisoned_=true;return OriginalHumanUpdateStatus::Quarantined;}
+  // No mutation before the original per-human setup, physical proxy,
+  // exact frame input and full restored P1 context are all proven.
+  try{if(!io.ReadyForOriginalHumanUpdate(scope,frame))return OriginalHumanUpdateStatus::Rejected;}
+  catch(...){return OriginalHumanUpdateStatus::Rejected;}
+  binding_=scope;bound_=true;lastFrame_=frame;
+  bool ok=false,restored=false,attempted=false,restoreAttempted=false;
+  try{
+   attempted=true;
+   if(io.EnterOwnedOriginalContext(scope))
+    ok=io.CallOriginalHumanUpdate(scope,frame);
+   restoreAttempted=true;
+   restored=io.RestoreOriginalP1(scope);
+   if(ok&&restored&&io.FullP1Restored(scope))return OriginalHumanUpdateStatus::Updated;
+  }catch(...){
+   if(attempted&&!restoreAttempted)try{(void)io.RestoreOriginalP1(scope);}catch(...){}
+  }
+  poisoned_=true;return OriginalHumanUpdateStatus::Quarantined;
+ }
+ bool Quarantined()const noexcept{return owner()&&poisoned_;}
+};
 // Runs the independently bound P2/P3/P4 setup lanes on the same original
 // post-world frame. Original singleton contexts must be visited serially,
 // not on concurrent threads. One failed restoration stops ALL lanes.
@@ -120,7 +163,8 @@ class OriginalSetupFrameScheduler final {
  const std::thread::id thread_=std::this_thread::get_id();
  OriginalHumanSetupLanes lanes_;
  std::array<OriginalSetupScene,3> scopes_{};
- uint32_t frame_=0;uint8_t mask_=0;bool poisoned_=false;
+ std::array<OriginalHumanUpdateTick,3> updates_{};
+ uint32_t frame_=0;uint8_t mask_=0;bool poisoned_=false,setupComplete_=false;
  bool owner()const noexcept{return thread_==std::this_thread::get_id();}
  static bool overlaps(uint32_t a,uint32_t n,uint32_t b,uint32_t m)noexcept{
   return uint64_t(a)<uint64_t(b)+m&&uint64_t(b)<uint64_t(a)+n;
@@ -166,50 +210,36 @@ public:
     }else all=false;
    }catch(...){poisoned_=true;return OriginalSetupState::Quarantined;}
   }
+  setupComplete_=all;
   return all?OriginalSetupState::SetupFinished:OriginalSetupState::Waiting;
  }
- bool Quarantined()const noexcept{return owner()&&poisoned_;}
-};
-// Original extra-human update after the genuine 1F1080 world tick.
-// The original enemy/ally AI is untouched. The shared world is never
-// stepped twice. IO must provide the original controller/actor methods,
-// independent input, interaction context and verified physical proxy.
-enum class OriginalHumanUpdateStatus:uint8_t {Rejected,Updated,Quarantined};
-class OriginalHumanUpdateTick final {
- const std::thread::id thread_=std::this_thread::get_id();
- OriginalSetupScene binding_{};
- uint32_t lastFrame_=0;
- bool bound_=false,poisoned_=false;
- bool owner()const noexcept{return thread_==std::this_thread::get_id();}
- static bool same(const OriginalSetupScene& a,const OriginalSetupScene& b)noexcept{
-  return a.nativeScene==b.nativeScene&&a.signedEpoch==b.signedEpoch&&
-   a.world==b.world&&a.p1Actor==b.p1Actor&&a.p1Owner==b.p1Owner&&
-   a.ownedActor==b.ownedActor&&a.ownedOwner==b.ownedOwner&&a.peer==b.peer;
- }
-public:
- template<class IO>OriginalHumanUpdateStatus Tick(IO& io,
-      const OriginalSetupScene& scope,uint32_t frame){
-  if(!owner()||!frame||frame<=lastFrame_||!scope.nativeScene||
-     !scope.signedEpoch||scope.peer<2||scope.peer>4)return OriginalHumanUpdateStatus::Rejected;
+ // After ALL setup lanes finish, advance human-only original frames on
+ // the same owner thread. A setup frame can never also be an update frame.
+ // Preflight every participant before touching any original actor.
+ template<class IO>OriginalHumanUpdateStatus TickHumans(const std::array<IO*,3>& io,uint32_t frame){
+  if(!owner()||!mask_||!frame)return OriginalHumanUpdateStatus::Rejected;
   if(poisoned_)return OriginalHumanUpdateStatus::Quarantined;
-  if(bound_&&!same(binding_,scope)){poisoned_=true;return OriginalHumanUpdateStatus::Quarantined;}
-  // No mutation before the original per-human setup, physical proxy,
-  // exact frame input and full restored P1 context are all proven.
-  try{if(!io.ReadyForOriginalHumanUpdate(scope,frame))return OriginalHumanUpdateStatus::Rejected;}
-  catch(...){return OriginalHumanUpdateStatus::Rejected;}
-  binding_=scope;bound_=true;lastFrame_=frame;
-  bool ok=false,restored=false,attempted=false,restoreAttempted=false;
+  if(!setupComplete_||frame<=frame_)return OriginalHumanUpdateStatus::Rejected;
+  for(unsigned i=0;i<3;i++)if(mask_&(2u<<i))
+   if(!io[i]||!scopes_[i].peer)return OriginalHumanUpdateStatus::Rejected;
+  frame_=frame;
   try{
-   attempted=true;
-   if(io.EnterOwnedOriginalContext(scope))
-    ok=io.CallOriginalHumanUpdate(scope,frame);
-   restoreAttempted=true;
-   restored=io.RestoreOriginalP1(scope);
-   if(ok&&restored&&io.FullP1Restored(scope))return OriginalHumanUpdateStatus::Updated;
-  }catch(...){
-   if(attempted&&!restoreAttempted)try{(void)io.RestoreOriginalP1(scope);}catch(...){}
-  }
-  poisoned_=true;return OriginalHumanUpdateStatus::Quarantined;
+   for(unsigned i=0;i<3;i++)if(mask_&(2u<<i)){
+    if(!lanes_.At(static_cast<uint8_t>(i+2))->ReadyForPhysicsNow(*io[i])){
+     poisoned_=true;return OriginalHumanUpdateStatus::Quarantined;
+    }
+    if(!io[i]->ReadyForOriginalHumanUpdate(scopes_[i],frame))
+     return OriginalHumanUpdateStatus::Rejected;
+   }
+   // Original singleton contexts are serial. Any failed update stops
+   // the entire scene; never rerun an earlier human or the world.
+   for(unsigned i=0;i<3;i++)if(mask_&(2u<<i)){
+    if(updates_[i].Tick(*io[i],scopes_[i],frame)!=OriginalHumanUpdateStatus::Updated){
+     poisoned_=true;return OriginalHumanUpdateStatus::Quarantined;
+    }
+   }
+  }catch(...){poisoned_=true;return OriginalHumanUpdateStatus::Quarantined;}
+  return OriginalHumanUpdateStatus::Updated;
  }
  bool Quarantined()const noexcept{return owner()&&poisoned_;}
 };

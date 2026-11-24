@@ -139,5 +139,36 @@ int main(){
   assert(tick.Tick(e,s,2)==OriginalHumanUpdateStatus::Quarantined&&e.left==2);
   assert(tick.Tick(e,s,3)==OriginalHumanUpdateStatus::Quarantined&&e.updates==2);
  }
+ {
+  struct UpdateIO:MockEngine {
+   bool ready=true;unsigned updates=0;
+   bool ReadyForOriginalHumanUpdate(const OriginalSetupScene&,uint32_t){return ready;}
+   bool CallOriginalHumanUpdate(const OriginalSetupScene&,uint32_t){++updates;return callOk;}
+  };
+  OriginalSetupFrameScheduler scheduler;
+  std::array<UpdateIO,3> engines{};
+  std::array<UpdateIO*,3> io{&engines[0],&engines[1],&engines[2]};
+  for(uint8_t p=2;p<=4;p++){
+   const auto s=scoped(p);auto& e=engines[p-2];
+   e.actor=s.ownedActor;e.owner=s.ownedOwner;e.completeAt=1;
+   assert(scheduler.Bind(e,s,15));
+  }
+  assert(scheduler.TickHumans(io,1)==OriginalHumanUpdateStatus::Rejected);
+  assert(scheduler.Tick(io,1)==OriginalSetupState::SetupFinished);
+  assert(scheduler.TickHumans(io,1)==OriginalHumanUpdateStatus::Rejected);
+  engines[2].ready=false;
+  assert(scheduler.TickHumans(io,2)==OriginalHumanUpdateStatus::Rejected);
+  for(const auto& e:engines)assert(e.updates==0);
+  engines[2].ready=true;
+  assert(scheduler.TickHumans(io,2)==OriginalHumanUpdateStatus::Rejected);
+  assert(scheduler.TickHumans(io,3)==OriginalHumanUpdateStatus::Updated);
+  for(const auto& e:engines)assert(e.updates==1&&e.left==2);
+  assert(scheduler.TickHumans(io,3)==OriginalHumanUpdateStatus::Rejected);
+  engines[1].callOk=false;
+  assert(scheduler.TickHumans(io,4)==OriginalHumanUpdateStatus::Quarantined);
+  assert(engines[0].updates==2&&engines[1].updates==2&&engines[2].updates==1);
+  assert(engines[1].left==3);
+  assert(scheduler.TickHumans(io,5)==OriginalHumanUpdateStatus::Quarantined);
+ }
  std::cout<<"ORIGINAL_BLACK_P2_P3_P4_MULTIFRAME_SETUP_CONTRACT_PASS_NO_LIVE_GUEST_CALL\n";
 }
