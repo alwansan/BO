@@ -19,18 +19,27 @@ class OriginalGuestHostObjectInbox final {
  static constexpr size_t kCapacity=64u;
  std::array<OriginalHostObjectEvent,kCapacity> queue_{};
  std::thread::id gameThread_{};
- bool bound_=false,scoped_=false,poisoned_=false;
+ bool bound_=false,scoped_=false,poisoned_=false,revoked_=false;
+ OriginalGuestLaunchMatchKey next_{};
  uint32_t epoch_=0,revision_=0,seq_=0,tick_=0,episode_=0;
  uint8_t level_=0,stage_=0,self_=0,participants_=0;
  uint64_t token_=0;
  size_t head_=0,count_=0;
+ static bool sameKey(const OriginalGuestLaunchMatchKey& a,const OriginalGuestLaunchMatchKey& b)noexcept{
+  return a.originalEpisode==b.originalEpisode&&a.sceneEpoch==b.sceneEpoch&&
+   a.rosterRevision==b.rosterRevision&&a.tokenHi==b.tokenHi&&a.tokenLo==b.tokenLo&&
+   a.level==b.level&&a.stage==b.stage&&a.selfSlot==b.selfSlot&&a.participants==b.participants;
+ }
+ static bool newer(uint32_t epoch,uint32_t revision,uint32_t oldEpoch,uint32_t oldRevision)noexcept{
+  return epoch>oldEpoch||(epoch==oldEpoch&&revision>oldRevision);
+ }
  bool owner()const noexcept{
   return !bound_||gameThread_==std::this_thread::get_id();
  }
 public:
  void Reset()noexcept{
   if(!owner())return;
-  queue_={};scoped_=poisoned_=false;
+  queue_={};scoped_=poisoned_=revoked_=false;next_={};
   epoch_=revision_=seq_=tick_=episode_=0;token_=0;head_=count_=0;
   level_=stage_=self_=participants_=0;
  }
@@ -40,11 +49,20 @@ public:
  bool CheckLocalLaunch(const OriginalGuestLaunchMatchKey& key)noexcept{
   if(!owner()||poisoned_)return false;
   if(!scoped_)return true;
+  if(revoked_){
+   if(sameKey(key,next_))return true;
+   if(!newer(key.sceneEpoch,key.rosterRevision,next_.sceneEpoch,next_.rosterRevision))return false;
+   next_=key;return true;
+  }
   const uint64_t token=(uint64_t(key.tokenHi)<<32)|key.tokenLo;
   if(key.sceneEpoch!=epoch_||key.rosterRevision!=revision_||token!=token_){
    // Discard old pending values, but retain replay watermarks until a
    // strictly newer signed scope is accepted by Ingest.
-   queue_={};head_=count_=0;return true;
+   queue_={};head_=count_=0;
+   if(!newer(key.sceneEpoch,key.rosterRevision,epoch_,revision_)){
+    poisoned_=true;return false;
+   }
+   revoked_=true;next_=key;return true;
   }
   if(key.originalEpisode!=episode_||key.level!=level_||key.stage!=stage_||
      key.selfSlot!=self_||key.participants!=participants_){
@@ -87,6 +105,7 @@ public:
       (matched.sceneEpoch==epoch_&&matched.rosterRevision<revision_)||
       (matched.sceneEpoch==epoch_&&matched.rosterRevision==revision_&&
        token!=token_)))return false;
+  if(revoked_&&!sameKey(matched,next_))return false;
   bool sameScope=scoped_&&
       epoch_==matched.sceneEpoch&&revision_==matched.rosterRevision&&
       token_==token;
@@ -97,8 +116,8 @@ public:
    }
   }else{
    // Different authenticated story: old changes never survive a restart.
+   if(seq!=1u)return false; // invalid first packet cannot erase watermark
    Reset();
-   if(seq!=1u)return false;
   }
   if(count_>=kCapacity){
    poisoned_=true;return false; // no silent drops on overflow

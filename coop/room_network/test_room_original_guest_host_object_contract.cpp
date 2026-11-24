@@ -89,9 +89,16 @@ int main(){
   auto next=key;++next.sceneEpoch;++next.tokenLo;
   assert(fresh.CheckLocalLaunch(next)&&fresh.Pending()==0);
   assert(!fresh.Take(event));
+  msg[4]=2;msg[5]=2;
+  assert(!fresh.Ingest(msg,10,key)&&!fresh.CheckLocalLaunch(key));
+  msg[4]=1;msg[5]=1;
   // A new signed scope can start from sequence 1, not inherit old events.
   msg[0]=static_cast<int32_t>(next.sceneEpoch);
   msg[3]=static_cast<int32_t>(next.tokenLo);
+  msg[4]=2;
+  assert(!fresh.Ingest(msg,10,next));
+  assert(!fresh.CheckLocalLaunch(key)); // malformed new first packet did not reset revocation
+  msg[4]=1;
   assert(fresh.Ingest(msg,10,next)&&fresh.Pending()==1);
  }
  {
