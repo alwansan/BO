@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-24_bo-coop-130-expired-quorum-reset.md",
+  "lastSession": "memory/sessions/2026-11-24_bo-coop-131-original-scene-p1-recovery.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3949,12 +3949,17 @@
     "verification": "pending_new_ci"
   },
   "latestSourceHardening": {
-    "session": 130,
-    "sourceRun": 45276818053,
-    "parallelRun": 45276818179,
-    "udpRun": 45276818177,
-    "androidRun": 45276818213,
-    "androidGameplayVerified": false,
-    "fix": "Reset expired canonical host quorum before accepting new frames"
+    "session": 131,
+    "code": "9566d66a9fcf599ad77337c934fdb5bb04d402bb",
+    "baseHead": "831902374a970d3b0c3a85599b40edd504a679ec",
+    "previousSourceRun": 45282869178,
+    "previousParallelRun": 45282869264,
+    "previousUdpRun": 45282869333,
+    "previousAndroidRun": 45282869137,
+    "status": "new_source_CI_unverified",
+    "fix": "Exact original launch identity, foreign-thread nonmutation and attempted P1 recovery after failed context entry",
+    "originalAndroidHostP2P3P4ActorsLive": false,
+    "originalGuestNPCDoorObjectivesApplied": false,
+    "ownerPhoneMicrotest": false
   }
 }
