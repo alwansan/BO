@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-24_bo-coop-133-android-actor-mapping-and-object-revocation.md",
+  "lastSession": "memory/sessions/2026-11-24_bo-coop-134-sdk-system-allocation-lifetime.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3949,16 +3949,17 @@
     "verification": "pending_new_ci"
   },
   "latestSourceHardening": {
-    "session": 133,
-    "code": "a950eedbc7192074f600e2b2c734ba701365e7eb",
-    "previousSourceRun": 45308125631,
-    "previousParallelRun": 45308125801,
-    "previousUdpRun": 45308125590,
-    "previousAndroidRun": 45308125602,
+    "session": 134,
+    "code": "10f4bea6035c9997e7cec78fcdc88794452638f6",
+    "previousSourceRun": 45308532969,
+    "previousParallelRun": 45308532925,
+    "previousUdpRun": 45308532910,
+    "previousAndroidRun": 45308533084,
+    "previousAllPassed": true,
     "status": "new_source_CI_unverified",
-    "fix": "Narrow real Android actor mapping adapter requiring original allocator lifetime provider; original guest object queue revocation",
-    "originalAndroidMappingAdapterImplemented": true,
-    "originalAllocatorLifetimeProviderImplemented": false,
+    "fix": "Actual pinned SDK AllocSystem/FreeSystem/Decommit exact allocation generation tracking",
+    "systemLifetimeProviderImplemented": true,
+    "originalCoreHeapLifetimeVerified": false,
     "originalAndroidHostP2P3P4ActorsLive": false,
     "originalGuestNPCDoorObjectivesApplied": false,
     "ownerPhoneMicrotest": false

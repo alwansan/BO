@@ -1,3 +1,10 @@
+### Session134 (2026-11-24): real pinned SDK system allocation lifetime evidence
+
+- Verified Session133 code a950eedb: source 45308532969, parallel source 45308532925, UDP 45308532910 and Android 45308533084 all SUCCESS. APK remains NO GAMEPLAY.
+- Code 10f4bea6035c9997e7cec78fcdc88794452638f6 stages narrowly anchored edits to disposable pinned Xbox SDK memory.cpp and memory.h. The real AllocSystem/FreeSystem lifecycle records a monotonically distinct generation for exact live allocation base/size under existing allocator lock; FreeSystem revokes it and overlapping Decommit invalidates it even after recommit. Interior addresses and incorrect sizes return zero. Tracking failures disable evidence rather than alter allocation success. No original game asset edits.
+- CI compiles and exercises actual patched SDK allocator on Linux (not a simulated allocator): independent allocations, exact base/size, free/reuse at same address, decommit/recommit invalidation. Android build now stages these two reviewed SDK files alongside existing file-open witness; compile-only smoke references the provider. New results pending. This proves only system allocations when CI passes, NOT arbitrary game-heap suballocation ownership, actual Android original core lifetime, live actor exchange or gameplay.
+- Next P0: identify actual original game core allocation/teardown provenance and independently bound per-player camera, animation, audio, weapon, FX/physics/AI/visible body contexts; connect setup call only after safe restoration and teardown. Guest canonical NPC/door/objective application remains independent parallel track. No phone microtests, preserve all existing strict acceptance criteria. Only experiment/black-coop writable; main, CL, biso, original XBE/ISO/saves/private logs unchanged.
+
 ### Session133 (2026-11-24): Android actor mapping adapter and original guest object queue revocation
 
 - Verified Session132 source 45308125631 SUCCESS, three parallel tracks 45308125801 SUCCESS, UDP 45308125590 SUCCESS; Android 45308125602 was building at inspection. Original Windows two-player engine proof 45239818055 remains independent.
