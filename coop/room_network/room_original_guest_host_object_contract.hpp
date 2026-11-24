@@ -14,6 +14,7 @@ struct OriginalHostObjectEvent {
  uint64_t token=0,objectKey=0;
  uint8_t kind=0,state=0;
 };
+enum class OriginalObjectApplyResult:uint8_t { Empty, WaitingForIdentity, Applied, Quarantined, Rejected };
 class OriginalGuestHostObjectInbox final {
  static constexpr size_t kCapacity=64u;
  std::array<OriginalHostObjectEvent,kCapacity> queue_{};
@@ -120,6 +121,37 @@ public:
   output=queue_[head_];
   queue_[head_]={};
   head_=(head_+1u)%kCapacity;--count_;return true;
+ }
+ // Transactional engine-side consumer. Do not pop until the exact live
+ // original object is resolved and its authoritative state is read back.
+ // IO must prove scene, stable identity, generation and real original
+ // callback semantics; no production engine adapter exists yet.
+ template<class IO>OriginalObjectApplyResult ApplyNext(IO& io,
+     const OriginalGuestLaunchMatchKey& matched,uint64_t nativeScene){
+  if(!owner()||!nativeScene)return OriginalObjectApplyResult::Rejected;
+  if(poisoned_||!CheckLocalLaunch(matched))return OriginalObjectApplyResult::Quarantined;
+  if(!count_)return OriginalObjectApplyResult::Empty;
+  const auto event=queue_[head_];
+  uint32_t actor=0;uint64_t generation=0;
+  try{
+   if(io.OriginalScene()!=nativeScene)return OriginalObjectApplyResult::Rejected;
+   if(!io.ResolveOriginalObject(event.objectKey,event.kind,actor,generation))
+    return OriginalObjectApplyResult::WaitingForIdentity;
+   if(actor<0x10000u||!generation||
+      !io.StillOwnsOriginalObject(event.objectKey,event.kind,actor,generation))
+    return OriginalObjectApplyResult::WaitingForIdentity;
+   // Once attempted, an uncertain mutation cannot be replayed blindly.
+   if(!io.ApplyOriginalHostState(actor,event.kind,event.state)||
+      io.OriginalScene()!=nativeScene||
+      !io.StillOwnsOriginalObject(event.objectKey,event.kind,actor,generation)||
+      !io.VerifyOriginalHostState(actor,event.kind,event.state)){
+    poisoned_=true;return OriginalObjectApplyResult::Quarantined;
+   }
+  }catch(...){
+   poisoned_=true;return OriginalObjectApplyResult::Quarantined;
+  }
+  queue_[head_]={};head_=(head_+1u)%kCapacity;--count_;
+  return OriginalObjectApplyResult::Applied;
  }
  size_t Pending()const noexcept{return owner()&&!poisoned_?count_:0u;}
  bool Poisoned()const noexcept{return owner()&&poisoned_;}

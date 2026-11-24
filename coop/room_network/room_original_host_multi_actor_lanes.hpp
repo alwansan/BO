@@ -101,6 +101,15 @@ public:
   const auto& p=slots_[peer-2];
   return p.peer==peer&&p.phase==OriginalHumanPhase::Gameplay&&trustworthy(p);
  }
+ // Runtime routing must additionally prove every participating lane was
+ // independently observed at this ORIGINAL frame. A historic Gameplay
+ // proof alone is not authorization to forward current input.
+ bool AllPadsReadyAtFrame(uint32_t epoch,uint32_t frame)const noexcept{
+  if(!owner()||!bound_||quarantined_||!frame||epoch!=scope_.signedEpoch)return false;
+  for(uint8_t peer=2;peer<=4;peer++)if(scope_.participants&(1u<<(peer-1)))
+   if(!PadReady(peer,epoch)||slots_[peer-2].frame!=frame)return false;
+  return true;
+ }
  unsigned Progress(uint8_t peer)const noexcept{
   return owner()&&peer>=2&&peer<=4?
     static_cast<unsigned>(slots_[peer-2].phase):0;

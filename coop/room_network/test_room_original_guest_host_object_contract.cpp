@@ -3,6 +3,19 @@
 #include <cassert>
 #include <iostream>
 #include <thread>
+struct ObjectIO {
+ uint64_t scene=99,generation=8;
+ bool resolved=false,owns=true,apply=true,verify=true;
+ unsigned calls=0;uint8_t state=0;
+ uint64_t OriginalScene()const{return scene;}
+ bool ResolveOriginalObject(uint64_t key,uint8_t kind,uint32_t& actor,uint64_t& gen){
+  if(!resolved||key!=555||kind!=1)return false;
+  actor=0x100000;gen=generation;return true;
+ }
+ bool StillOwnsOriginalObject(uint64_t,uint8_t,uint32_t,uint64_t gen){return owns&&gen==generation;}
+ bool ApplyOriginalHostState(uint32_t,uint8_t,uint8_t value){++calls;state=value;return apply;}
+ bool VerifyOriginalHostState(uint32_t,uint8_t,uint8_t value){return verify&&value==state;}
+};
 int main(){
  using namespace blackcoop;
  OriginalGuestHostObjectInbox inbox;
@@ -80,6 +93,23 @@ int main(){
   msg[0]=static_cast<int32_t>(next.sceneEpoch);
   msg[3]=static_cast<int32_t>(next.tokenLo);
   assert(fresh.Ingest(msg,10,next)&&fresh.Pending()==1);
+ }
+ {
+  OriginalGuestHostObjectInbox fresh;ObjectIO io;
+  msg[0]=static_cast<int32_t>(key.sceneEpoch);
+  msg[3]=static_cast<int32_t>(key.tokenLo);msg[4]=1;msg[5]=1;
+  assert(fresh.Ingest(msg,10,key));
+  assert(fresh.ApplyNext(io,key,99)==OriginalObjectApplyResult::WaitingForIdentity);
+  assert(fresh.Pending()==1&&io.calls==0);
+  io.resolved=true;
+  assert(fresh.ApplyNext(io,key,100)==OriginalObjectApplyResult::Rejected);
+  assert(fresh.ApplyNext(io,key,99)==OriginalObjectApplyResult::Applied);
+  assert(fresh.Pending()==0&&io.calls==1&&io.state==1);
+  msg[4]=2;msg[5]=2;assert(fresh.Ingest(msg,10,key));
+  io.verify=false;
+  assert(fresh.ApplyNext(io,key,99)==OriginalObjectApplyResult::Quarantined);
+  assert(fresh.ApplyNext(io,key,99)==OriginalObjectApplyResult::Quarantined);
+  assert(io.calls==2);
  }
  std::cout<<"ORIGINAL_GUEST_HOST_OBJECT_INBOX_PASS: native 64 FIFO, exact original stage/token, replay/overflow/cross-thread/abort; NO engine object write"<<std::endl;
 }

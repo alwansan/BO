@@ -27,6 +27,12 @@ int main(){
   assert(lanes.PadReady(peer,42)&&!lanes.PadReady(peer,41));
  }
  assert(lanes.Progress(4)==5);
+ assert(lanes.AllPadsReadyAtFrame(42,5));
+ assert(!lanes.AllPadsReadyAtFrame(42,6)&&!lanes.AllPadsReadyAtFrame(41,5));
+ auto refresh=make(4,0x200000u);
+ refresh.phase=OriginalHumanPhase::Gameplay;refresh.frame=6;
+ assert(lanes.Advance(refresh));
+ assert(!lanes.AllPadsReadyAtFrame(42,5)&&!lanes.AllPadsReadyAtFrame(42,6));
  auto repeated=make(2,0x180000u);repeated.frame=4;
  assert(!lanes.Advance(repeated));
  auto changed=make(2,0x190000u);changed.frame=6;
