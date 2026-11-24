@@ -1,3 +1,10 @@
+### Session138 (2026-11-24): composed presentation transaction and exact canonical application authorization
+
+- Session137 fddd7605 source 45313595634, parallel 45313595708 and UDP 45313595666 all SUCCESS; Android 45313595689 still building at initial inspection.
+- a9349ba92accfef824497171f823e17e3fccab25 composes animation, weapon/sound and FX exchanges into OriginalPresentationTransaction, with shared OriginalPresentationArbiter across P2/P3/P4. Only one original singleton presentation context can be active at once on the owner thread, with reverse-order recovery after partial entry and scene-wide quarantine after uncertain restoration. Fixture exercises combined enter/restore, P3/P4 exclusion, partial FX failure rollback, generation-loss quarantine. It implements the interface expected by OriginalSetupKernelIO but still requires real original allocator/constructor provenance and native mapping IO; no live activation.
+- Adds guest MatchesForApplication requiring exact signed launch, original scene, current avatar and NPC tick pair, roster mask and fresh data before authorizing future original callbacks. f610d382abb3d5c21fdfe5a5fc6f2194f32fd83a adds fixture for correct scope and changed token/scene/frames. Actual engine application still missing.
+- Continue all tracks: original core/camera/animation allocation lifetime, weapon/audio constructors and exclusive heap slots, native presentation IO, live P2-P4 setup/physics/AI/body/ports, original guest NPC/door/mission callbacks. No phone microtests, no gameplay claim from CI. Only experiment/black-coop writable; preserve main, CL, biso, original XBE/ISO/saves/private logs. New CI pending.
+
 ### Session137 (2026-11-24): original presentation FX and weapon/sound context exchange
 
 - Session136 parallel source 45313317862 verified all three jobs SUCCESS; UDP 45313317747 SUCCESS; earlier native setup SDK source 45313227305 SUCCESS. Full Session136 preflight and Android pending at first inspection.
