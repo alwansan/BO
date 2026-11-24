@@ -82,6 +82,9 @@ jobs:
             bool OriginalContextActive(const blackcoop::OriginalSetupScene&) { return false; }
             bool RestoreOriginal(const blackcoop::OriginalSetupScene&) { return false; }
             bool OriginalP1Restored(const blackcoop::OriginalSetupScene&) { return false; }
+            bool ReadyForHumanFrame(const blackcoop::OriginalSetupScene&,uint32_t) { return false; }
+            bool OriginalHumanInputActive(const blackcoop::OriginalSetupScene&,uint32_t,uint32_t,uint32_t) { return false; }
+            bool FinishOriginalHumanFrame(const blackcoop::OriginalSetupScene&,uint32_t) { return false; }
           };
           void compile_only(X86Context& ctx, uint64_t (*scene)() noexcept,
                             uint64_t (*generation)(uint32_t,uint32_t) noexcept) {
@@ -122,6 +125,8 @@ jobs:
             blackcoop::OriginalSetupScene setupScene{};
             (void) setup.Bind(setupIo,setupScene);
             (void) setup.Tick(setupIo,1u);
+            blackcoop::OriginalHumanUpdateTick humanUpdate;
+            (void) humanUpdate.Tick(setupIo,setupScene,2u);
           }
           CPP
           g++ -std=c++20 -pthread -fsyntax-only \

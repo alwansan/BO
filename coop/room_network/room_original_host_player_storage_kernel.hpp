@@ -256,6 +256,43 @@ public:
   result=kernel::CallGuest(call,0x1E0E40u,{});
   return true;
  }
+ // Original human-only update ABI from pinned PC black_p2_update.
+ // No world/AI step. A real provider must prove input and interaction
+ // ownership, physics proxy and complete scene context before calls.
+ bool ReadyForOriginalHumanUpdate(const OriginalSetupScene& s,uint32_t frame){
+  return match(s)&&frame&&FullP1Restored(s)&&
+    presentation_.ReadyForHumanFrame(s,frame);
+ }
+ bool CallOriginalHumanUpdate(const OriginalSetupScene& s,uint32_t frame){
+  uint32_t ctl=0,source=0,dt=0,cv=0,av=0,cf=0,af=0,post=0;
+  if(!match(s)||!frame||poisoned_||!entered_||!actor_.Entered()||
+     !camera_.Entered()||!presentation_.OriginalContextActive(s)||
+     !Read32(binding_.core+0x354u,ctl)||!storage_.Span(ctl,0xB0u)||
+     !Read32(ctl+0xA8u,source)||
+     (source&&(source!=view_.input||!storage_.Owns(source,0x40u)))||
+     !presentation_.OriginalHumanInputActive(s,frame,ctl,source)||
+     !Read32(binding_.core+0x1Cu,dt)||!Read32(ctl,cv)||
+     !Read32(s.p1Actor,av)||av!=0x28CFE0u||
+     !storage_.Span(cv,4u)||!storage_.Span(av,0x14u)||
+     !Read32(cv,cf)||!Read32(av,af)||!Read32(av+0x10u,post)||
+     post!=0x1E5FA0u||!dispatch::Find(cf)||!dispatch::Find(af)||
+     !dispatch::Find(post))return false;
+  // Exact thiscall ABI: controller receives ESI=actor; actor methods
+  // receive dt bits on the stack. All calls isolate original CPU context.
+  X86Context c=ctx_;
+  c.eax=c.edx=c.ebx=c.edi=0;c.ecx=ctl;c.esi=s.p1Actor;
+  (void)kernel::CallGuest(c,cf,{});
+  if(!presentation_.OriginalContextActive(s))return false;
+  c=ctx_;c.eax=c.edx=c.ebx=c.esi=c.edi=0;c.ecx=s.p1Actor;
+  (void)kernel::CallGuest(c,af,{dt});
+  if(!presentation_.OriginalContextActive(s))return false;
+  c=ctx_;c.eax=c.edx=c.ebx=c.esi=c.edi=0;c.ecx=s.p1Actor;
+  (void)kernel::CallGuest(c,post,{dt});
+  // Original FX aging and use/pickup context are part of the provider,
+  // not new bot AI logic. Do not mark a human frame complete without them.
+  return presentation_.OriginalContextActive(s)&&
+    presentation_.FinishOriginalHumanFrame(s,frame);
+ }
  bool RestoreOriginalP1(const OriginalSetupScene& s){
   if(!match(s)||!attempted_||poisoned_)return false;
   bool ok=true;

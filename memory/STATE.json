@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-24_bo-coop-142-weapon-heap-install-ai-targets.md",
+  "lastSession": "memory/sessions/2026-11-24_bo-coop-143-preserve-original-ai-human-update.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3949,26 +3949,23 @@
     "verification": "pending_new_ci"
   },
   "latestSourceHardening": {
-    "session": 142,
-    "code": "c8cd507a2a97fb238f004b00dd07fe80b15363d2",
-    "weaponHeapCode": "8c4595ad46ebc9b93177a1526ce918a937793f59",
-    "previousSourceRun": 45314960140,
-    "previousParallelRun": 45314960212,
-    "previousUdpRun": 45314960165,
-    "previousAndroidRun": 45314960153,
+    "session": 143,
+    "code": "26f0ad222582d0eb5cce1c8f3df5be0879980330",
     "status": "new_source_CI_unverified",
+    "previousSourceRun": 45316116744,
+    "previousParallelRun": 45316116553,
+    "previousUdpRun": 45316116567,
     "tracks": [
-      "source exact original heap descriptor installation",
-      "SDK P2 descriptor mapping compile only",
-      "AI target ownership ledger"
+      "human-only native frame update",
+      "preserve original enemy and ally AI"
     ],
-    "originalCoreHeapLifetimeVerified": false,
-    "realP3P4WeaponHeapIdsVerified": false,
-    "nativePresentationProviderImplemented": false,
     "originalAndroidHostP2P3P4ActorsLive": false,
     "originalGuestNPCDoorObjectivesApplied": false,
-    "ownerPhoneMicrotest": false,
-    "failedSourceRun": 45315972119,
-    "failure": "AI ledger signedness; corrected in following commit"
+    "ownerPhoneMicrotest": false
+  },
+  "ownerOriginalBotAiDirective": {
+    "preserveOriginalEnemyAndAllyAi": true,
+    "allowAiChangesOnlyAfterExplicitOwnerRequest": true,
+    "removeUnactivatedTargetRewrite": true
   }
 }
