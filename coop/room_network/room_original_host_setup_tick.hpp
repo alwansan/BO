@@ -218,6 +218,10 @@ public:
      io.InputGeneration(input)!=gen){poisoned_=true;return false;}
   return true;
  }
+ template<class IO>bool Resolve(IO& io,uint32_t input,uint8_t peer,
+     uint32_t& first,uint32_t& pad)const{
+  return Active(io,input,peer)&&topology(io,peer,first,pad);
+ }
  template<class IO>bool Active(IO& io,uint32_t input,uint8_t peer)const{
   uint32_t first=0,pad=0,current=0;
   return owner()&&!poisoned_&&generation_&&input==input_&&peer==peer_&&
@@ -256,7 +260,7 @@ public:
   bool ok=false,restored=false,attempted=false,restoreAttempted=false;
   try{
    attempted=true;
-   if(io.EnterOwnedOriginalContext(scope))
+   if(io.EnterOwnedOriginalHumanContext(scope))
     ok=io.CallOriginalHumanUpdate(scope,frame);
    restoreAttempted=true;
    restored=io.RestoreOriginalP1(scope);

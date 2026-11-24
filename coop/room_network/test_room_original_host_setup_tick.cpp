@@ -28,6 +28,9 @@ struct MockEngine {
   ++entered;if(enterThrows)throw 2;
   return enterOk&&s.ownedActor==actor&&s.ownedOwner==owner;
  }
+ bool EnterOwnedOriginalHumanContext(const OriginalSetupScene& s){
+  return EnterOwnedOriginalContext(s);
+ }
  bool GuestSetup1E0E40(uint32_t world,uint32_t eax,uint32_t& out){
   assert(world==0x300000u&&eax==0);++calls;
   if(throwing)throw 1;

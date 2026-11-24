@@ -132,5 +132,29 @@ int main(){
   const auto before=io.bytes;
   assert(!camera.Restore(io)&&camera.Quarantined()&&io.bytes==before);
  }
+ {
+  LinkIO io;OriginalPlayerLinkExchangePlan plan;
+  const uint32_t firstInput=0x400000u,extraInput=0x410000u,
+    firstPad=0x420000u,extraPad=0x420120u;
+  io.set(actor+0x600u,firstInput);io.set(actor+0x604u,firstPad);
+  io.set(p2+0x600u,firstInput);io.set(p2+0x604u,firstPad);
+  io.set(p2+0x608u,0x12345678u);
+  io.set(actor+0x34u,firstPad);
+  assert(plan.Prepare(io,b,p2));const auto before=io.bytes;
+  assert(!plan.EnterActorOnly(io,firstInput,extraInput,firstPad,extraPad));
+  assert(io.bytes==before);
+  io.set(actor+0x34u,0);
+  assert(plan.Prepare(io,b,p2));
+  assert(plan.EnterActorOnly(io,firstInput,extraInput,firstPad,extraPad));
+  uint32_t v=0;
+  assert(io.Read32(actor+0x600u,v)&&v==extraInput);
+  assert(io.Read32(actor+0x604u,v)&&v==extraPad);
+  assert(io.Read32(actor+0x608u,v)&&v==0x12345678u);
+  assert(plan.RestoreActorOnly(io));
+  assert(io.Read32(actor+0x600u,v)&&v==firstInput);
+  assert(io.Read32(actor+0x604u,v)&&v==firstPad);
+  assert(io.Read32(p2+0x600u,v)&&v==extraInput);
+  assert(io.Read32(p2+0x604u,v)&&v==extraPad);
+ }
  std::cout<<"ORIGINAL_P1_GRID_LINK_ACTOR_EXCHANGE_FIXTURE_PASS_NO_NATIVE_ACTIVATION\n";
 }

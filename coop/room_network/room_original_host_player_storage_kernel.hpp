@@ -264,16 +264,30 @@ public:
  bool OwnsOriginalCamera(uint32_t p,uint32_t n)const noexcept{
   return owner()&&p==view_.owner&&n==0x16C0u&&storage_.Owns(p,n);
  }
- bool EnterOwnedOriginalContext(const OriginalSetupScene& s){
+private:
+ bool EnterContext(const OriginalSetupScene& s,bool human){
   if(!match(s)||attempted_||poisoned_)return false;
   attempted_=true;restored_=false;
-  if(!presentation_.CanEnterOriginal(s)||!actor_.Prepare(actorIo_,binding_,view_.actor)||
-     !actor_.EnterActorOnly(actorIo_)||
-     !camera_.Enter(cameraIo_,binding_.scene,binding_.owner,view_.owner))return false;
+  uint32_t ctl=0,source=0,firstPad=0,extraPad=0;
+  if(!presentation_.CanEnterOriginal(s))return false;
+  if(human){
+   if(!Read32(binding_.core+0x354u,ctl)||!storage_.Span(ctl,0xB0u)||
+      !Read32(ctl+0xA8u,source)||!padBinding_.Bind(*this,view_.input,s.peer)||
+      !padBinding_.Resolve(*this,view_.input,s.peer,firstPad,extraPad)||
+      (source&&(!InputGeneration(source)||source==view_.input)))return false;
+  }
+  if(!actor_.Prepare(actorIo_,binding_,view_.actor))return false;
+  if(source){
+   if(!actor_.EnterActorOnly(actorIo_,source,view_.input,firstPad,extraPad))return false;
+  }else if(!actor_.EnterActorOnly(actorIo_))return false;
+  if(!camera_.Enter(cameraIo_,binding_.scene,binding_.owner,view_.owner))return false;
   presentationAttempted_=true;
   if(!presentation_.EnterOriginal(s)||!presentation_.OriginalContextActive(s))return false;
   entered_=true;return true;
  }
+public:
+ bool EnterOwnedOriginalContext(const OriginalSetupScene& s){return EnterContext(s,false);}
+ bool EnterOwnedOriginalHumanContext(const OriginalSetupScene& s){return EnterContext(s,true);}
  bool GuestSetup1E0E40(uint32_t world,uint32_t eax,uint32_t& result){
   uint32_t current=0;
   if(!owner()||poisoned_||!entered_||!actor_.Entered()||!camera_.Entered()||
@@ -302,8 +316,7 @@ public:
      !Read32(cv,cf)||!Read32(av,af)||!Read32(av+0x10u,post)||
      post!=0x1E5FA0u||!dispatch::Find(cf)||!dispatch::Find(af)||
      !dispatch::Find(post))return false;
-  if(!padBinding_.Bind(*this,view_.input,s.peer)||
-     !padBinding_.Active(*this,view_.input,s.peer)||
+  if(!padBinding_.Active(*this,view_.input,s.peer)||
      !controllerSource_.Enter(*this,ctl,view_.input)||
      !Read32(ctl+0xA8u,source)||
      !presentation_.OriginalHumanInputActive(s,frame,ctl,source))return false;

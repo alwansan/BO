@@ -136,7 +136,16 @@ public:
  // are insufficient. All mapping operations are on one original game thread.
  // This primitive swaps actor words ONLY; the caller must coordinate the
  // independently owned camera, animation, input, audio and weapon contexts.
- template<class IO>bool EnterActorOnly(IO& io)noexcept{
+ template<class IO>bool EnterActorOnly(IO& io,uint32_t firstInput=0,
+      uint32_t extraInput=0,uint32_t firstPad=0,uint32_t extraPad=0)noexcept{
+  // Pinned black_p2_update replaces exact donor input/pad aliases in
+  // the extra human actor. Never write original world-owned links.
+  const bool rebind=firstInput||extraInput||firstPad||extraPad;
+  if(rebind&&(!range(firstInput,0x40u)||!range(extraInput,0x40u)||
+     !range(firstPad,0x120u)||!range(extraPad,0x120u)||
+     firstInput==extraInput||firstPad==extraPad||
+     firstInput==firstPad||firstInput==extraPad||
+     extraInput==firstPad||extraInput==extraPad))return false;
   if(!SourceStillCurrent(io))return false;
   const auto sg=io.ActorGeneration(source_,kBytes);
   const auto tg=io.ActorGeneration(target_,kBytes);
@@ -148,8 +157,18 @@ public:
      io.ActorGeneration(target_,kBytes)!=tg||
      std::memcmp(a,first_.data(),kBytes)!=0||
      std::memcmp(b,second_.data(),kBytes)!=0)return false;
+  if(rebind)for(unsigned i=0;i<kWords;i++)if(protected_[i]){
+   const auto v=word(a+4u*i);
+   if(v==firstInput||v==firstPad)return false;
+  }
   sourceGeneration_=sg;targetGeneration_=tg;
   swapUnprotected(a,b);
+  // Only active extra actor words are changed; inactive P1 is untouched.
+  if(rebind)for(unsigned i=0;i<kWords;i++)if(!protected_[i]){
+   const auto v=word(a+4u*i);
+   const auto next=v==firstInput?extraInput:v==firstPad?extraPad:v;
+   if(next!=v)std::memcpy(a+4u*i,&next,4u);
+  }
   entered_=true;
   return true;
  }
