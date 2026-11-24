@@ -170,5 +170,31 @@ int main(){
   assert(engines[1].left==3);
   assert(scheduler.TickHumans(io,5)==OriginalHumanUpdateStatus::Quarantined);
  }
+ {
+  struct SourceIO {
+   uint32_t source=0x600000u;
+   uint64_t ctlGen=1,firstGen=2,extraGen=3;
+   bool owned=true;
+   bool Read32(uint32_t p,uint32_t& v){if(p!=0x7000A8u)return false;v=source;return true;}
+   uint64_t ControllerGeneration(uint32_t p){return p==0x700000u?ctlGen:0;}
+   uint64_t InputGeneration(uint32_t p){return p==0x600000u?firstGen:p==0x800000u?extraGen:0;}
+   bool OwnsHumanInput(uint32_t p){return owned&&p==0x800000u;}
+   uint32_t* MapControllerSource(uint32_t p){return p==0x700000u?&source:nullptr;}
+  } io;
+  OriginalHumanControllerSource scope;
+  io.owned=false;
+  assert(!scope.Enter(io,0x700000u,0x800000u)&&io.source==0x600000u);
+  io.owned=true;
+  assert(scope.Enter(io,0x700000u,0x800000u)&&io.source==0x800000u);
+  assert(!scope.Enter(io,0x700000u,0x800000u));
+  assert(scope.Restore(io)&&io.source==0x600000u);
+  io.source=0;
+  assert(scope.Enter(io,0x700000u,0x800000u)&&io.source==0);
+  assert(scope.Restore(io)&&io.source==0);
+  io.source=0x600000u;
+  assert(scope.Enter(io,0x700000u,0x800000u));
+  ++io.firstGen;
+  assert(!scope.Restore(io)&&scope.Quarantined()&&io.source==0x800000u);
+ }
  std::cout<<"ORIGINAL_BLACK_P2_P3_P4_MULTIFRAME_SETUP_CONTRACT_PASS_NO_LIVE_GUEST_CALL\n";
 }

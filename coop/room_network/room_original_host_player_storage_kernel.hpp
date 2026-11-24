@@ -207,6 +207,8 @@ template<class Presentation>class OriginalSetupKernelIO final {
  OriginalPlayerLinkExchangePlan actor_;
  OriginalCameraOwnerScope camera_;
  Presentation& presentation_;
+ OriginalHumanControllerSource controllerSource_;
+ uint64_t(*lifetime_)(uint32_t,uint32_t)noexcept;
  X86Context& ctx_;
  const std::thread::id thread_=std::this_thread::get_id();
  bool attempted_=false,entered_=false,presentationAttempted_=false,
@@ -217,6 +219,26 @@ template<class Presentation>class OriginalSetupKernelIO final {
    s.p1Actor==binding_.core+0x30u&&s.p1Owner==binding_.owner&&
    s.ownedActor==view_.actor&&s.ownedOwner==view_.owner&&s.peer>=2&&s.peer<=4;
  }
+ friend class OriginalHumanControllerSource;
+ uint64_t ControllerGeneration(uint32_t ctl)const noexcept{
+  uint32_t current=0,core=0,camera=0;
+  if(!owner()||!lifetime_||!entered_||!actor_.Entered()||!camera_.Entered()||
+     storage_.Scene()!=binding_.scene||
+     !storage_.Read32(0x2D45D4u,core)||core!=binding_.core||
+     !storage_.Read32(0x2D12B8u,camera)||camera!=view_.owner||
+     !storage_.Read32(core+0x354u,current)||current!=ctl||
+     !storage_.Span(ctl,0xB0u))return 0;
+  return lifetime_(ctl,0xB0u);
+ }
+ uint64_t InputGeneration(uint32_t p)const noexcept{
+  return owner()&&lifetime_&&storage_.Span(p,0x40u)?lifetime_(p,0x40u):0;
+ }
+ bool OwnsHumanInput(uint32_t p)const noexcept{
+  return owner()&&p==view_.input&&storage_.Owns(p,0x40u);
+ }
+ uint32_t* MapControllerSource(uint32_t ctl)const noexcept{
+  return ControllerGeneration(ctl)?static_cast<uint32_t*>(kernel::HostPtr(ctl+0xA8u)):nullptr;
+ }
 public:
  OriginalSetupKernelIO(X86Context& ctx,OriginalPlayerStorageKernelIO& storage,
      const OriginalPlayerStorageScene& binding,const OriginalPlayerStorageView& materialized,
@@ -224,7 +246,7 @@ public:
   :storage_(storage),binding_(binding),view_(materialized),
    actorIo_(storage,binding,materialized.actor,lifetime),
    cameraIo_(storage,binding,materialized.owner,lifetime),
-   presentation_(presentation),ctx_(ctx){}
+   presentation_(presentation),lifetime_(lifetime),ctx_(ctx){}
  uint64_t OriginalScene()const noexcept{return owner()?storage_.Scene():0;}
  bool Read32(uint32_t p,uint32_t& v)const noexcept{return owner()&&storage_.Read32(p,v);}
  uint32_t CorePhase(uint32_t core)const noexcept{
@@ -268,15 +290,15 @@ public:
   if(!match(s)||!frame||poisoned_||!entered_||!actor_.Entered()||
      !camera_.Entered()||!presentation_.OriginalContextActive(s)||
      !Read32(binding_.core+0x354u,ctl)||!storage_.Span(ctl,0xB0u)||
-     !Read32(ctl+0xA8u,source)||
-     (source&&(source!=view_.input||!storage_.Owns(source,0x40u)))||
-     !presentation_.OriginalHumanInputActive(s,frame,ctl,source)||
      !Read32(binding_.core+0x1Cu,dt)||!Read32(ctl,cv)||
      !Read32(s.p1Actor,av)||av!=0x28CFE0u||
      !storage_.Span(cv,4u)||!storage_.Span(av,0x14u)||
      !Read32(cv,cf)||!Read32(av,af)||!Read32(av+0x10u,post)||
      post!=0x1E5FA0u||!dispatch::Find(cf)||!dispatch::Find(af)||
      !dispatch::Find(post))return false;
+  if(!controllerSource_.Enter(*this,ctl,view_.input)||
+     !Read32(ctl+0xA8u,source)||
+     !presentation_.OriginalHumanInputActive(s,frame,ctl,source))return false;
   // Exact thiscall ABI: controller receives ESI=actor; actor methods
   // receive dt bits on the stack. All calls isolate original CPU context.
   X86Context c=ctx_;
@@ -298,8 +320,12 @@ public:
   bool ok=true;
   // Try each applicable restoration exactly once, even after a failed or
   // throwing presentation restore. Never attempt the setup call again.
+  if(controllerSource_.Entered()){
+   try{if(!controllerSource_.Restore(*this))ok=false;}catch(...){ok=false;}
+  }
+  if(controllerSource_.Quarantined())ok=false;
   if(presentationAttempted_){
-   try{ok=presentation_.RestoreOriginal(s);}catch(...){ok=false;}
+   try{if(!presentation_.RestoreOriginal(s))ok=false;}catch(...){ok=false;}
   }
   if(camera_.Entered()&&!camera_.Restore(cameraIo_))ok=false;
   if(actor_.Entered()&&!actor_.RestoreActorOnly(actorIo_))ok=false;
@@ -308,7 +334,8 @@ public:
   poisoned_=!restored_;return restored_;
  }
  bool FullP1Restored(const OriginalSetupScene& s){
-  return match(s)&&restored_&&!poisoned_&&actorIo_.Live()&&
+  return match(s)&&restored_&&!poisoned_&&!controllerSource_.Entered()&&
+    !controllerSource_.Quarantined()&&actorIo_.Live()&&
     presentation_.OriginalP1Restored(s);
  }
 };

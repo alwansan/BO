@@ -113,6 +113,60 @@ public:
   return p>=2&&p<=4?&lanes_[p-2]:nullptr;
  }
 };
+// Original controller manager +A8 switch, from pinned black_p2_update.
+// Null scripted input stays null. Actual allocation lifetime is required.
+class OriginalHumanControllerSource final {
+ const std::thread::id thread_=std::this_thread::get_id();
+ uint32_t ctl_=0,first_=0,extra_=0;
+ uint64_t cg_=0,fg_=0,eg_=0;
+ bool entered_=false,poisoned_=false;
+ bool owner()const noexcept{return thread_==std::this_thread::get_id();}
+ template<class IO>bool live(IO& io)const{
+  return owner()&&cg_&&eg_&&io.ControllerGeneration(ctl_)==cg_&&
+   io.InputGeneration(extra_)==eg_&&io.OwnsHumanInput(extra_)&&
+   (!first_||(fg_&&io.InputGeneration(first_)==fg_));
+ }
+public:
+ OriginalHumanControllerSource()=default;
+ OriginalHumanControllerSource(const OriginalHumanControllerSource&)=delete;
+ OriginalHumanControllerSource& operator=(const OriginalHumanControllerSource&)=delete;
+ bool Entered()const noexcept{return owner()&&entered_;}
+ bool Quarantined()const noexcept{return owner()&&poisoned_;}
+ template<class IO>bool Enter(IO& io,uint32_t ctl,uint32_t extra){
+  if(!owner()||entered_||poisoned_||ctl<0x10000u||ctl>0xFFFFFF50u||
+     extra<0x10000u||extra>0xFFFFFFC0u||(ctl&3u)||(extra&3u))return false;
+  uint32_t first=0;
+  if(!io.Read32(ctl+0xA8u,first)||first==extra||
+     (first&&(first<0x10000u||first>0xFFFFFFC0u||(first&3u)||
+     (uint64_t(first)<uint64_t(extra)+0x40u&&uint64_t(extra)<uint64_t(first)+0x40u))))return false;
+  ctl_=ctl;first_=first;extra_=extra;
+  cg_=io.ControllerGeneration(ctl);fg_=first?io.InputGeneration(first):0;
+  eg_=io.InputGeneration(extra);
+  if(!live(io))return false;
+  auto* word=io.MapControllerSource(ctl);
+  uint32_t current=0;
+  if(!word||!live(io)||!io.Read32(ctl+0xA8u,current)||current!=first)return false;
+  *word=first?extra:0u;entered_=true;
+  if(!io.Read32(ctl+0xA8u,current)||current!=(first?extra:0u)){
+   poisoned_=true;return false;
+  }
+  return true;
+ }
+ template<class IO>bool Restore(IO& io){
+  if(!owner()||!entered_||poisoned_)return false;
+  uint32_t current=0;
+  if(!live(io)||!io.Read32(ctl_+0xA8u,current)||current!=(first_?extra_:0u)){
+   poisoned_=true;return false;
+  }
+  auto* word=io.MapControllerSource(ctl_);
+  if(!word||!live(io)||!io.Read32(ctl_+0xA8u,current)||current!=(first_?extra_:0u)){
+   poisoned_=true;return false;
+  }
+  *word=first_;
+  if(!io.Read32(ctl_+0xA8u,current)||current!=first_){poisoned_=true;return false;}
+  entered_=false;return true;
+ }
+};
 // Original extra-human update after the genuine 1F1080 world tick.
 // The original enemy/ally AI is untouched. The shared world is never
 // stepped twice. IO must provide the original controller/actor methods,
