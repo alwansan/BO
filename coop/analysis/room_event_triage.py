@@ -111,7 +111,16 @@ def read_file(path: Path) -> list[str]:
     if not lines:
         raise ValueError("empty event file")
     codes=[]
+    # App `RoomDiagnostics.exportContents` prepends a safe ASCII header
+    # (schema + package/version + base APK sha256 + blank line) then events.
+    # Skip ONLY these exact known header keys + blank lines; never emit them.
+    HEADER_PREFIXES=("BO_ROOM_DIAGNOSTICS_SCHEMA=","PACKAGE=","VERSION_NAME=",
+                     "VERSION_CODE=","BASE_APK_SHA256=")
     for line in lines:
+        if not line:
+            continue
+        if line.startswith(HEADER_PREFIXES):
+            continue
         match=EVENT.fullmatch(line)
         if match is None:
             raise ValueError("unsafe or malformed event line")
