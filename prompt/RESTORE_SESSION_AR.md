@@ -1,7 +1,7 @@
 ## آخر تحديث Work38 (2026-11-26)
 
 - [45883083661](https://github.com/alwansan/BO/actions/runs/45883083661) على `0c7755d`: تحقق الأثر `15150840246` ومحَلّل الرأس؛ 4859 فحصًا ومطابقة وعضوية لوحدة واحدة على خيط اللعبة. انتهت المهلة بعد `restart_armed` وقبل `restart_pause_ready`؛ صفر استدعاءات فصل أو إعادة ربط. [الدليل](../memory/evidence/WORK_BATCH38_RESTART_TIMEOUT_45883083661.json). لا اعتماد للهوية في المزامنة ولا APK قبول.
-- عُدّل مختبر Windows ليضغط Start عبر إطارات اللعبة مع محاولات محدودة ورصد مستقل لمرور التقرير وظهور صفحة الإيقاف. نجح 40 اختبار Python وأربعة C مع ASan/UBSan. [تشغيل مصفوفة العناصر السابق](https://github.com/alwansan/BO/actions/runs/45885832477) جارٍ على `5daec92` قبل التصحيح. [التفاصيل](../memory/sessions/2026-11-26_bo-coop-work38-restart-input.md).
+- عُدّل مختبر Windows ليضغط Start عبر إطارات اللعبة مع محاولات محدودة ورصد مستقل لمرور التقرير وظهور صفحة الإيقاف. نجح 40 اختبار Python وأربعة C مع ASan/UBSan. [إعادة الاختبار 45888999187](https://github.com/alwansan/BO/actions/runs/45888999187) على `b84c49b` تنتظر انتهاء [رصد مصفوفة العناصر 45885832477](https://github.com/alwansan/BO/actions/runs/45885832477). أول خطوة تنزيل التقريرين والتحقق من علامات الإعادة والعدادات. [التفاصيل](../memory/sessions/2026-11-26_bo-coop-work38-restart-input.md).
 
 ## سجل Work37 (2026-11-26)
 

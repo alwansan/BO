@@ -4475,6 +4475,9 @@
     "localPythonTestsPassed": 40,
     "localNativeSanitizerFixturesPassed": 4,
     "pinnedUsbAndMenuStagingVerified": true,
+    "restartRetryRun": 45888999187,
+    "restartRetryCommit": "b84c49bfdbffc2c4f5225f3214a4667276a1923b",
+    "restartRetryStatus": "pending_behind_prop_run_at_last_check",
     "next": "inspect the original-engine aggregate for forwarded Start, observed pause page, and same-unit removal/relink; keep synchronization gated"
   }
 }
