@@ -1,6 +1,7 @@
 /* MIT. Disposable lab only. No guest writes, direct mission starts, or fake actors.
  * Included immediately before sub_001F1080, after native P2 helpers are defined.
- * USB reports are the only game inputs. All output is allowlisted integer aggregates.
+ * Gameplay uses USB reports; restart navigation uses the pinned PC menu dispatcher.
+ * Output is restricted to fixed markers and aggregate counts.
  */
 #include "schedule.h"
 #include <stdio.h>

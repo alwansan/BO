@@ -136,8 +136,9 @@ not a full determinism or collision correctness proof.
 
 The manual workflow option `restart_after_phases` (CLI: `--restart-after-phases`)
 adds a native lifecycle check after those phases. Port 0 uses normal USB
-input to open the pause menu and select **Restart Mission → Yes**. The pinned
-PC menu consumes that input headlessly only on the two restart pages. The
+input to open the pause menu. The pinned PC menu dispatches one scripted
+navigation action per ready tick on the two restart pages to select
+**Restart Mission → Yes**. The
 lab freezes the gameplay measurements at phase eight and requires the
 original restart request, observed removal from the world list during unload,
 and a fresh map and world link for the same unit role, authored unit index

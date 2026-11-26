@@ -4521,6 +4521,10 @@
     "localLabPythonTestsPassed": 40,
     "localVerifierTestsPassed": 4,
     "localNativeSanitizerFixturesPassed": 4,
+    "restartRetryRun": 45898767177,
+    "restartRetryCommit": "c6d905912cae884cb03807b267ab451e7d0828e0",
+    "restartRetryStatus": "in_progress_at_last_check",
+    "restartRetryFollowUp": "aut_219c5f8eb001ZAJakFYKw6gYqY",
     "next": "verify same-unit removal and relink after the ready-tick menu dispatch change; keep synchronization gated"
   }
 }
