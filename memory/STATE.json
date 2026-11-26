@@ -1,4 +1,13 @@
 {
+  "latestRestoreVerification": {
+    "date": "2026-11-26",
+    "verified_commit": "af204ca8db20102efed175b6822db5e2b669c2a8",
+    "source_preflight_run": 45832304468,
+    "source_preflight": "success",
+    "android_shared_campaign_verified": false,
+    "acceptance_apk_ready": false,
+    "next": "Recover or implement the live actor lifecycle and host-objective/world application bindings, then validate independent input and shared progression in Android."
+  },
   "schema": 1,
   "agent": "BO-COOP",
   "repository": "alwansan/BO",
