@@ -1,3 +1,12 @@
+# Work-Batch11: إغلاق التحقق — 2026-11-26
+
+- الكود المفحوص `cc2f9f1426dc95189ef8146d852b85a14f469200`؛ يلي هذا السجل commit توثيقي، فتحقق من الرأس الحي عند الاستئناف.
+- CI ناجح: source preflight `45777503191`، بما فيه اختبار placeholder الجديد ضد SDK المثبت؛ parallel source `45777503301` (3 jobs)، UDP `45777503239`. لا APK أو GPU render في هذه النتائج.
+- نجح الاختبار الصارم ASAN/UBSAN محليًا ومن checkout مصدر نظيف مسحوب من GitHub؛ الأدلة `memory/evidence/WORK_BATCH11_MOD_PLACEHOLDER_2026-11-26.json`.
+- الناتج CPU box geometry + detached State فقط، stream0 غير مربوط؛ لا native hook أو draw أو تخصيص GPU. التالي: كاميرا العالم الحالية الموثقة، رفع رؤوس fenced مع عمر مستقل، ثم rasterization بلا أصول قبل أي دمج حي. فعل الضيف والحالة المشتركة وانتقال القصة ما زالت غير مكتملة.
+
+---
+
 # Work-Batch11 — تجهيز مجسم بسيط مملوك للمود (2026-11-26)
 
 الأساس `1181690e9019e85abc0b3265d08bf8a39b117fe6`. أضيف تجهيز صندوق مستقل وحالة SDK منفصلة، بلا تعديل state الأصلية أو GPU submit أو native actor أو hook حي. الاختبار ضد SDK المثبت؛ ليس ظهورًا في BLACK. التفاصيل `docs/MOD_PLACEHOLDER_DRAW_PREPARATION_WORK11_AR.md` والأدلة `memory/evidence/WORK_BATCH11_MOD_PLACEHOLDER_2026-11-26.json`. التالي لإغلاق عائق العرض: مصدر كاميرا/إطار متحقق، ومخزن GPU مستقل fenced حتى انتهاء القراءة، ثم rasterization بلا أصول قبل أي دمج حي. أولوية Start->عرض متبادل->فعل ضيف مشترك->انتقال قصة باقية؛ لا AI/أصول/حفظ/APK يدوي/هواتف جزئية.

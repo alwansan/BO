@@ -25,13 +25,48 @@
     "lsan": "disabled locally",
     "scope": "12 triangles, state independence, invalid input transactional rejection; no pixels rendered"
   },
-  "ci_after_publish": "pending",
-  "clean_restore": "pending",
+  "ci_after_publish": [
+    {
+      "id": 45777503239,
+      "name": "BLACK Co-op isolated UDP probe",
+      "head_sha": "cc2f9f1426dc95189ef8146d852b85a14f469200",
+      "conclusion": "success",
+      "url": "https://github.com/alwansan/BO/actions/runs/45777503239"
+    },
+    {
+      "id": 45777503301,
+      "name": "BO-COOP parallel original engine tracks (source only)",
+      "head_sha": "cc2f9f1426dc95189ef8146d852b85a14f469200",
+      "conclusion": "success",
+      "url": "https://github.com/alwansan/BO/actions/runs/45777503301"
+    },
+    {
+      "id": 45777503191,
+      "name": "BO-COOP room network game bridge source preflight",
+      "head_sha": "cc2f9f1426dc95189ef8146d852b85a14f469200",
+      "conclusion": "success",
+      "url": "https://github.com/alwansan/BO/actions/runs/45777503191"
+    }
+  ],
+  "clean_restore": {
+    "method": "ff-only fetch from GitHub into previously clean sparse source checkout",
+    "head": "cc2f9f1426dc95189ef8146d852b85a14f469200",
+    "worktree": "clean",
+    "test_passed": true,
+    "scope": "same strict ASAN/UBSAN fixture against pinned SDK state.h; no GPU submission"
+  },
   "limits": [
     "No GPU submission/upload/allocation or native hook",
     "No current BLACK camera provenance established",
     "Stream0 deliberately unbound; future upload must retain owned data to completion fence",
     "No gameplay/native actors/AI/assets/saves/APK/device work",
     "No owner asset workflow manually launched"
+  ],
+  "published_code_head": "cc2f9f1426dc95189ef8146d852b85a14f469200",
+  "placeholder_sdk_step": [
+    {
+      "name": "Verify mod-owned placeholder draw preparation against pinned SDK (no GPU submission)",
+      "conclusion": "success"
+    }
   ]
 }
