@@ -4430,7 +4430,7 @@
     "propRuntimeVerified": false,
     "sourceCiRun": 45885149725,
     "sourceCiCommit": "cd48140",
-    "sourceCiStatus": "in_progress_at_last_check",
+    "sourceCiStatus": "success",
     "unitLifecycleRun": 45883083661,
     "unitLifecycleRunStatus": "original_engine_in_progress_no_artifact_at_last_check",
     "liveRemovalVerified": false,
@@ -4438,5 +4438,21 @@
     "sharedWorldComplete": false,
     "acceptanceApk": false,
     "next": "validate current 0xF0 unit lifecycle aggregate; separately instrument 0x200 prop table membership and state transition"
+  },
+  "workBatch37": {
+    "date": "2026-11-26",
+    "base": "de940c1",
+    "scope": "packed 0x200 prop identity and world-list link/removal instrumentation",
+    "session": "memory/sessions/2026-11-26_bo-coop-work37-live-prop-observer.md",
+    "localPythonTestsPassed": 40,
+    "localNativeSanitizerFixturesPassed": 4,
+    "strictPrivateAggregateFixtureVerified": true,
+    "unitLifecycleRun": 45883083661,
+    "unitLifecycleRunStatus": "original_engine_in_progress_no_artifact_at_last_check",
+    "liveSameUnitReloadVerified": false,
+    "propRuntimeVerified": false,
+    "sharedWorldComplete": false,
+    "acceptanceApk": false,
+    "next": "validate pending unit lifecycle summary before mapping use and read prop observations when the updated lab runs"
   }
 }

@@ -152,11 +152,12 @@ void sub_001EB1F0(void)
     const int slot = bo_unit_enter(BO_UNIT_UNLINK, unit);
     const int linked = slot >= 0 && GUEST8(unit + 0x38u);
     const uint32_t index = linked ? GUEST32(unit + 8u) : 0;
-    BoUnitObjects before = {0};
+    BoUnitObjects before = {0}, props = {0};
     if (linked && bo_unit_mapping(unit, &before) > 0 &&
         bo_unit_world_members(before) != (int)before.count) before.count = 0;
+    if (linked) props = bo_prop_before_unlink(unit);
     sub_001EB1F0_gen();
-    if (linked && bo_unit_after_unlink(slot, unit, index, before))
+    if (linked && bo_unit_after_unlink(slot, unit, index, before, props))
         bo_lab_restart_after_unlink(slot, index, before.count);
 }
 

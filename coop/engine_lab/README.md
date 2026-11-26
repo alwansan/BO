@@ -151,6 +151,14 @@ phases. Its summary scope is `original_PC_engine_unit_lifecycle_only`. The
 default run still exits after phase eight. The restart test exercises the
 Windows lab; its result does not establish Android co-op.
 
+`unit_observations` reports the packed `0x200` prop array separately from
+the `0xF0` unit records. The observer recovers each prop's authored ordinal
+through the stored record pointer and verifies its copied selector. It
+checks the whole terminating list after link and before/after unlink.
+`prop_removal_preconditions_missed` includes partially present or invalid
+ranges; these do not count as observed removal. Neither list proves that
+an object's collision has changed.
+
 The objective diagnostic samples the live table on both sides of the original
 `001F1080` update, before the PC second-player pass. Every live record must
 point to its corresponding `LevelDat` descriptor, with the same running

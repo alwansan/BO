@@ -7,7 +7,11 @@ enum BoUnitCounter {
     BO_UNIT_PUBLISHED, BO_UNIT_MAPPED, BO_UNIT_MAP_FAILED, BO_UNIT_EMPTY,
     BO_UNIT_UNLINKED, BO_UNIT_PAIRED_UNLINK, BO_UNIT_REPUBLISHED,
     BO_UNIT_LINKED, BO_UNIT_WORLD_LINK_VERIFIED, BO_UNIT_WORLD_LINK_FAILED,
-    BO_UNIT_WORLD_UNLINK_VERIFIED, BO_UNIT_WORLD_UNLINK_FAILED, BO_UNIT_COUNTER_COUNT
+    BO_UNIT_WORLD_UNLINK_VERIFIED, BO_UNIT_WORLD_UNLINK_FAILED,
+    BO_PROP_MAPPED, BO_PROP_MAP_FAILED, BO_PROP_RECORDS_MAPPED,
+    BO_PROP_WORLD_LINK_VERIFIED, BO_PROP_WORLD_LINK_FAILED,
+    BO_PROP_WORLD_UNLINK_VERIFIED, BO_PROP_WORLD_UNLINK_FAILED, BO_PROP_UNLINK_NOT_OBSERVED,
+    BO_UNIT_COUNTER_COUNT
 };
 static volatile LONG bo_unit_counts[BO_UNIT_COUNTER_COUNT];
 static volatile LONG bo_unit_frame_thread;
@@ -48,7 +52,7 @@ static int bo_unit_enter(enum BoUnitCounter call, uint32_t unit)
 /* 001D6200 creates two parallel arrays and retains the authored record
  * pointer on each live object. Check the entire bounded ordinal mapping. */
 typedef struct BoUnitObjects {
-    uint32_t base, count;
+    uint32_t base, count, stride;
 } BoUnitObjects;
 
 static int bo_unit_mapping(uint32_t unit, BoUnitObjects *range)
@@ -70,7 +74,43 @@ static int bo_unit_mapping(uint32_t unit, BoUnitObjects *range)
     if (range) {
         range->base = objects;
         range->count = count;
+        range->stride = 0xF0u;
     }
+    return 1;
+}
+
+/* 001D3610 packs the kind-4 subset of the 0x50 authored rows into
+ * unit+1C. Recover the authored ordinal through +114, never through the
+ * packed index. The source loop consumes the subset in increasing order. */
+static int bo_prop_mapping(uint32_t unit, BoUnitObjects *range)
+{
+    const uint32_t count = GUEST32(unit + 0x34u);
+    if (!count) return 0;
+    const uint32_t header = GUEST32(unit + 0xCu), objects = GUEST32(unit + 0x1Cu);
+    if (count > 4096u || (header & 3u) || !black_pc_ram_span(header, 0x94u) ||
+        GUEST32(header) != 24u) return -1;
+    const uint32_t descriptor_count = GUEST16(header + 0x92u);
+    const uint32_t table = GUEST32(header + 0x2Cu);
+    if (count > descriptor_count || (objects & 3u) || (table & 3u) ||
+        (uint64_t)table < (uint64_t)header + 0x94u ||
+        !black_pc_ram_span(table, descriptor_count * 0x50u) ||
+        !black_pc_ram_span(objects, count * 0x200u)) return -1;
+
+    uint32_t previous = 0;
+    for (uint32_t i = 0; i < count; ++i) {
+        const uint32_t object = objects + i * 0x200u;
+        const uint32_t row = GUEST32(object + 0x114u);
+        if (GUEST32(object) != 0x28ED98u || GUEST32(object + 0xC4u) != 4u ||
+            row < table || row <= previous) return -1;
+        const uint32_t offset = row - table;
+        if (offset >= descriptor_count * 0x50u || offset % 0x50u ||
+            GUEST32(object + 8u) != GUEST32(row + 0x48u) ||
+            GUEST32(object + 0xCu) != GUEST32(row + 0x4Cu)) return -1;
+        previous = row;
+    }
+    range->base = objects;
+    range->count = count;
+    range->stride = 0x200u;
     return 1;
 }
 
@@ -85,14 +125,37 @@ static int bo_unit_world_members(BoUnitObjects range)
         if (++visited > 4096u || (node & 3u) || !black_pc_ram_span(node, 0xB4u)) return -1;
         if (node >= range.base) {
             const uint32_t offset = node - range.base;
-            if (offset < range.count * 0xF0u) {
-                if (offset % 0xF0u) return -1;
+            if (offset < range.count * range.stride) {
+                if (offset % range.stride) return -1;
                 ++matches;
             }
         }
         node = GUEST32(node + 0xB0u);
     }
     return (int)matches;
+}
+
+static void bo_prop_after_link(uint32_t unit)
+{
+    BoUnitObjects range;
+    const int mapped = bo_prop_mapping(unit, &range);
+    if (mapped < 0) InterlockedIncrement(&bo_unit_counts[BO_PROP_MAP_FAILED]);
+    if (mapped <= 0) return;
+    InterlockedIncrement(&bo_unit_counts[BO_PROP_MAPPED]);
+    InterlockedExchangeAdd(&bo_unit_counts[BO_PROP_RECORDS_MAPPED], (LONG)range.count);
+    InterlockedIncrement(&bo_unit_counts[
+        bo_unit_world_members(range) == (int)range.count ? BO_PROP_WORLD_LINK_VERIFIED : BO_PROP_WORLD_LINK_FAILED]);
+}
+
+static BoUnitObjects bo_prop_before_unlink(uint32_t unit)
+{
+    BoUnitObjects before = {0};
+    const int mapped = bo_prop_mapping(unit, &before);
+    if (mapped < 0 || (mapped > 0 && bo_unit_world_members(before) != (int)before.count)) {
+        InterlockedIncrement(&bo_unit_counts[BO_PROP_UNLINK_NOT_OBSERVED]);
+        before.count = 0;
+    }
+    return before;
 }
 
 static unsigned bo_unit_after_poll(int slot, uint32_t unit, uint32_t before, uint32_t result)
@@ -125,6 +188,7 @@ static unsigned bo_unit_after_link(int slot, uint32_t unit)
         !black_pc_ram_span(unit, 0x3Cu) || GUEST32(unit) != 0x1Cu ||
         GUEST8(unit + 0x38u) != 1u) return 0;
     InterlockedIncrement(&bo_unit_counts[BO_UNIT_LINKED]);
+    bo_prop_after_link(unit);
     mapped = bo_unit_mapping(unit, &range);
     if (mapped == 0) return 0; /* An empty unit has no membership witness. */
     if (mapped > 0 && bo_unit_world_members(range) == (int)range.count) {
@@ -135,7 +199,8 @@ static unsigned bo_unit_after_link(int slot, uint32_t unit)
     return 0;
 }
 
-static int bo_unit_after_unlink(int slot, uint32_t unit, uint32_t index, BoUnitObjects before)
+static int bo_unit_after_unlink(int slot, uint32_t unit, uint32_t index,
+                                BoUnitObjects before, BoUnitObjects props)
 {
     if (slot < 0 || bo_unit_world != GUEST32(0x2D45D4u) ||
         !black_pc_ram_span(unit, 0x3Cu) || GUEST8(unit + 0x38u)) return 0;
@@ -144,6 +209,9 @@ static int bo_unit_after_unlink(int slot, uint32_t unit, uint32_t index, BoUnitO
     if (bo_unit_slots[slot].unlinked)
         InterlockedIncrement(&bo_unit_counts[BO_UNIT_PAIRED_UNLINK]);
     bo_unit_slots[slot].active = 0;
+    if (props.count)
+        InterlockedIncrement(&bo_unit_counts[bo_unit_world_members(props) == 0 ?
+            BO_PROP_WORLD_UNLINK_VERIFIED : BO_PROP_WORLD_UNLINK_FAILED]);
     if (!before.count) return 0;
     const int removed = bo_unit_world_members(before) == 0;
     InterlockedIncrement(&bo_unit_counts[removed ? BO_UNIT_WORLD_UNLINK_VERIFIED : BO_UNIT_WORLD_UNLINK_FAILED]);
@@ -157,7 +225,10 @@ static void bo_unit_write(void)
         "unit_publications", "ordinal_maps_verified", "ordinal_map_failures", "empty_publications",
         "unit_unlinks", "paired_unit_unlinks", "same_slot_unit_republications",
         "unit_link_transitions", "world_membership_verified", "world_membership_failures",
-        "world_removal_verified", "world_removal_failures"
+        "world_removal_verified", "world_removal_failures",
+        "prop_tables_mapped", "prop_table_map_failures", "prop_records_mapped",
+        "prop_world_membership_verified", "prop_world_membership_failures",
+        "prop_world_removal_verified", "prop_world_removal_failures", "prop_removal_preconditions_missed"
     };
     const char *path = getenv("BO_LAB_UNIT_AGGREGATE");
     FILE *file;

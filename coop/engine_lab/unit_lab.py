@@ -8,6 +8,9 @@ FIELDS = frozenset((
     "same_slot_unit_republications",
     "unit_link_transitions", "world_membership_verified", "world_membership_failures",
     "world_removal_verified", "world_removal_failures",
+    "prop_tables_mapped", "prop_table_map_failures", "prop_records_mapped",
+    "prop_world_membership_verified", "prop_world_membership_failures",
+    "prop_world_removal_verified", "prop_world_removal_failures", "prop_removal_preconditions_missed",
 ))
 
 
@@ -32,7 +35,13 @@ def parse(text):
             data["same_slot_unit_republications"] > data["paired_unit_unlinks"] or
             data["unit_link_transitions"] > data["link_calls"] or
             data["world_membership_verified"] + data["world_membership_failures"] > data["unit_link_transitions"] or
-            data["world_removal_verified"] + data["world_removal_failures"] > data["unit_unlinks"]):
+            data["world_removal_verified"] + data["world_removal_failures"] > data["unit_unlinks"] or
+            data["prop_tables_mapped"] + data["prop_table_map_failures"] > data["unit_link_transitions"] or
+            data["prop_tables_mapped"] != data["prop_world_membership_verified"] +
+            data["prop_world_membership_failures"] or
+            not data["prop_tables_mapped"] <= data["prop_records_mapped"] <= 4096 * data["prop_tables_mapped"] or
+            data["prop_world_removal_verified"] + data["prop_world_removal_failures"] > data["unit_unlinks"] or
+            data["prop_removal_preconditions_missed"] > data["unlink_calls"]):
         raise ValueError("inconsistent unit observation counts")
     return data
 

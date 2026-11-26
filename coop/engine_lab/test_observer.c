@@ -18,6 +18,7 @@ typedef unsigned long long ULONGLONG;
 static LONG InterlockedCompareExchange(volatile LONG *p, LONG value, LONG expected) { LONG old=*p; if(old==expected)*p=value; return old; }
 static LONG InterlockedExchange(volatile LONG *p, LONG value) { LONG old=*p; *p=value; return old; }
 static LONG InterlockedIncrement(volatile LONG *p) { return ++*p; }
+static LONG InterlockedExchangeAdd(volatile LONG *p, LONG value) { LONG old=*p; *p+=value; return old; }
 static ULONGLONG GetTickCount64(void) { return 1000; }
 static void ExitProcess(unsigned code) { (void)code; abort(); }
 static unsigned char memory[0x300000];

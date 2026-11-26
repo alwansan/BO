@@ -18,4 +18,4 @@ python3 -m coop.analysis.original_unit_prop_identity --levels-root /private/extr
 python3 -m unittest coop.analysis.test_original_unit_prop_identity coop.analysis.test_original_objective_descriptor_audit coop.analysis.test_original_unit_instance_identity coop.analysis.test_original_shared_world_acceptance -v
 ```
 
-نجح `BO_PINNED_PROP_SOURCE_PASS` و19 اختبار Python. [فحص المصدر 45885149725](https://github.com/alwansan/BO/actions/runs/45885149725) على `cd48140` جارٍ. لم تُنقل ملفات لعبة أو معرّفات خام. الخطوة التالية: تحقق من تقرير الإعادة الحالي، ثم راقب الترتيب والعضوية ودورة العمر والحالة للمصفوفة `0x200` بفعل عادي داخل اللعبة قبل استخدام الهوية في المزامنة. لا APK قبول أو تطبيق ضيف.
+نجح `BO_PINNED_PROP_SOURCE_PASS` و19 اختبار Python. نجح [فحص المصدر 45885149725](https://github.com/alwansan/BO/actions/runs/45885149725) على `cd48140`. لم تُنقل ملفات لعبة أو معرّفات خام. الخطوة التالية: تحقق من تقرير الإعادة الحالي، ثم راقب الترتيب والعضوية ودورة العمر والحالة للمصفوفة `0x200` بفعل عادي داخل اللعبة قبل استخدام الهوية في المزامنة. لا APK قبول أو تطبيق ضيف.

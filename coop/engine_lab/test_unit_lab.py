@@ -32,6 +32,9 @@ class UnitLabTests(unittest.TestCase):
             dict(counts, same_slot_unit_republications=1),
             dict(counts, link_calls=1, world_membership_verified=1),
             dict(counts, unlink_calls=1, world_removal_verified=1),
+            dict(counts, prop_tables_mapped=1, prop_world_membership_verified=1),
+            dict(counts, link_calls=1, unit_link_transitions=1, prop_records_mapped=1),
+            dict(counts, unlink_calls=1, prop_world_removal_verified=1),
         ):
             with self.assertRaises(ValueError):
                 parse(json.dumps(invalid))
@@ -56,6 +59,9 @@ class UnitLabTests(unittest.TestCase):
         self.assertLess(writer.index('bo_objective_writer_before(g_esi)'), writer.index('sub_001BA430_gen();'))
         self.assertLess(writer.index('sub_001BA430_gen();'), writer.index('bo_objective_writer_after(&before)'))
         self.assertTrue(Path(lab.HERE, 'unit_observer.inc').is_file())
+        unlink = patched.split('void sub_001EB1F0(void)\n{', 1)[1].split('\n}', 1)[0]
+        self.assertLess(unlink.index('bo_prop_before_unlink(unit)'), unlink.index('sub_001EB1F0_gen();'))
+        self.assertLess(unlink.index('sub_001EB1F0_gen();'), unlink.index('bo_unit_after_unlink(slot'))
 
     def test_headless_overlay_is_scoped_to_one_pinned_guard(self):
         patched = lab.patch_text(lab.MENU_OVERLAY_ANCHOR, 'menu_overlay')
