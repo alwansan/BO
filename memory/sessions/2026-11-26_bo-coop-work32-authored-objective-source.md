@@ -17,4 +17,4 @@ python3 -m coop.analysis.original_objective_descriptor_audit --levels-root /priv
 python3 -m unittest coop.analysis.test_original_objective_descriptor_audit coop.analysis.test_original_unit_instance_identity coop.analysis.test_original_shared_world_acceptance -v
 ```
 
-نجح `BO_PINNED_LEVELDAT_OBJECTIVE_ORIGIN_PASS` على المصدر المثبت و17 اختبار Python. التالي: تقارير العضوية والإعادة للمسار الخاص بالكائنات؛ وبصورة مستقلة تحقق حي على خيط الإطار من مطابقة أوصاف LevelDat بالجدول الحي ومن تغير عداد هدف أصلي بعد فعل اللاعب. لا تطبيق ضيف، ولا APK قبول.
+نجح `BO_PINNED_LEVELDAT_OBJECTIVE_ORIGIN_PASS` على المصدر المثبت و17 اختبار Python. [فحص CI المصدري 45878993957](https://github.com/alwansan/BO/actions/runs/45878993957) على `97180ac` جارٍ. التالي: تقارير العضوية والإعادة للمسار الخاص بالكائنات؛ وبصورة مستقلة تحقق حي على خيط الإطار من مطابقة أوصاف LevelDat بالجدول الحي ومن تغير عداد هدف أصلي بعد فعل اللاعب. لا تطبيق ضيف، ولا APK قبول.
