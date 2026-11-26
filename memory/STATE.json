@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-26_bo-coop-work10-shared-campaign-blockers.md",
+  "lastSession": "memory/sessions/2026-11-26_bo-coop-work11-mod-placeholder.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -3986,5 +3986,12 @@
     "nativeIntegrationEnabled": false,
     "evidence": "memory/evidence/WORK_BATCH10_SHARED_CAMPAIGN_BLOCKERS_2026-11-26.json",
     "acceptanceApkAvailable": false
+  },
+  "workBatch11": {
+    "baseHead": "1181690e9019e85abc0b3265d08bf8a39b117fe6",
+    "scope": "mod-owned box CPU geometry and detached SDK State preparation; no rendering/submission/hook enabled",
+    "evidence": "memory/evidence/WORK_BATCH11_MOD_PLACEHOLDER_2026-11-26.json",
+    "next": "prove current world camera and fenced GPU upload lifetime; asset-free raster test before live hook",
+    "sharedGameplayComplete": false
   }
 }

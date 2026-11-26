@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "date_utc": "2026-11-26",
+  "repository": "alwansan/BO",
+  "branch": "experiment/black-coop",
+  "base_head": "1181690e9019e85abc0b3265d08bf8a39b117fe6",
+  "worktree_before": "clean; local and origin equal",
+  "scope": "mod primitive draw preparation only, tied to Work10 visible-body blocker",
+  "sdk_pin": "TGP482/XboxXBE-Recomp@99078b119b5d5e0d1d6afb1390e29437c0c984c0",
+  "android_source_pin": "RanggaCasper/Black-Android@f3754d6985a8c35204e7df071546e586b10f1806",
+  "reviewed_reference_sha256": {
+    "state.h": "2c04c16c43e6874bcda93252e6ff5ad5e469029f267b33ee60a986d04e0cc464",
+    "backend.h": "7e16d35475eea8251d32b57159b30c416175028f24def997553181f873876d5f",
+    "vertex.cpp": "2b41d4b14ed304ffd46a388995a2e421f3a7da2ac9740153fd29923be0b9fb3d",
+    "d3d12.cpp": "2838352eada34bc031ef7abfb926360e1b8369d53c89bbd66fd5faae0ee3d8c1",
+    "shaders.cpp": "7db5f9b335858c4e4602c8cced52f93d66e42326773c774bc1e4d19076afe8e1",
+    "d3d8.cpp": "de6fee24d8626e1c62e402489411c2fc907cc3b4c149b8d49d51fe25f00b8a21",
+    "render_thread.cpp": "d3e78a0f4d5d6c0641757d75703bc57134dc70a698b1df8ff30c89b013181173"
+  },
+  "local_test": {
+    "passed": true,
+    "compiler": "g++ -std=c++20 -Wall -Wextra -Werror -fsanitize=address,undefined -fno-omit-frame-pointer",
+    "sdk_headers": "actual pinned gpu/state.h, unmodified",
+    "marker": "MOD_PLACEHOLDER_SDK_STATE_PASS",
+    "lsan": "disabled locally",
+    "scope": "12 triangles, state independence, invalid input transactional rejection; no pixels rendered"
+  },
+  "ci_after_publish": "pending",
+  "clean_restore": "pending",
+  "limits": [
+    "No GPU submission/upload/allocation or native hook",
+    "No current BLACK camera provenance established",
+    "Stream0 deliberately unbound; future upload must retain owned data to completion fence",
+    "No gameplay/native actors/AI/assets/saves/APK/device work",
+    "No owner asset workflow manually launched"
+  ]
+}
