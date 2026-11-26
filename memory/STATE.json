@@ -4486,6 +4486,12 @@
     "restartRetryRun": 45888999187,
     "restartRetryCommit": "b84c49bfdbffc2c4f5225f3214a4667276a1923b",
     "restartRetryStatus": "pending_no_artifact_at_last_check",
+    "lastArtifactCheckUtc": "2026-11-26T20:16Z",
+    "restartRetryFollowUp": {
+      "id": "aut_21980cbe500111vtWwsqkrPVHn",
+      "intervalMinutes": 5,
+      "expiresUtc": "2026-11-27T00:16:40Z"
+    },
     "propRun": 45885832477,
     "propRunStatus": "windows_engine_running_no_artifact_at_last_check",
     "artifactVerifier": "coop/analysis/verify_unit_lifecycle_artifact.py",

@@ -1,6 +1,6 @@
 ## آخر تحديث Work39 (2026-11-26)
 
-- [45888999187](https://github.com/alwansan/BO/actions/runs/45888999187) على `b84c49b` ينتظر [45885832477](https://github.com/alwansan/BO/actions/runs/45885832477)؛ لا أثر لأي منهما عند الفحص. الأثر السابق أثبت العضوية فقط؛ لا إزالة أو إعادة ربط ولا APK قبول.
+- [45888999187](https://github.com/alwansan/BO/actions/runs/45888999187) على `b84c49b` ينتظر [45885832477](https://github.com/alwansan/BO/actions/runs/45885832477)؛ عند `20:16Z` لم ينشر أي منهما أثرًا. جُدولت متابعة محدودة تستأنف التحقق عند توفر أثر الاختبار. الأثر السابق أثبت العضوية فقط؛ لا إزالة أو إعادة ربط ولا APK قبول.
 - عند نشر الأثر، افحص ZIP وبيانات GitHub بـ`coop/analysis/verify_unit_lifecycle_artifact.py`. [أمر التحقق ومسار PauseMenu الأصلي](../memory/sessions/2026-11-26_bo-coop-work39-unit-lifecycle-verification.md). نجحت أربعة اختبارات للمحقق؛ مطابقة الوحدة تبقى خارج المزامنة حتى يظهر دليل حي.
 
 ## سجل Work38 (2026-11-26)
