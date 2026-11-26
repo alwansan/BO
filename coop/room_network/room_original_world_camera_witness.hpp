@@ -1,6 +1,7 @@
 // Copyright 2026 BO-COOP contributors. SPDX-License-Identifier: MIT
 #pragma once
 #include "coop/room_original_world_camera_frame.hpp"
+#include "room_original_running_scene_source_gate.hpp"
 #include "kernel/kernel.h"
 #include "kernel/memory.h"
 #include "xdk/d3d8.h"
@@ -45,7 +46,8 @@ inline void ObserveOriginalWorldCameraAfterBegin(uint32_t rw,
     const uint32_t world = kernel::R32(0x2D45D4),
                    renderer = kernel::R32(0x2D67F4);
     if (!OriginalCameraSpan(world, 0x5CC0) ||
-        kernel::R32(world + 0x5AE0) != 0x1C ||
+        !IsOriginalWorldRunning(kernel::R32(world + 0x5AE0),
+                                kernel::R32(world + 0x5AE4)) ||
         !OriginalCameraSpan(renderer, 0xD4F0) || !rw ||
         kernel::R32(renderer + 0xD4A8) != rw) {
       source.Invalidate();
@@ -71,8 +73,13 @@ ReadCurrentOriginalWorldCameraFrame(OriginalWorldCameraFrame &out) noexcept {
       return false;
     const auto world = kernel::R32(0x2D45D4), renderer = kernel::R32(0x2D67F4);
     if (!OriginalCameraSpan(world, 0x5CC0) ||
-        kernel::R32(world + 0x5AE0) != 0x1C ||
-        !OriginalCameraSpan(renderer, 0xD594) ||
+        !IsOriginalWorldRunning(kernel::R32(world + 0x5AE0),
+                                kernel::R32(world + 0x5AE4))) {
+      OriginalWorldCameraAvailable().store(false);
+      OriginalWorldCameraSource().Invalidate();
+      return false;
+    }
+    if (!OriginalCameraSpan(renderer, 0xD594) ||
         kernel::R32(renderer + 0xD590) != renderer + 0xD450)
       return false;
     return OriginalWorldCameraSource().Read(

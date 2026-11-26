@@ -79,17 +79,18 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
     static OriginalCoreRunningPhaseWitness corePhase;
     // A genuine original core pointer is still a HINT; guard all subsequent
     // source reads with pinned native Xbox guest-page commitment.
-    const uint64_t phaseEnd=static_cast<uint64_t>(world)+0x5AE0u+4u;
+    const uint64_t phaseEnd=static_cast<uint64_t>(world)+0x5AE0u+8u;
     const bool phaseReadable=world&&phaseEnd<=0x100000000ull&&
-        OriginalGuestSpanCommitted(world+0x5AE0u,4u);
-    const uint32_t phase=phaseReadable?kernel::R32(world+0x5AE0u):0;
-    const bool candidateReady=coreEpisode&&world&&phase==0x1Cu&&
+        OriginalGuestSpanCommitted(world+0x5AE0u,8u);
+    const bool running=phaseReadable&&IsOriginalWorldRunning(
+        kernel::R32(world+0x5AE0u),kernel::R32(world+0x5AE4u));
+    const bool candidateReady=coreEpisode&&world&&running&&
         stable.IsStable()&&paired&&coreStream.episode==coreEpisode;
     static uint32_t phaseQualifiedEpisode=0,phaseQualifiedWorld=0;
     if(!candidateReady){
         phaseQualifiedEpisode=0;phaseQualifiedWorld=0;
     }
-    if(corePhase.Observe(coreEpisode,world,phase,
+    if(corePhase.Observe(coreEpisode,world,running?0x1Cu:0u,
                          stable.IsStable(),paired,coreStream.episode==coreEpisode)){
         phaseQualifiedEpisode=coreEpisode;phaseQualifiedWorld=world;
         SendSafeWorldCodeToAndroid(14); // source-gated RUNNING hint, NOT READY

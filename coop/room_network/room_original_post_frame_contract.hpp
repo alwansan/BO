@@ -4,12 +4,13 @@
 // this post-update frame boundary for black_p2_tick. Read-only stage now.
 // NOT a loaded-scene event, peer COMMIT, player-2 setup or shared AI proof.
 #pragma once
+#include "room_original_running_scene_source_gate.hpp"
 #include <cstdint>
 #include <thread>
 namespace blackcoop {
 struct OriginalPostFrameSample {
  uint32_t world=0,owner=0,physics=0,npcPool=0;
- uint32_t corePhase=0,localKind=0,localVtable=0;
+ uint32_t corePhase=0,unloadPhase=0,localKind=0,localVtable=0;
 };
 class OriginalPostFrameGate final {
  const std::thread::id thread_=std::this_thread::get_id();
@@ -27,7 +28,7 @@ public:
  bool Observe(const OriginalPostFrameSample& sample,bool originalPostTick)noexcept{
   if(!onThread()||!originalPostTick||sample.world<0x10000u||sample.owner<0x10000u||
      sample.physics<0x10000u||sample.npcPool<0x10000u||
-     sample.corePhase!=0x1Cu||sample.localKind!=2u||
+     !IsOriginalWorldRunning(sample.corePhase,sample.unloadPhase)||sample.localKind!=2u||
      sample.localVtable!=0x0028CFE0u){
    Reset();return false;
   }

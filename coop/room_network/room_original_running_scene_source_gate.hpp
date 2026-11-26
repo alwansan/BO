@@ -8,6 +8,12 @@
 #pragma once
 #include <cstdint>
 namespace blackcoop {
+// Pinned c5 image: 001EDC90 sets both fields on entering gameplay.
+// 001EBD60 advances the unload field while the running field remains 0x1C.
+constexpr bool IsOriginalWorldRunning(uint32_t loadPhase,uint32_t unloadPhase)noexcept{
+    return loadPhase==0x1Cu&&unloadPhase==0x1Du;
+}
+
 class OriginalRunningSceneSourceGate final {
     uint32_t episode_=0,world_=0;
     int level_=-1,stage_=-1;

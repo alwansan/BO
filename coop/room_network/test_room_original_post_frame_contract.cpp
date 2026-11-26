@@ -5,7 +5,7 @@
 using namespace blackcoop;
 int main(){
  OriginalPostFrameGate gate;
- const OriginalPostFrameSample valid{0x100000,0x120000,0x140000,0x150000,0x1C,2,0x28CFE0};
+ const OriginalPostFrameSample valid{0x100000,0x120000,0x140000,0x150000,0x1C,0x1D,2,0x28CFE0};
  assert(!gate.Observe(valid,false));
  for(unsigned n=0;n<29;n++)assert(!gate.Observe(valid,true));
  assert(gate.StableOriginalFrames()==29u);
@@ -19,6 +19,10 @@ int main(){
   gate.Reset(); // foreign caller cannot reset the real game-thread state
  });wrongThread.join();
  assert(!foreignSaw&&gate.StableOriginalFrames()==30u);
+ auto unloading=valid;unloading.unloadPhase=0x1E;
+ assert(!gate.Observe(unloading,true)&&gate.StableOriginalFrames()==0u);
+ for(unsigned n=0;n<29;n++)assert(!gate.Observe(valid,true));
+ assert(gate.Observe(valid,true));
  auto bad=valid;bad.localKind=1;
  assert(!gate.Observe(bad,true)&&gate.StableOriginalFrames()==0);
  for(unsigned n=0;n<29;n++)assert(!gate.Observe(valid,true));

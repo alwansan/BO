@@ -153,6 +153,7 @@ int main() {
   kernel::W32(0x2D45D4, world);
   kernel::W32(0x2D67F4, renderer);
   kernel::W32(world + 0x5AE0, 0x1C);
+  kernel::W32(world + 0x5AE4, 0x1D);
   kernel::G<uint8_t>(world + 0x5AEC) = 2;
   kernel::W32(renderer + 0xD4A8, rw);
   kernel::W32(renderer + 0xD590, renderer + 0xD450);

@@ -3,6 +3,11 @@
 #include <iostream>
 using blackcoop::OriginalRunningSceneSourceGate;
 int main(){
+    using blackcoop::IsOriginalWorldRunning;
+    static_assert(IsOriginalWorldRunning(0x1C,0x1D));
+    static_assert(!IsOriginalWorldRunning(0x16,0x1D));
+    for(uint32_t phase=0x1E;phase<=0x21;++phase)
+        assert(!IsOriginalWorldRunning(0x1C,phase));
     OriginalRunningSceneSourceGate scene;
     assert(!scene.Observe(0,1,0,0,true));
     assert(!scene.Observe(1,0,0,0,true));

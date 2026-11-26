@@ -40,6 +40,7 @@ inline void ObserveOriginalPostWorldFrame()noexcept{
    gate.Reset();return;
  }
  s.corePhase=kernel::R32(s.world+0x5AE0u);
+ s.unloadPhase=kernel::R32(s.world+0x5AE4u);
  s.localKind=kernel::R32(s.world+0x30u+0xC4u);
  s.localVtable=kernel::R32(s.world+0x30u); // exact ORIGINAL P1 identity
  if(gate.Observe(s,true))

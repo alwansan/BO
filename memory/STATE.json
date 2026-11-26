@@ -4266,5 +4266,19 @@
     "next": "read unit ordinal mapping and membership/removal reports on the pinned native engine",
     "sharedWorldComplete": false,
     "acceptanceApk": false
+  },
+  "workBatch29": {
+    "date": "2026-11-26",
+    "base": "6487f2f",
+    "scope": "source-backed Android unload rejection in world attestation, post-frame and camera observers",
+    "localSanitizedNativeTestsPassed": 4,
+    "localSourceStagingTestsPassed": 6,
+    "cameraRegressionFailedOnBase": true,
+    "unitRuntimeReportsAvailableAtCheck": false,
+    "evidence": "memory/sessions/2026-11-26_bo-coop-work29-world-unload-gate.md",
+    "next": "verify first two original-engine lab reports for world membership and unlink before using object ordinals",
+    "androidRuntimeVerified": false,
+    "sharedWorldComplete": false,
+    "acceptanceApk": false
   }
 }
