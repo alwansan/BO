@@ -4563,6 +4563,10 @@
     "sameSlotUnitRepublications": 1,
     "liveSameUnitReloadVerified": false,
     "earlyTeardownSourceVerified": true,
+    "restartRetryRun": 45904704260,
+    "restartRetryCommit": "68fdec4498d40cf4cbd3c5f084ebca9a8540f7c8",
+    "restartRetryStatus": "in_progress_at_last_check",
+    "restartRetryFollowUp": "aut_219f709ba001ydIO4mLl7LEiTp",
     "acceptanceApk": false,
     "next": "verify the early-teardown marker and same-unit relink after the fix before using the mapping"
   }
