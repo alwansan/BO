@@ -20,7 +20,13 @@ the pinned texture-header decoder, then exercises `PrepareModPlaceholderDraw`
 and `SubmitModPlaceholder` with the actual `ModPlaceholderUploadKernel` and
 `CreateThreadedBackend(CreateBackend())`. The real queue fence must complete
 before upload storage is freed. Instrumentation checks resource busy state,
-four released header/data pairs and unchanged allocation totals/input State.
+seven released header/data pairs and unchanged allocation totals/input State.
+
+The full-ticket presentation decoder and batch submitter also receive a
+synthetic four-human facade frame and render three separated peer markers.
+Three center colors and untouched exterior are checked; rejected scope must
+allocate nothing. This tests the real rendering path, not the live JNI or
+BLACK camera.
 
 `Backend::Sync` reads back owned color pixels. Assertions check clear color,
 box color, untouched exterior, occlusion by an owned cleared depth plane and

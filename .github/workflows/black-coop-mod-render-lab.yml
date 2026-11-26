@@ -31,6 +31,8 @@ jobs:
           sparse-checkout-cone-mode: false
           sparse-checkout: |
             /coop/render_lab/
+            /coop/room_network/room_mod_human_presentation.hpp
+            /coop/room_network/room_original_world_camera_frame.hpp
             /coop/room_network/room_mod_placeholder_draw.hpp
             /coop/room_network/room_mod_placeholder_submit.hpp
             /coop/room_network/room_mod_placeholder_upload_kernel.hpp
