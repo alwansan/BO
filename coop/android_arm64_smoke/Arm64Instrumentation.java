@@ -23,7 +23,7 @@ public final class Arm64Instrumentation extends Instrumentation {
             result.putString("stream","BO_ARM64_JNI_PASS: actual AArch64-only JNI function executed; ABI arm64-v8a offered; no game/runtime verification");
             finish(-1,result);
         }catch(Throwable failure){
-            result.putString("stream","BO_ARM64_JNI_FAILED: "+failure.getClass().getSimpleName());
+            result.putString("stream","BO_ARM64_JNI_FAILED: "+failure.getClass().getSimpleName()+": "+failure.getMessage()+"\n");
             finish(0,result);
         }
     }
