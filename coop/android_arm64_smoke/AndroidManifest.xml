@@ -1,0 +1,5 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.bocoop.arm64smoke">
+    <uses-sdk android:minSdkVersion="29" android:targetSdkVersion="34" />
+    <application android:label="BO ARM64 Runtime Test" android:testOnly="true" android:debuggable="true" />
+    <instrumentation android:name="org.bocoop.arm64smoke.Arm64Instrumentation" android:targetPackage="org.bocoop.arm64smoke" />
+</manifest>

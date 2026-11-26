@@ -1,0 +1,24 @@
+name: BO actual ARM64 JNI on official translated Android emulator
+on:
+  workflow_dispatch:
+  push:
+    branches: [experiment/black-coop]
+    paths: ['coop/android_arm64_smoke/**', '.github/workflows/black-coop-android-arm64-runtime.yml']
+permissions:
+  contents: read
+jobs:
+  actual-arm64:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop/android_arm64_smoke
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Compile AArch64-only JNI APK and execute on official Google APIs native bridge
+        shell: bash
+        run: bash coop/android_arm64_smoke/run.sh
