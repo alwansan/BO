@@ -4222,6 +4222,9 @@
       "unitsWithDuplicateSelectors": 2
     },
     "localTestsPassed": 14,
+    "syntheticCiRun": 45871529470,
+    "syntheticCiCommit": "5d73dee4f08b4213870dd63a77c6584ee79ff974",
+    "syntheticCiPassed": true,
     "evidence": "memory/sessions/2026-11-26_bo-coop-work26-unit-object-lifecycle.md",
     "next": "observe native unit publication, teardown and reload to validate thread and ordinal/lifetime before wiring sync",
     "sharedWorldComplete": false,
