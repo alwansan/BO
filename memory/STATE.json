@@ -4517,6 +4517,8 @@
     "liveRemovalVerified": false,
     "liveSameUnitReloadVerified": false,
     "liveObjectiveWriterVerified": false,
+    "objectiveType28DispatchSourceVerified": true,
+    "objectiveSecondaryWriterSourceVerified": "001BA770",
     "acceptanceApk": false,
     "localLabPythonTestsPassed": 40,
     "localVerifierTestsPassed": 4,
