@@ -1,0 +1,47 @@
+{
+  "code_commit": "9448a73b34e7a6694f7f17a28ecf4deb9626a0cb",
+  "runs": {
+    "source": {
+      "id": 45799322972,
+      "conclusion": "success",
+      "url": "https://github.com/alwansan/BO/actions/runs/45799322972"
+    },
+    "real_tls_four_humans": {
+      "id": 45799322977,
+      "conclusion": "success",
+      "url": "https://github.com/alwansan/BO/actions/runs/45799322977"
+    },
+    "android_keystore_synthetic": {
+      "id": 45799323195,
+      "conclusion": "success",
+      "url": "https://github.com/alwansan/BO/actions/runs/45799323195"
+    },
+    "udp": {
+      "id": 45799323049,
+      "conclusion": "success",
+      "url": "https://github.com/alwansan/BO/actions/runs/45799323049"
+    }
+  },
+  "local": {
+    "java8_core_strict": true,
+    "java17_tests_strict": true,
+    "four_human_actual_tls_synthetic_engine_pass": true,
+    "source_prepare_tests_passed": 5,
+    "missing_method_red_compile_reproduced": true,
+    "working_files_equal_fetched_github_commit": true
+  },
+  "files_sha256": {
+    "coop/lobby/android/com/racas/black/coop/RoomAppRooms.java": "dbe9414ea2c2cc2f29fe95406a2d119c156397f778ef216f1bdfaa32765d3545",
+    "coop/lobby/java/com/racas/black/coop/RoomSession.java": "fd73634cddfc4fabd9e0e2a4afa4ae01b95cf3631cd1c2bfd1b8e402da2087bb",
+    "coop/lobby/test/RoomFourHumanOriginalStageTlsTest.java": "a9d01112c5a13b7e4f1a819ac4fab239459510c82cda398d8233e907c52a534d",
+    "coop/prepare_room_network.py": "df0309ccf94d83417a9841d18866654202ef13be43e089bdf9befd66ac896431",
+    "coop/room_network_prepare_checks.py": "a9f38442a5040e1005c5724973b3bbaef148926acf3cb3d514d8c85f7f4c96d7"
+  },
+  "limits": [
+    "Synthetic engine attestations only; no BLACK runtime",
+    "Full-ticket native presentation consumer still not connected",
+    "No original physical P2 actor, shared host world gameplay or story transition proved",
+    "No game APK or ISO built in this change"
+  ],
+  "latest_cl_reference": "9abb911ac52a369312d7665b0c4c6eac7f71e104"
+}

@@ -4047,7 +4047,7 @@
     "next": "Signed story and original scene/frame visual consumer, then original shared host state and story transition"
   },
   "work15PresentationSource": {
-    "status": "local_strict_java_and_real_tls_source_fixture_pass_ci_pending",
+    "status": "local_and_github_strict_source_real_tls_and_synthetic_android_pass",
     "schema": 1,
     "headerInts": 16,
     "maxOtherHumans": 3,
@@ -4055,6 +4055,14 @@
     "fullTicketIncluded": true,
     "nativeConsumerImplemented": false,
     "sharedWorldComplete": false,
-    "documentation": "docs/OTHER_HUMAN_PRESENTATION_SOURCE_WORK15_AR.md"
+    "documentation": "docs/OTHER_HUMAN_PRESENTATION_SOURCE_WORK15_AR.md",
+    "code": "9448a73b34e7a6694f7f17a28ecf4deb9626a0cb",
+    "runs": {
+      "source": 45799322972,
+      "real_tls_four_humans": 45799322977,
+      "android_keystore_synthetic": 45799323195,
+      "udp": 45799323049
+    },
+    "evidence": "memory/evidence/WORK_BATCH15_SCOPED_PRESENTATION_2026-11-26.json"
   }
 }
