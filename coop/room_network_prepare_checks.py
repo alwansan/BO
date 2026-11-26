@@ -47,6 +47,18 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('coopPollTrustedHumanInputsFromGameThread()',java)
             self.assertIn('coopPollHostWorldSnapshotFromGameThread()',java)
             self.assertIn('coopPollOtherHumanPresentationFromGameThread()',java)
+            hooks=(root/'src/game/hooks.cpp').read_text(encoding='utf-8')
+            self.assertIn('ReadOriginalModHumanPresentation(env,activity,originalGrid,now,scene,packet)',hooks)
+            self.assertIn('blackcoop::DrawOriginalModHumans(scene,packet,originalGrid,',hooks)
+            self.assertNotIn('OriginalRemoteHumanBotVisual(peer).Draw',hooks)
+            self.assertEqual(hooks.count('__imp__sub_000D1500(ctx,base);'),1)
+            sdkdraw=(root/'src/d3d/d3d8.cpp').read_text(encoding='utf-8')
+            self.assertIn('void blackcoop::DrawOriginalModHumans(',sdkdraw)
+            self.assertIn('SubmitModHumanPresentation(*d3d::g_backend',sdkdraw)
+            for name in ('room_mod_human_presentation.hpp','room_mod_human_presentation_witness.hpp',
+                         'room_mod_placeholder_draw.hpp','room_mod_placeholder_submit.hpp',
+                         'room_mod_placeholder_upload_kernel.hpp'):
+                self.assertTrue((root/'src/coop'/name).is_file())
             facade=(root/'app/src/main/java/com/racas/black/coop/RoomAppRooms.java').read_text(encoding='utf-8')
             self.assertIn('s.otherHumanPresentationFromGameThread()',facade)
             self.assertIn('coopOfferOriginalGuestController(int x,int y,int yaw,',java)
@@ -516,6 +528,15 @@ class RoomNetPrepareTests(unittest.TestCase):
             p.write_text(p.read_text(encoding='utf-8').replace('    const Row* row = g_page.rows[g_page.top + slot];',
                                                     '    const Row* row = g_page.rows.at(g_page.top + slot);'),encoding='utf-8')
             # Base probe read-only transform must reject this upstream drift.
+            before={str(p.relative_to(root)):p.read_bytes() for p in root.rglob('*') if p.is_file()}
+            with self.assertRaises(ValueError):prepare(root)
+            self.assertEqual(before,{str(p.relative_to(root)):p.read_bytes() for p in root.rglob('*') if p.is_file()})
+    def test_backend_lifetime_drift_is_atomic(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=pathlib.Path(directory)
+            self.source(root)
+            p=root/'src/d3d/d3d8.cpp'
+            p.write_text(p.read_text().replace('    if (g_backend) return;','    g_backend.reset();',1))
             before={str(p.relative_to(root)):p.read_bytes() for p in root.rglob('*') if p.is_file()}
             with self.assertRaises(ValueError):prepare(root)
             self.assertEqual(before,{str(p.relative_to(root)):p.read_bytes() for p in root.rglob('*') if p.is_file()})

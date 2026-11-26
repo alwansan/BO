@@ -1,0 +1,14 @@
+# Work16 — توصيل عرض مجسم المود بمسار العالم الأصلي (2026-11-26)
+
+أُضيف consumer فعلي في مصدر Android: بعد original D1500 مرة واحدة، يقرأ JNI الحزمة الكاملة Work15 ويطابقها مع episode/level/stage/world الأصليين من eye/scene witness؛ داخل d3d8.cpp يستخدم backend الأصلي وكاميرا Work13 الحالية تحت SDK lock، ثم يرفع صندوقًا مستقلاً لكل إنسان آخر عبر Draw→Fence→WaitFence. مرة واحدة لكل camera-begin serial؛ لون مستقل لكل peer؛ لا state أصلية تتغير ولا depth writes. source freshness يعاد فحصها بساعة SDL الحية قبل التخصيص وقبل الرسم، لا بوقت ثابت سبق JNI. أي استثناء/عدم تأكيد fence يعزل ذاكرة المود داخل ledger محدود؛ لا تحرير غير مؤكد. pinned EnsureBackend ينشئ backend مرة واحدة؛ التحضير يرفض تغير هذا الافتراض قبل أي كتابة.
+
+نقطة الرسم لم تعد تستدعي OriginalRemoteHumanBotVisual(peer).Draw أو clone/animation أصليًا؛ ملفات ذلك المسار محفوظة للمراجعة ولم تُحذف. observer القديم غير مستدعى من eye. لم نغيّر AI الأعداء أو الحلفاء أو تخصيصاتها أو مظهرها. المجسمات مجرد عرض مواضع بشر، وليس لديها physical actor أو collision أو weapon أو host-world authority. بعض مواضع المصدر الحالي بذور/تسوية host kinematics؛ لا تعتبرها أجسام P2 أصلية منشأة. لا تُفتح بوابات physical readiness بهذا التغيير.
+
+الأدوات: room_mod_human_presentation.hpp يفك schema1 ويحتفظ بـsession128/token64/revision32 دون فقد البتات؛ room_mod_human_presentation_witness.hpp ينسخ JNI بقيم مملوكة ويحرر local refs ويرفض pending exceptions والطول/الغرفة/المشهد الخطأ؛ room_mod_human_render_bridge.inc هو الكود الملحق فعليًا بوحدة backend الأصلية. يرفض تبديل original launch episode فورًا، وحتى لو بقيت world pointer كما هي؛ ويتحقق من core level/stage وprimary camera والtargets/matrices. اختبار sanitizer يستخدم هذه الملفات الفعلية مع SDK وذاكرة/JNI/backend مؤجل اصطناعية، يتحقق من ثلاثة peers وfence/no early free ومنع التكرار والمرحلة/grid والخيط الخطأ وفقدان freshness بعد allocation، وجميع بايتات اللعبة الاصطناعية خارج تخصيصات المود ثابتة.
+
+محليًا نجح ASAN/UBSAN للـdecode والـbridge (LSAN معطل لبيئة Android المحلية)، واختبارات تجهيز المصدر الستة ومنها backend lifetime drift بلا كتابة، وgit diff --check. مختبر WARP أضيف له حزمة كاملة وثلاثة مجسمات منفصلة وreadback للألوان الثلاثة، و7 تخصيصات/7 تحريرات متوقعة. CI الجديد لم يُفحص بعد؛ لا Windows/GPU أو Android runtime نجاح مُدّعى لهذا التغيير قبل نتيجته. لا أصل لعبة أو ISO/XBE/APK يدوي أو save/checkpoint في هذا العمل.
+
+التالي: افحص CI source وWARP وأصلح أي فشل. بعد نجاحهما يبقى إثبات كاميرا/عرض BLACK الفعلي على Android غير متاح من fixture، وليس العالم المشترك مكتملًا. استمر بالأجسام الأصلية المستقلة والفيزياء/الأسلحة ومصدر presentation/audio الأصلي، ثم فعل ضيف يغيّر حالة الهوست الأصلية وتطبيقه لدى الضيف وانتقال القصة. لا تُطلب تجربة هاتف صغيرة أو تُعطى نسخة على أنها co-op مكتملة. لا manual asset workflows؛ experiment/black-coop فقط، وكل الأدوات والمعلومات هنا في GitHub.
+
+---
+

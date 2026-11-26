@@ -321,6 +321,8 @@ def prepare(root: pathlib.Path):
         content = (HERE / source).read_text(encoding='utf-8')
         pending[destination] = content
 
+    for mod_header in ('room_mod_human_presentation.hpp','room_mod_human_presentation_witness.hpp','room_mod_placeholder_draw.hpp','room_mod_placeholder_submit.hpp','room_mod_placeholder_upload_kernel.hpp'):
+        pending['src/coop/'+mod_header]=(HERE/'room_network'/mod_header).read_text(encoding='utf-8')
     pending['src/coop/room_net_ui.hpp'] = (HERE / 'room_network/room_net_ui.hpp').read_text(encoding='utf-8')
     for camera_header in ('room_original_world_camera_frame.hpp', 'room_original_world_camera_witness.hpp'):
         pending['src/coop/' + camera_header] = (HERE / 'room_network' / camera_header).read_text(encoding='utf-8')
@@ -429,24 +431,31 @@ def prepare(root: pathlib.Path):
     if (app::kGame.pad) app::kGame.pad(port, p);''',pad_file)
     pending[pad_file]=pad
 
-    # Exact original world draw hook. The source-validated original character
-    # renderer may draw one independent appearance-only remote HUMAN body
-    # under authenticated 2-human COMMIT. No NPC AI/world ownership transfer.
+    # Exact original world draw hook, now mod-owned geometry only. The legacy
+    # NPC-slot replica renderer remains reference source, never called here.
     draw='src/game/hooks.cpp'
     visual=pending.get(draw,originals[draw].decode('utf-8').replace('\r\n','\n'))
-    visual=once(visual,'#include "game/layout.h"',
-        '#include "game/layout.h"\n#include "coop/room_original_live_remote_bot.hpp"',draw)
     visual += '''
-// Original level grid drawing. After vanilla draw, one remote-human original
-// soldier LOOK may be drawn; never suppress or alter original NPC drawing.
+// Original level grid drawing executes once; then mod-owned human markers.
+// No original NPC clone, model, animation, actor or AI calls in this path.
 X86_EXTERN_FUNC(__imp__sub_000D1500);
 X86_FUNC(sub_000D1500) {
     const uint32_t originalGrid=ctx.edi;
     __imp__sub_000D1500(ctx,base);
-    for(uint8_t peer=1;peer<=4;peer++)
-        blackcoop::OriginalRemoteHumanBotVisual(peer).Draw(ctx,originalGrid);
+    // Fresh full-ticket JNI values, independently matched to the original
+    // eye/loaded scene. No original actor or AI is created or updated here.
+    auto* env=static_cast<JNIEnv*>(SDL_GetAndroidJNIEnv());
+    auto activity=static_cast<jobject>(SDL_GetAndroidActivity());
+    blackcoop::ModHumanOriginalScene scene;
+    blackcoop::ModHumanPresentation packet;
+    const auto now=static_cast<uint64_t>(SDL_GetTicks());
+    if(blackcoop::ReadOriginalModHumanPresentation(env,activity,originalGrid,now,scene,packet))
+        blackcoop::DrawOriginalModHumans(scene,packet,originalGrid,
+            []() noexcept -> uint64_t { return static_cast<uint64_t>(SDL_GetTicks()); });
+    if(env&&activity)env->DeleteLocalRef(activity);
 }
 '''
+    visual=once(visual,'#include "game/layout.h"','#include "game/layout.h"\n#include "coop/room_mod_human_presentation_witness.hpp"\n#include <SDL3/SDL_system.h>',draw)
     visual += '\n#include "coop/room_original_world_camera_witness.hpp"\n'
     visual += '''
 // Exact original RW device camera begin callback: cdecl(0, RwCamera*, 0).
@@ -555,6 +564,9 @@ X86_FUNC(sub_001EDC90) {
     # shader registers/constants, guest addresses or vertex payloads.
     d3d='src/d3d/d3d8.cpp'
     shader=pending.get(d3d,originals[d3d].decode('utf-8'))
+    backend_once='void EnsureBackend(uint32_t w, uint32_t h) {\n    if (g_backend) return;\n    g_backend = gpu::CreateBackend();\n    if (!g_backend->Init(w, h)) LOGE("d3d: renderer init failed");\n    if (kRenderThread) g_backend = gpu::CreateThreadedBackend(std::move(g_backend));\n}'
+    if shader.count(backend_once)!=1 or 'g_backend.reset(' in shader:
+        raise ValueError('Pinned process-lifetime backend changed; mod upload lifetime unproven')
     shader=once(shader,'#include "gpu/vertex.h"',
                 '#include "gpu/vertex.h"\n#include "coop/gpu_decl_witness.hpp"',d3d)
     shader=once(shader,'    gpu::ParseDeclaration(*vs);',
@@ -572,6 +584,7 @@ X86_FUNC(sub_001EDC90) {
         '''    if (g_backend && a[1] != 0)
         blackcoop::ObserveOriginalGpuDraw(g_state, true); // bounded indexed witness
     if (g_backend) g_backend->Draw(g_state, a[0], 0, a[1], indices);''',d3d)
+    shader += '\n' + (HERE/'room_network/room_mod_human_render_bridge.inc').read_text(encoding='utf-8')
     pending[d3d]=shader
     for name in pending:
         if name not in originals and (root / name).exists():

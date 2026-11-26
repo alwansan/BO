@@ -313,6 +313,20 @@ jobs:
             -d "$scratch/java" \
             "$scratch/stage"/app/src/main/java/com/racas/black/coop/*.java
           echo 'ROOM_NET_JAVA_PASS: Android Java source compile only, not a game APK'
+      - name: Native full-ticket human presentation and actual render bridge (synthetic only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/mod-human-headers/kernel"
+          ln -s "$GITHUB_WORKSPACE/bo/coop/room_network" "$RUNNER_TEMP/mod-human-headers/coop"
+          cp bo/coop/stage_resources/level_file_open_contract.hpp "$RUNNER_TEMP/mod-human-headers/kernel/coop_stage_resource_contract.hpp"
+          for source in test_room_mod_human_presentation test_room_mod_human_render_bridge; do
+            g++ -std=c++20 -Wall -Wextra -Werror -pthread -fsanitize=address,undefined -fno-omit-frame-pointer \
+              -I android-sdk/runtime -I bo/coop/room_network -I "$RUNNER_TEMP/mod-human-headers" \
+              -I "$JAVA_HOME/include" -I "$JAVA_HOME/include/linux" \
+              "bo/coop/room_network/$source.cpp" -o "$RUNNER_TEMP/$source"
+            "$RUNNER_TEMP/$source"
+          done
       - name: Verify mod-owned placeholder draw preparation against pinned SDK (no GPU submission)
         shell: bash
         run: |

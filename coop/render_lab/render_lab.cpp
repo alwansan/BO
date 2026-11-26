@@ -20,6 +20,7 @@
 #include "kernel/kernel.h"
 #include "kernel/memory.h"
 #include "room_mod_placeholder_upload_kernel.hpp"
+#include "room_mod_human_presentation.hpp"
 
 namespace kernel { uint8_t* g_base = nullptr; }
 namespace app {
@@ -176,9 +177,32 @@ int main() {
         clear(1.0f);
         draw(0.45f,kGreen);
         ExpectColor(Pixel(color,32,32),kGreen,"depth_clear_restores_visibility");
+        // Work16: the actual Java facade layout -> bounded native decode ->
+        // three mod-owned markers -> the same REAL SDK queue and fenced IO.
+        // Synthetic ticket/scene/camera deliberately; no BLACK runtime claim.
+        clear(1.0f);
+        const std::array<int32_t,34> humans{
+            1,1,2,0,1,1,0,123,15,1,1,3,0,1,2,3,
+            2,-60,-85,60,0,0,3,0,-85,60,0,0,4,60,-85,60,0,0};
+        blackcoop::ModHumanPresentation people;
+        Require(blackcoop::DecodeModHumanPresentation(humans.data(),humans.size(),1,2,0,people),
+                "full-ticket human presentation decode failed");
+        blackcoop::OriginalWorldCameraFrame syntheticCamera;
+        syntheticCamera.view=kIdentity;syntheticCamera.projection=kIdentity;
+        Require(blackcoop::SubmitModHumanPresentation(*backend,upload,original,syntheticCamera,
+                    people,[]{return true;})==3,"three human markers did not complete");
+        sync();
+        ExpectColor(Pixel(color,13,32),0xff40c0ffu,"peer_two_marker");
+        ExpectColor(Pixel(color,32,32),0xff70e080u,"peer_three_marker");
+        ExpectColor(Pixel(color,51,32),0xffd080ffu,"peer_four_marker");
+        ExpectColor(Pixel(color,2,2),kClear,"human_markers_exterior_unchanged");
+        const auto beforeRejected=upload.allocated;
+        Require(blackcoop::SubmitModHumanPresentation(*backend,upload,original,syntheticCamera,
+                    people,[]{return false;})==0&&upload.allocated==beforeRejected,
+                "rejected presentation scope allocated or drew");
         backend->Flush();
         const auto memoryAfter=mem::Query();
-        Require(upload.allocated==4 && upload.freed==4 && !upload.quarantined &&
+        Require(upload.allocated==7 && upload.freed==7 && !upload.quarantined &&
                 !upload.earlyFree && !upload.badRelease,"kernel upload lease/fence/release invariant failed");
         Require(memoryBefore.contiguous_used==memoryAfter.contiguous_used &&
                 memoryBefore.system_used==memoryAfter.system_used,"upload allocations leaked");
@@ -188,7 +212,7 @@ int main() {
         color.Free(); depth.Free();
         ImGui_ImplWin32_Shutdown(); ImGui::DestroyContext(); DestroyWindow(app::window);
         std::ofstream result("rasterization-result.json");
-        result << R"({"passed":true,"backend":"actual pinned SDK D3D12 through actual threaded backend","adapter":"required WARP software","owned_color_readback":true,"depth_occlusion_verified":true,"depth_readback_available":false,"placeholder_depth_write_absent":true,"kernel_upload_allocations":4,"fenced_upload_frees":4,"source_state_unchanged":true,"assets_used":false,"game_camera_verified":false,"gameplay_verified":false})";
+        result << R"({"passed":true,"backend":"actual pinned SDK D3D12 through actual threaded backend","adapter":"required WARP software","owned_color_readback":true,"depth_occlusion_verified":true,"depth_readback_available":false,"placeholder_depth_write_absent":true,"kernel_upload_allocations":7,"fenced_upload_frees":7,"full_ticket_three_human_markers":true,"source_state_unchanged":true,"assets_used":false,"game_camera_verified":false,"gameplay_verified":false})";
         Require(bool(result),"result metadata write failed");
         std::puts("ACTUAL_SDK_WARP_RASTERIZATION_PASS color_depth_occlusion_no_depth_write_real_queue_fence_no_assets_no_gameplay");
         return 0;

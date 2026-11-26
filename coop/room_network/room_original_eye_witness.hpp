@@ -16,7 +16,7 @@
 #include "coop/room_original_guest_launch_match_witness.hpp"
 #include "coop/room_original_running_scene_source_gate.hpp"
 #include "coop/room_other_human_body_source_witness.hpp"
-#include "coop/room_original_live_remote_bot.hpp"
+#include "coop/room_mod_human_presentation_witness.hpp"
 #include "coop/room_original_ai_target_witness.hpp"
 #include "coop/room_original_host_physics_proxy_witness.hpp"
 #include "coop/room_original_host_extra_actor_witness.hpp"
@@ -128,11 +128,11 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
     static OriginalRunningSceneSourceGate localSceneRun;
     const bool originalLocalSceneRunning=localSceneRun.Observe(
         coreEpisode,world,coreLevel,coreStage,lookSourceMatched);
+    OriginalModHumanScenes().Observe(coreEpisode,world,
+        static_cast<uint32_t>(coreLevel),static_cast<uint32_t>(coreStage),
+        originalLocalSceneRunning&&lookSourceMatched,at);
     // Same genuine original game thread and independently stable loaded level.
     // The actual other-human BODY source is checked again at DRAW time.
-    for(uint8_t peer=1;peer<=4;peer++)
-        OriginalRemoteHumanBotVisual(peer).ObserveScene(coreEpisode,world,
-            originalLocalSceneRunning&&lookSourceMatched);
     // P0: Are real ORIGINAL AI-target slots available for later REAL
     // host-owned humans? Strict read-only; no actor insertion or AI change.
     ObserveOriginalAiTargetPoolSourceHint(coreEpisode,world,

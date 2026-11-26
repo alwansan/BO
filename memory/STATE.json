@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-26_bo-coop-work15-scoped-presentation-source.md",
+  "lastSession": "memory/sessions/2026-11-26_bo-coop-work16-native-render-consumer.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -4064,5 +4064,17 @@
       "udp": 45799323049
     },
     "evidence": "memory/evidence/WORK_BATCH15_SCOPED_PRESENTATION_2026-11-26.json"
+  },
+  "work16NativeRenderConsumer": {
+    "status": "local_sanitizers_and_six_source_stage_tests_pass_ci_pending",
+    "modOwnedBoxes": true,
+    "originalBackendBridgeStaged": true,
+    "legacyNpcCloneInvocationRemoved": true,
+    "originalAiModified": false,
+    "physicalReadinessEnabled": false,
+    "androidRuntimeVerified": false,
+    "sharedWorldComplete": false,
+    "documentation": "docs/ORIGINAL_MOD_HUMAN_RENDER_CONSUMER_WORK16_AR.md",
+    "next": "Verify actual WARP three-peer raster and source CI; continue true original human bodies/physics/weapons and shared original host world plus story transition"
   }
 }
