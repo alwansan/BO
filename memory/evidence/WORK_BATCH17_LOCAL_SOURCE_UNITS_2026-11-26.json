@@ -1,0 +1,62 @@
+{
+  "passed": true,
+  "pins": {
+    "android": "f3754d6985a8c35204e7df071546e586b10f1806",
+    "sdk": "99078b119b5d5e0d1d6afb1390e29437c0c984c0",
+    "sdl": "fa2c02bb6e21974a89ea9824bc53c9932abe5f9c"
+  },
+  "compiler": "clang version 21.1.8",
+  "actual_android_arm64": true,
+  "android_min_api": 24,
+  "units": [
+    {
+      "unit": "src/game/hooks.cpp",
+      "exit_code": 0,
+      "staged_sha256": "afa9761c0e08a569394a912c4d16e76d83c962147acd60221cda3872174a69e4"
+    },
+    {
+      "unit": "src/d3d/d3d8.cpp",
+      "exit_code": 0,
+      "staged_sha256": "55bb901b50909df8503ecf7e1c07ceae6ead2764200a1ef5c0a7a01b49243c5d"
+    },
+    {
+      "unit": "src/game/cheats.cpp",
+      "exit_code": 0,
+      "staged_sha256": "1bf9e20f890487e555bac231933088711c01972aba002945ee1865356463c647"
+    },
+    {
+      "unit": "src/game/options_menu.cpp",
+      "exit_code": 0,
+      "staged_sha256": "886d064cbfb8d646c53e0565ae068a047edee0e13fc5d32aadcf59dfa04f4a94"
+    },
+    {
+      "unit": "src/game/exit_menu.cpp",
+      "exit_code": 0,
+      "staged_sha256": "0947dca057757da0897c7877e04c9cfbed48dfef93e148ed758c03da0f2e27df"
+    },
+    {
+      "unit": "src/game/difficulty.cpp",
+      "exit_code": 0,
+      "staged_sha256": "8ec93ecf51350bcf1066702fd3fd2f16f7e61df353e674967cbb6669ad9331db"
+    },
+    {
+      "unit": "native/input.cpp",
+      "exit_code": 0,
+      "staged_sha256": "580d5927470c8100b0d0525b064ec28dae24142b47306aa8f69a162274f1d9be"
+    }
+  ],
+  "public_config_symbols_sha256": "7ce81bd50184e27d8f85e1944da3db64e3aa502928850aa448b8b0124ef99f67",
+  "original_assets_used": false,
+  "guest_code_generated": false,
+  "linked": false,
+  "apk_built": false,
+  "gameplay_verified": false,
+  "prior_failure": {
+    "unit": "src/game/hooks.cpp",
+    "error": "SDL_GetTicks undeclared after legacy renderer header removal",
+    "corrected": "Explicit SDL3/SDL_timer.h include in source transform",
+    "red_compile_reproduced": true
+  },
+  "metadata_calibration_passed": true,
+  "source_stage_tests_passed": 6
+}

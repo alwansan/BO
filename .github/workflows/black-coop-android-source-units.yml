@@ -1,0 +1,100 @@
+name: BO Android complete source units without game assets
+on:
+  workflow_dispatch:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - 'coop/*.py'
+      - 'coop/room_network/**'
+      - 'coop/probe/**'
+      - 'coop/stage_resources/**'
+      - '.github/workflows/black-coop-android-source-units.yml'
+permissions:
+  contents: read
+concurrency:
+  group: bo-android-source-units
+  cancel-in-progress: true
+jobs:
+  android-arm64-frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: bo
+          persist-credentials: false
+          lfs: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: /coop/
+      - uses: actions/checkout@v4
+        with:
+          repository: RanggaCasper/Black-Android
+          ref: f3754d6985a8c35204e7df071546e586b10f1806
+          path: reference
+          persist-credentials: false
+          lfs: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /src/
+            /native/
+            /app/
+            /config/game.toml
+      - uses: actions/checkout@v4
+        with:
+          repository: TGP482/XboxXBE-Recomp
+          ref: 99078b119b5d5e0d1d6afb1390e29437c0c984c0
+          path: sdk
+          persist-credentials: false
+          lfs: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /runtime/
+            /LICENSE
+      - uses: actions/checkout@v4
+        with:
+          repository: libsdl-org/SDL
+          # release-3.4.16 used by the pinned Android Gradle source.
+          ref: fa2c02bb6e21974a89ea9824bc53c9932abe5f9c
+          path: sdl
+          persist-credentials: false
+          lfs: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /include/
+            /LICENSE.txt
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Ensure exact baseline NDK without invoking Gradle or asset workflows
+        shell: bash
+        run: |
+          set -euo pipefail
+          compiler="$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android29-clang++"
+          if [[ ! -x "$compiler" ]]; then
+            sdkmanager 'ndk;28.2.13676358'
+          fi
+          test -x "$compiler"
+          echo "BO_SOURCE_CXX=$compiler" >> "$GITHUB_ENV"
+      - name: Calibrate config metadata and compile all seven complete staged units
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s bo/coop -p test_android_source_units.py -v
+          python bo/coop/android_source_units.py --upstream reference --sdk sdk --sdl sdl \
+            --output "$RUNNER_TEMP/android-source-units" --cxx "$BO_SOURCE_CXX" --expected-api 29
+          git -C reference diff --exit-code
+          git -C sdk diff --exit-code
+          git -C sdl diff --exit-code
+      - name: Upload source frontend diagnostics only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bo-android-source-unit-diagnostics
+          retention-days: 14
+          path: |
+            ${{ runner.temp }}/android-source-units/report.json
+            ${{ runner.temp }}/android-source-units/logs/*.log

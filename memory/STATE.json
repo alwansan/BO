@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-26_bo-coop-work16-native-render-consumer.md",
+  "lastSession": "memory/sessions/2026-11-26_bo-coop-work17-android-source-units.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -4084,5 +4084,19 @@
     "udpRun": 45802030316,
     "evidence": "memory/evidence/WORK_BATCH16_NATIVE_RENDER_CONSUMER_2026-11-26.json",
     "wholeAndroidTranslationUnitCompileVerified": false
+  },
+  "work17CompleteSourceUnits": {
+    "status": "local_android_arm64_api24_all_seven_frontends_pass_api29_ci_pending",
+    "missingSDLTimerDeclarationFixed": true,
+    "sourceAssetsUsed": false,
+    "wholeAndroidTranslationUnitsLocalFrontendPass": 7,
+    "linked": false,
+    "apkBuilt": false,
+    "androidGameplayVerified": false,
+    "sharedWorldComplete": false,
+    "tool": "coop/android_source_units.py",
+    "workflow": ".github/workflows/black-coop-android-source-units.yml",
+    "documentation": "docs/ANDROID_COMPLETE_SOURCE_UNITS_WORK17_AR.md",
+    "localEvidence": "memory/evidence/WORK_BATCH17_LOCAL_SOURCE_UNITS_2026-11-26.json"
   }
 }

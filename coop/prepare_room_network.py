@@ -455,7 +455,7 @@ X86_FUNC(sub_000D1500) {
     if(env&&activity)env->DeleteLocalRef(activity);
 }
 '''
-    visual=once(visual,'#include "game/layout.h"','#include "game/layout.h"\n#include "coop/room_mod_human_presentation_witness.hpp"\n#include <SDL3/SDL_system.h>',draw)
+    visual=once(visual,'#include "game/layout.h"','#include "game/layout.h"\n#include "coop/room_mod_human_presentation_witness.hpp"\n#include <SDL3/SDL_system.h>\n#include <SDL3/SDL_timer.h>',draw)
     visual += '\n#include "coop/room_original_world_camera_witness.hpp"\n'
     visual += '''
 // Exact original RW device camera begin callback: cdecl(0, RwCamera*, 0).

@@ -51,6 +51,7 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('ReadOriginalModHumanPresentation(env,activity,originalGrid,now,scene,packet)',hooks)
             self.assertIn('blackcoop::DrawOriginalModHumans(scene,packet,originalGrid,',hooks)
             self.assertNotIn('OriginalRemoteHumanBotVisual(peer).Draw',hooks)
+            self.assertIn('#include <SDL3/SDL_timer.h>',hooks)
             self.assertEqual(hooks.count('__imp__sub_000D1500(ctx,base);'),1)
             sdkdraw=(root/'src/d3d/d3d8.cpp').read_text(encoding='utf-8')
             self.assertIn('void blackcoop::DrawOriginalModHumans(',sdkdraw)
