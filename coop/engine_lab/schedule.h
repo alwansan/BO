@@ -3,7 +3,7 @@
 #define BO_ENGINE_LAB_SCHEDULE_H
 #include <stdint.h>
 #include <string.h>
-typedef struct BoLabInput { int confirm, start, move, fire, menu_dir; } BoLabInput;
+typedef struct BoLabInput { int confirm, start, move, fire; } BoLabInput;
 enum BoLabRestartAction {
     BO_RESTART_NORMAL, BO_RESTART_NEUTRAL, BO_RESTART_OPEN,
     BO_RESTART_UP, BO_RESTART_DOWN, BO_RESTART_CONFIRM
@@ -76,19 +76,11 @@ static BoLabInput bo_lab_restart_open_input(unsigned port, unsigned frames)
     return in;
 }
 
-static BoLabInput bo_lab_restart_input(unsigned port, uint64_t now_ms, int action)
-{
-    BoLabInput in = {0};
-    if (port != 0 || now_ms % 1000u >= 250u) return in;
-    in.confirm = action == BO_RESTART_CONFIRM;
-    in.menu_dir = action == BO_RESTART_UP ? -1 : action == BO_RESTART_DOWN ? 1 : 0;
-    return in;
-}
 static void bo_lab_encode(BoLabInput in, unsigned char out[20])
 {
     memset(out, 0, 20);
     out[1] = 20;
-    out[2] = (in.start ? 0x10 : 0) | (in.menu_dir < 0 ? 0x01 : in.menu_dir > 0 ? 0x02 : 0);
+    out[2] = in.start ? 0x10 : 0;
     out[4] = in.confirm ? 255 : 0;
     out[11] = in.fire ? 255 : 0;
     if (in.move) { out[12] = in.move > 0 ? 0xFF : 0; out[13] = in.move > 0 ? 0x7F : 0x80; }

@@ -51,11 +51,7 @@ int main(void) {
         assert(!bo_lab_restart_open_input(1, first).start);
     }
     assert(!bo_lab_restart_open_input(0, BO_RESTART_OPEN_FRAMES + 1).start);
-    bo_lab_encode(bo_lab_restart_input(0, 1000, BO_RESTART_DOWN), report);
-    assert(report[2] == 2 && report[4] == 0);
-    bo_lab_encode(bo_lab_restart_input(0, 1250, BO_RESTART_DOWN), report);
-    assert(report[2] == 0 && report[4] == 0);
-    bo_lab_encode(bo_lab_restart_input(1, 1000, BO_RESTART_CONFIRM), report);
-    assert(report[2] == 0 && report[4] == 0);
+    bo_lab_encode(bo_lab_restart_open_input(0, 2), report);
+    assert(report[2] == 0x10 && report[4] == 0);
     return 0;
 }

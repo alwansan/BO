@@ -42,6 +42,7 @@ USB_ANCHOR = '''    out[0] = 0;
     out[1] = 20;
     if (pad) {'''
 MENU_OVERLAY_ANCHOR = '    if (m_page >= 0 && !m_overlay_assumed && (!m_overlay_seen || GetTickCount64() - m_overlay_seen > 1000)) {'
+MENU_ACTION_ANCHOR = '    if (ready) {\n        for (i = 0; i < n; i++) {'
 
 
 def parse_aggregate(text):
@@ -210,15 +211,29 @@ void sub_001F1080(void)
     if kind == 'menu':
         input_anchor = '    active = pc_menu_tick('
         focus_anchor = '    if (active) {\n        /* Hidden once the page is loaded'
+        tick_anchor = 'static void black_native_menu_tick(uint32_t ui)'
         request_anchor = '    GUEST32(reg + 0x370u) = 1u;\n    fprintf(stderr, "[MENU] gamecode'
-        if any(text.count(anchor) != 1 for anchor in (MENU_ANCHOR, input_anchor, focus_anchor, request_anchor)):
+        page_anchor = '    GUEST32(ui + 0x3884u) = 1u;\n    fprintf(stderr, "[MENU] page ->'
+        if any(text.count(anchor) != 1 for anchor in (
+                MENU_ANCHOR, input_anchor, focus_anchor, tick_anchor, request_anchor, page_anchor)):
             raise ValueError('frontend source drift')
         text = text.replace(input_anchor, '    bo_lab_restart_menu_enter(page);\n' + input_anchor)
-        text = text.replace(focus_anchor, '''    bo_lab_restart_menu_tick(page, pc_menu_test_focus(),
-        ready && active && GUEST32(ui + 0x3884u) == 0u && GUEST32(ui + 0x388Cu) == 0u);
-''' + focus_anchor)
+        text = text.replace(focus_anchor, '    bo_lab_restart_confirming = 0;\n' + focus_anchor)
+        text = text.replace(tick_anchor, '''int bo_lab_restart_native_menu_action(const char *page, int focus)
+{
+    switch (bo_lab_restart_ready_action(page, focus)) {
+    case BO_RESTART_UP: return PCM_ACT_UP;
+    case BO_RESTART_DOWN: return PCM_ACT_DOWN;
+    case BO_RESTART_CONFIRM: return PCM_ACT_CONFIRM;
+    default: return 0;
+    }
+}
+
+''' + tick_anchor)
         text = text.replace(request_anchor, request_anchor.replace(
             '    fprintf', '    bo_lab_restart_gamecode(name);\n    fprintf'))
+        text = text.replace(page_anchor, page_anchor.replace(
+            '    fprintf', '    bo_lab_restart_page_queued(name);\n    fprintf'))
         return text.replace(MENU_ANCHOR, '''    black_native_menu_tick(ui);
     if (ui && ui == GUEST32(0x002D199Cu) && black_pc_ram_span(ui, 0x3960u)) {
         char bo_lab_page[40];
@@ -243,12 +258,27 @@ void sub_001F1080(void)
         return ('extern int bo_lab_pad_report(int, unsigned char *, int *);\n'
                 'extern void bo_lab_restart_start_forwarded(void);\n' + text)
     if kind == 'menu_overlay':
-        if text.count(MENU_OVERLAY_ANCHOR) != 1:
-            raise ValueError('pinned native menu overlay source drift')
-        return 'extern int bo_lab_restart_headless_menu(const char *page);\n' + text.replace(
+        if any(text.count(anchor) != 1 for anchor in (MENU_OVERLAY_ANCHOR, MENU_ACTION_ANCHOR)):
+            raise ValueError('pinned native menu source drift')
+        text = text.replace(
             MENU_OVERLAY_ANCHOR,
             MENU_OVERLAY_ANCHOR.replace('&& !m_overlay_assumed',
                 '&& !bo_lab_restart_headless_menu(page) && !m_overlay_assumed'))
+        text = text.replace(MENU_ACTION_ANCHOR, '''    if (ready) {
+        if (m_page >= 0 && !m_depth && bo_lab_restart_headless_menu(page)) {
+            p = &m_doc->page[m_page];
+            first_focus(host, p, t);
+            /* Use the existing dispatcher in this ready tick; the bounded lab has no human inputs. */
+            actions[0] = 0;
+            if (strcmp(page, "ConfirmWarning") ||
+                (!strcmp(resolve(host, "@FEConfirmYesGameCode"), "RestartLevel") &&
+                 !strcmp(resolve(host, "@FEConfirmNoPage"), "PauseMenu")))
+                actions[0] = bo_lab_restart_native_menu_action(page, m_focus);
+            n = actions[0] != 0;
+        }
+        for (i = 0; i < n; i++) {''')
+        return ('extern int bo_lab_restart_headless_menu(const char *page);\n'
+                'extern int bo_lab_restart_native_menu_action(const char *page, int focus);\n' + text)
     if kind == 'hdd_file':
         # Pin the Windows backend only, never touch POSIX/XBE/guest code.
         checks = (
@@ -590,6 +620,8 @@ def private_call(argv, cwd, timeout, env=None, progress=None, diagnostics=None):
                    b'BO_ENGINE_RESTART_START_FORWARDED': 'restart_start_forwarded',
                    b'BO_ENGINE_RESTART_PAUSE_SEEN': 'restart_pause_seen',
                    b'BO_ENGINE_RESTART_PAUSE_READY': 'restart_pause_ready',
+                   b'BO_ENGINE_RESTART_CONFIRM_QUEUED': 'restart_confirm_queued',
+                   b'BO_ENGINE_RESTART_CONFIRM_SEEN': 'restart_confirm_seen',
                    b'BO_ENGINE_RESTART_CONFIRM_READY': 'restart_confirm_ready',
                    b'BO_ENGINE_RESTART_GAMECODE_QUEUED': 'restart_gamecode_queued',
                    b'BO_ENGINE_RESTART_UNLOAD_REMOVAL': 'restart_unload_removal',

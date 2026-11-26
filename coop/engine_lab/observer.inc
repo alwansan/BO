@@ -45,6 +45,7 @@ static int bo_lab_ui_marker_emitted;
 static volatile LONG bo_lab_restart_action, bo_lab_restart_open_frames;
 static int bo_lab_restart_armed, bo_lab_restart_confirming, bo_lab_restart_requested;
 static int bo_lab_restart_pause_seen, bo_lab_restart_confirmation_seen;
+static int bo_lab_restart_confirmation_page_seen, bo_lab_restart_confirmation_queued;
 static unsigned bo_lab_restart_scene;
 typedef struct BoLabRestartUnit {
     uint32_t index, count, remapped_world;
@@ -52,8 +53,8 @@ typedef struct BoLabRestartUnit {
 } BoLabRestartUnit;
 static BoLabRestartUnit bo_lab_restart_units[2];
 
-/* The disposable Windows runner has no presenter overlay. Allow the pinned
- * PC menu to consume actual USB input for just the two restart pages. */
+/* The disposable Windows runner has no presenter overlay. Enable the pinned
+ * PC menu only on the two restart pages, on the original frame thread. */
 int bo_lab_restart_headless_menu(const char *page)
 {
     const LONG action = InterlockedCompareExchange(&bo_lab_restart_action, 0, 0);
@@ -75,7 +76,7 @@ void bo_lab_restart_start_forwarded(void)
 int bo_lab_pad_report(int pad, unsigned char *out, int *restart_start)
 {
     ULONGLONG now = GetTickCount64();
-    BoLabInput in;
+    BoLabInput in = {0};
     int restart;
     *restart_start = 0;
     if (pad < 0 || pad > 1) return 0;
@@ -90,17 +91,6 @@ int bo_lab_pad_report(int pad, unsigned char *out, int *restart_start)
         in = bo_lab_restart_open_input((unsigned)pad,
             (unsigned)InterlockedCompareExchange(&bo_lab_restart_open_frames, 0, 0));
         *restart_start = in.start;
-    } else {
-        /* Only one navigation button per window, even if focus changes. */
-        static ULONGLONG window;
-        static int pulsed_action;
-        const ULONGLONG current_window = now / 1000u + 1u;
-        if (pad == 0 && window != current_window) {
-            window = current_window;
-            pulsed_action = restart;
-        }
-        in = bo_lab_restart_input((unsigned)pad, now,
-            pulsed_action == restart ? restart : BO_RESTART_NEUTRAL);
     }
     bo_lab_encode(in, out);
     InterlockedIncrement(&bo_lab_pads[pad]);
@@ -193,43 +183,61 @@ static void bo_lab_ui_page(const char *page)
 
 static void bo_lab_restart_menu_enter(const char *page)
 {
+    if (!page || !*page || !strcmp(page, "Empty") ||
+        InterlockedCompareExchange(&bo_unit_frame_thread, 0, 0) != (LONG)GetCurrentThreadId())
+        return;
+    if (strcmp(page, "PauseMenu") && strcmp(page, "ConfirmWarning")) {
+        bo_lab_restart_armed = bo_lab_restart_confirmation_queued = 0;
+        return;
+    }
     /* Release Start before the native menu starts consuming pad edges, even
      * when its first PauseMenu tick is not ready to navigate. */
     if (bo_lab_restart_headless_menu(page) && !strcmp(page, "PauseMenu") &&
         InterlockedCompareExchange(&bo_lab_restart_action, BO_RESTART_NEUTRAL,
             BO_RESTART_OPEN) == BO_RESTART_OPEN)
         fputs("BO_ENGINE_RESTART_PAUSE_SEEN\n", stderr);
+    if (bo_lab_restart_headless_menu(page) && bo_lab_restart_armed &&
+        !strcmp(page, "ConfirmWarning") && !bo_lab_restart_confirmation_page_seen) {
+        bo_lab_restart_confirmation_page_seen = 1;
+        fputs("BO_ENGINE_RESTART_CONFIRM_SEEN\n", stderr);
+    }
 }
 
-static void bo_lab_restart_menu_tick(const char *page, int focus, int ready)
+/* Only called by the pinned dispatcher after it has selected the actual
+ * page and checked ready. It consumes the result in this same tick. */
+static int bo_lab_restart_ready_action(const char *page, int focus)
 {
-    const LONG action = InterlockedCompareExchange(&bo_lab_restart_action, 0, 0);
-    if (bo_lab_restart_headless_menu(page)) {
-        if (ready && !bo_lab_restart_pause_seen && !strcmp(page, "PauseMenu")) {
-            bo_lab_restart_pause_seen = 1;
-            fputs("BO_ENGINE_RESTART_PAUSE_READY\n", stderr);
-        }
-        if (ready && bo_lab_restart_armed && !bo_lab_restart_confirmation_seen &&
-            !strcmp(page, "ConfirmWarning")) {
-            bo_lab_restart_confirmation_seen = 1;
-            fputs("BO_ENGINE_RESTART_CONFIRM_READY\n", stderr);
-        }
-        const int next = ready ? bo_lab_restart_menu(page, focus, &bo_lab_restart_armed) :
-                                 BO_RESTART_NEUTRAL;
-        bo_lab_restart_confirming = next == BO_RESTART_CONFIRM && !strcmp(page, "ConfirmWarning");
-        InterlockedExchange(&bo_lab_restart_action, next);
-    } else if (action != BO_RESTART_NORMAL &&
-        InterlockedCompareExchange(&bo_unit_frame_thread, 0, 0) == (LONG)GetCurrentThreadId() &&
-        page && *page && strcmp(page, "Empty")) {
-        bo_lab_restart_armed = bo_lab_restart_confirming = 0;
-        InterlockedExchange(&bo_lab_restart_action, BO_RESTART_NEUTRAL);
+    if (!bo_lab_restart_headless_menu(page) ||
+        InterlockedCompareExchange(&bo_lab_restart_action, 0, 0) != BO_RESTART_NEUTRAL)
+        return BO_RESTART_NEUTRAL;
+    if (!bo_lab_restart_pause_seen && !strcmp(page, "PauseMenu")) {
+        bo_lab_restart_pause_seen = 1;
+        fputs("BO_ENGINE_RESTART_PAUSE_READY\n", stderr);
+    }
+    if (bo_lab_restart_armed && bo_lab_restart_confirmation_queued &&
+        !bo_lab_restart_confirmation_seen && !strcmp(page, "ConfirmWarning")) {
+        bo_lab_restart_confirmation_seen = 1;
+        fputs("BO_ENGINE_RESTART_CONFIRM_READY\n", stderr);
+    }
+    if (!strcmp(page, "ConfirmWarning") && !bo_lab_restart_confirmation_queued)
+        return BO_RESTART_NEUTRAL;
+    const int next = bo_lab_restart_menu(page, focus, &bo_lab_restart_armed);
+    bo_lab_restart_confirming = next == BO_RESTART_CONFIRM && !strcmp(page, "ConfirmWarning");
+    return next;
+}
+
+static void bo_lab_restart_page_queued(const char *name)
+{
+    if (bo_lab_restart_armed && bo_lab_restart_headless_menu("PauseMenu") &&
+        !bo_lab_restart_confirmation_queued && !strcmp(name, "ConfirmWarning")) {
+        bo_lab_restart_confirmation_queued = 1;
+        fputs("BO_ENGINE_RESTART_CONFIRM_QUEUED\n", stderr);
     }
 }
 
 static void bo_lab_restart_gamecode(const char *name)
 {
-    if (InterlockedCompareExchange(&bo_lab_restart_action, 0, 0) == BO_RESTART_CONFIRM &&
-        InterlockedCompareExchange(&bo_unit_frame_thread, 0, 0) == (LONG)GetCurrentThreadId() &&
+    if (InterlockedCompareExchange(&bo_unit_frame_thread, 0, 0) == (LONG)GetCurrentThreadId() &&
         bo_lab_restart_confirming && !bo_lab_restart_requested && !strcmp(name, "RestartLevel")) {
         bo_lab_restart_requested = 1;
         InterlockedExchange(&bo_lab_restart_action, BO_RESTART_NEUTRAL);

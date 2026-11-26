@@ -4501,6 +4501,26 @@
     "liveRemovalVerified": false,
     "liveSameUnitReloadVerified": false,
     "acceptanceApk": false,
-    "next": "download the published ZIP and artifact metadata for 45888999187, run the verifier, and inspect the first missing boundary before using the mapping"
+    "next": "see Work40 for the published and verified result"
+  },
+  "workBatch40": {
+    "date": "2026-11-27",
+    "session": "memory/sessions/2026-11-27_bo-coop-work40-restart-confirmation.md",
+    "evidence": "memory/evidence/WORK_BATCH40_RESTART_AND_PROP_MEMBERSHIP.json",
+    "verifiedRestartRun": 45888999187,
+    "verifiedRestartCommit": "b84c49bfdbffc2c4f5225f3214a4667276a1923b",
+    "verifiedRestartArtifact": 15154392230,
+    "verifiedPropRun": 45885832477,
+    "verifiedPropArtifact": 15151504872,
+    "firstMissingRestartMarker": "restart_confirm_ready",
+    "livePropRecordsWithMembership": 42,
+    "liveRemovalVerified": false,
+    "liveSameUnitReloadVerified": false,
+    "liveObjectiveWriterVerified": false,
+    "acceptanceApk": false,
+    "localLabPythonTestsPassed": 40,
+    "localVerifierTestsPassed": 4,
+    "localNativeSanitizerFixturesPassed": 4,
+    "next": "verify same-unit removal and relink after the ready-tick menu dispatch change; keep synchronization gated"
   }
 }

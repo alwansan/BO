@@ -64,7 +64,13 @@ class UnitLabTests(unittest.TestCase):
         self.assertLess(unlink.index('sub_001EB1F0_gen();'), unlink.index('bo_unit_after_unlink(slot'))
 
     def test_headless_overlay_is_scoped_to_one_pinned_guard(self):
-        patched = lab.patch_text(lab.MENU_OVERLAY_ANCHOR, 'menu_overlay')
+        source = lab.MENU_OVERLAY_ANCHOR + '\n' + lab.MENU_ACTION_ANCHOR
+        patched = lab.patch_text(source, 'menu_overlay')
         self.assertIn('&& !bo_lab_restart_headless_menu(page) && !m_overlay_assumed', patched)
+        self.assertIn('m_page >= 0 && !m_depth && bo_lab_restart_headless_menu(page)', patched)
+        self.assertLess(patched.index('resolve(host, "@FEConfirmYesGameCode")'),
+                        patched.index('actions[0] = bo_lab_restart_native_menu_action(page, m_focus)'))
+        self.assertLess(patched.index('actions[0] = bo_lab_restart_native_menu_action(page, m_focus)'),
+                        patched.index('for (i = 0; i < n; i++)'))
         with self.assertRaises(ValueError):
-            lab.patch_text(lab.MENU_OVERLAY_ANCHOR * 2, 'menu_overlay')
+            lab.patch_text(source + lab.MENU_OVERLAY_ANCHOR, 'menu_overlay')
