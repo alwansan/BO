@@ -11,6 +11,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.LongSupplier;
 
 /**
  * Detached objective snapshot bodies. This class does not assign a room packet
@@ -135,8 +136,9 @@ public final class RoomObjectiveChunks {
      * Callers must hand bodies to the owner thread and must not mutate an input
      * array concurrently with a call.
      *
-     * A valid part zero starts a strictly newer sequence. There is no reordering,
-     * timeout, freshness guarantee, or retry of a discarded sequence. The last
+     * A valid part zero starts a strictly newer sequence. There is no reordering or
+     * retry of a discarded sequence. Assembly expires fifteen seconds after its
+     * first accepted part; duplicates never renew that deadline. The last
      * completed snapshot may remain visible while a newer snapshot is pending.
      * Long.MAX_VALUE is the last sequence for this ticket; sequence never wraps.
      * A new instance loses this instance's high-water mark. Recreating one for
@@ -145,6 +147,8 @@ public final class RoomObjectiveChunks {
      */
     public static final class Assembler {
         private final Thread owner = Thread.currentThread();
+        private final LongSupplier clock;
+        private static final long ASSEMBLY_TTL_NS=15000000000L;
         private final RoomStoryWire.Ticket ticket;
         private final byte[][] expectedIds;
         private boolean revoked;
@@ -154,7 +158,15 @@ public final class RoomObjectiveChunks {
 
         public Assembler(RoomStoryWire.Ticket value, byte[][] independentlyExpectedIds)
                 throws IOException {
-            if (value == null) throw new IOException("Missing objective story ticket");
+            this(value, independentlyExpectedIds, System::nanoTime);
+        }
+
+        // Package-private deterministic clock for synthetic deadline tests.
+        Assembler(RoomStoryWire.Ticket value, byte[][] independentlyExpectedIds,
+                  LongSupplier monotonicClock) throws IOException {
+            if (value == null || monotonicClock == null)
+                throw new IOException("Missing objective story ticket or clock");
+            clock = monotonicClock;
             ticket = value; // Ticket is immutable and owns its session bytes.
             expectedIds = copyExpectedIds(independentlyExpectedIds);
         }
@@ -162,6 +174,12 @@ public final class RoomObjectiveChunks {
         public Result accept(RoomStoryWire.Ticket currentTicket, byte[] body) {
             if (Thread.currentThread() != owner || !active(currentTicket)) {
                 return Result.REJECTED;
+            }
+            final long at = clock.getAsLong();
+            if (pending != null) {
+                long age = at - pending.startedAtNs;
+                if (age < 0 || age > ASSEMBLY_TTL_NS) pending = null;
+                // Keep highWater: an expired sequence must never restart.
             }
             if (body == null || body.length < 44) {
                 return Result.REJECTED; // No complete scope + sequence to correlate.
@@ -212,7 +230,7 @@ public final class RoomObjectiveChunks {
                     return Result.REJECTED; // Orphan does not replace state or move the watermark.
                 }
                 // Allocate before replacing the current pending state.
-                Pending next = new Pending(sequence, total, digest);
+                Pending next = new Pending(sequence, total, digest, at);
                 pending = next;
                 highWater = sequence;
             } else if (pending == null) {
@@ -304,13 +322,14 @@ public final class RoomObjectiveChunks {
     }
 
     private static final class Pending {
-        final long sequence;
+        final long sequence,startedAtNs;
         final int total;
         final byte[] digest;
         final byte[] records;
         int nextPart;
 
-        Pending(long serial, int count, byte[] hash) {
+        Pending(long serial, int count, byte[] hash, long at) {
+            startedAtNs = at;
             sequence = serial;
             total = count;
             digest = hash;

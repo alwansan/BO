@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "date_utc": "2026-11-26",
+  "repository": "alwansan/BO",
+  "branch": "experiment/black-coop",
+  "base_head": "c4e2ddb7490e6f05b580470df7dfe2dc73f3e716",
+  "base_ci": "Exact documentation head had no runs; preceding code 52248cc3d0d7ebfe646615536fa33fb206f5b341 had four verified successful source/synthetic workflows",
+  "local_initial_state": "clean",
+  "policy": "15 second monotonic assembly deadline from first accepted part; retain watermark after expiry; existing 3 second complete-consumption TTL unchanged",
+  "tests": [
+    {
+      "name": "chunks_interop",
+      "success": true,
+      "report_sha256": "01707aa2eb17be9ce9061e67ae3ecdb6a655b9e71e2ab9666bb30c13a4f02342"
+    },
+    {
+      "name": "tls",
+      "success": true,
+      "report_sha256": "e4d8b724328f1e112d111d58a975109c2e051a89ea3bdac91dad6563744ea0af"
+    }
+  ],
+  "java_chunk_scenarios": 13,
+  "tls_programs": 10,
+  "tls_objective_scenarios": 11,
+  "tls_session_scenarios": 9,
+  "guests": 3,
+  "records_per_guest": 4096,
+  "local_target": "Java21 current runtime; Java8 target unavailable locally; C++ ASAN/UBSAN with LSAN disabled",
+  "development_findings": [
+    "Initial fixture encoded count/sequence arguments in wrong order; corrected before final passing run",
+    "Three-second assembly policy failed full 158-part transfer under continuous WORLD load; changed assembly deadline to fifteen seconds, retaining sender fairness and complete-consumption TTL"
+  ],
+  "ci_after_publish": "pending",
+  "clean_restore": "pending",
+  "limits": [
+    "Synthetic values only; no game assets/saves/AI/native engine/APK/device work",
+    "Deadline checked lazily at next accepted-call attempt; bounded pending buffer remains until next receive/abort",
+    "Does not prove host capture time or pre-first-part delay",
+    "No manual owner-asset workflow launched"
+  ]
+}

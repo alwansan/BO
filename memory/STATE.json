@@ -3971,5 +3971,11 @@
     "scope": "synthetic objective consume freshness, exact current ticket and local episode; no native engine apply",
     "evidence": "memory/evidence/WORK_BATCH08_OBJECTIVE_CONSUMPTION_2026-11-26.json",
     "next": "prove live objective source and lifetime before native integration"
+  },
+  "workBatch09": {
+    "baseHead": "c4e2ddb7490e6f05b580470df7dfe2dc73f3e716",
+    "scope": "synthetic objective assembly deadline, retained replay watermark, no native integration",
+    "evidence": "memory/evidence/WORK_BATCH09_OBJECTIVE_ASSEMBLY_2026-11-26.json",
+    "next": "prove live objective source and lifetime before native integration"
   }
 }

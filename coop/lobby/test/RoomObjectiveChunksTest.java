@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicLong;
 
 /** Synthetic value tests only: no TLS sockets, Android, or original engine. */
 public final class RoomObjectiveChunksTest {
@@ -38,7 +39,8 @@ public final class RoomObjectiveChunksTest {
         run("all_scope_fields", RoomObjectiveChunksTest::allScopeFields);
         run("abort_and_owner_thread", RoomObjectiveChunksTest::abortAndOwnerThread);
         run("copies_and_sequence_limit", RoomObjectiveChunksTest::copiesAndSequenceLimit);
-        check(scenarios == 12, "Every named scenario must run before emitting outputs");
+        run("assembly_deadline_and_recovery", RoomObjectiveChunksTest::assemblyDeadline);
+        check(scenarios == 13, "Every named scenario must run before emitting outputs");
         Path output = Paths.get(args[1]);
         Files.createDirectories(output);
         for (int guest = 0; guest < 3; guest++) {
@@ -47,6 +49,37 @@ public final class RoomObjectiveChunksTest {
         }
         System.out.println("OBJECTIVE_CHUNKS_JAVA_PASS scenarios=" + scenarios +
                 " parts=158 guests=3 SYNTHETIC_BODY_ONLY_NO_TLS_ANDROID_ENGINE");
+    }
+
+    private static void assemblyDeadline() throws Exception {
+        AtomicLong clock=new AtomicLong(100);
+        RoomObjectiveChunks.Assembler a=new RoomObjectiveChunks.Assembler(ticket, ids(27), clock::get);
+        RoomObjectiveChunks.EncodedSnapshot first=encode(1,27,0);
+        expect(RoomObjectiveChunks.Result.PENDING,a.accept(ticket,first.body(0)),"start");
+        clock.set(15000000100L);
+        expect(RoomObjectiveChunks.Result.COMPLETE,a.accept(ticket,first.body(1)),"exact boundary");
+        RoomObjectiveChunks.Snapshot saved=a.latest(ticket);
+        RoomObjectiveChunks.EncodedSnapshot delayed=encode(2,27,1);
+        clock.set(130000000100L);
+        expect(RoomObjectiveChunks.Result.PENDING,a.accept(ticket,delayed.body(0)),"new start");
+        clock.set(30000000100L);
+        expect(RoomObjectiveChunks.Result.REJECTED,a.accept(ticket,delayed.body(0)),"duplicate no renewal");
+        clock.set(31000000101L);
+        expect(RoomObjectiveChunks.Result.REJECTED,a.accept(ticket,delayed.body(1)),"expired final part");
+        expect(RoomObjectiveChunks.Result.REJECTED,a.accept(ticket,delayed.body(0)),"expired sequence cannot restart");
+        check(a.latest(ticket)==saved,"expired assembly preserves previous completion");
+        RoomObjectiveChunks.EncodedSnapshot next=encode(3,27,2);
+        expect(RoomObjectiveChunks.Result.PENDING,a.accept(ticket,next.body(0)),"higher sequence recovery");
+        clock.incrementAndGet();
+        expect(RoomObjectiveChunks.Result.COMPLETE,a.accept(ticket,next.body(1)),"recovered complete");
+        check(a.latest(ticket).sequence==3,"new completion");
+        RoomObjectiveChunks.EncodedSnapshot rollback=encode(4,27,3);
+        expect(RoomObjectiveChunks.Result.PENDING,a.accept(ticket,rollback.body(0)),"rollback start");
+        clock.decrementAndGet();
+        expect(RoomObjectiveChunks.Result.REJECTED,a.accept(ticket,rollback.body(1)),"clock reversal");
+        expect(RoomObjectiveChunks.Result.REJECTED,a.accept(ticket,rollback.body(0)),"rollback keeps watermark");
+        a.abort();
+        expect(RoomObjectiveChunks.Result.REJECTED,a.accept(ticket,encode(5,27,0).body(0)),"abort blocks recovery");
     }
 
     private static void goldenAndBoundaries() throws Exception {
