@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "date": "2026-11-26",
+  "codeCommit": "2fd2e63605ab8841037983a2bee5545e5ce9fa45",
+  "sourcePreflight": {
+    "run": 45779897152,
+    "conclusion": "success"
+  },
+  "parallelSource": {
+    "run": 45779897167,
+    "conclusion": "success"
+  },
+  "udp": {
+    "run": 45779897210,
+    "conclusion": "success"
+  },
+  "cleanRecovery": "four source files fetched from exact GitHub commit using connector; bytes matched after removing patch transport extra EOF newline",
+  "cleanSanitizer": "passed; local clang21 Android aarch64; leak check disabled",
+  "sdk": "99078b119b5d5e0d1d6afb1390e29437c0c984c0",
+  "sdkNativeBridge": "syntax-only compile passed",
+  "gpuRasterization": false,
+  "originalCameraVerified": false,
+  "productionHook": false,
+  "sharedCampaignAccepted": false,
+  "sha256": {
+    "room_mod_placeholder_draw.hpp": "5744f7d5206943ad4ebce14be65eacd0c1c08f100ee9b78f83e10c1011b30d01",
+    "room_mod_placeholder_submit.hpp": "cb7d8215660f207bca13d128d236e7b65c52f9088635e39cbae203aa670bab98",
+    "room_mod_placeholder_upload_kernel.hpp": "515f47c786fed8256e497896fa9dcbbc41001a10732c370a43c2374a83508e8f",
+    "test_room_mod_placeholder_submit.cpp": "8848218da1453131e6a7681ad410c8af600a7b77771da45938634d3675069162"
+  }
+}

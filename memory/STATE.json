@@ -4003,6 +4003,13 @@
     "liveCameraVerified": false,
     "liveHookEnabled": false,
     "sharedWorldAccepted": false,
-    "ci": "pending_after_publish"
+    "ci": {
+      "source": 45779897152,
+      "parallel": 45779897167,
+      "udp": 45779897210,
+      "result": "success_source_only"
+    },
+    "codeCommit": "2fd2e63605ab8841037983a2bee5545e5ce9fa45",
+    "cleanGitHubRecovery": "passed_source_only"
   }
 }
