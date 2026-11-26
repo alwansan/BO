@@ -5,6 +5,13 @@ import android.os.Bundle;
 import java.util.Arrays;
 public final class Arm64Instrumentation extends Instrumentation {
     private static native long executeArm64(long value);
+
+    @Override
+    public void onCreate(Bundle arguments) {
+        super.onCreate(arguments);
+        start();
+    }
+
     @Override public void onStart(){
         Bundle result=new Bundle();
         try{
