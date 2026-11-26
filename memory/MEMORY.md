@@ -1,3 +1,10 @@
+## Work21 — اختبار المالك بهاتفين على APK المبني (2026-11-26)
+
+- المالك فتح run `45846052896` + `alwansan/CL black log` وقال **غير مكتمل؛ لا توقف**. دليل من السجلات الآمنة (مرساة restored `room_event_triage.py`، لا pixels): `PACKAGE=org.bocoop.black.roomnet VERSION=1.5.0-roomnet BASE_APK_SHA256=87e99f17...10d9` (=APK المبني من `810013f`).
+- هاتفان فعليان على **room-only NO-GAMEPLAY**: host `ROOM_HOSTING`, guest `SCAN_RESULTS_1`→`JOIN_REQUEST`→`ROOM_CONNECTING`→(أول `ERROR_SOCKETTIMEOUTEXCEPTION`+`ROOM_ERROR` ثم إعادة)→`JOIN_CONNECTED`+**`ROOM_JOINED`**. `second_device_join_success_events=1`, `HOST_BIND_ERRORS_DETECTED=false`, `DISCOVERY_AFTER_JOIN_DETECTED=false`.
+- **لا** `STORY_*` ولا `WORLD_SNAPSHOT/NPC_WORLD/OBJECT_EVENT/OBJECTIVE_CHUNK/HUMAN_INPUT` في الجلسة؛ `shared_black_world_proven=false`, `story_and_world_sync_proven=false`, `remote_human_actor_proven=false`, `same_game_scene_proven=false`. (الـAPK مُعنون NO-GAMEPLAY أصلاً.)
+- الدليل `memory/evidence/WORK_BATCH21_CL_OWNER_TWO_PHONE_20261126.json`. **العالم المشترك ما زال محجوبًا كما في Work18/Work20**؛ لا ABI مخترع. لا طلب اختبار جزئي.
+
 ## Work20 — مراجعة الاستعادة + دليل العالم المشترك (2026-11-26)
 
 - الأساس `2e810f5`, دفع إلى `experiment/black-coop`. روابط ChatGPT المشاركة لم تُجلب (لا نص)؛ المصدر الحي + الاستعادة + الذاكرة.

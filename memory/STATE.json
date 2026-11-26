@@ -4195,5 +4195,20 @@
     },
     "apkEvidence": "memory/evidence/WORK_BATCH20_ROOM_NETWORK_APK_45846052896.json",
     "acceptanceApk": false
+  },
+  "workBatch21": {
+    "date": "2026-11-26",
+    "branch": "experiment/black-coop",
+    "ownerTwoPhoneTest": true,
+    "apkSha256": "87e99f17b62562d55da8b48a2389538b95834a3cb878b793b9da9fa5cd0e10d9",
+    "source": "alwansan/CL black log 2026-11-26",
+    "twoPhoneJoinProven": true,
+    "firstJoinSocketTimeoutRetryThenJoined": true,
+    "sharedWorldProven": false,
+    "storySyncProven": false,
+    "remoteHumanProven": false,
+    "gameplayCoop": false,
+    "evidence": "memory/evidence/WORK_BATCH21_CL_OWNER_TWO_PHONE_20261126.json",
+    "chatgptLinksNotReviewed": true
   }
 }
