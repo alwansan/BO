@@ -4549,5 +4549,21 @@
     "liveSameUnitReloadVerified": false,
     "acceptanceApk": false,
     "next": "verify the pending 45898767177 archive before using the mapping; a later private run is needed to observe the added writer"
+  },
+  "workBatch42": {
+    "date": "2026-11-27",
+    "session": "memory/sessions/2026-11-27_bo-coop-work42-native-unit-removal.md",
+    "evidence": "memory/evidence/WORK_BATCH42_LIVE_UNIT_REMOVAL_45898767177.json",
+    "verifiedRun": 45898767177,
+    "verifiedCommit": "c6d905912cae884cb03807b267ab451e7d0828e0",
+    "verifiedArtifact": 15156920933,
+    "firstMissingRestartMarker": "restart_unload_removal",
+    "liveWorldListRemovalVerified": true,
+    "livePropWorldListRemovalVerified": true,
+    "sameSlotUnitRepublications": 1,
+    "liveSameUnitReloadVerified": false,
+    "earlyTeardownSourceVerified": true,
+    "acceptanceApk": false,
+    "next": "verify the early-teardown marker and same-unit relink after the fix before using the mapping"
   }
 }

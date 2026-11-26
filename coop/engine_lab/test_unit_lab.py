@@ -68,6 +68,9 @@ class UnitLabTests(unittest.TestCase):
         unlink = patched.split('void sub_001EB1F0(void)\n{', 1)[1].split('\n}', 1)[0]
         self.assertLess(unlink.index('bo_prop_before_unlink(unit)'), unlink.index('sub_001EB1F0_gen();'))
         self.assertLess(unlink.index('sub_001EB1F0_gen();'), unlink.index('bo_unit_after_unlink(slot'))
+        self.assertLess(unlink.index('return_pc = stack_valid ? GUEST32(g_esp)'),
+                        unlink.index('sub_001EB1F0_gen();'))
+        self.assertIn('bo_lab_restart_after_unlink(slot, index, before.count, return_pc)', unlink)
 
     def test_headless_overlay_is_scoped_to_one_pinned_guard(self):
         source = lab.MENU_OVERLAY_ANCHOR + '\n' + lab.MENU_ACTION_ANCHOR

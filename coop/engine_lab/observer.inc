@@ -258,17 +258,23 @@ static unsigned bo_lab_scene(uint32_t core)
 
 /* Called only after the exact mapped range was first present and is now
  * absent from the terminating list. Preserve logical identity, not addresses. */
-static void bo_lab_restart_after_unlink(int slot, uint32_t index, unsigned count)
+static void bo_lab_restart_after_unlink(int slot, uint32_t index, unsigned count, uint32_t return_pc)
 {
     const uint32_t world = bo_unit_world;
     if (!bo_lab_restart_requested || index == UINT32_MAX ||
         !black_pc_ram_span(world, 0x5CC0u) || bo_lab_scene(world) != bo_lab_restart_scene) return;
     const uint32_t unload = GUEST32(world + 0x5AE4u);
-    if (unload < 0x1Eu || unload > 0x21u) return;
+    /* 001EBD60 calls 001EBB40 while still in 0x1D, then writes 0x1E.
+     * In 0x1D accept only the two unlink call sites in that teardown. */
+    const int early_teardown = unload == 0x1Du &&
+        ((slot == 0 && return_pc == 0x001EBB62u) ||
+         (slot == 1 && return_pc == 0x001EBB6Eu));
+    if (!early_teardown && (unload < 0x1Eu || unload > 0x21u)) return;
     BoLabRestartUnit *const entry = &bo_lab_restart_units[slot];
     if (entry->count) return;
     entry->index = index;
     entry->count = count;
+    if (early_teardown) fputs("BO_ENGINE_RESTART_EARLY_TEARDOWN_REMOVAL\n", stderr);
     fputs("BO_ENGINE_RESTART_UNLOAD_REMOVAL\n", stderr);
     bo_lab_write();
 }

@@ -240,11 +240,14 @@ int main(void) {
     assert(bo_lab_restart_requested && bo_lab_restart_action == BO_RESTART_NEUTRAL);
     assert(!bo_lab_restart_headless_menu("ConfirmWarning"));
     assert(bo_unit_enter(BO_UNIT_UNLINK, 0x1000+0x49D0) == 0);
-    bo_lab_restart_after_unlink(0, 7, 1);
+    bo_lab_restart_after_unlink(0, 7, 1, 0x001EB6DCu);
+    bo_lab_restart_after_unlink(0, 7, 1, 0x001EBB6Eu);
     assert(!bo_lab_restart_units[0].count && !bo_lab_restart_tick());
-    GUEST32(0x1000+0x5AE4) = 0x1E;
-    bo_lab_restart_after_unlink(0, 7, 1);
+    bo_lab_restart_after_unlink(0, 7, 1, 0x001EBB62u);
     assert(bo_lab_restart_units[0].count == 1 && !bo_lab_restart_tick());
+    GUEST32(0x1000+0x5AE4) = 0x1E;
+    bo_lab_restart_after_unlink(1, 9, 2, 0x001EB6DCu);
+    assert(bo_lab_restart_units[1].count == 2);
     /* The restart can allocate a different world, unit, and object range. */
     const uint32_t reloaded = 0x10000, unit = reloaded + 0x49D0;
     const uint32_t header = 0x23000, table = 0x24000, object = 0x25000;

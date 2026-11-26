@@ -152,7 +152,9 @@ void sub_001EB7F0(void)
 
 void sub_001EB1F0(void)
 {
-    const uint32_t unit = black_pc_ram_span(g_esp, 8u) ? GUEST32(g_esp + 4u) : 0;
+    const int stack_valid = !(g_esp & 3u) && black_pc_ram_span(g_esp, 8u);
+    const uint32_t return_pc = stack_valid ? GUEST32(g_esp) : 0;
+    const uint32_t unit = stack_valid ? GUEST32(g_esp + 4u) : 0;
     const int slot = bo_unit_enter(BO_UNIT_UNLINK, unit);
     const int linked = slot >= 0 && GUEST8(unit + 0x38u);
     const uint32_t index = linked ? GUEST32(unit + 8u) : 0;
@@ -162,7 +164,7 @@ void sub_001EB1F0(void)
     if (linked) props = bo_prop_before_unlink(unit);
     sub_001EB1F0_gen();
     if (linked && bo_unit_after_unlink(slot, unit, index, before, props))
-        bo_lab_restart_after_unlink(slot, index, before.count);
+        bo_lab_restart_after_unlink(slot, index, before.count, return_pc);
 }
 
 void sub_001EB440(void)
@@ -634,6 +636,7 @@ def private_call(argv, cwd, timeout, env=None, progress=None, diagnostics=None):
                    b'BO_ENGINE_RESTART_CONFIRM_SEEN': 'restart_confirm_seen',
                    b'BO_ENGINE_RESTART_CONFIRM_READY': 'restart_confirm_ready',
                    b'BO_ENGINE_RESTART_GAMECODE_QUEUED': 'restart_gamecode_queued',
+                   b'BO_ENGINE_RESTART_EARLY_TEARDOWN_REMOVAL': 'restart_early_teardown_removal',
                    b'BO_ENGINE_RESTART_UNLOAD_REMOVAL': 'restart_unload_removal',
                    b'BO_ENGINE_RESTART_SAME_UNIT_RELINKED': 'restart_same_unit_relinked',
                    b'BO_ENGINE_RESTART_LIFECYCLE_OBSERVED': 'restart_lifecycle_observed',
