@@ -1,3 +1,10 @@
+## Work22 — سجلات شاملة آمنة لتحليل الاختبار بهاتفين (2026-11-26)
+
+- المستخدم يريد الاكتمال ثم يجرّب ويرفع **كل** logs. `RoomDiagnostics` يُخرج **رموزًا آمنة فقط** (بلا أسماء/PIN/IP/شهادات/مفاتيح/أصول/حفظ/أسطر خام)، طابور محدود + `ROOM_LOG_EVENTS_DROPPED`، تصدير صريح واحد للـDownloads + header `SCHEMA/PACKAGE/VERSION/BASE_APK_SHA256`.
+- `room_event_triage.FIXED` وُسّع ليشمل **كل** رموز app الآمنة المُصدَرة فعلاً (`STORY_*` كامل + `STORY_DIAGNOSTICS_*`, `WORLD_*`, `ORIGINAL_*`, `ORIGINAL_GUEST_*`, `ORIGINAL_HOST_*`, `ORIGINAL_REMOTE_*`, `ORIGINAL_AI_TARGET_*`, `ORIGINAL_HUMAN_LOOK_*`, `ORIGINAL_POOL_*`, `ORIGINAL_LAUNCH_DIFFICULTY_*`, `ORIGINAL_CORE_*`, `ORIGINAL_POST_*`, `GPU_V36_*`, `PRESENCE_*`, `ROOM_FIRST_STAGE_START_*`, `MENU_GUEST_FIRST_STAGE_AUTO_DISMISSED`, `ORIGINAL_TWO_PHONE_AUTO_MENU_*`, `ROOM_SAFE_LOG_EXPORT_VERIFIED`, `HOST_INPUT_ERROR`, `JOIN_INPUT_ERROR`, `ERROR_SOCKETTIMEOUTEXCEPTION`, `FIRST_*`). لا تسريب. **لا تغيير أعلام shared-world** (`shared_black_world_proven=false`...).
+- الإصلاح: `read_file` يتجاوز header `RoomDiagnostics` + فراغات ويرفض الأسطر المشوّهة (كان CI `black-coop-cl-room-evidence` يفشل `input rejected` على logs جديدة من المالك؛ أُعيد إنتاجه وأُصلح). 
+- الدليل: إعادة إنتاج red→green؛ `test_room_event_triage` 4/4 OK؛ owner logs `unknown->0`, `shared=false`؛ **CI run 45861601742 SUCCESS (synthetic+owner-evidence)**. مرفوع. **العالم المشترك ما زال غير مكتمل.**
+
 ## Work21 — اختبار المالك بهاتفين على APK المبني (2026-11-26)
 
 - المالك فتح run `45846052896` + `alwansan/CL black log` وقال **غير مكتمل؛ لا توقف**. دليل من السجلات الآمنة (مرساة restored `room_event_triage.py`، لا pixels): `PACKAGE=org.bocoop.black.roomnet VERSION=1.5.0-roomnet BASE_APK_SHA256=87e99f17...10d9` (=APK المبني من `810013f`).
