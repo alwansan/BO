@@ -5,7 +5,7 @@
 - أدلة مضافة `memory/evidence/WORK_BATCH20_WORLD_XREFS_PINNED_45843350617.json` (CI45843350617 SUCCESS، XBE مطابق، فقط أعداد مشتقة). `memory/sessions/2026-11-26_bo-coop-work20-shared-world-review.md`.
 - الحالة الصادقة: scaffolding مصدري مثبت لكن لا عالم مشترك حي؛ التفاصيل `docs/SHARED_WORLD_PROVIDER_INVESTIGATION_WORK18_AR.md`.
 - الخطوة التالية القابلة للتنفيذ: الربط الحي على خيط اللعبة الأصلي أو Work18 (unit-v24->constructor->teardown->stableKey->موفر أصلي). لا physical readiness.
-- أُطلق dispatch لـ `black-coop-room-network-apk.yml` على `d1b8194` (run 45844688050) استخدامًا للـISO المرفوعة في المستودع **دون تعديلها** لبناء APK للاختبار؛ **لا يُدّعى نجاحه قبل نتيجة CI** ولا أن APK يحقق العالم المشترك. البديل السابق APKs ذات NO-GAMEPLAY. لا طلب اختبار هاتف جزئي.
+- `black-coop-room-network-apk.yml`: السابق 45844688050 FAILURE (CRLF Windows source-preflight، أُصلح `810013f`). **run 45846052896 SUCCESS**؛ artifact **15132610478 `black-room-network-android-arm64-NO-GAMEPLAY-COOP`** + metadata 15132525606؛ inner APK `black-room-network-NO-GAMEPLAY-COOP.apk` 22067735B sha256 `87e99f17...10d9` package `org.bocoop.black.roomnet` arm64-v8a، **لا أصول/ISO**، `gameplay_coop=false,multiplayer=false,verified_game_scene_loaded=false,sharedWorldComplete=false`؛ دليل `memory/evidence/WORK_BATCH20_ROOM_NETWORK_APK_45846052896.json`. **room-only لا قبول**؛ لا طلب اختبار هاتف جزئي.
 - كل العمل مرفوع على GitHub.
 
 ---
