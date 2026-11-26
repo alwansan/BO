@@ -1,3 +1,13 @@
+# Work15 — مصدر عرض ذري مرتبط بتذكرة القصة والمشهد الأصلي (2026-11-26)
+
+أضيف `RoomSession.otherHumanPresentationFromGameThread()` وواجهة RoomAppRooms/BlackActivity المجهزة للمصدر. يجمع الإصدار1، originalEpisode، level/stage، epoch/revision، token64، participants/self، tick/count وsession128 مع مواضع البشر الأصلية المصدر/المعتمدة من الهوست، تحت قفل RoomSession واحد. يعيد صفراً عند عدم COMMIT أو اختلاف التذكرة/المشهد أو صلاحية خيط الأصل أو فقدان العضو. يسجل episode وقت attestation الأصلية، ويرفض تحميلًا جديدًا لنفس المرحلة إذا حاول استعارة readiness قديمة. يعيد فحص التذكرة وCOMMIT بعد قراءة المصدر القائم؛ لا بروتوكول شبكة جديد أو إدخال يدوي للمستخدم.
+
+نجح محليًا Java8 core وJava17 tests بالتحذيرات كأخطاء؛ اختبار TLS الحقيقي بأربعة أطراف (مدخلات محرك اصطناعية) تحقق من header/session/nonce والأدوار والنسخ المستقلة، رفض خيط آخر، إبطال إعادة تحميل المرحلة ذاتها، ABORT/rejoin وعدم العرض قبل READY الجديدة. نجحت اختبارات source staging الخمسة مع BO_UPSTREAM_REFERENCE المثبت. إضافة الاختبار بدأت بفشل compile لغياب الواجهة ثم نجحت بعد التنفيذ. CI لهذا التغيير ينتظر commit/run ولا يُدّعى نجاحه مسبقًا.
+
+العرض الحي لم يُربط بهذا المصدر بعد. التالي كتابة consumer أصلي يطابق originalEpisode/world/frame ومصدر كاميرا Work13 مع هذه الحزمة، ثم يرفع مجسم المود عبر المسار Work12 المثبت في WARP/Work14. لا تضبط بوابات physical readiness على true؛ لا تعديل AI/أصول/حفظ أو dispatch يدوي ISO/APK. العالم المشترك والأفعال الأصلية وانتقال القصة ما زالت مطلوبة قبل تجربة الهاتفين الثقيلة. أدلة الرسم الفعلي صارت محفوظة في memory/evidence/WORK_BATCH14_ACTUAL_SDK_RASTER_2026-11-26.json. كل التغييرات على experiment/black-coop فقط.
+
+---
+
 # Work14 — نتيجة الرسم الفعلي محفوظة ومتحققة (2026-11-26)
 
 نجح run [45788110496](https://github.com/alwansan/BO/actions/runs/45788110496) على الكود cbf0144cde648de4a2311a8e0ca57faa38fd80ab: SDK D3D12 الأصلي المثبت مع threaded backend وWARP الإلزامي؛ 11 مقارنة بكسل ناجحة، occlusion صحيح، المجسم لا يكتب العمق، و4 تخصيصات/4 تحريرات بعد fence. أُعيد التحقق محليًا من SHA256 للأرتيفاكت 15101237016: `51b5d33e71a13c97543d055c9ccc8421975694bbceabfb846411e2543b7c70fa`. الدليل: `memory/evidence/WORK_BATCH14_ACTUAL_SDK_RASTER_2026-11-26.json`؛ الأدوات: `coop/render_lab/` والـworkflow موجودان في GitHub.

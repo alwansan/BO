@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-26_bo-coop-work11-mod-placeholder.md",
+  "lastSession": "memory/sessions/2026-11-26_bo-coop-work15-scoped-presentation-source.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -4045,5 +4045,16 @@
     "liveBlackOrAndroidVerified": false,
     "sharedWorldComplete": false,
     "next": "Signed story and original scene/frame visual consumer, then original shared host state and story transition"
+  },
+  "work15PresentationSource": {
+    "status": "local_strict_java_and_real_tls_source_fixture_pass_ci_pending",
+    "schema": 1,
+    "headerInts": 16,
+    "maxOtherHumans": 3,
+    "originalEpisodeAttestedIndependently": true,
+    "fullTicketIncluded": true,
+    "nativeConsumerImplemented": false,
+    "sharedWorldComplete": false,
+    "documentation": "docs/OTHER_HUMAN_PRESENTATION_SOURCE_WORK15_AR.md"
   }
 }

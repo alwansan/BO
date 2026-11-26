@@ -235,6 +235,12 @@ public final class RoomAppRooms {
   synchronized(RoomAppRooms.class){s=active;}
   return s==null?new int[10]:s.otherHumanBodySourceFromGameThread();
  }
+ /** Full ticket, attested local episode and canonical poses in one value read. */
+ public static int[] pollOtherHumanPresentationFromGameThread(){
+  RoomSession s;
+  synchronized(RoomAppRooms.class){s=active;}
+  return s==null?new int[16]:s.otherHumanPresentationFromGameThread();
+ }
  /** Current HOST-authoritative bounded other-human BOT LOOK bodies. */
  public static int[] pollAllOtherHumanBodiesFromGameThread(){
   RoomSession s;

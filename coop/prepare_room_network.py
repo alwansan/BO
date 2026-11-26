@@ -91,6 +91,9 @@ def prepare(root: pathlib.Path):
         return com.racas.black.coop.RoomAppRooms.firstStageAutoMenuPlanFromOriginalFrontend();
     }
     // 2-4 authenticated humans: exact host-sourced remote visual body feed.
+    public int[] coopPollOtherHumanPresentationFromGameThread() {
+        return com.racas.black.coop.RoomAppRooms.pollOtherHumanPresentationFromGameThread();
+    }
     public int[] coopPollAllOtherHumanBodiesFromGameThread() {
         return com.racas.black.coop.RoomAppRooms.pollAllOtherHumanBodiesFromGameThread();
     }

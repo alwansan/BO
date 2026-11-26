@@ -83,6 +83,7 @@ public final class RoomSession implements AutoCloseable {
     // Exact ticket identity for at-most-once local original-running-scene
     // confirmation; native source cannot authorize an unrelated TLS story.
     private RoomStoryWire.Ticket originalRunningReadyTicket;
+    private int originalRunningReadyEpisode;
     // Guest original scene's own independently enumerated objective IDs.
     // The binding is revoked permanently on a newer native stage episode.
     private RoomStoryWire.Ticket originalObjectiveBindingTicket;
@@ -336,6 +337,7 @@ public final class RoomSession implements AutoCloseable {
                     host.hostSceneLoaded(level,stage,ticket.sceneEpoch);
                     if(!host.hostLocalStageReady(ticket))return 0;
                     originalRunningReadyTicket=ticket;
+                    originalRunningReadyEpisode=episode;
                     event("ORIGINAL_HOST_LOCAL_RUNNING_STAGE_READY_NO_SHARED_AI");
                     return 1;
                 }
@@ -359,6 +361,7 @@ public final class RoomSession implements AutoCloseable {
                     if(!client.acknowledgeSceneLoaded(level,stage,sceneEpoch))
                         return 0;
                     originalRunningReadyTicket=ticket;
+                    originalRunningReadyEpisode=episode;
                     event("ORIGINAL_GUEST_LOCAL_RUNNING_STAGE_READY_NO_SHARED_AI");
                     return 2;
                 }
@@ -645,6 +648,55 @@ public final class RoomSession implements AutoCloseable {
      * Only the HOST constructs positions; guest reads a fresh canonical TLS
      * HOST world. Fail closed to all-zero [0]*5 when scope/freshness changes.
      */
+    /**
+     * Atomic value-only presentation source for the native draw consumer.
+     * Header: version, originalEpisode, level, stage, epoch, revision,
+     * tokenHi, tokenLo, participants, self, tick, count, session[4 big-endian
+     * words]; followed by count * (peer,xCm,yCm,zCm,yaw,flags).
+     * The full ticket and the independently attested original local episode
+     * travel with the poses. This does NOT authorize physical actors or prove
+     * a current native camera/frame; the consumer must verify those separately.
+     */
+    public int[] otherHumanPresentationFromGameThread(){
+        synchronized(lock){
+            final int[] empty=new int[16];
+            if(closed||!validStoryThread()||lastSourceStage==null||
+               originalRunningReadyTicket==null||originalRunningReadyEpisode<=0||
+               originalRunningReadyEpisode!=lastSourceStage.originalEpisode||
+               System.nanoTime()-lastSourceStageAtNs>3000000000L)return empty;
+            final boolean hosting=phase==Phase.HOSTING&&host!=null&&
+                                  host.isRunning()&&host.storyCommitted();
+            final boolean joined=phase==Phase.JOINED&&client!=null&&
+                                 client.isRunning()&&client.storyCommitted();
+            if(!hosting&&!joined)return empty;
+            RoomStoryWire.Ticket t=hosting?host.storyTicket():client.storyTicket();
+            if(t==null||!t.same(originalRunningReadyTicket)||
+               t.mission!=lastSourceStage.level||t.stage!=lastSourceStage.stage)
+                return empty;
+            // Reentrant lock keeps the independently attested source and the
+            // existing canonical-pose facade in the same RoomSession scope.
+            int[] poses=allOtherHumanBodiesFromGameThread();
+            RoomStoryWire.Ticket after=hosting?host.storyTicket():client.storyTicket();
+            if(!t.same(after)||!(hosting?host.storyCommitted():client.storyCommitted())||
+               poses.length<11||poses[0]!=t.sceneEpoch||
+               poses[1]!=(int)t.rosterRevision||poses[2]<=0||
+               poses[4]!=Integer.bitCount(t.participants)-1)return empty;
+            int[] frame=new int[16+6*poses[4]];
+            frame[0]=1;frame[1]=originalRunningReadyEpisode;
+            frame[2]=t.mission;frame[3]=t.stage;frame[4]=t.sceneEpoch;
+            frame[5]=(int)t.rosterRevision;frame[6]=(int)(t.token>>>32);
+            frame[7]=(int)t.token;frame[8]=t.participants;frame[9]=poses[3];
+            frame[10]=poses[2];frame[11]=poses[4];
+            byte[] id=t.session();
+            for(int i=0;i<4;i++){
+                int j=i*4;
+                frame[12+i]=((id[j]&255)<<24)|((id[j+1]&255)<<16)|
+                            ((id[j+2]&255)<<8)|(id[j+3]&255);
+            }
+            System.arraycopy(poses,5,frame,16,poses.length-5);
+            return frame;
+        }
+    }
     public int[] allOtherHumanBodiesFromGameThread(){
         synchronized(lock){
             final int[] empty=new int[5];
@@ -909,7 +961,7 @@ public final class RoomSession implements AutoCloseable {
             lastSourceStage=null;lastSourceStageAtNs=0;
             sourceStagePrepare.reset();
             originalGuestFrontendThread=null;
-            originalRunningReadyTicket=null;
+            originalRunningReadyTicket=null;originalRunningReadyEpisode=0;
             originalObjectiveBindingTicket=null;originalObjectiveBindingEpisode=0;
             oldHost=host;oldClient=client;oldAnnouncer=announcer;
             host=null;client=null;announcer=null;phase=Phase.CONNECTING;
@@ -1051,7 +1103,7 @@ public final class RoomSession implements AutoCloseable {
             lastSourceStage=null;lastSourceStageAtNs=0;
             sourceStagePrepare.reset();
             originalGuestFrontendThread=null;
-            originalRunningReadyTicket=null;
+            originalRunningReadyTicket=null;originalRunningReadyEpisode=0;
             originalObjectiveBindingTicket=null;originalObjectiveBindingEpisode=0;
             oldHost=host;oldClient=client;oldAnnouncer=announcer;
             host=null;client=null;announcer=null;phase=Phase.IDLE;description="";fingerprint="";

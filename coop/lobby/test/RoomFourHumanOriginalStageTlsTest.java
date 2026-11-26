@@ -45,6 +45,28 @@ public final class RoomFourHumanOriginalStageTlsTest {
         for(RoomSession g:guests)if(!g.storyStatus().committed)return false;
         return true;
     }
+    private static void presentation(RoomSession session,RoomStoryWire.Ticket ticket,
+                                     int episode,int slot){
+        int[] frame=session.otherHumanPresentationFromGameThread();
+        ok(frame.length==34&&frame[0]==1&&frame[1]==episode&&
+           frame[2]==ticket.mission&&frame[3]==ticket.stage&&
+           frame[4]==ticket.sceneEpoch&&frame[5]==(int)ticket.rosterRevision&&
+           frame[6]==(int)(ticket.token>>>32)&&frame[7]==(int)ticket.token&&
+           frame[8]==ticket.participants&&frame[9]==slot&&
+           frame[10]>0&&frame[11]==3);
+        byte[] id=ticket.session();
+        for(int i=0;i<4;i++){
+            int j=i*4;
+            int word=((id[j]&255)<<24)|((id[j+1]&255)<<16)|
+                     ((id[j+2]&255)<<8)|(id[j+3]&255);
+            ok(frame[12+i]==word);
+        }
+        int[] poses=session.allOtherHumanBodiesFromGameThread();
+        ok(poses.length==23);
+        for(int i=0;i<18;i++)ok(frame[16+i]==poses[5+i]);
+        frame[0]=0;frame[16]=99; // caller cannot mutate retained source values
+        ok(session.otherHumanPresentationFromGameThread()[0]==1);
+    }
     public static void main(String[] args)throws Exception{
         SSLContext tls=TlsRoomTest.host(Paths.get(args[0]));
         byte[] fingerprint=TlsRoomTest.fingerprint(Paths.get(args[0]));
@@ -84,6 +106,7 @@ public final class RoomFourHumanOriginalStageTlsTest {
                     .allMatch(n->n==0)); // joining a room NEVER launches a scene
             }
             ok(wire.size()==3&&compact.size()==3);
+            ok(Arrays.stream(host.otherHumanPresentationFromGameThread()).allMatch(n->n==0));
             // Synthetic source-linked native callback only, not actual BLACK.
             ok(host.observeOriginalStageIdentityFromGameThread(90,2,0));
             ok(host.prepareObservedHostStageFromGameThread());
@@ -134,6 +157,14 @@ public final class RoomFourHumanOriginalStageTlsTest {
                 ok(bodies.length==23&&bodies[0]==ticket.sceneEpoch&&
                    bodies[3]==actualSlots[i]&&bodies[4]==3);
             }
+            presentation(host,ticket,90,1);
+            for(int i=0;i<3;i++)presentation(guests[i],ticket,120+i,actualSlots[i]);
+            Thread foreign=new Thread(()->ok(Arrays.stream(
+                host.otherHumanPresentationFromGameThread()).allMatch(n->n==0)));
+            final Throwable[] foreignFailure=new Throwable[1];
+            foreign.setUncaughtExceptionHandler((thread,error)->foreignFailure[0]=error);
+            foreign.start();foreign.join();ok(foreignFailure[0]==null);
+            presentation(host,ticket,90,1);
             RoomWorldSnapshotWire.Snapshot initial=second.readHostWorldFromGameThread();
             ok(initial.avatars.get(0).xCm==10000&&initial.avatars.get(0).playerId==1);
             for(int i=0;i<4;i++)ok(initial.avatars.get(i).playerId==i+1);
@@ -193,6 +224,10 @@ public final class RoomFourHumanOriginalStageTlsTest {
                 .avatars.get(actualSlots[0]-1).xCm;
             ok(reconciledSecondX>oldSecondX&&
                reconciledSecondX-oldSecondX<=73);
+            // Same level/stage but a NEW native loading episode cannot borrow
+            // the old committed ticket's local readiness.
+            ok(second.observeOriginalStageIdentityFromGameThread(150,2,0));
+            ok(Arrays.stream(second.otherHumanPresentationFromGameThread()).allMatch(n->n==0));
             int priorWireId=fourth.snapshot().roster.self;
             fourth.stop(); // network leave must ABORT all committed worlds
             until(()->host.snapshot().roster.players.size()==3&&
@@ -201,6 +236,8 @@ public final class RoomFourHumanOriginalStageTlsTest {
                 third.storyStatus().ticket==null);
             ok(!host.storyStatus().committed);
             ok(!second.storyStatus().committed&&!third.storyStatus().committed);
+            ok(Arrays.stream(host.otherHumanPresentationFromGameThread()).allMatch(n->n==0));
+            ok(Arrays.stream(second.otherHumanPresentationFromGameThread()).allMatch(n->n==0));
             ok(second.readHostWorldFromGameThread()==null);
             ok(!third.offerHumanInputFromGameThread(
                 2,0,0,0,false,false));
@@ -218,6 +255,9 @@ public final class RoomFourHumanOriginalStageTlsTest {
             ok(next!=null&&next.sceneEpoch>ticket.sceneEpoch&&
                !next.same(ticket)&&next.participants==15);
             until(()->allStory(guests,next));
+            ok(Arrays.stream(host.otherHumanPresentationFromGameThread()).allMatch(n->n==0));
+            for(RoomSession g:guests)
+                ok(Arrays.stream(g.otherHumanPresentationFromGameThread()).allMatch(n->n==0));
             ok(RoomWire.storySlot(fourth.snapshot().roster,
                 fourth.snapshot().roster.self)==4);
             ok(fourth.guestPreparedStoryFromOriginalFrontend()[6]==4);
