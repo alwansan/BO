@@ -1,0 +1,50 @@
+{
+  "NOT_proven": [
+    "exact per-instance 48B field semantics (only +0x20/+0x24 read here)",
+    "teardown/destroy for these objects (sub_001CD4E0/1C72B0/1C73C0/1D3610/1C7430 roles not proven)",
+    "stable original identity across phones",
+    "scene-loaded callback",
+    "production OriginalScene/ResolveOriginalObject/StillOwnsOriginalObject/ApplyOriginalHostState/VerifyOriginalHostState",
+    "producer",
+    "OriginalGuestCanonicalApplyFrame caller",
+    "P2..P4",
+    "sharedWorldComplete",
+    "no ABI invented",
+    "no original AI/assets/saves changed",
+    "nothing original uploaded"
+  ],
+  "date": "2026-11-26",
+  "globals": {
+    "arrayVtable": "0x28EA60",
+    "kWorld": "0x2D45D4",
+    "levelRes": "0x2D1988",
+    "objAllocSource": "0x2D12E8",
+    "objVtable": "0x28EA60"
+  },
+  "method": "generated original recompiled.c (xboxrecomp e4b62170, pinned XBE c5bfed25..., /tmp private); `Unit_%02d.bin`@0x0028F3F0 -> sub_000A1AEB snprintf -> sub_001D6200 file `sub_001D6200`... trace. No original bytes uploaded.",
+  "schema": "BO-COOP-unit-v24-original-consumer-v1",
+  "sharedWorldComplete": false,
+  "sub_001C8450": {
+    "original": "0x001C8450",
+    "role": "original object constructor (cdecl 0-param, object in eax, clears +8..+0xC8, matrix 0x2ACE70/80/90 + 0x2F4390, +0xC4=0xA, ret)"
+  },
+  "sub_001D6200": {
+    "count_read": "MEM16(ebp+0xC + 0x90) N",
+    "inner_loop": "source instance `edx=table+esi`, `esi+=0x30` (48B); output `eax=allocbase+edi`, `edi+=0xF0`",
+    "inputs": "eax arg; ebp+0xC = MEM32(eax+0x118); ebp=MEM32(esp+0x10); calls sub_001D3290; alloc via sub_001F3FC0(eax=0x2D12E8) N*0xF0; MEM32(ecx)=0x28EA60 array vtable; ...",
+    "instance_authored_id_fields": "MEM32(instance+0x20)->obj+8; MEM32(instance+0x24)->obj+0xC (NOT proven cross-phone stable key; instance also has other 48B fields unread here)",
+    "per_instance": "call sub_001C8450 (ctor); set +0xC4=0,+0xDA=1,+0xDB,+0xD0=edx,+0xD8=0xFFFF,+0xD4=0, +8=MEM32(edx+0x20),+0xC=MEM32(edx+0x24), +0xEC=0; output stride 0xF0; vtable 0x28EA60",
+    "post": "sub_001C7430, sub_001C73C0, sub_001D3610, sub_001C72B0, sub_001CD4E0, sub_0015E140, ...",
+    "table_read": "MEM32(ebp+0xC + 0x1C)"
+  },
+  "unit_v24_layout_confirmed_in_original_xbe": {
+    "consumer_function": "sub_001D6200",
+    "consumer_original": "0x001D6200",
+    "format": "unit-v24",
+    "instance_count": "u16 @ +0x90",
+    "instance_record_stride": "0x30 = 48 bytes",
+    "magic_check": "r.expect(0,0x18) host",
+    "notes": "NOT the PC-only host Rust reader assumption; original XBE consumer confirmed in generated code",
+    "table": "@ +0x1C (relative base)"
+  }
+}

@@ -1,3 +1,9 @@
+## Work25 — `unit-v24` consumer أصلي مثبت في generated original (2026-11-26)
+
+- `Unit_%02d.bin`@0x0028F3F0→`sub_000A1AEB`→`sub_001D6200`. **`sub_001D6200` (0x001D6200)** قارئ `unit-v24` الأصلي المُولَّد: **`MEM16(+0x90)` count، `MEM32(+0x1C)` table، `0x30`=**48B instance stride**، `esi+=0x30`, output `edi+=0xF0`, output vtable `0x28EA60`, `sub_001F3FC0` alloc `N*0xF0`, `kWorld=0x2D45D4`, `0x2D12E8`, `0x2D1988`. **`sub_001C8450` (0x001C8450) original constructor** (cdecl 0-param، object in `eax`, clears `+8..+0xC8`, matrix `0x2ACE70/80/90`,`0x2F4390`, `+0xC4=0xA`, `ret`). Per instance: `sub_001C8450`, sets `+0xC4/+0xDA/+0xDB/+0xD0/+0xD8/+0xD4/+8/+0xC/+0xEC`, `+8=MEM32(instance+0x20)`,`+0xC=MEM32(instance+0x24)`, then `sub_001C7430/1C73C0/1D3610/1C72B0/1CD4E0/1C8450`, `sub_0015E140`. يطابق `unit-v24` pinned Rust (+0x90,+0x1c,48B)! **مثبت أصلي، لا مجرد host tool.**
+- **`unit-v24`->constructor` جزئيًا مثبت. غير مثبت:** دلالات 48B الكاملة (فقط +0x20/+0x24 هنا)؛ **teardown/destroy**؛ **stable original identity**؛ **scene-loaded**؛ `OriginalScene/ResolveOriginalObject/StillOwnsOriginalObject/ApplyOriginalHostState/VerifyOriginalHostState` إنتاجي؛ producer؛ `OriginalGuestCanonicalApplyFrame` caller؛ P2..P4؛ sharedWorldComplete. **لا ABI مخترع؛ لا تعديل AI/أصول/حفظ؛ لا رفع original/generated.**
+- الدليل `memory/evidence/WORK_BATCH25_UNIT_V24_ORIGINAL_CONSUMER_20261126.json`. مرفوع. **الهدف غير مكتمل.**
+
 ## Work24 — تفعيل third_party/xboxrecomp + generated original source (2026-11-26)
 
 - بموجب صلاحية المستخدم + الإنترنت: استنساخ pinned `portingpete/Black-2006-Recomp@b2512faf` + `git submodule update --init third_party/xboxrecomp@e4b62170`. `websearch` غير متاح.
