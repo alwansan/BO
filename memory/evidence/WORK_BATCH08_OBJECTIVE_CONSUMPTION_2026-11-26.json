@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "date_utc": "2026-11-26",
+  "repository": "alwansan/BO",
+  "branch": "experiment/black-coop",
+  "base_head": "08eb7012542b6c72721b362752b2d9e193288d29",
+  "pre_sync_worktree": "clean; ff-only from f7551ad to base_head",
+  "base_ci": "No Actions runs for exact base; four source/synthetic runs succeeded at d831fd97cc559578d21ec8bb33f2750c91790a6c",
+  "change": "Three-second monotonic local-completion TTL; retained completion current identity + exact ticket/local episode/stage/thread preflight",
+  "local_test": {
+    "command": "python3 coop/room_network/check_objective_tls.py --source-root . --output /tmp/bo-work-objective-ttl-verified --java-current-runtime",
+    "success": true,
+    "programs": 10,
+    "objective_tls_scenarios": 11,
+    "objective_session_scenarios": 9,
+    "guests": 3,
+    "records_per_guest": 4096,
+    "report_sha256": "8056912d4c49ba568b4d626ed42657b2de542067bbe68450bcfc614f49b22d2c",
+    "production_java_target": "local Java21 current runtime; --release 8 unavailable",
+    "sources_unchanged": true
+  },
+  "development_failures": [
+    "Initial Java8 target unsupported locally",
+    "Fixture host witness expired during delayed transfer; refreshed synthetic witness before next publish",
+    "Intermediate checker invalidated because test source changed during execution; final immutable-source run passed"
+  ],
+  "ci_after_publish": "pending",
+  "clean_remote_restore": "pending",
+  "limits": [
+    "No live engine/source/AI/assets/save/APK/device work",
+    "TTL starts at complete local assembly, not host capture or initial chunk",
+    "Boolean consume preflight does not authorize deferred use or native mutation",
+    "No owner asset workflow manually launched"
+  ]
+}

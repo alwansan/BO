@@ -142,9 +142,43 @@ public final class RoomObjectiveSessionTlsTest {
             });
             passed("four_session_tls_4096_exact_complete_values");
 
+            RoomObjectiveChunks.Snapshot retained=g2.readHostObjectivesFromGameThread();
+            ok(g2.isHostObjectiveSnapshotCurrentFromGameThread(61,retained),"fresh consume");
+            ok(!g2.isHostObjectiveSnapshotCurrentFromGameThread(62,retained),"wrong local episode");
+            ok(!g2.isHostObjectiveSnapshotCurrentFromGameThread(61,null),"null consume");
+            AtomicBoolean foreignConsume=new AtomicBoolean(true);
+            Thread consumer=new Thread(()->foreignConsume.set(
+                g2.isHostObjectiveSnapshotCurrentFromGameThread(61,retained)));
+            consumer.start();consumer.join();
+            ok(!foreignConsume.get(),"retained consume thread fence");
+            // Keep the local scene witness fresh while the complete snapshot
+            // ages. Render callbacks/reads must never renew snapshot freshness.
+            long expiry=System.nanoTime()+TimeUnit.MILLISECONDS.toNanos(3200);
+            while(System.nanoTime()<expiry){
+                for(int i=0;i<3;i++)guests[i].observeOriginalStageIdentityFromGameThread(61+i,0,1);
+                g2.readHostObjectivesFromGameThread();
+                Thread.sleep(20);
+            }
+            for(RoomSession g:guests)ok(g.readHostObjectivesFromGameThread()==null,
+                "delayed complete snapshot expires despite fresh scene");
+            ok(!g2.isHostObjectiveSnapshotCurrentFromGameThread(61,retained),"delayed retained consume");
+            host.observeOriginalStageIdentityFromGameThread(50,0,1);
+            ok(host.publishOriginalHostObjectiveSnapshotFromGameThread(50,2,records(4096,1)),"fresh recovery");
+            until("fresh recovery received",()->{
+                for(int i=0;i<3;i++)guests[i].observeOriginalStageIdentityFromGameThread(61+i,0,1);
+                return allReceived(guests,2,4096,1);
+            });
+            ok(!g2.isHostObjectiveSnapshotCurrentFromGameThread(61,retained),"superseded consume");
+            RoomObjectiveChunks.Snapshot beforeScene=g2.readHostObjectivesFromGameThread();
+            RoomObjectiveChunks.Snapshot beforeNewer=g3.readHostObjectivesFromGameThread();
+            ok(g3.isHostObjectiveSnapshotCurrentFromGameThread(62,beforeNewer),"new sample consumable");
+            passed("consume_ttl_episode_thread_and_fresh_recovery");
+
             ok(g2.observeOriginalStageIdentityFromGameThread(100,0,1),
                "new local episode even with same mission and stage");
             ok(g2.readHostObjectivesFromGameThread()==null,"revoked read");
+            ok(!g2.isHostObjectiveSnapshotCurrentFromGameThread(61,beforeScene),"retained scene revoke");
+            ok(!g2.isHostObjectiveSnapshotCurrentFromGameThread(100,beforeScene),"new episode cannot revive retained");
             ok(!g2.bindOriginalObjectiveIdsFromGameThread(100,ids(4096)),
                "no same-ticket identity reset after source change");
             ok(g2.storyStatus().committed,"room connection stays committed");
@@ -153,7 +187,8 @@ public final class RoomObjectiveSessionTlsTest {
                "other guest values remain independent");
             passed("new_local_episode_revokes_one_guest_only");
 
-            ok(host.publishOriginalHostObjectiveSnapshotFromGameThread(50,2,records(4096,1)),
+            host.observeOriginalStageIdentityFromGameThread(50,0,1);
+            ok(host.publishOriginalHostObjectiveSnapshotFromGameThread(50,3,records(4096,1)),
                "next host sample");
             until("unaffected guests progress",()->{
                 host.observeOriginalStageIdentityFromGameThread(50,0,1);
@@ -161,7 +196,7 @@ public final class RoomObjectiveSessionTlsTest {
                 g4.observeOriginalStageIdentityFromGameThread(63,0,1);
                 RoomObjectiveChunks.Snapshot a=g3.readHostObjectivesFromGameThread();
                 RoomObjectiveChunks.Snapshot b=g4.readHostObjectivesFromGameThread();
-                return a!=null&&b!=null&&a.sequence==2&&b.sequence==2&&
+                return a!=null&&b!=null&&a.sequence==3&&b.sequence==3&&
                     Arrays.equals(a.records(),records(4096,1))&&
                     Arrays.equals(b.records(),records(4096,1));
             });
@@ -171,6 +206,15 @@ public final class RoomObjectiveSessionTlsTest {
                "revoked objective does not disconnect lobby");
             passed("revoked_inflight_parts_ignored_room_stays_live");
 
+            ok(!g3.isHostObjectiveSnapshotCurrentFromGameThread(62,beforeNewer),"new completion supersedes still fresh retained sample");
+            RoomObjectiveChunks.Snapshot beforeAbort=g3.readHostObjectivesFromGameThread();
+            ok(g3.isHostObjectiveSnapshotCurrentFromGameThread(62,beforeAbort),"current before abort");
+            RoomObjectiveChunks.Snapshot beforeMission=g4.readHostObjectivesFromGameThread();
+            ok(g4.isHostObjectiveSnapshotCurrentFromGameThread(63,beforeMission),"current before mission change");
+            ok(g4.observeOriginalStageIdentityFromGameThread(101,1,2),"different local mission");
+            ok(!g4.isHostObjectiveSnapshotCurrentFromGameThread(63,beforeMission),"old mission consume");
+            ok(!g4.isHostObjectiveSnapshotCurrentFromGameThread(101,beforeMission),"new mission cannot reuse old values");
+            passed("different_local_mission_revokes_retained_completion");
             ok(host.cancelStoryFromGameThread(),"abort current ticket");
             until("all aborted",()->{
                 for(RoomSession g:guests)if(g.storyStatus().ticket!=null)return false;
@@ -178,13 +222,15 @@ public final class RoomObjectiveSessionTlsTest {
             });
             for(RoomSession g:guests)ok(g.readHostObjectivesFromGameThread()==null,
                                          "abort invalidates reads");
-            ok(!host.publishOriginalHostObjectiveSnapshotFromGameThread(50,3,records(4096,2)),
+            ok(!g3.isHostObjectiveSnapshotCurrentFromGameThread(62,beforeAbort),"retained abort revoke");
+            ok(!host.publishOriginalHostObjectiveSnapshotFromGameThread(50,4,records(4096,2)),
                "no post abort publication");
             passed("abort_revokes_all_objective_reads");
 
             RoomStoryWire.Ticket next=host.prepareStoryFromGameThread(0,1,
                                                   ticket.sceneEpoch+1);
             ok(!ticket.same(next),"new ticket differs");
+            ok(!g3.isHostObjectiveSnapshotCurrentFromGameThread(62,beforeAbort),"new ticket cannot revive retained");
             until("new prepared",()->{
                 for(RoomSession g:guests){
                     RoomStoryWire.Ticket t=g.storyStatus().ticket;
@@ -216,7 +262,7 @@ public final class RoomObjectiveSessionTlsTest {
                     "new commit not an original scene attestation");
             passed("new_ticket_rebind_requires_fresh_native_attestation");
         }
-        ok(cases==7,"expected scenario cardinality");
-        System.out.println("OBJECTIVE_SESSION_REAL_TLS_PASS scenarios=7 guests=3 records=4096 SYNTHETIC_STAGE_AND_IDS_NO_ANDROID_ENGINE");
+        ok(cases==9,"expected scenario cardinality");
+        System.out.println("OBJECTIVE_SESSION_REAL_TLS_PASS scenarios=9 guests=3 records=4096 SYNTHETIC_STAGE_AND_IDS_NO_ANDROID_ENGINE");
     }
 }

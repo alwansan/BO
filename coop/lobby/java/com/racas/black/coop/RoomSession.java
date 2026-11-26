@@ -864,6 +864,19 @@ public final class RoomSession implements AutoCloseable {
         }
     }
 
+    /** Recheck a retained immutable completion immediately before consuming its
+     * values. Exact current completion, ticket, local episode and fresh stage
+     * witness are all required. This is value-only; it grants no native writes
+     * and cannot authorize deferred use after this check returns. */
+    public boolean isHostObjectiveSnapshotCurrentFromGameThread(
+            int localEpisode,RoomObjectiveChunks.Snapshot retained){
+        synchronized(lock){
+            return retained!=null&&localEpisode>0&&
+                localEpisode==originalObjectiveBindingEpisode&&
+                readHostObjectivesFromGameThread()==retained;
+        }
+    }
+
     /** Host scene unload/cancel invalidates its prepared ticket. */
     public boolean cancelStoryFromGameThread(){
         synchronized(lock){

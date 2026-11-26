@@ -1,3 +1,9 @@
+# Work-Batch08 — حاجز استهلاك أهداف اصطناعي (2026-11-26)
+
+الأساس المتحقق: `08eb7012542b6c72721b362752b2d9e193288d29`، فرق Work كان نظيفًا قبل fast-forward. القراءة ترفض لقطة مكتملة أقدم من 3 ثوانٍ محليًا؛ واجهة فحص اللقطة المحتفظ بها تعيد التحقق من أحدث completion، ticket، local episode، شاهد المشهد والخيط. الإلغاء/المهمة الجديدة لا يعيدان صلاحية لقطة قديمة. لا engine apply أو AI/أصول/حفظ/APK/هاتف. الأدلة: `memory/evidence/WORK_BATCH08_OBJECTIVE_CONSUMPTION_2026-11-26.json`. الخطوة التالية: توثيق مصدر الأهداف الحي وعمره قبل أي ربط بالمحرك؛ عمر المصدر/تأخر تجميع الشبكة ما زالا غير مثبتين.
+
+---
+
 ### Session92 — 2026-11-23 — real engine lab and original soldier ownership repair
 
 Latest owner explicitly accepts any original enemy/ally soldier appearance. START already loads the same stage on both phones; a shared physical world remains UNIMPLEMENTED. Do not present the current APK as completed co-op or request minor phone probes.

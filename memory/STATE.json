@@ -3965,5 +3965,11 @@
     "preserveOriginalEnemyAndAllyAi": true,
     "allowAiChangesOnlyAfterExplicitOwnerRequest": true,
     "removeUnactivatedTargetRewrite": true
+  },
+  "workBatch08": {
+    "baseHead": "08eb7012542b6c72721b362752b2d9e193288d29",
+    "scope": "synthetic objective consume freshness, exact current ticket and local episode; no native engine apply",
+    "evidence": "memory/evidence/WORK_BATCH08_OBJECTIVE_CONSUMPTION_2026-11-26.json",
+    "next": "prove live objective source and lifetime before native integration"
   }
 }

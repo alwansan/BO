@@ -653,7 +653,8 @@ public final class RoomTls {
         private RoomObjectiveChunks.Assembler objectiveAssembler;
         private RoomObjectiveChunks.Snapshot objectiveSnapshot;
         private boolean objectiveSourceRevoked;
-        private long objectiveReceivingSequence;
+        private long objectiveReceivingSequence,objectiveSnapshotAtNs;
+        private static final long OBJECTIVE_TTL_NS=3000000000L;
         private RoomNpcWorldWire.Chunk pendingNpc;
         private int lastNpcTick,lastObjectEventSequence,lastObjectEventTick;
         // FIFO, not latest-only. Overflow rejects the peer rather than
@@ -738,7 +739,7 @@ public final class RoomTls {
         }
         /**
          * Complete host-origin values for the independently supplied current
-         * ticket. No native mutation or freshness/TTL guarantee. The previous
+         * ticket, at most three seconds after local complete assembly. The previous
          * completion may stay readable while a newer sequence is assembling.
          * A returned immutable value must be scope-checked again before use.
          */
@@ -746,10 +747,12 @@ public final class RoomTls {
                   RoomStoryWire.Ticket exact){
             synchronized(lifecycle){
                 RoomWire.State current=view;
+                long age=System.nanoTime()-objectiveSnapshotAtNs;
                 return !closed.get()&&storyCommitted&&story!=null&&exact!=null&&
                     story.same(exact)&&!objectiveSourceRevoked&&current!=null&&
                     current.revision==story.rosterRevision&&objectiveSnapshot!=null&&
-                    objectiveSnapshot.ticket.same(story)?objectiveSnapshot:null;
+                    objectiveSnapshot.ticket.same(story)&&
+                    age>=0&&age<=OBJECTIVE_TTL_NS?objectiveSnapshot:null;
             }
         }
         // Caller holds lifecycle. abort() revokes immediately on the reader;
@@ -758,7 +761,7 @@ public final class RoomTls {
         private void clearObjectivesLocked(){
             if(objectiveAssembler!=null)objectiveAssembler.abort();
             objectiveIdsTicket=null;objectiveIds=null;objectiveAssembler=null;
-            objectiveSnapshot=null;objectiveReceivingSequence=0;
+            objectiveSnapshot=null;objectiveReceivingSequence=0;objectiveSnapshotAtNs=0;
         }
         /** Host-origin, validated roster/epoch only. No game actor pointer. */
         public RoomWorldSnapshotWire.Snapshot worldSnapshot(){
@@ -1001,8 +1004,10 @@ public final class RoomTls {
                                     objectiveReceivingSequence=serial;started=true;
                                 }
                             }
-                            if(result==RoomObjectiveChunks.Result.COMPLETE)
+                            if(result==RoomObjectiveChunks.Result.COMPLETE){
                                 objectiveSnapshot=objectiveAssembler.latest(story);
+                                objectiveSnapshotAtNs=System.nanoTime();
+                            }
                         }
                         // Diagnostics cannot hold the lifecycle lock or expose
                         // IDs, records, endpoints or other peer information.

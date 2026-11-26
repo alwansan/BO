@@ -1,3 +1,9 @@
+# Work-Batch08 — حاجز استهلاك أهداف اصطناعي (2026-11-26)
+
+الأساس المتحقق: `08eb7012542b6c72721b362752b2d9e193288d29`، فرق Work كان نظيفًا قبل fast-forward. القراءة ترفض لقطة مكتملة أقدم من 3 ثوانٍ محليًا؛ واجهة فحص اللقطة المحتفظ بها تعيد التحقق من أحدث completion، ticket، local episode، شاهد المشهد والخيط. الإلغاء/المهمة الجديدة لا يعيدان صلاحية لقطة قديمة. لا engine apply أو AI/أصول/حفظ/APK/هاتف. الأدلة: `memory/evidence/WORK_BATCH08_OBJECTIVE_CONSUMPTION_2026-11-26.json`. الخطوة التالية: توثيق مصدر الأهداف الحي وعمره قبل أي ربط بالمحرك؛ عمر المصدر/تأخر تجميع الشبكة ما زالا غير مثبتين.
+
+---
+
 ### Session148 (2026-11-24): independent original weapon manager preparation
 
 - Code e23256548a608ed844edb9ed883198a94aadc09f implements OriginalWeaponManagerImage from pinned PC black_p2_banks_take. Detached 0xD0 manager preparation rebases internal record pointers +7C/+80, assigns independent heap pair, remaps two original sound-bank references, resets original load/weapon record fields. Requires initialized donor and original pool signature +130C=9; rejects aliases and unexplained bank/record pointers. Preserves original donor and output on failure.
