@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "project": "alwansan/BO",
+  "branch": "experiment/black-coop",
+  "baseline": "f7551ada9e7e352f937bd24e7b5ba405b947602d",
+  "date": "2026-11-26",
+  "scope": "Local source snapshot and synthetic-value only tests; NO BLACK engine/Android/phone claims",
+  "source_patch_sha256": "e996e7d2a90bf265e2ed5598854ce87568c43ddc3e8ec85a9ba671789b0801dc",
+  "local_checks": [
+    {
+      "command": "python3 coop/room_network/check_objective_tls.py --source-root . --output OUT --java-current-runtime",
+      "success": true,
+      "tests": "10/10",
+      "marker": "OBJECTIVE_TLS_CHECK_PASS",
+      "result_file_sha256": "784855bf4403af8c6eaeb5ed7a4461c899a4e320a38c032aebac774b04b73f79"
+    },
+    {
+      "command": "python3 coop/room_network/check_objective_story_scope_parity.py --source-root . --output OUT --java-current-runtime",
+      "success": true,
+      "cases": "157/157 (64 validity + 93 equality)",
+      "marker": "OBJECTIVE_STORY_SCOPE_PARITY_PASS",
+      "result_file_sha256": "27f6db3ebda4de96dda19cfe6d3629361a4f6374a448f7c896eaab712ecf1cae"
+    },
+    {
+      "command": "python3 coop/room_network/check_objective_chunks_interop.py --source-root . --output OUT --java-current-runtime --disable-leak-check",
+      "success": true,
+      "scenarios": 12,
+      "guests": 3,
+      "records_per_guest": 4096,
+      "marker": "OBJECTIVE_CHUNKS_INTEROP_PASS",
+      "result_file_sha256": "d7673e21130536d5db3221979b3c327d4e7c066c224ae4036d8a26ee999ad87d"
+    }
+  ],
+  "limitations": [
+    "JDK current-runtime mode does not prove Java8 target or Android",
+    "LeakSanitizer disabled for C++ interop due ptrace restriction",
+    "No production game objective source, native apply or Android APK validated",
+    "Source-only local tests; no GitHub CI outcome yet"
+  ],
+  "ci_policy": "Owner asset-consuming room-network APK workflow made manual dispatch only; never dispatch without separate authorized asset review."
+}

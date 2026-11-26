@@ -75,6 +75,18 @@ public final class RoomTls {
         private int storyReadyMask;
         private boolean storyCommitted;
         private int lastWorldSnapshotTick,lastNpcSnapshotTick,lastObjectEventSequence,lastObjectEventTick;
+        private long lastObjectiveSequence;
+
+        // One immutable publication may be shared by three peers. Each peer
+        // has its own cursor; parts never occupy the eight-entry control FIFO.
+        private static final class ObjectivePublication {
+            final RoomStoryWire.Ticket ticket;
+            final RoomObjectiveChunks.EncodedSnapshot chunks;
+            ObjectivePublication(RoomStoryWire.Ticket ticket,
+                                 RoomObjectiveChunks.EncodedSnapshot chunks){
+                this.ticket=ticket;this.chunks=chunks;
+            }
+        }
         // Pre-JOIN handshake diagnostics only; never store PINs or peer identities.
         private volatile String handshakeFailureKind="none";
         public String handshakeFailureKind(){return handshakeFailureKind;}
@@ -163,6 +175,29 @@ public final class RoomTls {
                 return true;
             }
         }
+        /**
+         * Host-origin detached objective values for this exact COMMIT. This
+         * method performs bounded copying/encoding only, never socket I/O.
+         * A live producer still needs independent original-engine provenance;
+         * the transport test supplies explicitly synthetic records.
+         */
+        public boolean offerObjectiveSnapshot(RoomStoryWire.Ticket exact,
+                  long sequence,byte[] records)throws IOException{
+            synchronized(lock){
+                if(closed||story==null||!storyCommitted||exact==null||
+                   !story.same(exact)||revision!=story.rosterRevision||
+                   sequence<=lastObjectiveSequence)return false;
+                for(Peer p:peers.values())
+                    if(p.dead.get()||p.stopRequested)return false;
+                ObjectivePublication publication=new ObjectivePublication(story,
+                    RoomObjectiveChunks.encode(story,sequence,records));
+                lastObjectiveSequence=sequence;
+                for(Peer p:peers.values()){
+                    p.objective=publication;p.objectivePart=0;
+                }
+                return true;
+            }
+        }
         /** Host-only, source-ticket-verified event fanout. Never silently
          * drop an event or let a GUEST announce a world mutation. */
         public boolean offerObjectEvent(RoomObjectEventWire.Event evt)throws IOException{
@@ -213,6 +248,12 @@ public final class RoomTls {
             final AtomicReference<byte[]> latestWorldFrame=new AtomicReference<>();
             final AtomicReference<byte[]> latestNpcFirst=new AtomicReference<>();
             final AtomicReference<byte[]> latestNpcSecond=new AtomicReference<>();
+            // Guarded by Server.lock. A superseding offer replaces both as
+            // one operation; an already-selected frame stays before ABORT on
+            // this peer's single writer, never after it.
+            ObjectivePublication objective;
+            int objectivePart;
+            volatile boolean stopRequested;
             int lastInputSequence;
             int lastEyeSequence;
             RoomCameraEyeWire.Eye latestEye;
@@ -299,9 +340,11 @@ public final class RoomTls {
                 }
                 story=ticket;storyReadyMask=0;storyCommitted=false;
                 lastWorldSnapshotTick=lastNpcSnapshotTick=lastObjectEventSequence=lastObjectEventTick=0;
+                lastObjectiveSequence=0;
                 for(Peer p:peers.values()){
                     p.lastInputSequence=0;p.latestInput=null;p.latestWorldFrame.set(null);p.latestNpcFirst.set(null);p.latestNpcSecond.set(null);
                     p.lastEyeSequence=0;p.latestEye=null;p.latestEyeAt=0;
+                    p.objective=null;p.objectivePart=0;
                 }
                 storySlots.clear();storySlots.putAll(slots);
                 record("STORY_HOST_PREPARED");
@@ -345,14 +388,20 @@ public final class RoomTls {
             RoomStoryWire.Ticket old=story;
             story=null;storyReadyMask=0;storyCommitted=false;storySlots.clear();
             lastWorldSnapshotTick=lastNpcSnapshotTick=lastObjectEventSequence=lastObjectEventTick=0;
+            lastObjectiveSequence=0;
             for(Peer p:peers.values()){
                 p.lastInputSequence=0;p.latestInput=null;p.latestWorldFrame.set(null);p.latestNpcFirst.set(null);p.latestNpcSecond.set(null);
                     p.lastEyeSequence=0;p.latestEye=null;p.latestEyeAt=0;
+                p.objective=null;p.objectivePart=0;
             }
             if(old!=null)record("STORY_HOST_ABORTED");
             if(old!=null)try{
                 byte[] cancel=RoomStoryWire.encode(RoomWire.STORY_ABORT,old);
-                for(Peer peer:peers.values())peer.outbound.offer(cancel);
+                for(Peer peer:peers.values())if(!peer.outbound.offer(cancel)){
+                    // Never silently lose revocation. The writer closes the
+                    // socket outside the roster lock if control cannot queue.
+                    peer.stopRequested=true;
+                }
             }catch(IOException ignored){}
         }
         public RoomWire.State snapshot()throws IOException{synchronized(lock){return RoomWire.parseState(RoomWire.decode(state(RoomWire.ROSTER,1,new byte[16])));}}
@@ -408,8 +457,9 @@ public final class RoomTls {
                 final Peer owned=peer;
                 owned.writer=thread(()->{
                     try{
-                        while(!owned.dead.get()){
+                        while(!owned.dead.get()&&!owned.stopRequested){
                             byte[] control=owned.outbound.poll(20,TimeUnit.MILLISECONDS);
+                            if(owned.stopRequested)break;
                             if(control!=null){RoomWire.write(out,control);continue;}
                             byte[] frame=owned.latestWorldFrame.getAndSet(null);
                             if(frame!=null){
@@ -418,14 +468,19 @@ public final class RoomTls {
                                 synchronized(lock){
                                     if(closed||story==null||!storyCommitted||
                                        revision!=story.rosterRevision||
-                                       !sample.matches(story)||owned.dead.get())
+                                       !sample.matches(story)||owned.dead.get()||owned.stopRequested||
+                                       !owned.outbound.isEmpty())
                                         continue;
                                 }
+                                if(owned.stopRequested)break;
                                 RoomWire.write(out,frame);
-                                continue;
                             }
-                            // First world/room roster; then original NPC chunks,
-                            // all source-pinned to the SAME current story.
+                            // A bounded data cycle serves world, NPC and objective
+                            // lanes. Do not continue after a world sample: a 50Hz
+                            // host must not starve a multipart objective snapshot.
+                            // Controls that arrived meanwhile get the next turn.
+                            if(owned.stopRequested)break;
+                            if(!owned.outbound.isEmpty())continue;
                             byte[] a=owned.latestNpcFirst.getAndSet(null);
                             byte[] b=owned.latestNpcSecond.getAndSet(null);
                             for(byte[] chunk:new byte[][]{a,b}){
@@ -435,16 +490,46 @@ public final class RoomTls {
                                 synchronized(lock){
                                     if(closed||story==null||!storyCommitted||
                                        revision!=story.rosterRevision||
-                                       !npc.matches(story)||owned.dead.get())
+                                       !npc.matches(story)||owned.dead.get()||owned.stopRequested||
+                                       !owned.outbound.isEmpty())
                                         continue;
                                 }
+                                if(owned.stopRequested)break;
                                 RoomWire.write(out,chunk);
+                            }
+                            byte[] objectiveFrame=null;
+                            int selectedPart=-1;
+                            synchronized(lock){
+                                ObjectivePublication publication=owned.objective;
+                                if(closed||story==null||!storyCommitted||
+                                   revision!=story.rosterRevision||owned.dead.get()||
+                                   owned.stopRequested||publication==null||
+                                   !publication.ticket.same(story)){
+                                    owned.objective=null;owned.objectivePart=0;
+                                }else if(owned.outbound.isEmpty()){
+                                    // In particular COMMIT must have left the
+                                    // FIFO before the first objective is selected.
+                                    selectedPart=owned.objectivePart++;
+                                    objectiveFrame=RoomWire.frame(RoomWire.OBJECTIVE_CHUNK,
+                                        publication.chunks.body(selectedPart));
+                                    if(owned.objectivePart==publication.chunks.partCount()){
+                                        owned.objective=null;owned.objectivePart=0;
+                                    }
+                                }
+                            }
+                            if(owned.stopRequested)break;
+                            if(objectiveFrame!=null){
+                                RoomWire.write(out,objectiveFrame);
+                                // Fixed diagnostic only, outside all state locks.
+                                // Observers must return promptly; they run on this
+                                // network worker, never on a game thread.
+                                if(selectedPart==0)record("OBJECTIVE_HOST_FIRST_PART_SENT");
                             }
                         }
                     }catch(IOException e){owned.stop();}
                     catch(InterruptedException e){
                         Thread.currentThread().interrupt();owned.stop();
-                    }
+                    }finally{owned.stop();}
                 });owned.writer.start();broadcast();socket.setSoTimeout(5000);
                 long lastSequence=0,window=now()/1000;int packets=0,inputPackets=0,eyePackets=0;
                 while(!closed&&!owned.dead.get()){
@@ -561,6 +646,14 @@ public final class RoomTls {
         private volatile RoomStoryWire.Ticket story;
         private volatile RoomWorldSnapshotWire.Snapshot worldSnapshot;
         private volatile RoomNpcWorldWire.World npcWorld;
+        // All objective fields are guarded by lifecycle. Independent IDs bind
+        // once before local READY; only the reader creates/uses the assembler.
+        private RoomStoryWire.Ticket objectiveIdsTicket;
+        private byte[][] objectiveIds;
+        private RoomObjectiveChunks.Assembler objectiveAssembler;
+        private RoomObjectiveChunks.Snapshot objectiveSnapshot;
+        private boolean objectiveSourceRevoked;
+        private long objectiveReceivingSequence;
         private RoomNpcWorldWire.Chunk pendingNpc;
         private int lastNpcTick,lastObjectEventSequence,lastObjectEventTick;
         // FIFO, not latest-only. Overflow rejects the peer rather than
@@ -611,6 +704,62 @@ public final class RoomTls {
         }
         public RoomWire.State snapshot(){RoomWire.State value=view;return value==null?null:RoomWire.copy(value);}
         public RoomStoryWire.Ticket storyTicket(){return story;}
+        /**
+         * Bind a locally established descriptor table, never IDs copied from
+         * network data. Call after PREPARE and before acknowledgeSceneLoaded.
+         * Rebinding the same prepared story is forbidden, even before any data,
+         * so a caller cannot reset its sequence watermark or change identity.
+         */
+        public boolean bindObjectiveIds(RoomStoryWire.Ticket exact,
+                  byte[][] independentlyExpectedIds)throws IOException{
+            synchronized(lifecycle){
+                RoomWire.State current=view;
+                if(closed.get()||story==null||exact==null||!story.same(exact)||
+                   storyReadySent||storyCommitted||objectiveIds!=null||objectiveSourceRevoked||
+                   current==null||current.revision!=story.rosterRevision||
+                   !MessageDigest.isEqual(current.session,story.session()))return false;
+                byte[][] owned=RoomObjectiveChunks.copyExpectedIds(independentlyExpectedIds);
+                objectiveIdsTicket=story;objectiveIds=owned;
+                return true;
+            }
+        }
+        /** A local verified scene change permanently revokes objective
+         * values for this ticket; a new PREPARE is required to bind again.
+         * In-flight chunks are ignored rather than killing an otherwise valid
+         * TLS room. No engine memory is touched. */
+        public boolean revokeObjectiveSource(RoomStoryWire.Ticket exact){
+            synchronized(lifecycle){
+                if(closed.get()||story==null||exact==null||!story.same(exact))
+                    return false;
+                objectiveSourceRevoked=true;
+                clearObjectivesLocked();
+                return true;
+            }
+        }
+        /**
+         * Complete host-origin values for the independently supplied current
+         * ticket. No native mutation or freshness/TTL guarantee. The previous
+         * completion may stay readable while a newer sequence is assembling.
+         * A returned immutable value must be scope-checked again before use.
+         */
+        public RoomObjectiveChunks.Snapshot latestObjectiveSnapshot(
+                  RoomStoryWire.Ticket exact){
+            synchronized(lifecycle){
+                RoomWire.State current=view;
+                return !closed.get()&&storyCommitted&&story!=null&&exact!=null&&
+                    story.same(exact)&&!objectiveSourceRevoked&&current!=null&&
+                    current.revision==story.rosterRevision&&objectiveSnapshot!=null&&
+                    objectiveSnapshot.ticket.same(story)?objectiveSnapshot:null;
+            }
+        }
+        // Caller holds lifecycle. abort() revokes immediately on the reader;
+        // an external close also drops every reference under the same lock.
+        // No assembler can be reused across a later PREPARE or reconnect.
+        private void clearObjectivesLocked(){
+            if(objectiveAssembler!=null)objectiveAssembler.abort();
+            objectiveIdsTicket=null;objectiveIds=null;objectiveAssembler=null;
+            objectiveSnapshot=null;objectiveReceivingSequence=0;
+        }
         /** Host-origin, validated roster/epoch only. No game actor pointer. */
         public RoomWorldSnapshotWire.Snapshot worldSnapshot(){
             return lastWorldSnapshotAt>0&&now()-lastWorldSnapshotAt<=350?
@@ -791,6 +940,7 @@ public final class RoomTls {
                                 lastQueuedEyeSequence=0;cameraFrames.clear();firstCameraEyeSent.set(false);
                                 worldSnapshot=null;lastWorldSnapshotTick=0;lastWorldSnapshotAt=0;
                                 npcWorld=null;pendingNpc=null;lastNpcTick=0;lastNpcAt=0;objectEvents.clear();lastObjectEventSequence=lastObjectEventTick=0;
+                                clearObjectivesLocked();objectiveSourceRevoked=false;
                                 record("STORY_GUEST_PREPARED");
                             }
                         }
@@ -815,9 +965,52 @@ public final class RoomTls {
                                 lastQueuedEyeSequence=0;cameraFrames.clear();firstCameraEyeSent.set(false);
                                 worldSnapshot=null;lastWorldSnapshotTick=0;lastWorldSnapshotAt=0;
                                 npcWorld=null;pendingNpc=null;lastNpcTick=0;lastNpcAt=0;objectEvents.clear();lastObjectEventSequence=lastObjectEventTick=0;
+                                clearObjectivesLocked();
                                 record("STORY_GUEST_ABORTED");
                             }
                         }
+                        continue;
+                    }
+                    if(packet.type==RoomWire.OBJECTIVE_CHUNK){
+                        RoomObjectiveChunks.Result result;
+                        boolean started=false;
+                        synchronized(lifecycle){
+                            // A revoked local engine scene may still have
+                            // queued old host parts. Drop those value-only
+                            // frames without disconnecting the lobby.
+                            if(objectiveSourceRevoked)continue;
+                            RoomWire.State current=view;
+                            if(closed.get()||!storyCommitted||story==null||
+                               current==null||current.revision!=story.rosterRevision||
+                               objectiveIds==null||objectiveIdsTicket==null||
+                               !objectiveIdsTicket.same(story))
+                                throw new IOException("Objective data without committed independent binding");
+                            // Construct and consume on this reader thread only.
+                            if(objectiveAssembler==null)
+                                objectiveAssembler=new RoomObjectiveChunks.Assembler(story,objectiveIds);
+                            DataInputStream body=RoomWire.body(packet,RoomWire.OBJECTIVE_CHUNK);
+                            byte[] bytes=new byte[body.available()];body.readFully(bytes);
+                            result=objectiveAssembler.accept(story,bytes);
+                            if(result!=RoomObjectiveChunks.Result.REJECTED){
+                                // accept() has checked the full canonical header;
+                                // this bounded read is for diagnostics only.
+                                DataInputStream accepted=new DataInputStream(new ByteArrayInputStream(bytes));
+                                accepted.skipBytes(36);
+                                long serial=accepted.readLong();
+                                if(serial>objectiveReceivingSequence){
+                                    objectiveReceivingSequence=serial;started=true;
+                                }
+                            }
+                            if(result==RoomObjectiveChunks.Result.COMPLETE)
+                                objectiveSnapshot=objectiveAssembler.latest(story);
+                        }
+                        // Diagnostics cannot hold the lifecycle lock or expose
+                        // IDs, records, endpoints or other peer information.
+                        if(started)record("OBJECTIVE_GUEST_STARTED");
+                        if(result==RoomObjectiveChunks.Result.COMPLETE)
+                            record("OBJECTIVE_GUEST_COMPLETED");
+                        else if(result==RoomObjectiveChunks.Result.REJECTED)
+                            record("OBJECTIVE_GUEST_REJECTED");
                         continue;
                     }
                     if(packet.type==RoomWire.WORLD_SNAPSHOT){
@@ -902,6 +1095,7 @@ public final class RoomTls {
                                 lastQueuedEyeSequence=0;cameraFrames.clear();firstCameraEyeSent.set(false);
                                 worldSnapshot=null;lastWorldSnapshotTick=0;lastWorldSnapshotAt=0;
                                 npcWorld=null;pendingNpc=null;lastNpcTick=0;lastNpcAt=0;objectEvents.clear();lastObjectEventSequence=lastObjectEventTick=0;
+                            clearObjectivesLocked();
                             record("STORY_GUEST_ROSTER_INVALIDATED");
                         }
                     }
@@ -917,6 +1111,7 @@ public final class RoomTls {
                                 lastQueuedEyeSequence=0;cameraFrames.clear();firstCameraEyeSent.set(false);
                                 worldSnapshot=null;lastWorldSnapshotTick=0;lastWorldSnapshotAt=0;
                                 npcWorld=null;pendingNpc=null;lastNpcTick=0;lastNpcAt=0;objectEvents.clear();lastObjectEventSequence=lastObjectEventTick=0;
+                clearObjectivesLocked();
             }
             readyWriter.shutdownNow();
             closeSocket(socket);heartbeat.shutdownNow();reader.interrupt();inputWriter.interrupt();

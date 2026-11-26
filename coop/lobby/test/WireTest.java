@@ -11,6 +11,19 @@ public final class WireTest {
   byte[] frame=RoomWire.join(join);
   check(RoomWire.parseJoin(RoomWire.decode(frame)).name.equals("علي"));
   byte[] wrong=frame.clone();wrong[4]=99;rejects(()->RoomWire.decode(wrong));
+  // Version 9 peers cannot safely consume the new objective chunk stream.
+  check(RoomWire.VERSION==10&&RoomWire.PROFILE==10);
+  byte[] oldVersion=frame.clone();oldVersion[4]=9;
+  rejects(()->RoomWire.decode(oldVersion));
+  byte[] oldProfile=frame.clone();oldProfile[8+20]=0;oldProfile[8+20+1]=9;
+  rejects(()->RoomWire.parseJoin(RoomWire.decode(oldProfile)));
+  // Framing bounds only: the objective assembler separately validates bodies.
+  byte[] objectiveFrame=RoomWire.frame(RoomWire.OBJECTIVE_CHUNK,new byte[504]);
+  check(objectiveFrame.length==512&&RoomWire.decode(objectiveFrame).type==17);
+  rejects(()->RoomWire.frame(RoomWire.OBJECTIVE_CHUNK,new byte[505]));
+  rejects(()->RoomWire.frame(18,new byte[0]));
+  byte[] futureType=objectiveFrame.clone();futureType[5]=18;
+  rejects(()->RoomWire.decode(futureType));
   rejects(()->RoomWire.decode(Arrays.copyOf(frame,frame.length+1)));
   rejects(()->RoomWire.join(new RoomWire.Join("bad\nname",nonce)));
   rejects(()->RoomWire.join(new RoomWire.Join("\ud800",nonce)));
@@ -28,6 +41,6 @@ public final class WireTest {
   var stream=new ByteArrayOutputStream();RoomWire.write(new DataOutputStream(stream),frame);
   check(Arrays.equals(frame,RoomWire.read(new DataInputStream(new ByteArrayInputStream(stream.toByteArray())))));
   rejects(()->RoomWire.read(new DataInputStream(new ByteArrayInputStream(new byte[]{127,-1}))));
-  System.out.println("PASS strict room wire, UTF-8, roster and framed I/O");
+  System.out.println("PASS strict room wire, UTF-8, roster, framed I/O and objective profile 10 compatibility");
  }
 }

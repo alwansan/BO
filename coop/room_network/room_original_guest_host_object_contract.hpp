@@ -145,6 +145,8 @@ public:
  // original object is resolved and its authoritative state is read back.
  // IO must prove scene, stable identity, generation and real original
  // callback semantics; no production engine adapter exists yet.
+ // Its probes must be read-only on the owner thread; ownership validation
+ // must establish the generation before dereferencing a possibly stale handle.
  template<class IO>OriginalObjectApplyResult ApplyNext(IO& io,
      const OriginalGuestLaunchMatchKey& matched,uint64_t nativeScene){
   if(!owner()||!nativeScene)return OriginalObjectApplyResult::Rejected;
@@ -156,9 +158,15 @@ public:
    if(io.OriginalScene()!=nativeScene)return OriginalObjectApplyResult::Rejected;
    if(!io.ResolveOriginalObject(event.objectKey,event.kind,actor,generation))
     return OriginalObjectApplyResult::WaitingForIdentity;
+   // Resolution may have observed a scene transition. Do not inspect the
+   // resolved handle against another scene, or consume the pending event.
+   if(io.OriginalScene()!=nativeScene)return OriginalObjectApplyResult::Rejected;
    if(actor<0x10000u||!generation||
       !io.StillOwnsOriginalObject(event.objectKey,event.kind,actor,generation))
     return OriginalObjectApplyResult::WaitingForIdentity;
+   // Confirm the scene again after the lifetime probe and before the first
+   // application callback. A pre-apply mismatch has made no object write.
+   if(io.OriginalScene()!=nativeScene)return OriginalObjectApplyResult::Rejected;
    // Once attempted, an uncertain mutation cannot be replayed blindly.
    if(!io.ApplyOriginalHostState(actor,event.kind,event.state)||
       io.OriginalScene()!=nativeScene||

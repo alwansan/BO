@@ -16,6 +16,74 @@ struct ObjectIO {
  bool ApplyOriginalHostState(uint32_t,uint8_t,uint8_t value){++calls;state=value;return apply;}
  bool VerifyOriginalHostState(uint32_t,uint8_t,uint8_t value){return verify&&value==state;}
 };
+
+// Synthetic lifecycle transitions only; no native game object or asset is used.
+enum class LifecycleChange { None, ResolveScene, OwnershipScene, ResolveGeneration };
+struct LifecycleIO:ObjectIO {
+ LifecycleChange change=LifecycleChange::None;
+ unsigned resolutions=0,ownershipChecks=0,readbacks=0;
+ bool ResolveOriginalObject(uint64_t key,uint8_t kind,uint32_t& actor,uint64_t& gen){
+  ++resolutions;
+  if(!ObjectIO::ResolveOriginalObject(key,kind,actor,gen))return false;
+  if(change==LifecycleChange::ResolveScene)scene=100;
+  if(change==LifecycleChange::ResolveGeneration)++generation;
+  return true;
+ }
+ bool StillOwnsOriginalObject(uint64_t key,uint8_t kind,uint32_t actor,uint64_t gen){
+  ++ownershipChecks;
+  const bool live=ObjectIO::StillOwnsOriginalObject(key,kind,actor,gen);
+  if(live&&change==LifecycleChange::OwnershipScene)scene=100;
+  return live;
+ }
+ bool VerifyOriginalHostState(uint32_t actor,uint8_t kind,uint8_t value){
+  ++readbacks;return ObjectIO::VerifyOriginalHostState(actor,kind,value);
+ }
+};
+
+void TestObjectPreApplyLifecycle(){
+ using namespace blackcoop;
+ OriginalGuestLaunchMatchKey key{};
+ key.originalEpisode=77;key.sceneEpoch=7;key.rosterRevision=5;
+ key.tokenHi=3;key.tokenLo=9;key.selfSlot=2;key.participants=3;
+ const int32_t message[]={7,5,3,9,1,6,0,555,1,1};
+ for(const auto change:{LifecycleChange::ResolveScene,LifecycleChange::OwnershipScene}){
+  OriginalGuestHostObjectInbox inbox;LifecycleIO io;
+  io.resolved=true;io.change=change;
+  assert(inbox.Ingest(message,10,key));
+  assert(inbox.ApplyNext(io,key,99)==OriginalObjectApplyResult::Rejected);
+  assert(io.scene==100&&io.resolutions==1);
+  assert(io.ownershipChecks==(change==LifecycleChange::ResolveScene?0u:1u));
+  assert(io.calls==0&&io.readbacks==0&&io.state==0);
+  assert(inbox.Pending()==1&&!inbox.Poisoned());
+  // Another poll cannot write into the replacement scene. Do not pretend
+  // that restoring a numeric scene ID proves a real engine teardown.
+  assert(inbox.ApplyNext(io,key,99)==OriginalObjectApplyResult::Rejected);
+  assert(io.resolutions==1&&io.calls==0&&io.readbacks==0);
+  OriginalHostObjectEvent retained{};
+  assert(inbox.Take(retained)&&inbox.Pending()==0);
+  assert(retained.sceneEpoch==7&&retained.revision==5&&retained.sequence==1&&
+         retained.tick==6&&retained.token==((uint64_t(3)<<32)|9u)&&
+         retained.objectKey==555&&retained.kind==1&&retained.state==1);
+ }
+ {
+  OriginalGuestHostObjectInbox inbox;LifecycleIO io;
+  io.resolved=true;io.change=LifecycleChange::ResolveGeneration;
+  assert(inbox.Ingest(message,10,key));
+  assert(inbox.ApplyNext(io,key,99)==OriginalObjectApplyResult::WaitingForIdentity);
+  assert(io.scene==99&&io.generation==9&&io.ownershipChecks==1);
+  assert(io.calls==0&&io.readbacks==0&&io.state==0);
+  assert(inbox.Pending()==1&&!inbox.Poisoned());
+  // Resolve the replacement generation afresh; never reuse the old output.
+  io.change=LifecycleChange::None;
+  assert(inbox.ApplyNext(io,key,99)==OriginalObjectApplyResult::Applied);
+  assert(io.resolutions==2&&io.ownershipChecks==3);
+  assert(io.calls==1&&io.readbacks==1&&io.state==1&&inbox.Pending()==0);
+  assert(inbox.ApplyNext(io,key,99)==OriginalObjectApplyResult::Empty);
+  assert(io.resolutions==2&&io.calls==1&&io.readbacks==1);
+ }
+ std::cout<<"SYNTHETIC_OBJECT_LIFECYCLE_PASS scenarios=3 NO_ANDROID_ENGINE\n";
+}
+
 int main(){
  using namespace blackcoop;
  OriginalGuestHostObjectInbox inbox;
@@ -118,5 +186,6 @@ int main(){
   assert(fresh.ApplyNext(io,key,99)==OriginalObjectApplyResult::Quarantined);
   assert(io.calls==2);
  }
+ TestObjectPreApplyLifecycle();
  std::cout<<"ORIGINAL_GUEST_HOST_OBJECT_INBOX_PASS: native 64 FIFO, exact original stage/token, replay/overflow/cross-thread/abort; NO engine object write"<<std::endl;
 }

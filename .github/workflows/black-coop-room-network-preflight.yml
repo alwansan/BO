@@ -195,6 +195,18 @@ jobs:
           set -euo pipefail
           g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread -fsanitize=address,undefined bo/coop/room_network/test_room_original_guest_canonical_source_barrier.cpp -o "$RUNNER_TEMP/test_guest_host_story_barrier"
           "$RUNNER_TEMP/test_guest_host_story_barrier"
+      - name: Detached objective descriptor counter state values (C++ ASan/UBSan)
+        shell: bash
+        run: |
+          set -euo pipefail
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread -fsanitize=address,undefined bo/coop/room_network/test_room_original_objective_snapshot.cpp -o "$RUNNER_TEMP/test_original_objective_values"
+          "$RUNNER_TEMP/test_original_objective_values"
+      - name: Objective values bound to the complete story ticket (C++ ASan/UBSan)
+        shell: bash
+        run: |
+          set -euo pipefail
+          g++ -std=c++20 -O1 -g -Wall -Wextra -Werror -pedantic -pthread -fsanitize=address,undefined bo/coop/room_network/test_room_original_objective_story_scope.cpp -o "$RUNNER_TEMP/test_original_objective_story_scope"
+          "$RUNNER_TEMP/test_original_objective_story_scope"
       - name: Native original first-person camera eye quantization guards
         shell: bash
         run: |
@@ -257,6 +269,23 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+      - name: Objective story scope parity with the existing Java ticket
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 bo/coop/room_network/check_objective_story_scope_parity.py --source-root bo --output "$RUNNER_TEMP/objective-story-scope-parity"
+      - name: Bounded objective chunk assembly and C++ Java record interoperability
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 bo/coop/room_network/check_objective_chunks_interop.py --source-root bo --output "$RUNNER_TEMP/objective-chunks-interop"
+      # Objective TLS runs on the host JVM with synthetic values. It does not
+      # establish an Android game producer, native apply or phone acceptance.
+      - name: Objective snapshots through real loopback TLS
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 bo/coop/room_network/check_objective_tls.py --source-root bo --output "$RUNNER_TEMP/objective-tls"
       - name: Compile Android room form and all staged Java 8 sources
         shell: bash
         run: |

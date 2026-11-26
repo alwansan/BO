@@ -23,9 +23,9 @@ public final class RoomStoryTlsTest {
         try(RoomTls.Server host=RoomTls.Server.start(hostContext,loop,0,"Host","Campaign");
             RoomTls.Client guest=RoomTls.Client.connect(guestContext,loop,host.port(),"Remote human")){
             until(()->guest.snapshot()!=null&&guest.snapshot().players.size()==2);
-            final long gameThread=Thread.currentThread().getId();
-            final java.util.concurrent.atomic.AtomicLong writerThread=
-                new java.util.concurrent.atomic.AtomicLong();
+            final Thread gameThread=Thread.currentThread();
+            final java.util.concurrent.atomic.AtomicReference<Thread> writerThread=
+                new java.util.concurrent.atomic.AtomicReference<>();
             final java.util.concurrent.atomic.AtomicInteger queued=
                 new java.util.concurrent.atomic.AtomicInteger();
             final java.util.concurrent.atomic.AtomicInteger sent=
@@ -33,7 +33,7 @@ public final class RoomStoryTlsTest {
             guest.setSafeEventSink(code->{
                 if("STORY_GUEST_READY_QUEUED".equals(code))queued.incrementAndGet();
                 if("STORY_GUEST_READY_SENT".equals(code)){
-                    writerThread.set(Thread.currentThread().getId());
+                    writerThread.set(Thread.currentThread());
                     sent.incrementAndGet();
                 }
             });
@@ -51,7 +51,7 @@ public final class RoomStoryTlsTest {
             ok(!guest.acknowledgeSceneLoaded(0,0,1)); // duplicate
             until(()->host.storyCommitted()&&guest.storyCommitted());
             until(()->sent.get()==1);
-            ok(queued.get()==1&&writerThread.get()!=0&&writerThread.get()!=gameThread);
+            ok(queued.get()==1&&writerThread.get()!=null&&writerThread.get()!=gameThread);
             ok(ticket.same(guest.storyTicket()));
             // Story host barrier cannot silently start a second mission.
             try{host.prepareStory(1,0,2);throw new AssertionError("Duplicate story accepted");}

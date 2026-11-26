@@ -83,6 +83,10 @@ public final class RoomSession implements AutoCloseable {
     // Exact ticket identity for at-most-once local original-running-scene
     // confirmation; native source cannot authorize an unrelated TLS story.
     private RoomStoryWire.Ticket originalRunningReadyTicket;
+    // Guest original scene's own independently enumerated objective IDs.
+    // The binding is revoked permanently on a newer native stage episode.
+    private RoomStoryWire.Ticket originalObjectiveBindingTicket;
+    private int originalObjectiveBindingEpisode;
     /** Compact TLS roster positions, NOT long-lived RoomWire.Player IDs.
      * Source-only bot appearance proposal for genuine joined human devices. */
     public int hostAppearancePeerMaskFromGameThread(){
@@ -149,6 +153,16 @@ public final class RoomSession implements AutoCloseable {
                     host.cancelStory();
                     event("ORIGINAL_HOST_STAGE_MISMATCH_ABORTED");
                 }
+            }
+            // A fresh original stage episode must revoke even a fully
+            // received TLS objective snapshot before the next game read.
+            if(phase==Phase.JOINED&&client!=null&&
+               originalObjectiveBindingTicket!=null&&
+               episode!=originalObjectiveBindingEpisode){
+                client.revokeObjectiveSource(originalObjectiveBindingTicket);
+                originalObjectiveBindingTicket=null;
+                originalObjectiveBindingEpisode=0;
+                event("ORIGINAL_OBJECTIVE_SCENE_REVOKED");
             }
             lastSourceStage=new OriginalStageCandidate(episode,level,stage);
             lastSourceStageAtNs=now;
@@ -786,6 +800,70 @@ public final class RoomSession implements AutoCloseable {
                 (int)evt.objectKey,evt.kind,evt.state};
         }
     }
+    /** Only a verified ORIGINAL GUEST game thread can supply its own
+     * descriptor table after observing the local stage, before READY.
+     * The remote chunks cannot be used as the identity source. */
+    public boolean bindOriginalObjectiveIdsFromGameThread(int localEpisode,
+                                                           byte[][] independentIds){
+        synchronized(lock){
+            if(closed||!validStoryThread()||phase!=Phase.JOINED||
+               client==null||!client.isRunning()||client.storyCommitted()||
+               localEpisode<=0||lastSourceStage==null||
+               lastSourceStage.originalEpisode!=localEpisode||
+               System.nanoTime()-lastSourceStageAtNs>3000000000L||
+               originalObjectiveBindingTicket!=null)return false;
+            RoomStoryWire.Ticket t=client.storyTicket();
+            if(t==null||t.mission!=lastSourceStage.level||
+               t.stage!=lastSourceStage.stage||
+               (originalRunningReadyTicket!=null&&
+                originalRunningReadyTicket.same(t)))return false;
+            try{
+                if(!client.bindObjectiveIds(t,independentIds))return false;
+                originalObjectiveBindingTicket=t;
+                originalObjectiveBindingEpisode=localEpisode;
+                return true;
+            }catch(IOException rejected){return false;}
+        }
+    }
+    /** Only independently source-verified ORIGINAL HOST game-thread data,
+     * not objectives recovered from a guest or network message. */
+    public boolean publishOriginalHostObjectiveSnapshotFromGameThread(
+            int localEpisode,long sequence,byte[] records){
+        synchronized(lock){
+            if(closed||!validStoryThread()||phase!=Phase.HOSTING||
+               host==null||!host.isRunning()||!host.storyCommitted()||
+               localEpisode<=0||lastSourceStage==null||
+               lastSourceStage.originalEpisode!=localEpisode||
+               System.nanoTime()-lastSourceStageAtNs>3000000000L||
+               originalRunningReadyTicket==null)return false;
+            RoomStoryWire.Ticket t=host.storyTicket();
+            if(t==null||!t.same(originalRunningReadyTicket)||
+               t.mission!=lastSourceStage.level||
+               t.stage!=lastSourceStage.stage)return false;
+            try{return host.offerObjectiveSnapshot(t,sequence,records);}
+            catch(IOException rejected){return false;}
+        }
+    }
+    /** Value-only host completion, guarded again by local ORIGINAL source
+     * identity and exact current TLS ticket. Never applies engine state. */
+    public RoomObjectiveChunks.Snapshot readHostObjectivesFromGameThread(){
+        synchronized(lock){
+            if(closed||!validStoryThread()||phase!=Phase.JOINED||
+               client==null||!client.isRunning()||!client.storyCommitted()||
+               lastSourceStage==null||originalRunningReadyTicket==null||
+               originalObjectiveBindingTicket==null||
+               originalObjectiveBindingEpisode!=lastSourceStage.originalEpisode||
+               System.nanoTime()-lastSourceStageAtNs>3000000000L)
+                return null;
+            RoomStoryWire.Ticket t=client.storyTicket();
+            if(t==null||!t.same(originalRunningReadyTicket)||
+               !t.same(originalObjectiveBindingTicket)||
+               t.mission!=lastSourceStage.level||t.stage!=lastSourceStage.stage)
+                return null;
+            return client.latestObjectiveSnapshot(t);
+        }
+    }
+
     /** Host scene unload/cancel invalidates its prepared ticket. */
     public boolean cancelStoryFromGameThread(){
         synchronized(lock){
@@ -819,6 +897,7 @@ public final class RoomSession implements AutoCloseable {
             sourceStagePrepare.reset();
             originalGuestFrontendThread=null;
             originalRunningReadyTicket=null;
+            originalObjectiveBindingTicket=null;originalObjectiveBindingEpisode=0;
             oldHost=host;oldClient=client;oldAnnouncer=announcer;
             host=null;client=null;announcer=null;phase=Phase.CONNECTING;
             description="Connecting";fingerprint="";
@@ -960,6 +1039,7 @@ public final class RoomSession implements AutoCloseable {
             sourceStagePrepare.reset();
             originalGuestFrontendThread=null;
             originalRunningReadyTicket=null;
+            originalObjectiveBindingTicket=null;originalObjectiveBindingEpisode=0;
             oldHost=host;oldClient=client;oldAnnouncer=announcer;
             host=null;client=null;announcer=null;phase=Phase.IDLE;description="";fingerprint="";
         }

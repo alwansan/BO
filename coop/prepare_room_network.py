@@ -291,6 +291,7 @@ def prepare(root: pathlib.Path):
         'RoomWorldSnapshotWire.java': 'lobby/java/com/racas/black/coop/RoomWorldSnapshotWire.java',
         'RoomNpcWorldWire.java': 'lobby/java/com/racas/black/coop/RoomNpcWorldWire.java',
         'RoomObjectEventWire.java': 'lobby/java/com/racas/black/coop/RoomObjectEventWire.java',
+        'RoomObjectiveChunks.java': 'lobby/java/com/racas/black/coop/RoomObjectiveChunks.java',
         'RoomCameraEyeWire.java': 'lobby/java/com/racas/black/coop/RoomCameraEyeWire.java',
         'RoomTls.java': 'lobby/java/com/racas/black/coop/RoomTls.java',
         'RoomDirect.java': 'lobby/java/com/racas/black/coop/RoomDirect.java',
