@@ -52,9 +52,13 @@ int main(void)
     bo_audio_lock=0;
     {
         unsigned i;
+        g_esp=0x100;
         for(i=0;i<65;++i) {
-            GUEST32(g_esp=0x100, g_esp+24)=0; /* replaced below */
+            GUEST32(g_esp+24)=0x4000+i*0x60;
+            object=bo_audio_enter(0);
+            bo_audio_leave(0,object);
         }
+        assert(bo_audio_counts[5]==1);
     }
     bo_audio_write();
     puts("AUDIO_OBSERVER_CALIBRATION_PASS_NO_ENGINE_EVIDENCE");
