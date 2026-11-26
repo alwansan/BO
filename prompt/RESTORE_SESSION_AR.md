@@ -1,7 +1,7 @@
 ## آخر تحديث Work27 (2026-11-26)
 
 - أضيف رصد نشر وفصل الوحدة إلى مختبر المحرك الأصلي على Windows (`coop/engine_lab/unit_observer.inc`). يراقب انتقال `0x1C` في `001EB7F0` وزوال علم الارتباط في `001EB1F0`، ويفحص مطابقة ترتيب سجلات `unit-v24` بالكائنات الحية. التقرير عدادات فقط باسم `unit_observations`.
-- نجح 38 اختبار Python واختبار C مع ASan/UBSan محليًا. ينتظر إثبات المحرك الحقيقي عبر `black-coop-original-engine-lab.yml`. التفاصيل: `memory/sessions/2026-11-26_bo-coop-work27-unit-lifecycle-observer.md`.
+- نجح 38 اختبار Python واختبار C مع ASan/UBSan محليًا. نجح التوليد المقسّم على XBE المطابق مع اللفافتين. [CI 45873530764](https://github.com/alwansan/BO/actions/runs/45873530764) على `3c6c670`: نجح `harness-checks`، وجارٍ اختبار المحرك الحقيقي. التفاصيل: `memory/sessions/2026-11-26_bo-coop-work27-unit-lifecycle-observer.md`.
 - التالي: فحص عدادات المحرك، خاصة مطابقة رقم السجل ودورات الفصل وإعادة النشر والخيط. لم يكتمل تشغيل الحملة المشتركة ولا يوجد APK قبول؛ لا تطلب إعادة اختبار نسخة الغرف.
 
 ## سجل Work26 (2026-11-26)
