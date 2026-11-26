@@ -4279,6 +4279,9 @@
     "ciSourcePreflight": 45875764699,
     "ciAndroidSourceUnits": 45875764585,
     "ciParallelSource": 45875764712,
+    "ciSourcePreflightResult": "success",
+    "ciAndroidSourceUnitsResult": "success",
+    "ciParallelSourceResult": "success",
     "ciUdp": 45875764623,
     "ciUdpResult": "success",
     "evidence": "memory/sessions/2026-11-26_bo-coop-work29-world-unload-gate.md",
@@ -4286,5 +4289,20 @@
     "androidRuntimeVerified": false,
     "sharedWorldComplete": false,
     "acceptanceApk": false
+  },
+  "workBatch30": {
+    "date": "2026-11-26",
+    "base": "bcc1a78",
+    "scope": "opt-in Windows private lab verified removal during same-mission restart and fresh mapping and linking",
+    "localPythonTestsPassed": 40,
+    "localNativeSanitizerFixturesPassed": 4,
+    "pinnedMenuAnchorsVerified": true,
+    "initialRun": 45873530764,
+    "membershipRun": 45874280537,
+    "originalRuntimeVerified": false,
+    "sharedWorldComplete": false,
+    "acceptanceApk": false,
+    "evidence": "memory/sessions/2026-11-26_bo-coop-work30-restart-lifecycle.md",
+    "next": "read both original-engine summaries, then dispatch restart mode if native unload/reload coverage is missing and the existing membership run is no longer pending"
   }
 }

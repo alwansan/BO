@@ -33,7 +33,8 @@ static int black_p2_state, black_p2_in;
 static uint32_t black_p2_shadow, black_p2_proxy;
 static uint32_t black_proxy_motion(uint32_t proxy) { return proxy == 0x9000 ? 0xA000 : proxy == 0x9100 ? 0xA100 : 0; }
 static void bo_audio_write(void) {}
-static void bo_unit_write(void) {}
+static LONG GetCurrentThreadId(void) { return 1; }
+#include "unit_observer.inc"
 #include "observer.inc"
 int main(void) {
     unsigned char report[20];
@@ -99,5 +100,38 @@ int main(void) {
     assert(bo_lab.grid_region_head_ticks == before_head+1u);
     assert(bo_lab.restore_grid_only_ticks == before_grid_only+1u);
     assert(bo_lab.grid_region_cell_ticks == 0u);
+    GUEST32(0x1000+0x5AE4) = 0x1D;
+    bo_unit_bind_frame_thread();
+    bo_lab_restart_scene = bo_lab_scene(0x1000);
+    assert(!bo_lab_restart_headless_menu("PauseMenu"));
+    InterlockedExchange(&bo_lab_restart_action, BO_RESTART_OPEN);
+    assert(bo_lab_restart_headless_menu("PauseMenu") && !bo_lab_restart_headless_menu("OptionsMenuXbox"));
+    bo_lab_restart_menu_tick("PauseMenu", 3, 1);
+    bo_lab_restart_menu_tick("PauseMenu", 3, 0);
+    assert(bo_lab_restart_armed && bo_lab_restart_action == BO_RESTART_NEUTRAL);
+    bo_lab_restart_menu_tick("ConfirmWarning", 0, 1);
+    bo_lab_restart_gamecode("QuitLevel");
+    assert(!bo_lab_restart_requested);
+    bo_lab_restart_gamecode("RestartLevel");
+    assert(bo_lab_restart_requested && bo_lab_restart_action == BO_RESTART_NEUTRAL);
+    assert(!bo_lab_restart_headless_menu("ConfirmWarning"));
+    ++bo_unit_counts[BO_UNIT_WORLD_UNLINK_VERIFIED];
+    bo_lab_restart_after_unlink(0);
+    assert(!bo_lab_restart_removed && !bo_lab_restart_after_phases());
+    GUEST32(0x1000+0x5AE4) = 0x1E;
+    bo_lab_restart_after_unlink(1);
+    assert(!bo_lab_restart_removed);
+    ++bo_unit_counts[BO_UNIT_WORLD_UNLINK_VERIFIED];
+    bo_lab_restart_after_unlink(1);
+    assert(bo_lab_restart_removed && !bo_lab_restart_after_phases());
+    GUEST32(0x1000+0x5AE4) = 0x1D;
+    ++bo_unit_counts[BO_UNIT_MAPPED];
+    assert(!bo_lab_restart_after_phases());
+    ++bo_unit_counts[BO_UNIT_WORLD_LINK_VERIFIED];
+    GUEST8(0x1000+0x5AED) = 1;
+    assert(!bo_lab_restart_after_phases());
+    GUEST8(0x1000+0x5AED) = 0;
+    assert(bo_lab_restart_after_phases());
+    puts("BO_ENGINE_RESTART_FIXTURE_PASS");
     return 0;
 }

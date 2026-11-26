@@ -134,6 +134,19 @@ aggregate evidence fails the job. Ammunition loss is a weapon effect observation
 not proof that a bullet hit an enemy. Input timing plus neutral comparison is
 not a full determinism or collision correctness proof.
 
+The manual workflow option `restart_after_phases` (CLI: `--restart-after-phases`)
+adds a native lifecycle check after those phases. Port 0 uses normal USB
+input to open the pause menu and select **Restart Mission → Yes**. The pinned
+PC menu consumes that input headlessly only on the two restart pages. The
+lab freezes the gameplay measurements at phase eight and requires the
+original restart request, observed removal from the world list during unload,
+and a fresh map/list link followed by a running frame at the same level and
+stage. `restart_lifecycle_passed` also requires zero foreign-thread calls or
+mapping/list failures. `unit_observations` reports same-slot republication
+separately, since reloading can replace the world allocation. The default
+run still exits after phase eight. The restart test exercises the Windows
+lab; its result does not establish Android co-op.
+
 `summary.json` reports the exact fail-closed category and counters. A build failure
 is reported by stage (`runtime_dependency_checkout_failed`, `dsp_dependency_checkout_failed`,
 `original_code_generation_failed`,

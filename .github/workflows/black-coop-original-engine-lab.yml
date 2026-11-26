@@ -6,6 +6,10 @@ on:
         description: Bounded real-engine runtime (60..1800 seconds)
         default: '1200'
         required: true
+      restart_after_phases:
+        description: Verify native removal and reload through Restart Mission
+        type: boolean
+        default: false
   push:
     branches: [experiment/black-coop]
     paths:
@@ -77,8 +81,11 @@ jobs:
         shell: pwsh
         env:
           BO_ENGINE_RUN_SECONDS: ${{ inputs.run_seconds || '1200' }}
+          BO_ENGINE_RESTART: ${{ inputs.restart_after_phases }}
         run: |
-          python bo/coop/engine_lab/lab.py execute --bo bo --pc engine --out safe-engine-lab --seconds $env:BO_ENGINE_RUN_SECONDS
+          $restartArgs = @()
+          if ($env:BO_ENGINE_RESTART -eq 'true') { $restartArgs += '--restart-after-phases' }
+          python bo/coop/engine_lab/lab.py execute --bo bo --pc engine --out safe-engine-lab --seconds $env:BO_ENGINE_RUN_SECONDS @restartArgs
           exit $LASTEXITCODE
       - name: Retain only allowlisted aggregate summary
         if: always()

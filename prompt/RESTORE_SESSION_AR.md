@@ -1,4 +1,10 @@
-## آخر تحديث Work29 (2026-11-26)
+## آخر تحديث Work30 (2026-11-26)
+
+- أضيف خيار `restart_after_phases` لمختبر Windows: بعد المراحل الثماني يمر عبر `PauseMenu` و`ConfirmWarning` بإدخال USB ويتطلب فصلًا مرصودًا أثناء التفريغ ثم ربطًا جديدًا وعودة المرحلة نفسها. فحوص المصدر وASan/UBSan محلية؛ لا إثبات محرك حي لهذا الخيار بعد.
+- أول خطوة: اقرأ `summary.json` من [45873530764](https://github.com/alwansan/BO/actions/runs/45873530764) و[45874280537](https://github.com/alwansan/BO/actions/runs/45874280537) عند نشرهما. شغّل خيار الإعادة إذا لم يُرصد الفصل وإعادة النشر، وبعد خروج Work28 من الانتظار حتى لا يُلغى تشغيله. لا تفعّل المزامنة قبل دليل الخيط والمطابقة والعضوية والفصل. لا APK قبول.
+- إصلاح Android `76cdbc0`: نجحت [فحوص المصدر](https://github.com/alwansan/BO/actions/runs/45875764699)، و[وحدات Android ARM64](https://github.com/alwansan/BO/actions/runs/45875764585)، و[المسارات الثلاثة](https://github.com/alwansan/BO/actions/runs/45875764712)؛ بناء مصدر فقط. [تفاصيل الدفعة](../memory/sessions/2026-11-26_bo-coop-work30-restart-lifecycle.md).
+
+## سجل Work29 (2026-11-26)
 
 - تحقق مصدر XBE: `001EDC90` ينشر حالتي العالم `0x1C/0x1D` بعد ربط الوحدة، ويغيّر `001EBD60` حقل التفريغ قبل حقل التشغيل. رصد Android للمشهد والإطار والكاميرا يشترط الزوج الكامل الآن، ويرفض لقطة الكاميرا القديمة بعد التفريغ. اجتاز أربعة اختبارات C++ بـASan/UBSan وستة اختبارات تجهيز مصدر.
 - لا نتيجة محرك أصلية لـ[45873530764](https://github.com/alwansan/BO/actions/runs/45873530764) أو [45874280537](https://github.com/alwansan/BO/actions/runs/45874280537) وقت الفحص. اقرأ عدادات الخيط ومطابقة السجل والعضوية والفصل قبل دمج المزامنة. [الدليل المصدري](../memory/sessions/2026-11-26_bo-coop-work29-world-unload-gate.md). لا APK قبول.

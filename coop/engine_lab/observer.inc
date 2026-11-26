@@ -42,17 +42,48 @@ static unsigned bo_lab_ammo_was[2];
 static int bo_lab_control_ready;
 static unsigned bo_lab_ui_ticks, bo_lab_ui_now, bo_lab_ui_changes;
 static int bo_lab_ui_marker_emitted;
+static volatile LONG bo_lab_restart_action;
+static int bo_lab_restart_armed, bo_lab_restart_confirming, bo_lab_restart_requested, bo_lab_restart_removed;
+static unsigned bo_lab_restart_scene, bo_lab_restart_maps, bo_lab_restart_links;
+
+/* The disposable Windows runner has no presenter overlay. Allow the pinned
+ * PC menu to consume actual USB input for just the two restart pages. */
+int bo_lab_restart_headless_menu(const char *page)
+{
+    const LONG action = InterlockedCompareExchange(&bo_lab_restart_action, 0, 0);
+    return action != BO_RESTART_NORMAL &&
+        InterlockedCompareExchange(&bo_unit_frame_thread, 0, 0) == (LONG)GetCurrentThreadId() &&
+        !bo_lab_restart_requested && page &&
+        (!strcmp(page, "PauseMenu") || !strcmp(page, "ConfirmWarning"));
+}
 
 int bo_lab_pad_report(int pad, unsigned char *out)
 {
     ULONGLONG now = GetTickCount64();
     BoLabInput in;
+    int restart;
     if (pad < 0 || pad > 1) return 0;
     /* Only the USB thread initializes this clock; observer never writes it. */
     if (!bo_lab_boot) { bo_lab_boot = now; fputs("BO_ENGINE_PAD_STARTED\n", stderr); }
-    in = bo_lab_input((unsigned)pad, now - bo_lab_boot,
-        InterlockedCompareExchange(&bo_lab_mission, 0, 0) != 0,
-        (unsigned)InterlockedCompareExchange(&bo_lab_phase, 0, 0));
+    restart = (int)InterlockedCompareExchange(&bo_lab_restart_action, 0, 0);
+    if (restart == BO_RESTART_NORMAL) {
+        in = bo_lab_input((unsigned)pad, now - bo_lab_boot,
+            InterlockedCompareExchange(&bo_lab_mission, 0, 0) != 0,
+            (unsigned)InterlockedCompareExchange(&bo_lab_phase, 0, 0));
+    } else {
+        /* Only one button per window, even if the menu focus changes before
+         * release. Never send another Start that could close the pause menu. */
+        static ULONGLONG window;
+        static int pulsed_action, opened;
+        const ULONGLONG current_window = now / 1000u + 1u;
+        if (pad == 0 && window != current_window) {
+            window = current_window;
+            pulsed_action = restart == BO_RESTART_OPEN && opened ? BO_RESTART_NEUTRAL : restart;
+            if (pulsed_action == BO_RESTART_OPEN && now % 1000u < 250u) opened = 1;
+        }
+        in = bo_lab_restart_input((unsigned)pad, now,
+            pulsed_action == restart ? restart : BO_RESTART_NEUTRAL);
+    }
     bo_lab_encode(in, out);
     InterlockedIncrement(&bo_lab_pads[pad]);
     if (in.move) InterlockedIncrement(&bo_lab_moves[pad]);
@@ -132,6 +163,81 @@ static void bo_lab_ui_page(const char *page)
     ++bo_lab_ui_ticks;
     if (changed) { bo_lab_ui_now = category; ++bo_lab_ui_changes; }
     if (changed || bo_lab_ui_ticks % 60u == 0) bo_lab_write();
+}
+
+static void bo_lab_restart_menu_tick(const char *page, int focus, int ready)
+{
+    const LONG action = InterlockedCompareExchange(&bo_lab_restart_action, 0, 0);
+    if (bo_lab_restart_headless_menu(page)) {
+        const int next = ready ? bo_lab_restart_menu(page, focus, &bo_lab_restart_armed) :
+                                 BO_RESTART_NEUTRAL;
+        bo_lab_restart_confirming = next == BO_RESTART_CONFIRM && !strcmp(page, "ConfirmWarning");
+        InterlockedExchange(&bo_lab_restart_action, next);
+    } else if (action != BO_RESTART_NORMAL &&
+        InterlockedCompareExchange(&bo_unit_frame_thread, 0, 0) == (LONG)GetCurrentThreadId() &&
+        page && *page && strcmp(page, "Empty")) {
+        bo_lab_restart_armed = bo_lab_restart_confirming = 0;
+        InterlockedExchange(&bo_lab_restart_action, BO_RESTART_NEUTRAL);
+    }
+}
+
+static void bo_lab_restart_gamecode(const char *name)
+{
+    if (InterlockedCompareExchange(&bo_lab_restart_action, 0, 0) == BO_RESTART_CONFIRM &&
+        InterlockedCompareExchange(&bo_unit_frame_thread, 0, 0) == (LONG)GetCurrentThreadId() &&
+        bo_lab_restart_confirming && !bo_lab_restart_requested && !strcmp(name, "RestartLevel")) {
+        bo_lab_restart_requested = 1;
+        InterlockedExchange(&bo_lab_restart_action, BO_RESTART_NEUTRAL);
+        fputs("BO_ENGINE_RESTART_GAMECODE_QUEUED\n", stderr);
+    }
+}
+
+static unsigned bo_lab_unit_count(enum BoUnitCounter counter)
+{
+    return (unsigned)InterlockedCompareExchange(&bo_unit_counts[counter], 0, 0);
+}
+
+static void bo_lab_restart_after_unlink(unsigned removals_before)
+{
+    if (!bo_lab_restart_requested || bo_lab_restart_removed ||
+        bo_lab_unit_count(BO_UNIT_WORLD_UNLINK_VERIFIED) <= removals_before) return;
+    const uint32_t world = GUEST32(0x002D45D4u);
+    if (!black_pc_ram_span(world, 0x5CC0u)) return;
+    const uint32_t unload = GUEST32(world + 0x5AE4u);
+    if (unload < 0x1Eu || unload > 0x21u) return;
+    bo_lab_restart_removed = 1;
+    bo_lab_restart_maps = bo_lab_unit_count(BO_UNIT_MAPPED);
+    bo_lab_restart_links = bo_lab_unit_count(BO_UNIT_WORLD_LINK_VERIFIED);
+    fputs("BO_ENGINE_RESTART_UNLOAD_REMOVAL\n", stderr);
+    bo_lab_write();
+}
+
+static unsigned bo_lab_scene(uint32_t core)
+{
+    return GUEST8(core + 0x5AECu) * 256u + GUEST8(core + 0x5AEDu);
+}
+
+/* Keep the first eight phases immutable while exercising original teardown.
+ * Clean return requires a new world link and a verified removal, not a menu
+ * click or another sample of the old mission. */
+static int bo_lab_restart_after_phases(void)
+{
+    const uint32_t core = GUEST32(0x002D45D4u);
+    const int running = black_pc_ram_span(core, 0x5CC0u) &&
+        GUEST32(core + 0x5AE0u) == BLACK_CORE_RUNNING && GUEST32(core + 0x5AE4u) == 0x1Du;
+    if (InterlockedCompareExchange(&bo_lab_restart_action, 0, 0) == BO_RESTART_NORMAL) {
+        if (!getenv("BO_LAB_RESTART")) return 1;
+        if (!running) return 0;
+        bo_lab_restart_scene = bo_lab_scene(core);
+        InterlockedExchange(&bo_lab_restart_action, BO_RESTART_OPEN);
+        fputs("BO_ENGINE_RESTART_ARMED\n", stderr);
+        bo_lab_write();
+    }
+    if (!bo_lab_restart_removed || !running || bo_lab_scene(core) != bo_lab_restart_scene ||
+        bo_lab_unit_count(BO_UNIT_MAPPED) <= bo_lab_restart_maps ||
+        bo_lab_unit_count(BO_UNIT_WORLD_LINK_VERIFIED) <= bo_lab_restart_links) return 0;
+    fputs("BO_ENGINE_RESTART_LIFECYCLE_OBSERVED\n", stderr);
+    return 1;
 }
 
 static void bo_lab_before(void)
@@ -309,14 +415,20 @@ static void bo_lab_after_impl(void)
         bo_lab.phases_completed = phase + 1u;
         InterlockedExchange(&bo_lab_phase, (LONG)(phase + 1u));
     }
-    if (bo_lab.mission_ticks % 30u == 0 || bo_lab.phases_completed >= 8u) bo_lab_write();
+    if (bo_lab.mission_ticks % 30u == 0) bo_lab_write();
 }
 static void bo_lab_after(void)
 {
     unsigned csr = _mm_getcsr();
     fenv_t environment;
     fegetenv(&environment); fesetenv(FE_DFL_ENV); _mm_setcsr(0x1F80u);
-    bo_lab_after_impl();
+    if (bo_lab.phases_completed < 8u) bo_lab_after_impl();
+    if (bo_lab.phases_completed >= 8u) {
+        const int finished = bo_lab_restart_after_phases();
+        if (finished) bo_lab_write();
+        fesetenv(&environment); _mm_setcsr(csr);
+        if (finished) ExitProcess(0);
+        return;
+    }
     fesetenv(&environment); _mm_setcsr(csr);
-    if (bo_lab.phases_completed >= 8u) ExitProcess(0);
 }

@@ -35,3 +35,14 @@ def parse(text):
             data["world_removal_verified"] + data["world_removal_failures"] > data["unit_unlinks"]):
         raise ValueError("inconsistent unit observation counts")
     return data
+
+
+def restart_lifecycle_observed(progress, units):
+    """Require positive evidence and zero contradictions across the bounded run."""
+    return (all(progress.get(key) is True for key in (
+                'restart_armed', 'restart_gamecode_queued', 'restart_unload_removal',
+                'restart_lifecycle_observed')) and
+            units is not None and all(units[key] > 0 for key in (
+                'ordinal_maps_verified', 'world_membership_verified', 'world_removal_verified')) and
+            all(units[key] == 0 for key in ('other_thread_calls', 'ordinal_map_failures',
+                'world_membership_failures', 'world_removal_failures')))

@@ -33,5 +33,19 @@ int main(void) {
     bo_lab_encode(bo_lab_input(1, 0, 1, 3), report);
     assert(report[1] == 20 && report[12] == 0 && report[13] == 0x80);
     assert(report[11] == 0 && report[4] == 0 && report[2] == 0);
+    int armed = 0;
+    assert(bo_lab_restart_menu("ConfirmWarning", 0, &armed) == BO_RESTART_NEUTRAL);
+    assert(bo_lab_restart_menu("PauseMenu", 2, &armed) == BO_RESTART_DOWN);
+    assert(bo_lab_restart_menu("PauseMenu", 4, &armed) == BO_RESTART_UP);
+    assert(bo_lab_restart_menu("PauseMenu", 3, &armed) == BO_RESTART_CONFIRM);
+    assert(bo_lab_restart_menu("ConfirmWarning", 1, &armed) == BO_RESTART_UP);
+    assert(bo_lab_restart_menu("ConfirmWarning", 0, &armed) == BO_RESTART_CONFIRM);
+    assert(bo_lab_restart_menu("Other", 0, &armed) == BO_RESTART_NEUTRAL && !armed);
+    bo_lab_encode(bo_lab_restart_input(0, 1000, BO_RESTART_DOWN), report);
+    assert(report[2] == 2 && report[4] == 0);
+    bo_lab_encode(bo_lab_restart_input(0, 1250, BO_RESTART_DOWN), report);
+    assert(report[2] == 0 && report[4] == 0);
+    bo_lab_encode(bo_lab_restart_input(1, 1000, BO_RESTART_CONFIRM), report);
+    assert(report[2] == 0 && report[4] == 0);
     return 0;
 }

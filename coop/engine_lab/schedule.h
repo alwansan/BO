@@ -3,7 +3,11 @@
 #define BO_ENGINE_LAB_SCHEDULE_H
 #include <stdint.h>
 #include <string.h>
-typedef struct BoLabInput { int confirm, start, move, fire; } BoLabInput;
+typedef struct BoLabInput { int confirm, start, move, fire, menu_dir; } BoLabInput;
+enum BoLabRestartAction {
+    BO_RESTART_NORMAL, BO_RESTART_NEUTRAL, BO_RESTART_OPEN,
+    BO_RESTART_UP, BO_RESTART_DOWN, BO_RESTART_CONFIRM
+};
 static int bo_lab_prefix(const char *text, const char *prefix)
 {
     for (; *prefix; ++prefix, ++text) {
@@ -28,7 +32,7 @@ static unsigned bo_lab_ui_category(const char *page)
 }
 static BoLabInput bo_lab_input(unsigned port, uint64_t elapsed_ms, int mission, unsigned phase)
 {
-    BoLabInput in = {0, 0, 0, 0};
+    BoLabInput in = {0};
     if (port > 1) return in;
     if (!mission) {
         /* Fresh original profile/menu: confirm selected default rows. Bounded,
@@ -45,11 +49,37 @@ static BoLabInput bo_lab_input(unsigned port, uint64_t elapsed_ms, int mission, 
     if (phase == 7 && port == 1) in.fire = 1;
     return in;
 }
+/* Row indices from the pinned PauseMenu and ConfirmWarning definitions.
+ * Never confirm an unknown or unexpected page. Confirmation must follow
+ * actually seeing Restart Mission focused in the pause menu. */
+static int bo_lab_restart_menu(const char *page, int focus, int *armed)
+{
+    if (page && !strcmp(page, "PauseMenu") && focus >= 0 && focus < 7) {
+        *armed = focus == 3;
+        if (*armed) return BO_RESTART_CONFIRM;
+        return focus < 3 ? BO_RESTART_DOWN : BO_RESTART_UP;
+    }
+    if (*armed && page && !strcmp(page, "ConfirmWarning")) {
+        if (focus == 0) return BO_RESTART_CONFIRM;
+        if (focus == 1) return BO_RESTART_UP;
+    }
+    *armed = 0;
+    return BO_RESTART_NEUTRAL;
+}
+static BoLabInput bo_lab_restart_input(unsigned port, uint64_t now_ms, int action)
+{
+    BoLabInput in = {0};
+    if (port != 0 || now_ms % 1000u >= 250u) return in;
+    in.start = action == BO_RESTART_OPEN;
+    in.confirm = action == BO_RESTART_CONFIRM;
+    in.menu_dir = action == BO_RESTART_UP ? -1 : action == BO_RESTART_DOWN ? 1 : 0;
+    return in;
+}
 static void bo_lab_encode(BoLabInput in, unsigned char out[20])
 {
     memset(out, 0, 20);
     out[1] = 20;
-    out[2] = in.start ? 0x10 : 0;
+    out[2] = (in.start ? 0x10 : 0) | (in.menu_dir < 0 ? 0x01 : in.menu_dir > 0 ? 0x02 : 0);
     out[4] = in.confirm ? 255 : 0;
     out[11] = in.fire ? 255 : 0;
     if (in.move) { out[12] = in.move > 0 ? 0xFF : 0; out[13] = in.move > 0 ? 0x7F : 0x80; }

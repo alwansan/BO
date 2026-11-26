@@ -13,7 +13,7 @@ import tempfile
 import threading
 import time
 from audio_lab import instrument_generated, parse as parse_audio
-from unit_lab import parse as parse_units
+from unit_lab import parse as parse_units, restart_lifecycle_observed
 
 PC_PIN = 'b2512fafd3e181e4febfb298f297245b845ef628'
 RUNTIME_PIN = 'e4b621706a3b5e58c084838d1f27547548cf27a8'
@@ -35,6 +35,7 @@ MENU_ANCHOR = '''    black_native_menu_tick(ui);
 USB_ANCHOR = '''    out[0] = 0;
     out[1] = 20;
     if (pad) {'''
+MENU_OVERLAY_ANCHOR = '    if (m_page >= 0 && !m_overlay_assumed && (!m_overlay_seen || GetTickCount64() - m_overlay_seen > 1000)) {'
 
 
 def parse_aggregate(text):
@@ -142,11 +143,15 @@ void sub_001EB1F0(void)
     const int slot = bo_unit_enter(BO_UNIT_UNLINK, unit);
     const int linked = slot >= 0 && GUEST8(unit + 0x38u);
     const uint32_t index = linked ? GUEST32(unit + 8u) : 0;
+    const unsigned removals = bo_lab_unit_count(BO_UNIT_WORLD_UNLINK_VERIFIED);
     BoUnitObjects before = {0};
     if (linked && bo_unit_mapping(unit, &before) > 0 &&
         bo_unit_world_members(before) != (int)before.count) before.count = 0;
     sub_001EB1F0_gen();
-    if (linked) bo_unit_after_unlink(slot, unit, index, before);
+    if (linked) {
+        bo_unit_after_unlink(slot, unit, index, before);
+        bo_lab_restart_after_unlink(removals);
+    }
 }
 
 void sub_001EB440(void)
@@ -183,8 +188,15 @@ void sub_001F1080(void)
             '    ExitProcess(0);', '    fputs("BO_ENGINE_FIRMWARE_SHUTDOWN\\n", stderr);\n    ExitProcess(0);'))
         return '#include <stdio.h>\n' + text
     if kind == 'menu':
-        if text.count(MENU_ANCHOR) != 1:
+        focus_anchor = '    if (active) {\n        /* Hidden once the page is loaded'
+        request_anchor = '    GUEST32(reg + 0x370u) = 1u;\n    fprintf(stderr, "[MENU] gamecode'
+        if any(text.count(anchor) != 1 for anchor in (MENU_ANCHOR, focus_anchor, request_anchor)):
             raise ValueError('frontend source drift')
+        text = text.replace(focus_anchor, '''    bo_lab_restart_menu_tick(page, pc_menu_test_focus(),
+        ready && active && GUEST32(ui + 0x3884u) == 0u && GUEST32(ui + 0x388Cu) == 0u);
+''' + focus_anchor)
+        text = text.replace(request_anchor, request_anchor.replace(
+            '    fprintf', '    bo_lab_restart_gamecode(name);\n    fprintf'))
         return text.replace(MENU_ANCHOR, '''    black_native_menu_tick(ui);
     if (ui && ui == GUEST32(0x002D199Cu) && black_pc_ram_span(ui, 0x3960u)) {
         char bo_lab_page[40];
@@ -203,6 +215,13 @@ void sub_001F1080(void)
     }
     if (pad) {''')
         return 'extern int bo_lab_pad_report(int, unsigned char *);\n' + text
+    if kind == 'menu_overlay':
+        if text.count(MENU_OVERLAY_ANCHOR) != 1:
+            raise ValueError('pinned native menu overlay source drift')
+        return 'extern int bo_lab_restart_headless_menu(const char *page);\n' + text.replace(
+            MENU_OVERLAY_ANCHOR,
+            MENU_OVERLAY_ANCHOR.replace('&& !m_overlay_assumed',
+                '&& !bo_lab_restart_headless_menu(page) && !m_overlay_assumed'))
     if kind == 'hdd_file':
         # Pin the Windows backend only, never touch POSIX/XBE/guest code.
         checks = (
@@ -334,6 +353,7 @@ def prepare(pc):
         raise ValueError('source checkout is not disposable and clean')
     sources = [(pc / 'src/recomp_manual.c', 'manual'),
                (pc / 'src/black_native_menu.inc', 'menu'),
+               (pc / 'third_party/xboxrecomp/src/video/pc_menu.c', 'menu_overlay'),
                (pc / 'third_party/xboxrecomp/src/usb/usb_gamepad.c', 'usb'),
                (pc / 'third_party/xboxrecomp/src/kernel/kernel_hal.c', 'hal'),
                (pc / 'third_party/xboxrecomp/src/kernel/kernel_file.c', 'hdd_file'),
@@ -538,6 +558,10 @@ def private_call(argv, cwd, timeout, env=None, progress=None, diagnostics=None):
         markers = {b'XBE loaded:': 'xbe_loaded', b'Starting game...': 'guest_entry_called',
                    b'BO_ENGINE_PAD_STARTED': 'usb_pad_polled',
                    b'BO_ENGINE_MENU_TICK': 'frontend_ui_polled',
+                   b'BO_ENGINE_RESTART_ARMED': 'restart_armed',
+                   b'BO_ENGINE_RESTART_GAMECODE_QUEUED': 'restart_gamecode_queued',
+                   b'BO_ENGINE_RESTART_UNLOAD_REMOVAL': 'restart_unload_removal',
+                   b'BO_ENGINE_RESTART_LIFECYCLE_OBSERVED': 'restart_lifecycle_observed',
                    b'Game returned. Cleaning up...': 'guest_entry_returned',
                    b'BO_ENGINE_FIRMWARE_KIND_0': 'firmware_kind_0',
                     b'BO_ENGINE_FIRMWARE_KIND_1': 'firmware_kind_1',
@@ -596,11 +620,12 @@ def private_call(argv, cwd, timeout, env=None, progress=None, diagnostics=None):
     return result
 
 
-def execute(bo, pc, out, seconds):
+def execute(bo, pc, out, seconds, restart=False):
     report = {'schema': 1, 'scope': 'original_PC_engine_two_players_only',
               'android_runtime_verified': False, 'four_players_verified': False,
               'pc_pin': PC_PIN, 'runtime_pin': RUNTIME_PIN, 'dsp_pin': DSP_PIN,
-              'passed': False, 'blocker': 'not_started', 'observations': {}}
+              'passed': False, 'blocker': 'not_started', 'observations': {},
+              'restart_after_phases_requested': restart}
     out.mkdir(parents=True, exist_ok=True)
     phase = 'dependency_checkout'
     temp = Path(tempfile.mkdtemp(prefix='black-private-', dir=os.environ.get('RUNNER_TEMP')))
@@ -657,6 +682,8 @@ def execute(bo, pc, out, seconds):
                    BO_LAB_AGGREGATE=str(temp / 'aggregate.json'),
                    BO_LAB_AUDIO_AGGREGATE=str(temp / 'audio-aggregate.json'),
                    BO_LAB_UNIT_AGGREGATE=str(temp / 'unit-aggregate.json'))
+        if restart:
+            env['BO_LAB_RESTART'] = '1'
         progress = {}
         started = time.monotonic()
         code = private_call([executable], pc, seconds, env, progress)
@@ -689,9 +716,15 @@ def execute(bo, pc, out, seconds):
                 report['blocker'] = 'usb_input_not_polled'
         report['bounded_run_finished'] = code != -1
         report['engine_exit_success'] = code == 0
+        if restart:
+            report['restart_lifecycle_passed'] = (
+                code == 0 and restart_lifecycle_observed(progress, report['unit_observations']))
+            if result['passed'] and not report['restart_lifecycle_passed']:
+                report.update(passed=False, blocker='restart_lifecycle_unverified',
+                              failed_checks=['restart_lifecycle_unverified'])
         if code != 0:
             report['passed'] = False
-            if result['passed']:
+            if report['blocker'] == 'none':
                 report['blocker'] = 'engine_timeout' if code == -1 else 'engine_exit_failure'
     except (OSError, ValueError, RuntimeError, subprocess.SubprocessError, KeyError, json.JSONDecodeError):
         report['blocker'] = phase + '_failed'
@@ -710,10 +743,12 @@ def main():
     parser.add_argument('--pc', type=Path, required=True)
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--seconds', type=int, default=300)
+    parser.add_argument('--restart-after-phases', action='store_true')
     args = parser.parse_args()
     if not 60 <= args.seconds <= 1800:
         parser.error('run deadline must be 60..1800 seconds')
-    return execute(args.bo.resolve(), args.pc.resolve(), args.out.resolve(), args.seconds)
+    return execute(args.bo.resolve(), args.pc.resolve(), args.out.resolve(), args.seconds,
+                   args.restart_after_phases)
 
 if __name__ == '__main__':
     raise SystemExit(main())
