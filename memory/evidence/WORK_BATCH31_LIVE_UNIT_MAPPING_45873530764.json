@@ -1,0 +1,30 @@
+{
+  "run": 45873530764,
+  "commit": "3c6c670c5417a85a4a7ad36c4ab5e962a018c076",
+  "artifact": 15145790742,
+  "artifact_sha256": "bab04d776261ebfd641e19a977ab91311d2acd8f2d24ccb9e275cc426ba0bec3",
+  "artifact_entries": ["summary.json"],
+  "scope": "original_PC_engine_two_players_only",
+  "owner_xbe_sha256_verified": true,
+  "passed": true,
+  "engine_exit_success": true,
+  "runtime_elapsed_ms": 1081953,
+  "phases_completed": 8,
+  "unit_observations": {
+    "before_frame_thread_calls": 0,
+    "empty_publications": 0,
+    "ordinal_map_failures": 0,
+    "ordinal_maps_verified": 1,
+    "other_thread_calls": 0,
+    "paired_unit_unlinks": 0,
+    "poll_calls": 1250,
+    "same_slot_unit_republications": 0,
+    "unit_publications": 1,
+    "unit_unlinks": 0,
+    "unlink_calls": 0
+  },
+  "world_list_membership_measured": false,
+  "native_removal_verified": false,
+  "native_reload_verified": false,
+  "android_runtime_verified": false
+}
