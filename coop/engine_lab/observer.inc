@@ -121,7 +121,9 @@ static void bo_lab_write(void)
         "\"p1_body_move_mm\":%u,\"p2_body_move_mm\":%u,\"p1_shots\":%u,\"p2_shots\":%u,"
         "\"pad0_reports\":%lu,\"pad1_reports\":%lu,"
         "\"input0_move_reports\":%lu,\"input1_move_reports\":%lu,"
-        "\"input0_fire_reports\":%lu,\"input1_fire_reports\":%lu,\"phase\":%lu,\"control_ready\":%u,\"ui_ticks\":%u,\"ui_category\":%u,\"ui_category_changes\":%u}\n",
+        "\"input0_fire_reports\":%lu,\"input1_fire_reports\":%lu,\"phase\":%lu,\"control_ready\":%u,\"ui_ticks\":%u,\"ui_category\":%u,\"ui_category_changes\":%u,"
+        "\"objective_verified_frames\":%u,\"objective_rejected_frames\":%u,\"objective_max_records\":%u,"
+        "\"objective_changed_records\":%u,\"objective_counter_advances\":%u,\"objective_entries_reaching_state_3\":%u}\n",
         bo_lab.mission_ticks, bo_lab.p2_ready_ticks, bo_lab.phases_completed,
         bo_lab.distinct_actor_ticks, bo_lab.distinct_proxy_ticks, bo_lab.distinct_weapon_ticks,
         bo_lab.restored_ticks, bo_lab.restore_failures, bo_lab.proxy_failures,
@@ -148,7 +150,9 @@ static void bo_lab_write(void)
         (unsigned long)InterlockedCompareExchange(&bo_lab_moves[1], 0, 0),
         (unsigned long)InterlockedCompareExchange(&bo_lab_fires[0], 0, 0),
         (unsigned long)InterlockedCompareExchange(&bo_lab_fires[1], 0, 0),
-        (unsigned long)InterlockedCompareExchange(&bo_lab_phase, 0, 0), (unsigned)bo_lab_control_ready, bo_lab_ui_ticks, bo_lab_ui_now, bo_lab_ui_changes);
+         (unsigned long)InterlockedCompareExchange(&bo_lab_phase, 0, 0), (unsigned)bo_lab_control_ready, bo_lab_ui_ticks, bo_lab_ui_now, bo_lab_ui_changes,
+         bo_objectives.verified_frames, bo_objectives.rejected_frames, bo_objectives.max_records,
+         bo_objectives.changed_records, bo_objectives.counter_advances, bo_objectives.entries_reaching_state_3);
     fclose(file);
 }
 

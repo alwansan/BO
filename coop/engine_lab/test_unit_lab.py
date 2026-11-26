@@ -47,7 +47,10 @@ class UnitLabTests(unittest.TestCase):
         for name in ('sub_001EB7F0', 'sub_001EB1F0', 'sub_001EB440'):
             self.assertIn(f'\nvoid {name}(void)\n', patched)
             self.assertEqual(patched.count(f'    {name}_gen();'), 1)
-        self.assertIn('bo_unit_bind_frame_thread();\n    sub_001F1080_gen();', patched)
+        source_tick = patched.split('void sub_001F1080(void)\n{', 1)[1]
+        self.assertLess(source_tick.index('bo_unit_bind_frame_thread();'), source_tick.index('bo_objective_begin();'))
+        self.assertLess(source_tick.index('bo_objective_begin();'), source_tick.index('sub_001F1080_gen();'))
+        self.assertLess(source_tick.index('sub_001F1080_gen();'), source_tick.index('bo_objective_end();'))
         self.assertTrue(Path(lab.HERE, 'unit_observer.inc').is_file())
 
     def test_headless_overlay_is_scoped_to_one_pinned_guard(self):

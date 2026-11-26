@@ -35,7 +35,53 @@ static uint32_t black_proxy_motion(uint32_t proxy) { return proxy == 0x9000 ? 0x
 static void bo_audio_write(void) {}
 static LONG GetCurrentThreadId(void) { return 1; }
 #include "unit_observer.inc"
+#include "objective_observer.inc"
 #include "observer.inc"
+
+static void test_objective_frames(void)
+{
+    const uint32_t world = 0x1000, level_data = 0x21000, authored = 0x21400, live = 0x22000;
+    GUEST32(world + 0x5B2C) = level_data;
+    GUEST32(world + 0x930) = live;
+    GUEST32(world + 0x934) = 2;
+    GUEST32(level_data) = 17;
+    GUEST32(level_data + 4) = 2;
+    GUEST32(level_data + 8) = authored;
+    GUEST32(live) = authored;
+    GUEST32(live + 0xC) = authored + 0x18;
+    GUEST32(live + 4) = GUEST32(live + 0x10) = 1;
+    bo_objective_begin();
+    GUEST32(live + 0x10) = 2;
+    GUEST32(live + 0x14) = 3;
+    bo_objective_end();
+    assert(bo_objectives.verified_frames == 1 && bo_objectives.max_records == 2);
+    assert(bo_objectives.changed_records == 1 && bo_objectives.counter_advances == 1);
+    assert(bo_objectives.entries_reaching_state_3 == 1);
+
+    bo_objective_begin();
+    GUEST32(live + 4) = 2;
+    GUEST32(live + 0xC) = authored;
+    bo_objective_end();
+    assert(bo_objectives.rejected_frames == 1 && bo_objectives.changed_records == 1);
+    GUEST32(live + 0xC) = authored + 0x18;
+
+    bo_objective_begin();
+    GUEST32(world + 0x5AE4) = 0x1E;
+    bo_objective_end();
+    assert(bo_objectives.rejected_frames == 2 && bo_objectives.verified_frames == 1);
+    bo_objective_begin();
+    bo_objective_end();
+    assert(bo_objectives.rejected_frames == 2);
+    GUEST32(world + 0x5AE4) = 0x1D;
+
+    bo_objective_begin();
+    GUEST8(world + 0x5AED) = 2;
+    bo_objective_end();
+    assert(bo_objectives.rejected_frames == 3 && bo_objectives.verified_frames == 1);
+    GUEST8(world + 0x5AED) = 0;
+    puts("BO_ENGINE_OBJECTIVE_FRAME_FIXTURE_PASS");
+}
+
 int main(void) {
     unsigned char report[20];
     g_xbox_mem_offset=(uintptr_t)memory;
@@ -102,6 +148,7 @@ int main(void) {
     assert(bo_lab.grid_region_cell_ticks == 0u);
     GUEST32(0x1000+0x5AE4) = 0x1D;
     bo_unit_bind_frame_thread();
+    test_objective_frames();
     bo_lab_restart_scene = bo_lab_scene(0x1000);
     assert(!bo_lab_restart_headless_menu("PauseMenu"));
     InterlockedExchange(&bo_lab_restart_action, BO_RESTART_OPEN);

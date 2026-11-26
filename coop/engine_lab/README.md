@@ -147,6 +147,14 @@ separately, since reloading can replace the world allocation. The default
 run still exits after phase eight. The restart test exercises the Windows
 lab; its result does not establish Android co-op.
 
+The objective diagnostic samples the live table on both sides of the original
+`001F1080` update, before the PC second-player pass. Every live record must
+point to its corresponding `LevelDat` descriptor, with the same running
+scene and table at both boundaries. Only aggregate counts are retained:
+verified/rejected frames, maximum matched records, changes, counter advances
+and entries reaching raw state 3. The update window does not cover every
+objective callback and cannot attribute a change to a particular input.
+
 `summary.json` reports the exact fail-closed category and counters. A build failure
 is reported by stage (`runtime_dependency_checkout_failed`, `dsp_dependency_checkout_failed`,
 `original_code_generation_failed`,

@@ -21,6 +21,10 @@ DSP_PIN = 'aab3649fc452daf03da8b5e36fdc0c308d874101'
 XBE_SHA256 = 'df2739c372d254a90aeeccf5971d12097f22d89fbb90db021fda96dd4deb68f6'
 HERE = Path(__file__).resolve().parent
 FIELDS = frozenset('mission_ticks p2_ready_ticks phases_completed distinct_actor_ticks distinct_proxy_ticks distinct_weapon_ticks p1_body_move_mm p2_body_move_mm restored_ticks restore_failures proxy_failures restore_scope_failures restore_actor_grid_failures restore_actor_motion_failures restore_actor_weapon_failures restore_actor_model_failures restore_actor_tail_failures restore_grid_node_failures restore_grid_other_failures p1_proxy_missing_ticks p1_body_missing_ticks p2_proxy_missing_ticks p2_body_missing_ticks proxy_pool_low_ticks proxy_pool_unknown_ticks scripted_control_ticks restored_immutable_ticks restore_grid_only_ticks grid_region_head_ticks grid_region_cell_ticks grid_region_links_ticks p2_distinct_physical_ticks p2_setup_wait_ticks p2_playing_ticks scripted_owner_ticks scripted_actor_ticks scripted_both_ticks scripted_unheld_ticks p1_move_mm p2_move_mm p1_idle_mm p2_idle_mm p1_shots p2_shots pad0_reports pad1_reports input0_move_reports input1_move_reports input0_fire_reports input1_fire_reports epoch_changes invalid_samples phase control_ready ui_ticks ui_category ui_category_changes'.split())
+FIELDS |= frozenset((
+    'objective_verified_frames', 'objective_rejected_frames', 'objective_max_records',
+    'objective_changed_records', 'objective_counter_advances', 'objective_entries_reaching_state_3',
+))
 MANUAL_ANCHOR = '''void sub_001F1080(void)
 {
     sub_001F1080_gen();
@@ -121,6 +125,7 @@ def patch_text(text, kind):
         if any(re.search(r'\bvoid\s+' + name + r'\s*\(', text) for name in unit_hooks):
             raise ValueError('unit observer source drift')
         return text.replace(MANUAL_ANCHOR, '''#include "bo_unit_observer.inc"
+#include "bo_objective_observer.inc"
 #include "bo_engine_lab.inc"
 extern void sub_001EB7F0_gen(void);
 extern void sub_001EB1F0_gen(void);
@@ -166,7 +171,10 @@ void sub_001EB440(void)
 void sub_001F1080(void)
 {
     bo_unit_bind_frame_thread();
+    const int owner_thread = InterlockedCompareExchange(&bo_unit_frame_thread, 0, 0) == (LONG)GetCurrentThreadId();
+    if (owner_thread) bo_objective_begin();
     sub_001F1080_gen();
+    if (owner_thread) bo_objective_end();
     bo_lab_before();
     black_p2_tick();
     bo_lab_after();
@@ -364,6 +372,7 @@ def prepare(pc):
     shutil.copyfile(HERE / 'observer.inc', pc / 'src/bo_engine_lab.inc')
     shutil.copyfile(HERE / 'audio_observer.inc', pc / 'src/bo_audio_observer.inc')
     shutil.copyfile(HERE / 'unit_observer.inc', pc / 'src/bo_unit_observer.inc')
+    shutil.copyfile(HERE / 'objective_observer.inc', pc / 'src/bo_objective_observer.inc')
     shutil.copyfile(HERE / 'schedule.h', pc / 'src/schedule.h')
 
 

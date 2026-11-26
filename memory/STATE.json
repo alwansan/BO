@@ -4339,7 +4339,7 @@
     "localPythonTestsPassed": 17,
     "sourceCiRun": 45878993957,
     "sourceCiCommit": "97180ac",
-    "sourceCiStatus": "in_progress_at_last_check",
+    "sourceCiStatus": "success",
     "pinnedLevelDatObjectiveOriginVerified": true,
     "objectiveIdsCompared": 97,
     "sameLevelUnitSelectorsCompared": 877,
@@ -4352,5 +4352,22 @@
     "sharedWorldComplete": false,
     "acceptanceApk": false,
     "next": "verify the two unit lifecycle reports; independently match the authored objective table and observe a native objective change on the game thread"
+  },
+  "workBatch33": {
+    "date": "2026-11-26",
+    "base": "1ee509f",
+    "scope": "read-only Windows objective table match and value changes around original 001F1080",
+    "evidence": "memory/sessions/2026-11-26_bo-coop-work33-objective-frame-observer.md",
+    "localPythonTestsPassed": 40,
+    "localNativeSanitizerFixturesPassed": 4,
+    "pinnedOriginalAndStagingAnchorsVerified": true,
+    "nativeObjectiveRuntimeVerified": false,
+    "membershipRun": 45874280537,
+    "membershipRunStatus": "in_progress_at_last_check",
+    "restartRun": 45877709542,
+    "restartRunStatus": "pending_at_last_check",
+    "sharedWorldComplete": false,
+    "acceptanceApk": false,
+    "next": "validate membership and restart reports, then run the independent objective observation in the private lab"
   }
 }
