@@ -3993,5 +3993,16 @@
     "evidence": "memory/evidence/WORK_BATCH11_MOD_PLACEHOLDER_2026-11-26.json",
     "next": "prove current world camera and fenced GPU upload lifetime; asset-free raster test before live hook",
     "sharedGameplayComplete": false
+  },
+  "workBatch12": {
+    "date": "2026-11-26",
+    "base": "e809cbd4041a6d9c2bbfc8a486713374634a4156",
+    "fencedSubmission": "implemented_local_sanitizer_pass",
+    "sdkUploadBridge": "syntax_compile_only",
+    "gpuRasterization": false,
+    "liveCameraVerified": false,
+    "liveHookEnabled": false,
+    "sharedWorldAccepted": false,
+    "ci": "pending_after_publish"
   }
 }

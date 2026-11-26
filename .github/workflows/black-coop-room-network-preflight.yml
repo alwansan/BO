@@ -322,3 +322,10 @@ jobs:
             bo/coop/room_network/test_room_mod_placeholder_draw.cpp \
             -o "$RUNNER_TEMP/mod_placeholder_draw"
           "$RUNNER_TEMP/mod_placeholder_draw"
+          g++ -std=c++20 -Wall -Wextra -Werror -fsanitize=address,undefined -fno-omit-frame-pointer \
+            -I android-sdk/runtime -I bo/coop/room_network \
+            bo/coop/room_network/test_room_mod_placeholder_submit.cpp \
+            -o "$RUNNER_TEMP/mod_placeholder_submit"
+          "$RUNNER_TEMP/mod_placeholder_submit"
+          printf '#include "room_mod_placeholder_upload_kernel.hpp"\n' | g++ -std=c++20 -Wall -Wextra -Werror \
+            -fsyntax-only -I android-sdk/runtime -I bo/coop/room_network -x c++ -
