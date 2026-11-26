@@ -24,12 +24,61 @@
     "Fixture host witness expired during delayed transfer; refreshed synthetic witness before next publish",
     "Intermediate checker invalidated because test source changed during execution; final immutable-source run passed"
   ],
-  "ci_after_publish": "pending",
-  "clean_remote_restore": "pending",
+  "ci_after_publish": [
+    {
+      "id": 45771148137,
+      "name": "BLACK Co-op isolated UDP probe",
+      "head_sha": "52248cc3d0d7ebfe646615536fa33fb206f5b341",
+      "conclusion": "success",
+      "url": "https://github.com/alwansan/BO/actions/runs/45771148137"
+    },
+    {
+      "id": 45771148154,
+      "name": "BO-COOP real TLS room core",
+      "head_sha": "52248cc3d0d7ebfe646615536fa33fb206f5b341",
+      "conclusion": "success",
+      "url": "https://github.com/alwansan/BO/actions/runs/45771148154"
+    },
+    {
+      "id": 45771148381,
+      "name": "BO-COOP Android Keystore and real TLS platform test",
+      "head_sha": "52248cc3d0d7ebfe646615536fa33fb206f5b341",
+      "conclusion": "success",
+      "url": "https://github.com/alwansan/BO/actions/runs/45771148381"
+    },
+    {
+      "id": 45771148171,
+      "name": "BO-COOP room network game bridge source preflight",
+      "head_sha": "52248cc3d0d7ebfe646615536fa33fb206f5b341",
+      "conclusion": "success",
+      "url": "https://github.com/alwansan/BO/actions/runs/45771148171"
+    }
+  ],
+  "clean_remote_restore": {
+    "head": "52248cc3d0d7ebfe646615536fa33fb206f5b341",
+    "method": "fresh depth-1 sparse checkout directly from GitHub, coop source only",
+    "status": "clean; three changed Java source files byte-match published workspace",
+    "test_success": true,
+    "programs": 10,
+    "objective_session_scenarios": 9,
+    "report_sha256": "8a6cc945f0e00430a68d0e0444d8361ad29ee3ca220b39c09c711f239ff3dc40",
+    "production_java_target": "Java21 current runtime locally; Java8 checked by source preflight CI separately"
+  },
   "limits": [
     "No live engine/source/AI/assets/save/APK/device work",
     "TTL starts at complete local assembly, not host capture or initial chunk",
     "Boolean consume preflight does not authorize deferred use or native mutation",
     "No owner asset workflow manually launched"
+  ],
+  "published_code_head": "52248cc3d0d7ebfe646615536fa33fb206f5b341",
+  "java8_ci_steps": [
+    {
+      "name": "Objective snapshots through real loopback TLS",
+      "conclusion": "success"
+    },
+    {
+      "name": "Compile Android room form and all staged Java 8 sources",
+      "conclusion": "success"
+    }
   ]
 }
