@@ -1,3 +1,13 @@
+# Work14 — نتيجة الرسم الفعلي محفوظة ومتحققة (2026-11-26)
+
+نجح run [45788110496](https://github.com/alwansan/BO/actions/runs/45788110496) على الكود cbf0144cde648de4a2311a8e0ca57faa38fd80ab: SDK D3D12 الأصلي المثبت مع threaded backend وWARP الإلزامي؛ 11 مقارنة بكسل ناجحة، occlusion صحيح، المجسم لا يكتب العمق، و4 تخصيصات/4 تحريرات بعد fence. أُعيد التحقق محليًا من SHA256 للأرتيفاكت 15101237016: `51b5d33e71a13c97543d055c9ccc8421975694bbceabfb846411e2543b7c70fa`. الدليل: `memory/evidence/WORK_BATCH14_ACTUAL_SDK_RASTER_2026-11-26.json`؛ الأدوات: `coop/render_lab/` والـworkflow موجودان في GitHub.
+
+نجحت اختبارات نفس الكود: source45788110359، parallel45788110387، privacy45788110494، UDP45788110385. هذا يغلق انتظار CI المذكور أدناه في Work13/14. نتيجة التحضير `rasterization_verified:false` داخل source manifest سبقت التنفيذ؛ runtime result هو دليل نجاح الاختبار المعزول فقط.
+
+لا يثبت ذلك ظهور لاعب داخل BLACK أو Android/Vulkan أو عالمًا مشتركًا. التالي: ربط مجسم المود بكاميرا Work13 وبحالة القصة/الغرفة والمشهد والإطار الحقيقيين؛ ثم فعل الضيف في حالة الهوست الأصلية وتطبيقها لدى الضيف وانتقال القصة. لا تُفعّل مسار NPC القديم أو بوابات physical readiness بمجرد نجاح الرسم. لا AI/أصول/حفظ، ولا dispatch يدوي لـISO/APK أو تجربة هاتف صغيرة. يجب إكمال العوائق الأصلية قبل تجربة الهاتفين الثقيلة. تابع على experiment/black-coop فقط، وتحقق من الرأس قبل الكتابة.
+
+---
+
 # Work-Batch14 — مختبر رسم SDK فعلي بلا أصول، CI غير متحقق بعد (2026-11-26)
 
 أضيف coop/render_lab وworkflow black-coop-mod-render-lab.yml: SDK مثبت، WARP إلزامي في نسخة cpp اختبارية خارج SDK، backend D3D12 وqueue وallocator فعليون، أسطح/مجسم اصطناعية مملوكة، readback لون وocclusion وعدم كتابة العمق وfence قبل Free. التحضير/hash/عدم تعديل SDK نجح محليًا؛ Windows compile/rasterization ينتظر CI ولا نجاح مُدّعى. لا أصل لعبة أو ISO/XBE/APK أو AI/حفظ أو اختبار هاتف جزئي. التفاصيل docs/MOD_PLACEHOLDER_RASTER_LAB_WORK14_AR.md. تابع نتيجة هذا الـrun وأصلحها، ثم اربط consumer مرئي بـsigned story/scene/frame ومصدر كاميرا Work13؛ العالم المشترك غير مكتمل.

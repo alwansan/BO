@@ -4036,5 +4036,14 @@
     "rasterizationAccepted": false,
     "assetsUsed": false,
     "androidGameAccepted": false
+  },
+  "work14ActualRasterVerification": {
+    "status": "pass_isolated_actual_sdk_warp_only",
+    "code": "cbf0144cde648de4a2311a8e0ca57faa38fd80ab",
+    "run": 45788110496,
+    "evidence": "memory/evidence/WORK_BATCH14_ACTUAL_SDK_RASTER_2026-11-26.json",
+    "liveBlackOrAndroidVerified": false,
+    "sharedWorldComplete": false,
+    "next": "Signed story and original scene/frame visual consumer, then original shared host state and story transition"
   }
 }

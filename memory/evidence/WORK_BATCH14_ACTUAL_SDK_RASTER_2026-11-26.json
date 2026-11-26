@@ -1,0 +1,117 @@
+{
+  "run_id": 45788110496,
+  "job_id": 139799952290,
+  "conclusion": "success",
+  "run_url": "https://github.com/alwansan/BO/actions/runs/45788110496",
+  "code_commit": "cbf0144cde648de4a2311a8e0ca57faa38fd80ab",
+  "imgui_commit": "8199457a7d9e453f8d3d9cadc14683fb54a858b5",
+  "artifact_id": 15101237016,
+  "artifact_bytes": 9028,
+  "artifact_sha256": "51b5d33e71a13c97543d055c9ccc8421975694bbceabfb846411e2543b7c70fa",
+  "artifact_download_and_hash_verified": true,
+  "artifact_contents_validated": true,
+  "source": {
+    "sdk_commit": "99078b119b5d5e0d1d6afb1390e29437c0c984c0",
+    "original_d3d12_sha256": "2838352eada34bc031ef7abfb926360e1b8369d53c89bbd66fd5faae0ee3d8c1",
+    "test_d3d12_sha256": "f21f47af45957e630689fde89ddb14f927a8d2af9489942d446e516f660b1a8a",
+    "deviation": "Adapter selection only: require EnumWarpAdapter; no hardware/default fallback",
+    "production_sdk_modified": false,
+    "assets_used": false,
+    "rasterization_verified": false
+  },
+  "source_manifest_note": "rasterization_verified=false is the pre-build preparation manifest; runtime result below proves this isolated test only",
+  "runtime_result": {
+    "passed": true,
+    "backend": "actual pinned SDK D3D12 through actual threaded backend",
+    "adapter": "required WARP software",
+    "owned_color_readback": true,
+    "depth_occlusion_verified": true,
+    "depth_readback_available": false,
+    "placeholder_depth_write_absent": true,
+    "kernel_upload_allocations": 4,
+    "fenced_upload_frees": 4,
+    "source_state_unchanged": true,
+    "assets_used": false,
+    "game_camera_verified": false,
+    "gameplay_verified": false
+  },
+  "actual_adapter": "Microsoft Basic Render Driver",
+  "compiler": "Visual Studio clang-cl 22.1.3",
+  "ctest_passed": 1,
+  "ctest_seconds": 0.34,
+  "pixel_checks": [
+    {
+      "check": "owned_clear_center",
+      "actual": "ff102030",
+      "expected": "ff102030"
+    },
+    {
+      "check": "outside_box_unchanged",
+      "actual": "ff102030",
+      "expected": "ff102030"
+    },
+    {
+      "check": "visible_mod_box",
+      "actual": "ffe02040",
+      "expected": "ffe02040"
+    },
+    {
+      "check": "outside_box_unchanged",
+      "actual": "ff102030",
+      "expected": "ff102030"
+    },
+    {
+      "check": "far_box_proves_no_placeholder_depth_write",
+      "actual": "ff30d060",
+      "expected": "ff30d060"
+    },
+    {
+      "check": "owned_clear_center",
+      "actual": "ff102030",
+      "expected": "ff102030"
+    },
+    {
+      "check": "outside_box_unchanged",
+      "actual": "ff102030",
+      "expected": "ff102030"
+    },
+    {
+      "check": "owned_depth_occludes_box",
+      "actual": "ff102030",
+      "expected": "ff102030"
+    },
+    {
+      "check": "owned_clear_center",
+      "actual": "ff102030",
+      "expected": "ff102030"
+    },
+    {
+      "check": "outside_box_unchanged",
+      "actual": "ff102030",
+      "expected": "ff102030"
+    },
+    {
+      "check": "depth_clear_restores_visibility",
+      "actual": "ff30d060",
+      "expected": "ff30d060"
+    }
+  ],
+  "artifact_files_sha256": {
+    "NOTICES.txt": "c2ba2c9455d0a732d20006a5dc6df3fe2899b65c21fe0c4a2e9da7dd0f7beb81",
+    "build.log": "4427a212b4e757c30fc560f30873b0e60c19ca56e617ff0c8d8c40b96d7b58b0",
+    "configure.log": "d6558bbbdde775ecdeab8cf7bec57d49f7c02b1c24fc90b2328bffc390ee3733",
+    "ctest.log": "e9f3a624dc85de96d724f306917184aefd28c651c6766d83a3a1a2b1b6a466b6",
+    "lab-scope.json": "c74e8202933ed091020b75b5e872e087623570fa859c55b82004cee23b37acce",
+    "rasterization-result.json": "05a279f7b72ea7d509e1b43222fd7f992f61397a8bff9e89344b526fef53be39",
+    "rasterization.log": "86625a2e38a3250659ba0838dcfa8959d7ded40790824f87facaf04cd66c7624",
+    "sdk-render-lab.log": "43664a693ced16b2b62f844cc7105c85868bc510db66be09fa8cf43f3bc9b0ee",
+    "source-manifest.json": "eac7db24d135584228152803d3b1131110665e5c1717c2263482e32424ff4310",
+    "source-prepare.log": "86844ef1cdc48eb56d96e274e1b4799a5818b9dec3a15ba85870a5540bc58aea"
+  },
+  "limits": [
+    "WARP software D3D12 only; not Android GPU validation",
+    "owned synthetic surfaces and identity matrices; not BLACK camera capture",
+    "depth behavior proven through occlusion; no direct depth readback",
+    "no original game image/assets, original gameplay, remote body or co-op proof"
+  ]
+}
