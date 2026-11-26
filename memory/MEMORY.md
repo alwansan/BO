@@ -1,3 +1,10 @@
+## Work24 — تفعيل third_party/xboxrecomp + generated original source (2026-11-26)
+
+- بموجب صلاحية المستخدم + الإنترنت: استنساخ pinned `portingpete/Black-2006-Recomp@b2512faf` + `git submodule update --init third_party/xboxrecomp@e4b62170`. `websearch` غير متاح.
+- خط الأنابيب على XBE الأصلي الخاص المطابق `c5bfed25...` (`/tmp`, **لا bytes أصلية/generated مرفوعة**): `python3 -m tools.xbe_parser --json` → `python3 -m tools.disasm` → `python3 -m tools.recomp --all`. **`recompiled.c` 13,750 دالة، 0 فشل، 1,385,277 سطر، ~51MB.** (xboxrecomp Python يحتاج capstone؛ متاح في python3.14.)
+- **مثبت:** `sub_00014380` (0x14380-0x14490،272B،49 insn): **cdecl 0-param، كائن ESI، vtables/fields، `edi=esi+0x550`, `ebx=5`, stride`0x60`, `MEM32(edi)=0x28C1A0`, يستدعي `sub_000116C0`×5، `ret eax=esi`.** + `sub_000116C0` (**C++ array-constructor، ret16، indirect ctor، `esi+=stride`, count=arg-1**). يطابق `black_p2_make`(pinned PC MIT: ESI=owner, `0x0020BDD1`). **غير مثبت:** `unit-v24` 48B reader في XBE الأصلي (reader في pinned PC Rust `tools/black-formats`؛ لم يُثبت مستهلك XBE)؛ constructor 48B؛ teardown؛ stable identity؛ scene-loaded؛ resolver/apply/verify؛ producer؛ `OriginalGuestCanonicalApplyFrame` caller؛ P2..P4. **لا ABI مخترع.**
+- الدليل `memory/evidence/WORK_BATCH24_XBOXRECOMP_GENERATED_ABI_20261126.json`. **`sharedWorldComplete=false`.** لا تعديل AI/أصول/حفظ/main/CL/biso. مرفوع.
+
 ## Work23b — قرار بموجب الصلاحية (2026-11-26)
 
 - قراري بموجب تفويض المستخدم: **قبول مجسم placeholder مُعدّل (mod-owned) للبشر الآخرين** كما هو مرحليًا (`room_mod_placeholder_*`, مجسم ملون لكل peer، مع شاشة اللاعب الأول الأصلية دون تعديل)، **دون** الادّعاء بمزامنة عالم أصلية أو `sharedWorldComplete`. المسار الأصلي الكامل `P2..P4 + shared world` يبقى هدفًا أعلى من القبول المؤقت.

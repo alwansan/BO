@@ -1,0 +1,61 @@
+{
+  "date": "2026-11-26",
+  "generated": {
+    "bytes_kb": 51885,
+    "failed": 0,
+    "functions": 13750,
+    "lines": 1385277,
+    "output": "recompiled.c (private /tmp; NOT uploaded)"
+  },
+  "method": "clone pinned portingpete/Black-2006-Recomp@b2512fafd3e181e4febfb298f297245b845ef628 (MIT); init third_party/xboxrecomp@e4b621706a3b5e58c084838d1f27547548cf27a8; python3 -m tools.xbe_parser <pinned XBE> --json; python3 -m tools.disasm; python3 -m tools.recomp <pinned XBE> --all -o /tmp (capstone py). Pinned XBE alwansan/biso SHA1 c5bfed25449c8212d7a976f15246e87ead57713f. Generated original NOT exported; bounded facts only.",
+  "pinnedXbeSha1Matched": true,
+  "proven_not_proven": {
+    "NOT_proven": [
+      "unit-v24 48B table reader in original XBE (unit-v24 reader is pinned PC host Rust tools/black-formats; NOT proven original-XBE consumer)",
+      "unit-v24 constructor consuming 48B record",
+      "original object state-change/destruction teardown callback",
+      "stable original identity across phones",
+      "scene-loaded callback",
+      "production OriginalScene/ResolveOriginalObject/StillOwnsOriginalObject/ApplyOriginalHostState/VerifyOriginalHostState",
+      "producer offerOriginalHostObjectEventFromGameThread",
+      "production OriginalGuestCanonicalApplyFrame caller",
+      "original P2..P4 live on Android",
+      "sharedWorldComplete",
+      "two-phone co-op acceptance",
+      "no original bytes uploaded",
+      "no original AI/assets/saves modified",
+      "no invented ABI"
+    ],
+    "proven": [
+      "sub_00014380 generated ABI (cdecl 0-param, ESI object, ret eax=esi, calls sub_000116C0 x5)",
+      "sub_000116C0 C++ array-constructor helper",
+      "xboxrecomp + generated original source pipeline works on pinned XBE",
+      "black_p2_make (pinned PC MIT) uses sub_00014380 with ESI=owner & return-site 0x0020BDD1"
+    ]
+  },
+  "schema": "BO-COOP-native-abi-evidence-v1",
+  "sharedWorldComplete": false,
+  "sub_000116C0": {
+    "cc": "cdecl",
+    "loop": "count=arg-1; indirect call ebx(ctor); esi+=stride; ecx=esi",
+    "note": "ctor identity per callsite; NOT proof of unit-v24 48B table reader",
+    "ret": "ret 16",
+    "role": "C++ array-constructor helper (original)"
+  },
+  "sub_00014380": {
+    "bytes": 272,
+    "calls": "sub_000116C0 x5 (pushed 0x12130,4,0x10,edi+0x20)",
+    "cc": "cdecl",
+    "insns": 49,
+    "matches_black_p2_make": true,
+    "object": "esi",
+    "original": "0x00014380-0x00014490",
+    "params": 0,
+    "returns": "int_or_void",
+    "returns_eax": "esi",
+    "subobjects": "edi=esi+0x550; ebx=5; stride0x60; MEM32(edi)=0x28C1A0",
+    "writes": "vtables + fields (offsets 0x18,0x38,0x50,0xD0,0xF0,0x170,0x190,0x238,0x23C,0x240,0x2A0,0x2C0,0x310,0x370,0x390,0x400,0x404,0x420,0x460,0x4B0,0x4F0,0x520,0x740,0x790)"
+  },
+  "third_party_xboxrecomp_commit": "e4b621706a3b5e58c084838d1f27547548cf27a8",
+  "xboxrecompEnabled": true
+}
