@@ -9,6 +9,8 @@ on:
       - 'coop/analysis/test_original_unit_instance_identity.py'
       - 'coop/analysis/original_objective_descriptor_audit.py'
       - 'coop/analysis/test_original_objective_descriptor_audit.py'
+      - 'coop/analysis/original_unit_prop_identity.py'
+      - 'coop/analysis/test_original_unit_prop_identity.py'
       - '.github/workflows/black-coop-original-shared-world-acceptance.yml'
   workflow_dispatch:
 jobs:
@@ -22,3 +24,5 @@ jobs:
         run: python3 -m unittest coop.analysis.test_original_unit_instance_identity -v
       - name: Check objective descriptor audit on synthetic level data
         run: python3 -m unittest coop.analysis.test_original_objective_descriptor_audit -v
+      - name: Check identities across synthetic prop and instance tables
+        run: python3 -m unittest coop.analysis.test_original_unit_prop_identity -v

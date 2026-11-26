@@ -1,0 +1,12 @@
+{
+  "first_level_prop_descriptors": 256,
+  "levels_compared_with_objectives": 8,
+  "levels_with_duplicate_prop_selectors": 0,
+  "levels_with_prop_tables": 8,
+  "prop_descriptors": 7626,
+  "schema": "BO-COOP-unit-v24-prop-identity-v1",
+  "shared_objective_selectors": 0,
+  "shared_unit_instance_selectors": 8,
+  "unit_files": 42,
+  "zero_prop_selectors": 0
+}
