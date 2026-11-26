@@ -30,12 +30,58 @@
     "Initial fixture encoded count/sequence arguments in wrong order; corrected before final passing run",
     "Three-second assembly policy failed full 158-part transfer under continuous WORLD load; changed assembly deadline to fifteen seconds, retaining sender fairness and complete-consumption TTL"
   ],
-  "ci_after_publish": "pending",
-  "clean_restore": "pending",
+  "ci_after_publish": [
+    {
+      "id": 45773610004,
+      "name": "BLACK Co-op isolated UDP probe",
+      "head_sha": "5e8f640065cbabc4048e8154045a1dddf8f4a7b0",
+      "conclusion": "success",
+      "url": "https://github.com/alwansan/BO/actions/runs/45773610004"
+    },
+    {
+      "id": 45773610022,
+      "name": "BO-COOP real TLS room core",
+      "head_sha": "5e8f640065cbabc4048e8154045a1dddf8f4a7b0",
+      "conclusion": "success",
+      "url": "https://github.com/alwansan/BO/actions/runs/45773610022"
+    },
+    {
+      "id": 45773609993,
+      "name": "BO-COOP room network game bridge source preflight",
+      "head_sha": "5e8f640065cbabc4048e8154045a1dddf8f4a7b0",
+      "conclusion": "success",
+      "url": "https://github.com/alwansan/BO/actions/runs/45773609993"
+    },
+    {
+      "id": 45773609934,
+      "name": "BO-COOP Android Keystore and real TLS platform test",
+      "head_sha": "5e8f640065cbabc4048e8154045a1dddf8f4a7b0",
+      "conclusion": "success",
+      "url": "https://github.com/alwansan/BO/actions/runs/45773609934"
+    }
+  ],
+  "clean_restore": {
+    "method": "fresh depth1 sparse source checkout directly from GitHub",
+    "head": "5e8f640065cbabc4048e8154045a1dddf8f4a7b0",
+    "status": "clean; changed source/test byte-match worktree",
+    "checks": [
+      {
+        "name": "chunks",
+        "success": true,
+        "report_sha256": "847c3644f8bae21a4ab3b7a1b554c7bf2efc1b53eb5a82b69f9a4eddf6dbb58d"
+      },
+      {
+        "name": "tls",
+        "success": true,
+        "report_sha256": "444ce9be4faaffd6a0aff29fb3e22e7fbaccb0cd6460cd3ad248d3ea5eada82f"
+      }
+    ]
+  },
   "limits": [
     "Synthetic values only; no game assets/saves/AI/native engine/APK/device work",
     "Deadline checked lazily at next accepted-call attempt; bounded pending buffer remains until next receive/abort",
     "Does not prove host capture time or pre-first-part delay",
     "No manual owner-asset workflow launched"
-  ]
+  ],
+  "published_code_head": "5e8f640065cbabc4048e8154045a1dddf8f4a7b0"
 }
