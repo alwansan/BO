@@ -13,3 +13,5 @@
 نجح تجهيز الخطافات على المصدر المثبت (`BO_PINNED_HEADLESS_RESTART_MENU_STAGE_PASS`)، و40 اختبار مختبر Python، وأربعة اختبارات المحقق، وأربع عينات C بـASan/UBSan. هذه اختبارات مصدر ومحاكاة. الخطوة التالية قراءة أثر التشغيل المصحح وإثبات الإزالة وإعادة الربط على خيط اللعبة قبل استعمال الهوية. لا APK قبول ولا حاجة لاختبار هاتف.
 
 بدأ [45898767177](https://github.com/alwansan/BO/actions/runs/45898767177) على `c6d9059` بـ`unit_lifecycle_only=true` و`run_seconds=1800`. تعمل متابعة محدودة كل خمس دقائق إلى حين نشر الأثر. إذا لم يصل إلى الإزالة، افحص بالترتيب `restart_pause_ready` و`restart_confirm_queued` و`restart_confirm_seen` و`restart_confirm_ready` و`restart_gamecode_queued`.
+
+عند `21:33:48Z` في 26 نوفمبر، نجح [فحص المختبر 140179129003](https://github.com/alwansan/BO/actions/runs/45898767177/job/140179129003): 40 اختبار Python، وظهرت `BO_ENGINE_RESTART_FIXTURE_PASS` و`BO_UNIT_PROP_OBSERVER_FIXTURE_PASS`. دخلت [مهمة Windows 140179174075](https://github.com/alwansan/BO/actions/runs/45898767177/job/140179174075) خطوة توليد المحرك وبنائه وتشغيله عند `21:33:28Z`؛ عدد الآثار صفر. علامات المحاكاة ليست دليلًا حيًا.

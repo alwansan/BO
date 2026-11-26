@@ -4523,7 +4523,11 @@
     "localNativeSanitizerFixturesPassed": 4,
     "restartRetryRun": 45898767177,
     "restartRetryCommit": "c6d905912cae884cb03807b267ab451e7d0828e0",
-    "restartRetryStatus": "in_progress_at_last_check",
+    "restartRetryStatus": "windows_engine_running_no_artifact_at_last_check",
+    "restartRetryHarnessJob": 140179129003,
+    "restartRetryHarnessPassed": true,
+    "restartRetryWindowsJob": 140179174075,
+    "restartRetryLastCheckUtc": "2026-11-26T21:33:48Z",
     "restartRetryFollowUp": "aut_219c5f8eb001ZAJakFYKw6gYqY",
     "next": "verify same-unit removal and relink after the ready-tick menu dispatch change; keep synchronization gated"
   }
