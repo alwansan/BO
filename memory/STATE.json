@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-26_bo-coop-work17-android-source-units.md",
+  "lastSession": "memory/sessions/2026-11-26_bo-coop-work18-revocation-diagnostics.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -4098,5 +4098,13 @@
     "workflow": ".github/workflows/black-coop-android-source-units.yml",
     "documentation": "docs/ANDROID_COMPLETE_SOURCE_UNITS_WORK17_AR.md",
     "localEvidence": "memory/evidence/WORK_BATCH17_LOCAL_SOURCE_UNITS_2026-11-26.json"
+  },
+  "work18": {
+    "base": "7acb81040f93ce2ca1647f8bfb3af4f8b083c47b",
+    "presentation_revocation_regression": "red_then_green_asan_ubsan",
+    "staging_tests_passed": 6,
+    "diagnostic_metadata": "schema_package_version_base_apk_sha256",
+    "android_ci": "pending",
+    "shared_world_complete": false
   }
 }

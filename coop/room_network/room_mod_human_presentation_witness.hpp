@@ -137,5 +137,5 @@ ReadOriginalModHumanPresentation(JNIEnv *env, jobject activity, uint32_t grid,
 using ModHumanClock = uint64_t (*)() noexcept;
 void DrawOriginalModHumans(const ModHumanOriginalScene &,
                            const ModHumanPresentation &, uint32_t grid,
-                           ModHumanClock clock) noexcept;
+                           ModHumanClock clock, JNIEnv *env, jobject activity) noexcept;
 } // namespace blackcoop

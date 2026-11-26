@@ -12,6 +12,7 @@
 static std::vector<uint8_t> memory(0x300000);
 static unsigned allocations = 0, frees = 0, draws = 0;
 static bool pending = false;
+static void (*afterAllocation)() = nullptr;
 static unsigned clockCalls = 0, expireAfter = 0;
 static uint64_t TestClock() noexcept {
   ++clockCalls;
@@ -27,6 +28,7 @@ bool IsCommitted(uint32_t p) {
 uint32_t AllocContiguous(uint32_t n, uint32_t, uint32_t, uint32_t) {
   assert(n == 576 && !pending);
   ++allocations;
+  if (afterAllocation) afterAllocation();
   return 0x100000;
 }
 uint32_t AllocSystem(uint32_t n, uint32_t) {
@@ -164,29 +166,44 @@ int main() {
   const gpu::State before = s;
   const auto original = memory;
   ObserveOriginalWorldCameraAfterBegin(rw, 1);
-  DrawOriginalModHumans(scene, packet, world + 0x4960, TestClock);
+  DrawOriginalModHumans(scene, packet, world + 0x4960, TestClock, &env, activity);
   assert(draws == 3 && allocations == 3 && frees == 3 && !pending);
   assert(s.transforms == before.transforms &&
          s.streams[0].vb == before.streams[0].vb);
-  DrawOriginalModHumans(scene, packet, world + 0x4960, TestClock);
+  DrawOriginalModHumans(scene, packet, world + 0x4960, TestClock, &env, activity);
   assert(draws == 3);
   ObserveOriginalWorldCameraAfterBegin(rw, 1);
-  DrawOriginalModHumans(scene, packet, world, TestClock);
+  DrawOriginalModHumans(scene, packet, world, TestClock, &env, activity);
   assert(draws == 3);
   kernel::G<uint8_t>(world + 0x5AED) = 1;
-  DrawOriginalModHumans(scene, packet, world + 0x4960, TestClock);
+  DrawOriginalModHumans(scene, packet, world + 0x4960, TestClock, &env, activity);
   assert(draws == 3);
   kernel::G<uint8_t>(world + 0x5AED) = 0;
   // The real wall clock is re-read before upload/draw, not frozen before
   // JNI or a long fence wait. Expiration AFTER allocation frees safely.
   ObserveOriginalWorldCameraAfterBegin(rw, 1);
   clockCalls = 0;
-  expireAfter = 3;
-  DrawOriginalModHumans(scene, packet, world + 0x4960, TestClock);
+  expireAfter = 5;
+  DrawOriginalModHumans(scene, packet, world + 0x4960, TestClock, &env, activity);
   assert(draws == 3 && allocations == 4 && frees == 4 && !pending);
   expireAfter = 0;
+  // An ABORT/roster change after JNI succeeds must revoke the batch before
+  // upload can reach Draw. A replacement committed ticket also cannot borrow
+  // the old packet even if the episode and native world remain unchanged.
+  ObserveOriginalWorldCameraAfterBegin(rw, 1);
+  afterAllocation = [] { ++values[5]; };
+  DrawOriginalModHumans(scene, packet, world + 0x4960, TestClock, &env, activity);
+  afterAllocation = nullptr;
+  assert(draws == 3 && allocations == 5 && frees == 5 && !pending);
+  --values[5];
+  ObserveOriginalWorldCameraAfterBegin(rw, 1);
+  afterAllocation = [] { length = 16; };
+  DrawOriginalModHumans(scene, packet, world + 0x4960, TestClock, &env, activity);
+  afterAllocation = nullptr;
+  length = 34;
+  assert(draws == 3 && allocations == 6 && frees == 6 && !pending);
   assert(g_originalStageFileOpen.BeginOriginalLaunchAttempt() == 2);
-  DrawOriginalModHumans(scene, packet, world + 0x4960, TestClock);
+  DrawOriginalModHumans(scene, packet, world + 0x4960, TestClock, &env, activity);
   assert(draws == 3);
   std::thread foreign([&] {
     ModHumanOriginalScene reject;

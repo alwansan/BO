@@ -7,7 +7,8 @@
 void blackcoop::DrawOriginalModHumans(const ModHumanOriginalScene &scene,
                                       const ModHumanPresentation &packet,
                                       uint32_t grid,
-                                      ModHumanClock clock) noexcept {
+                                      ModHumanClock clock, JNIEnv *env,
+                                      jobject activity) noexcept {
   try {
     if (!clock || !OriginalModHumanSceneCurrent(scene, clock()) ||
         packet.originalEpisode != scene.episode ||
@@ -38,7 +39,16 @@ void blackcoop::DrawOriginalModHumans(const ModHumanOriginalScene &scene,
       return;
     const auto scope = [&] {
       OriginalWorldCameraFrame current;
-      return OriginalModHumanSceneCurrent(scene, clock()) &&
+      ModHumanOriginalScene liveScene;
+      ModHumanPresentation livePacket;
+      // Room membership and COMMIT can be revoked by a network worker after
+      // the initial JNI copy, including while Allocate or WaitFence runs.
+      // Re-read the authoritative Java facade before every queued draw.
+      return ReadOriginalModHumanPresentation(env, activity, grid, clock(),
+                                              liveScene, livePacket) &&
+             SameModHumanTicket(packet, livePacket) &&
+             livePacket.tick >= packet.tick &&
+             OriginalModHumanSceneCurrent(scene, clock()) &&
              ReadCurrentOriginalWorldCameraFrame(current) &&
              current.serial == camera.serial &&
              current.source.world == scene.world && stageMatches();

@@ -31,11 +31,26 @@ public final class PlatformInstrumentation extends Instrumentation {
         String safe=RoomDiagnostics.read();
         check(recent.isFile()&&older.isFile());
         check(safe.contains("STORY_DIAGNOSTICS_BEGIN")&&safe.contains("STORY_DIAGNOSTICS_END"));
+        String exported=RoomDiagnostics.exportContents(context);
+        android.content.pm.PackageInfo packageInfo=context.getPackageManager().getPackageInfo(context.getPackageName(),0);
+        check(exported.startsWith("BO_ROOM_DIAGNOSTICS_SCHEMA=1\nPACKAGE="+context.getPackageName()+"\n"));
+        check(exported.contains("\nVERSION_CODE="+packageInfo.getLongVersionCode()+"\n"));
+        check(exported.contains("\nVERSION_NAME="+(packageInfo.versionName==null?"UNKNOWN":packageInfo.versionName)+"\n"));
+        MessageDigest apkDigest=MessageDigest.getInstance("SHA-256");
+        try(java.io.FileInputStream input=new java.io.FileInputStream(context.getApplicationInfo().sourceDir)){
+            byte[] bytes=new byte[8192];int count;
+            while((count=input.read(bytes))!=-1)apkDigest.update(bytes,0,count);
+        }
+        StringBuilder expectedHash=new StringBuilder();
+        for(byte value:apkDigest.digest())expectedHash.append(String.format(java.util.Locale.ROOT,"%02x",value&255));
+        check(exported.contains("\nBASE_APK_SHA256="+expectedHash+"\n\n"));
+        check(exported.endsWith(safe));
         check(RoomDiagnostics.exportToDownloads(context));
         try(java.io.FileOutputStream write=new java.io.FileOutputStream(older,true)){
             write.write("UNTRUSTED_RAW_ADDRESS_OR_SECRET\n".getBytes(java.nio.charset.StandardCharsets.UTF_8));
         }
         check(RoomDiagnostics.read().startsWith("Unable to read"));
+        check(!RoomDiagnostics.exportToDownloads(context));
         check(recent.delete()&&older.delete());
         RoomDiagnostics.event("ROOM_SAFE_LOG_EXPORT_VERIFIED");
     }

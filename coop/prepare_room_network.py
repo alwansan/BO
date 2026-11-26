@@ -451,7 +451,7 @@ X86_FUNC(sub_000D1500) {
     const auto now=static_cast<uint64_t>(SDL_GetTicks());
     if(blackcoop::ReadOriginalModHumanPresentation(env,activity,originalGrid,now,scene,packet))
         blackcoop::DrawOriginalModHumans(scene,packet,originalGrid,
-            []() noexcept -> uint64_t { return static_cast<uint64_t>(SDL_GetTicks()); });
+            []() noexcept -> uint64_t { return static_cast<uint64_t>(SDL_GetTicks()); }, env, activity);
     if(env&&activity)env->DeleteLocalRef(activity);
 }
 '''

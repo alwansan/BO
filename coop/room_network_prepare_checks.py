@@ -50,12 +50,15 @@ class RoomNetPrepareTests(unittest.TestCase):
             hooks=(root/'src/game/hooks.cpp').read_text(encoding='utf-8')
             self.assertIn('ReadOriginalModHumanPresentation(env,activity,originalGrid,now,scene,packet)',hooks)
             self.assertIn('blackcoop::DrawOriginalModHumans(scene,packet,originalGrid,',hooks)
+            self.assertIn('}, env, activity);',hooks)
             self.assertNotIn('OriginalRemoteHumanBotVisual(peer).Draw',hooks)
             self.assertIn('#include <SDL3/SDL_timer.h>',hooks)
             self.assertEqual(hooks.count('__imp__sub_000D1500(ctx,base);'),1)
             sdkdraw=(root/'src/d3d/d3d8.cpp').read_text(encoding='utf-8')
             self.assertIn('void blackcoop::DrawOriginalModHumans(',sdkdraw)
             self.assertIn('SubmitModHumanPresentation(*d3d::g_backend',sdkdraw)
+            self.assertIn('ReadOriginalModHumanPresentation(env, activity, grid, clock(),',sdkdraw)
+            self.assertIn('SameModHumanTicket(packet, livePacket)',sdkdraw)
             for name in ('room_mod_human_presentation.hpp','room_mod_human_presentation_witness.hpp',
                          'room_mod_placeholder_draw.hpp','room_mod_placeholder_submit.hpp',
                          'room_mod_placeholder_upload_kernel.hpp'):

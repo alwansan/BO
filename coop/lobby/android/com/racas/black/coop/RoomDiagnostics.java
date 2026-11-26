@@ -4,6 +4,8 @@ package com.racas.black.coop;
 import android.content.Context;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.pm.PackageInfo;
+import java.security.MessageDigest;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -104,7 +106,9 @@ public final class RoomDiagnostics {
      */
     public static boolean exportToDownloads(Context context){
         if(Build.VERSION.SDK_INT<29)return false;
-        final String contents=read();
+        final String contents;
+        try{contents=exportContents(context);}
+        catch(Exception unavailable){return false;}
         if(contents.startsWith("No BLACK Co-op room log")||
            contents.startsWith("Room log exceeds")||
            contents.startsWith("Unable to read"))return false;
@@ -135,6 +139,34 @@ public final class RoomDiagnostics {
             if(created!=null)try{resolver.delete(created,null,null);}catch(Exception alsoIgnored){}
             return false;
         }
+    }
+    /** Called on the explicit export worker, never on a frame callback.
+     * The APK digest identifies the exact installed base APK even when two
+     * candidates share a version name. No device or network identifiers enter it. */
+    static String exportContents(Context context)throws Exception{
+        String events=read();
+        if(!events.matches("(?s)[0-9]{13} [A-Z0-9_]{1,70}\\n.*"))
+            throw new java.io.IOException("Room events unavailable");
+        Context application=context.getApplicationContext();
+        String packageName=application.getPackageName();
+        PackageInfo info=application.getPackageManager().getPackageInfo(packageName,0);
+        String version=info.versionName==null?"UNKNOWN":info.versionName;
+        if(!packageName.matches("[A-Za-z0-9_.]{1,200}")||
+           !version.matches("[A-Za-z0-9_.+() -]{1,120}"))
+            throw new java.io.IOException("Unsupported package metadata");
+        MessageDigest digest=MessageDigest.getInstance("SHA-256");
+        try(FileInputStream input=new FileInputStream(application.getApplicationInfo().sourceDir)){
+            byte[] block=new byte[65536];
+            int count;
+            while((count=input.read(block))!=-1)digest.update(block,0,count);
+        }
+        StringBuilder hash=new StringBuilder(64);
+        for(byte value:digest.digest())hash.append(String.format(Locale.ROOT,"%02x",value&255));
+        return "BO_ROOM_DIAGNOSTICS_SCHEMA=1\n"+
+            "PACKAGE="+packageName+"\n"+
+            "VERSION_NAME="+version+"\n"+
+            "VERSION_CODE="+info.getLongVersionCode()+"\n"+
+            "BASE_APK_SHA256="+hash+"\n\n"+events;
     }
     private static String readSegment(File segment)throws java.io.IOException{
         if(segment==null||!segment.isFile())return "";
