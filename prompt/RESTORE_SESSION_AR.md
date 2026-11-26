@@ -1,3 +1,11 @@
+# تكملة تحقق CI بعد نشر Chat-Batch07 — 2026-11-26
+
+- عند أول push على رأس `60963d8b2bae3e295e933103c0868aa4d5487a75`: أربع عمليات GitHub Actions **SUCCESS** (Android synthetic TLS platform `45769044893`، source preflight `45769044780`، UDP `45769044807`، parallel source `45769044966`) وعملية **FAILURE** (`real TLS room core` run `45769044777`). السبب المثبت من job log: اختبار `RoomObjectEventWireTest` ظل يقارن `f[4]==9` بينما `RoomWire.VERSION=10`. لم يُشغّل سير ISO/owner-asset APK.
+- الإصلاح المنفصل من نفس الفرع: commit `360c70323c61c95ba0b52c080da1123da1e029fd`: يستعمل `RoomWire.VERSION` بدل literal 9 دون تغيير بروتوكول الإنتاج، ويضيف `memory/evidence/CHAT_BATCH07_CI_POSTPUSH_2026-11-26.json`. نجح الاختبار نفسه محليًا بـ `javac --release 8 -Xlint:all,-options -Werror` للإنتاج و`--release 17 -Xlint:all -Werror` للاختبار. **نتيجة CI للإصلاح لا تُعد ناجحة إلا بعد قراءة تشغيل GitHub اللاحق**.
+- رأس الفرع النهائي هنا هو commit الاستعادة الذي يتضمن هذه المقدمة ويأتي بعد `360c703…`. تحقق منه مباشرة من GitHub؛ لا تفترض أن SHA المذكور هو HEAD النهائي. بقية تفاصيل الدفعات وشروط السلامة أدناه باقية دون حذف.
+
+---
+
 # استعادة إلزامية — مزامنة الدفعات Chat-Batch01..07 (2026-11-26)
 
 **المستودع والفرع الوحيد المسموح به:** `alwansan/BO` / `experiment/black-coop`. لا تعدّل `main` أو `CL` أو `biso` ولا تستخدم force push. يبدأ أي عمل جديد بفحص رأس الفرع الحي ومقارنة التغييرات والمحافظة على العمل المحلي، ثم رفع الدفعة المتحققة مع الاستعادة والأدلة. لا تعتمد على sandbox أو أرشيف محادثة بوصفه المصدر الوحيد.
