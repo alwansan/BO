@@ -4210,5 +4210,21 @@
     "gameplayCoop": false,
     "evidence": "memory/evidence/WORK_BATCH21_CL_OWNER_TWO_PHONE_20261126.json",
     "chatgptLinksNotReviewed": true
+  },
+  "workBatch26": {
+    "date": "2026-11-26",
+    "base": "0b3736e249834a213c1abbc919fcbdd596562d9c",
+    "unitObjectUnlinkAndAttachmentCleanup": "verified_static_pinned_image_only",
+    "unitArrayFreeAndFullSceneReady": "unverified",
+    "unitSelectorAudit": {
+      "units": 42,
+      "records": 877,
+      "unitsWithDuplicateSelectors": 2
+    },
+    "localTestsPassed": 14,
+    "evidence": "memory/sessions/2026-11-26_bo-coop-work26-unit-object-lifecycle.md",
+    "next": "observe native unit publication, teardown and reload to validate thread and ordinal/lifetime before wiring sync",
+    "sharedWorldComplete": false,
+    "acceptanceApk": false
   }
 }

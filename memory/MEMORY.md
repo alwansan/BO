@@ -1,3 +1,8 @@
+## Work26 — تفريغ الوحدة وتصادم محدد الهوية (2026-11-26)
+
+- `001EB1F0` يفصل كائنات `unit+0x14` عبر `001BEB40` ويستدعي خانة `+0x0C` التي تقود على جدول الكائن إلى `001C7E50`؛ دليل ساكن على تنظيف الارتباطات، لا برهان تحرير المصفوفة. `001EB6B0` يمحو حقول الوحدة بعد تنظيفها؛ `001EB7F0` ينشر حالة الوحدة `0x1C`، وهي منفصلة عن إثبات جاهزية المشهد.
+- الفحص القابل للتكرار `coop/analysis/original_unit_instance_identity.py`: 42 ملفًا، 877 سجلًا، تصادم داخل وحدتين. زوج `object+8/+0xC` محدد غير فريد؛ `001C2180` يغير بايت `+0xDA` لكل مطابق، ولم تثبت دلالته كباب أو تدمير. نجحت 14 حالة محليًا. الدليل والخطوة التالية في `memory/sessions/2026-11-26_bo-coop-work26-unit-object-lifecycle.md`.
+
 ## Work25 — `unit-v24` consumer أصلي مثبت في generated original (2026-11-26)
 
 - `Unit_%02d.bin`@0x0028F3F0→`sub_000A1AEB`→`sub_001D6200`. **`sub_001D6200` (0x001D6200)** قارئ `unit-v24` الأصلي المُولَّد: **`MEM16(+0x90)` count، `MEM32(+0x1C)` table، `0x30`=**48B instance stride**، `esi+=0x30`, output `edi+=0xF0`, output vtable `0x28EA60`, `sub_001F3FC0` alloc `N*0xF0`, `kWorld=0x2D45D4`, `0x2D12E8`, `0x2D1988`. **`sub_001C8450` (0x001C8450) original constructor** (cdecl 0-param، object in `eax`, clears `+8..+0xC8`, matrix `0x2ACE70/80/90`,`0x2F4390`, `+0xC4=0xA`, `ret`). Per instance: `sub_001C8450`, sets `+0xC4/+0xDA/+0xDB/+0xD0/+0xD8/+0xD4/+8/+0xC/+0xEC`, `+8=MEM32(instance+0x20)`,`+0xC=MEM32(instance+0x24)`, then `sub_001C7430/1C73C0/1D3610/1C72B0/1CD4E0/1C8450`, `sub_0015E140`. يطابق `unit-v24` pinned Rust (+0x90,+0x1c,48B)! **مثبت أصلي، لا مجرد host tool.**
