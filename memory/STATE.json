@@ -4329,5 +4329,25 @@
     "sharedWorldComplete": false,
     "acceptanceApk": false,
     "next": "read membership run 45874280537 and restart run 45877709542; independently trace an original destruction transition and readback for a specific object or objective"
+  },
+  "workBatch32": {
+    "date": "2026-11-26",
+    "base": "59f0c5e",
+    "scope": "pinned source LevelDat objective table provenance and owner-data aggregate identity audit",
+    "evidence": "memory/evidence/WORK_BATCH32_LEVELDAT_OBJECTIVE_IDENTITIES.json",
+    "session": "memory/sessions/2026-11-26_bo-coop-work32-authored-objective-source.md",
+    "localPythonTestsPassed": 17,
+    "pinnedLevelDatObjectiveOriginVerified": true,
+    "objectiveIdsCompared": 97,
+    "sameLevelUnitSelectorsCompared": 877,
+    "sameLevelUnitSelectorOverlaps": 0,
+    "nativeObjectiveRuntimeVerified": false,
+    "membershipRun": 45874280537,
+    "membershipRunStatus": "in_progress_at_last_check",
+    "restartRun": 45877709542,
+    "restartRunStatus": "pending_at_last_check",
+    "sharedWorldComplete": false,
+    "acceptanceApk": false,
+    "next": "verify the two unit lifecycle reports; independently match the authored objective table and observe a native objective change on the game thread"
   }
 }

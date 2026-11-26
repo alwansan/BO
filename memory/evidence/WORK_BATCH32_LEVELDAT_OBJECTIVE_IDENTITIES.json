@@ -1,0 +1,12 @@
+{
+  "levels_compared_with_unit_selectors": 8,
+  "levels_with_descriptors": 8,
+  "levels_with_duplicate_objective_ids": 0,
+  "objective_descriptors": 97,
+  "objective_ids_matching_same_level_unit_selectors": 0,
+  "objective_ids_reused_across_levels": 1,
+  "schema": "BO-COOP-leveldat-v17-objective-identity-v1",
+  "unit_files_compared": 42,
+  "unit_records_compared": 877,
+  "zero_descriptor_ids": 0
+}

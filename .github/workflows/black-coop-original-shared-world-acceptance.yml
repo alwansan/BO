@@ -7,6 +7,8 @@ on:
       - 'coop/analysis/test_original_shared_world_acceptance.py'
       - 'coop/analysis/original_unit_instance_identity.py'
       - 'coop/analysis/test_original_unit_instance_identity.py'
+      - 'coop/analysis/original_objective_descriptor_audit.py'
+      - 'coop/analysis/test_original_objective_descriptor_audit.py'
       - '.github/workflows/black-coop-original-shared-world-acceptance.yml'
   workflow_dispatch:
 jobs:
@@ -18,3 +20,5 @@ jobs:
         run: python3 -m unittest coop.analysis.test_original_shared_world_acceptance -v
       - name: Check object selector collision audit on synthetic units
         run: python3 -m unittest coop.analysis.test_original_unit_instance_identity -v
+      - name: Check objective descriptor audit on synthetic level data
+        run: python3 -m unittest coop.analysis.test_original_objective_descriptor_audit -v
