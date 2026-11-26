@@ -116,20 +116,21 @@ def patch_text(text, kind):
         text = text.replace(audio_anchor, '#include "bo_audio_observer.inc"\n' + audio_anchor)
         text = text.replace('    black_p2_banks_take();',
                             '    black_p2_banks_take();\n    bo_audio_after_take();')
-        unit_hooks = ('sub_001EB7F0', 'sub_001EB1F0')
+        unit_hooks = ('sub_001EB7F0', 'sub_001EB1F0', 'sub_001EB440')
         if any(re.search(r'\bvoid\s+' + name + r'\s*\(', text) for name in unit_hooks):
             raise ValueError('unit observer source drift')
         return text.replace(MANUAL_ANCHOR, '''#include "bo_unit_observer.inc"
 #include "bo_engine_lab.inc"
 extern void sub_001EB7F0_gen(void);
 extern void sub_001EB1F0_gen(void);
+extern void sub_001EB440_gen(void);
 
 /* ECX is the stream poll descriptor; unlink receives it at entry ESP+4.
  * Define the wrappers in recomp_manual.c so generate.py finds both names. */
 void sub_001EB7F0(void)
 {
     const uint32_t unit = g_ecx;
-    const int slot = bo_unit_enter(0, unit);
+    const int slot = bo_unit_enter(BO_UNIT_POLL, unit);
     const uint32_t before = slot < 0 ? 0 : GUEST32(unit);
     sub_001EB7F0_gen();
     bo_unit_after_poll(slot, unit, before, g_eax);
@@ -138,11 +139,23 @@ void sub_001EB7F0(void)
 void sub_001EB1F0(void)
 {
     const uint32_t unit = black_pc_ram_span(g_esp, 8u) ? GUEST32(g_esp + 4u) : 0;
-    const int slot = bo_unit_enter(1, unit);
+    const int slot = bo_unit_enter(BO_UNIT_UNLINK, unit);
     const int linked = slot >= 0 && GUEST8(unit + 0x38u);
     const uint32_t index = linked ? GUEST32(unit + 8u) : 0;
+    BoUnitObjects before = {0};
+    if (linked && bo_unit_mapping(unit, &before) > 0 &&
+        bo_unit_world_members(before) != (int)before.count) before.count = 0;
     sub_001EB1F0_gen();
-    if (linked) bo_unit_after_unlink(slot, unit, index);
+    if (linked) bo_unit_after_unlink(slot, unit, index, before);
+}
+
+void sub_001EB440(void)
+{
+    const uint32_t unit = black_pc_ram_span(g_esp, 8u) ? GUEST32(g_esp + 4u) : 0;
+    const int slot = bo_unit_enter(BO_UNIT_LINK, unit);
+    const int linking = slot >= 0 && GUEST32(unit) == 0x1Cu && !GUEST8(unit + 0x38u);
+    sub_001EB440_gen();
+    if (linking) bo_unit_after_link(slot, unit);
 }
 
 void sub_001F1080(void)

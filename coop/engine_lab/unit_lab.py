@@ -2,10 +2,12 @@
 import json
 
 FIELDS = frozenset((
-    "poll_calls", "unlink_calls", "before_frame_thread_calls", "other_thread_calls",
+    "poll_calls", "unlink_calls", "link_calls", "before_frame_thread_calls", "other_thread_calls",
     "unit_publications", "ordinal_maps_verified", "ordinal_map_failures",
     "empty_publications", "unit_unlinks", "paired_unit_unlinks",
     "same_slot_unit_republications",
+    "unit_link_transitions", "world_membership_verified", "world_membership_failures",
+    "world_removal_verified", "world_removal_failures",
 ))
 
 
@@ -27,6 +29,9 @@ def parse(text):
             data["unit_publications"] > data["poll_calls"] or
             data["unit_unlinks"] > data["unlink_calls"] or
             data["paired_unit_unlinks"] > min(data["unit_unlinks"], data["ordinal_maps_verified"]) or
-            data["same_slot_unit_republications"] > data["paired_unit_unlinks"]):
+            data["same_slot_unit_republications"] > data["paired_unit_unlinks"] or
+            data["unit_link_transitions"] > data["link_calls"] or
+            data["world_membership_verified"] + data["world_membership_failures"] > data["unit_link_transitions"] or
+            data["world_removal_verified"] + data["world_removal_failures"] > data["unit_unlinks"]):
         raise ValueError("inconsistent unit observation counts")
     return data

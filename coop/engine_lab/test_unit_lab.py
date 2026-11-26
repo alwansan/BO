@@ -15,6 +15,8 @@ class UnitLabTests(unittest.TestCase):
             dict(counts, poll_calls=1, unit_publications=1),
             dict(counts, ordinal_maps_verified=True),
             dict(counts, same_slot_unit_republications=1),
+            dict(counts, link_calls=1, world_membership_verified=1),
+            dict(counts, unlink_calls=1, world_removal_verified=1),
         ):
             with self.assertRaises(ValueError):
                 parse(json.dumps(invalid))
@@ -27,7 +29,7 @@ class UnitLabTests(unittest.TestCase):
             lab.MANUAL_ANCHOR,
         ))
         patched = lab.patch_text(source, 'manual')
-        for name in ('sub_001EB7F0', 'sub_001EB1F0'):
+        for name in ('sub_001EB7F0', 'sub_001EB1F0', 'sub_001EB440'):
             self.assertIn(f'\nvoid {name}(void)\n', patched)
             self.assertEqual(patched.count(f'    {name}_gen();'), 1)
         self.assertIn('bo_unit_bind_frame_thread();\n    sub_001F1080_gen();', patched)

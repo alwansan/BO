@@ -4247,5 +4247,20 @@
     "next": "read original engine CI unit_observations before choosing identity/lifetime boundaries",
     "sharedWorldComplete": false,
     "acceptanceApk": false
+  },
+  "workBatch28": {
+    "date": "2026-11-26",
+    "base": "8bc0af1",
+    "scope": "private PC engine observation of world list membership and removal of all mapped unit objects",
+    "localPythonTestsPassed": 38,
+    "localCObserverASanUBSan": "passed",
+    "previousCiRun": 45873530764,
+    "previousCiOriginalEngine": "in_progress_at_last_check",
+    "originalRuntimeWorldMembershipVerified": false,
+    "androidRuntimeVerified": false,
+    "evidence": "memory/sessions/2026-11-26_bo-coop-work28-world-membership-observer.md",
+    "next": "read unit ordinal mapping and membership/removal reports on the pinned native engine",
+    "sharedWorldComplete": false,
+    "acceptanceApk": false
   }
 }

@@ -23,7 +23,9 @@ int main(void)
 {
     const uint32_t world = 0x10000, unit = world + 0x49D0, header = 0x20000;
     const uint32_t objects = 0x30000, table = 0x22000;
-    assert(bo_unit_enter(0, unit) == -1);
+    const uint32_t other_object = 0x32000;
+    const BoUnitObjects range = {objects, 2};
+    assert(bo_unit_enter(BO_UNIT_POLL, unit) == -1);
     bo_unit_bind_frame_thread();
     GUEST32(0x2D45D4) = world;
     GUEST32(unit) = 0x1C;
@@ -37,25 +39,43 @@ int main(void)
     GUEST32(objects + 0xD0) = table;
     GUEST32(objects + 0xF0 + 0xD0) = table + 0x30;
 
-    const int slot = bo_unit_enter(0, unit);
+    const int slot = bo_unit_enter(BO_UNIT_POLL, unit);
     assert(slot == 0);
     bo_unit_after_poll(slot, unit, 7, 1);
     bo_unit_after_poll(slot, unit, 0x1C, 1); /* Still loaded: no new publish. */
     assert(bo_unit_counts[BO_UNIT_MAPPED] == 1);
+    assert(bo_unit_counts[BO_UNIT_WORLD_LINK_VERIFIED] == 0);
+    GUEST32(world + 0x5CB4) = other_object;
+    GUEST32(other_object + 0xB0) = objects + 0xF0;
+    GUEST32(objects + 0xF0 + 0xB0) = objects;
     GUEST8(unit + 0x38) = 1;
-    bo_unit_after_unlink(bo_unit_enter(1, unit), unit, 1);
+    bo_unit_after_link(bo_unit_enter(BO_UNIT_LINK, unit), unit);
+    assert(bo_unit_counts[BO_UNIT_WORLD_LINK_VERIFIED] == 1);
+    GUEST32(objects + 0xB0) = other_object;
+    assert(bo_unit_world_members(range) == -1); /* Cyclic tail despite all matches. */
+    GUEST32(objects + 0xB0) = objects + 4;
+    assert(bo_unit_world_members(range) == -1); /* Interior pointer is not an object. */
+    GUEST32(objects + 0xB0) = 0;
+    bo_unit_after_unlink(bo_unit_enter(BO_UNIT_UNLINK, unit), unit, 1, range);
     assert(bo_unit_counts[BO_UNIT_UNLINKED] == 0);
+    GUEST32(other_object + 0xB0) = objects;
+    bo_unit_after_link(bo_unit_enter(BO_UNIT_LINK, unit), unit);
+    assert(bo_unit_counts[BO_UNIT_WORLD_LINK_FAILED] == 1);
     GUEST8(unit + 0x38) = 0;
-    bo_unit_after_unlink(bo_unit_enter(1, unit), unit, 1);
+    bo_unit_after_unlink(bo_unit_enter(BO_UNIT_UNLINK, unit), unit, 1, range);
+    assert(bo_unit_counts[BO_UNIT_WORLD_UNLINK_FAILED] == 1);
     assert(bo_unit_counts[BO_UNIT_PAIRED_UNLINK] == 1);
-    bo_unit_after_poll(bo_unit_enter(0, unit), unit, 3, 1);
+    bo_unit_after_poll(bo_unit_enter(BO_UNIT_POLL, unit), unit, 3, 1);
     assert(bo_unit_counts[BO_UNIT_REPUBLISHED] == 1);
+    GUEST32(other_object + 0xB0) = 0;
+    bo_unit_after_unlink(bo_unit_enter(BO_UNIT_UNLINK, unit), unit, 1, range);
+    assert(bo_unit_counts[BO_UNIT_WORLD_UNLINK_VERIFIED] == 1);
     GUEST32(objects + 0xF0 + 0xD0) = table + 0x60;
-    bo_unit_after_poll(bo_unit_enter(0, unit), unit, 7, 1);
+    bo_unit_after_poll(bo_unit_enter(BO_UNIT_POLL, unit), unit, 7, 1);
     assert(bo_unit_counts[BO_UNIT_MAP_FAILED] == 1);
 
     thread = 2;
-    bo_unit_after_poll(bo_unit_enter(0, unit), unit, 7, 1);
+    bo_unit_after_poll(bo_unit_enter(BO_UNIT_POLL, unit), unit, 7, 1);
     assert(bo_unit_counts[BO_UNIT_OTHER_THREAD] == 1);
     assert(bo_unit_counts[BO_UNIT_BEFORE_FRAME_THREAD] == 1);
     assert(bo_unit_counts[BO_UNIT_PUBLISHED] == 3);
