@@ -4565,9 +4565,24 @@
     "earlyTeardownSourceVerified": true,
     "restartRetryRun": 45904704260,
     "restartRetryCommit": "68fdec4498d40cf4cbd3c5f084ebca9a8540f7c8",
-    "restartRetryStatus": "in_progress_at_last_check",
+    "restartRetryStatus": "success_verified_in_workBatch43",
     "restartRetryFollowUp": "aut_219f709ba001ydIO4mLl7LEiTp",
     "acceptanceApk": false,
-    "next": "verify the early-teardown marker and same-unit relink after the fix before using the mapping"
+    "next": "see Work43 for the verified same-unit lifecycle result and Android prerequisites"
+  },
+  "workBatch43": {
+    "date": "2026-11-27",
+    "session": "memory/sessions/2026-11-27_bo-coop-work43-same-unit-relink.md",
+    "evidence": "memory/evidence/WORK_BATCH43_SAME_UNIT_RELINK_45904704260.json",
+    "verifiedRun": 45904704260,
+    "verifiedCommit": "68fdec4498d40cf4cbd3c5f084ebca9a8540f7c8",
+    "verifiedArtifact": 15158088326,
+    "liveWindowsSameUnitRemovalAndRelinkVerified": true,
+    "liveWindowsPropListRemovalVerified": true,
+    "liveWindowsSecondaryObjectiveWriterVerified": true,
+    "androidRuntimeVerified": false,
+    "mappingUsedForSynchronization": false,
+    "acceptanceApk": false,
+    "next": "verify game-thread unit identity and lifetime in Android and an independently observable native prop transition before enabling host production and guest application"
   }
 }
