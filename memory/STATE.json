@@ -10,7 +10,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-24_bo-coop-148-weapon-manager-image.md",
+  "lastSession": "memory/sessions/2026-11-26_bo-coop-work10-shared-campaign-blockers.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -2072,7 +2072,7 @@
     "deviceTested": true,
     "deviceTestScope": "Owner primary-model read-only capture; 8 complete arm-only primary model records"
   },
-  "next": "Session56 first verify CI44978058696 real TLS,44978058836 Android29 TLS,44978058766 Windows room-only APK for source commit 12e7f2fc. Original XBE private second-hop CI44977623118 showed 0x11BC00 calls 0x0A23A4/0x11A4A0 and0x1B6EB0 no direct calls. Source XBE width CI44977857722 proved mission candidate globals0x2D0D60/68 and0x2EC598 WORD, fixed native observer R32->R16 and added C, CI44978058718 PASS. STILL NO selected original mission index/loader ABI/guest stage scene READY/remote human any-bot body/host AI. Next P0 prove real original mission loader and native matching scene completion then render independent bot avatar and replicate host AI/quest. Avoid tiny phone test, one major trial. Update RESTORE and state.",
+  "next": "Prioritize existing Start -> mutual visible humans -> one guest action applied by host and visible on both -> joint stage transition. First prove authorized renderer-only primitive provider and original host interaction/guest apply callback; no isolated transport improvements absent a concrete blocker.",
   "latestHandoff": {
     "date": "2026-11-22",
     "session": 56,
@@ -3977,5 +3977,14 @@
     "scope": "synthetic objective assembly deadline, retained replay watermark, no native integration",
     "evidence": "memory/evidence/WORK_BATCH09_OBJECTIVE_ASSEMBLY_2026-11-26.json",
     "next": "prove live objective source and lifetime before native integration"
+  },
+  "workBatch10": {
+    "baseHead": "1fb99b23230e80685b5e120228e51dc745b22258",
+    "scope": "source trace and documented shared-campaign integration blockers only",
+    "ownerReport": "baseline works; Start starts same stage on both phones, worlds separate and other human invisible",
+    "simpleAuthorizedPlaceholderAllowed": true,
+    "nativeIntegrationEnabled": false,
+    "evidence": "memory/evidence/WORK_BATCH10_SHARED_CAMPAIGN_BLOCKERS_2026-11-26.json",
+    "acceptanceApkAvailable": false
   }
 }

@@ -1,3 +1,9 @@
+# Work-Batch10 — توجيه علي: Start إلى عالم مشترك (2026-11-26)
+
+الأولوية الملزمة الآن: Start الموجود يبدأ نفس المرحلة لكن العالمين منفصلان وفق تقرير علي؛ المطلوب رؤية متبادلة وفعل ضيف يغير حالة بقيادة المضيف وانتقال قصة مشترك. مجسم بسيط مصرح به مقبول. لا المزيد من النقل المعزول بلا عائق محدد. لا baseline/XBE مطلوب ولا اختبار هاتف جزئي ولا ISO/APK يدوي. العوائق المثبتة وأقرب وصلة مأذونة موثقة في `docs/SHARED_CAMPAIGN_START_BLOCKERS_WORK10_AR.md`؛ الأدلة في `memory/evidence/WORK_BATCH10_SHARED_CAMPAIGN_BLOCKERS_2026-11-26.json`. هذه دفعة توثيق وتتبع مصدر فقط؛ لا runtime جديد أو دمج حي متحقق أو APK قبول. اقرأها قبل متابعة خطة الأهداف القديمة أدناه.
+
+---
+
 ### Session148 (2026-11-24): independent original weapon manager preparation
 
 - Code e23256548a608ed844edb9ed883198a94aadc09f implements OriginalWeaponManagerImage from pinned PC black_p2_banks_take. Detached 0xD0 manager preparation rebases internal record pointers +7C/+80, assigns independent heap pair, remaps two original sound-bank references, resets original load/weapon record fields. Requires initialized donor and original pool signature +130C=9; rejects aliases and unexplained bank/record pointers. Preserves original donor and output on failure.
