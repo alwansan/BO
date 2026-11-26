@@ -13,7 +13,7 @@ public final class RoomObjectEventWireTest {
   RoomStoryWire.Ticket t=new RoomStoryWire.Ticket(sid,77,8,0,1,4,15);
   RoomObjectEventWire.Event src=new RoomObjectEventWire.Event(t,1,10,12345L,1,1);
   byte[] f=RoomObjectEventWire.encode(src);
-  yes(f.length==58&&f[5]==RoomWire.OBJECT_EVENT&&f[4]==9);
+  yes(f.length==58&&f[5]==RoomWire.OBJECT_EVENT&&f[4]==RoomWire.VERSION);
   RoomObjectEventWire.Event event=RoomObjectEventWire.parse(RoomWire.decode(f));
   yes(event.matches(t)&&event.sequence==1&&event.tick==10&&event.objectKey==12345L);
   bad(()->new RoomObjectEventWire.Event(t,0,10,12345L,1,1));
@@ -29,6 +29,6 @@ public final class RoomObjectEventWireTest {
   bad(()->RoomWire.decode(Arrays.copyOf(f,f.length+1)));
   yes(!event.matches(new RoomStoryWire.Ticket(sid,78,8,0,1,4,15)));
   yes(!event.matches(new RoomStoryWire.Ticket(sid,77,8,0,1,5,15)));
-  System.out.println("OBJECT_EVENT_WIRE_PASS: v9, strict 50-byte scope, malformed event rejected; NO BLACK gameplay");
+  System.out.println("OBJECT_EVENT_WIRE_PASS: version 10, strict 50-byte scope, malformed event rejected; NO BLACK gameplay");
  }
 }

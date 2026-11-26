@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "project": "alwansan/BO",
+  "branch": "experiment/black-coop",
+  "initial_head": "60963d8b2bae3e295e933103c0868aa4d5487a75",
+  "date": "2026-11-26",
+  "initial_post_push_ci": {
+    "success_runs": [
+      45769044893,
+      45769044780,
+      45769044807,
+      45769044966
+    ],
+    "failure_run": 45769044777,
+    "failed_job": 139736963922,
+    "failed_step": "Strict Java 8 API core and Java 17 integration tests",
+    "cause": "Unchanged RoomObjectEventWireTest expected literal v9 in encoded frame; version 10 was intentionally introduced",
+    "source_test_line": 16
+  },
+  "fix": "Use RoomWire.VERSION for exact current wire version rather than literal 9; update diagnostic marker to version 10",
+  "local_validation": "javac --release 8 strict production; javac --release 17 strict test; java -ea RoomObjectEventWireTest; OBJECT_EVENT_WIRE_PASS",
+  "remote_ci_after_fix": "pending at the creation of this record",
+  "note": "No original game assets, Android gameplay or phone tests used"
+}
