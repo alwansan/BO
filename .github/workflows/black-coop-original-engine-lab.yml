@@ -10,6 +10,10 @@ on:
         description: Verify native removal and reload through Restart Mission
         type: boolean
         default: false
+      unit_lifecycle_only:
+        description: Verify native unit restart without the two-player movement phases
+        type: boolean
+        default: false
   push:
     branches: [experiment/black-coop]
     paths:
@@ -82,9 +86,11 @@ jobs:
         env:
           BO_ENGINE_RUN_SECONDS: ${{ inputs.run_seconds || '1200' }}
           BO_ENGINE_RESTART: ${{ inputs.restart_after_phases }}
+          BO_ENGINE_UNIT_LIFECYCLE_ONLY: ${{ inputs.unit_lifecycle_only }}
         run: |
           $restartArgs = @()
           if ($env:BO_ENGINE_RESTART -eq 'true') { $restartArgs += '--restart-after-phases' }
+          if ($env:BO_ENGINE_UNIT_LIFECYCLE_ONLY -eq 'true') { $restartArgs += '--unit-lifecycle-only' }
           python bo/coop/engine_lab/lab.py execute --bo bo --pc engine --out safe-engine-lab --seconds $env:BO_ENGINE_RUN_SECONDS @restartArgs
           exit $LASTEXITCODE
       - name: Retain only allowlisted aggregate summary

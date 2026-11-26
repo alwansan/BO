@@ -140,12 +140,16 @@ input to open the pause menu and select **Restart Mission → Yes**. The pinned
 PC menu consumes that input headlessly only on the two restart pages. The
 lab freezes the gameplay measurements at phase eight and requires the
 original restart request, observed removal from the world list during unload,
-and a fresh map/list link followed by a running frame at the same level and
-stage. `restart_lifecycle_passed` also requires zero foreign-thread calls or
-mapping/list failures. `unit_observations` reports same-slot republication
-separately, since reloading can replace the world allocation. The default
-run still exits after phase eight. The restart test exercises the Windows
-lab; its result does not establish Android co-op.
+and a fresh map and world link for the same unit role, authored unit index
+and row count at the same level and stage. This does not require the same
+world allocation. The first running frame also rechecks the mapped objects
+in the terminating list. `restart_lifecycle_passed` requires zero
+foreign-thread calls or mapping/list failures. `unit_lifecycle_only` (CLI:
+`--unit-lifecycle-only`) starts this test after the original intro releases
+control and initial membership is verified, without the two-player input
+phases. Its summary scope is `original_PC_engine_unit_lifecycle_only`. The
+default run still exits after phase eight. The restart test exercises the
+Windows lab; its result does not establish Android co-op.
 
 The objective diagnostic samples the live table on both sides of the original
 `001F1080` update, before the PC second-player pass. Every live record must

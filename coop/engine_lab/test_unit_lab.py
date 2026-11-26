@@ -9,7 +9,7 @@ from unit_lab import FIELDS, parse, restart_lifecycle_observed
 class UnitLabTests(unittest.TestCase):
     def test_restart_requires_each_boundary_and_no_mapping_contradiction(self):
         progress = dict.fromkeys(('restart_armed', 'restart_gamecode_queued',
-            'restart_unload_removal', 'restart_lifecycle_observed'), True)
+            'restart_unload_removal', 'restart_same_unit_relinked', 'restart_lifecycle_observed'), True)
         units = dict.fromkeys(FIELDS, 0)
         units.update(ordinal_maps_verified=2, world_membership_verified=2, world_removal_verified=1)
         self.assertTrue(restart_lifecycle_observed(progress, units))

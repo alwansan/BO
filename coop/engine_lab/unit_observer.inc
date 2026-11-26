@@ -1,4 +1,6 @@
 /* MIT. Private PC lab; no guest writes and no guest addresses in the report. */
+#include <stdio.h>
+
 enum BoUnitCounter {
     BO_UNIT_POLL, BO_UNIT_UNLINK, BO_UNIT_LINK,
     BO_UNIT_BEFORE_FRAME_THREAD, BO_UNIT_OTHER_THREAD,
@@ -93,15 +95,16 @@ static int bo_unit_world_members(BoUnitObjects range)
     return (int)matches;
 }
 
-static void bo_unit_after_poll(int slot, uint32_t unit, uint32_t before, uint32_t result)
+static unsigned bo_unit_after_poll(int slot, uint32_t unit, uint32_t before, uint32_t result)
 {
+    BoUnitObjects range;
     int mapped;
     if (slot < 0 || bo_unit_world != GUEST32(0x2D45D4u) ||
         before == 0x1Cu || (result & 0xFFu) != 1u ||
         !black_pc_ram_span(unit, 0x3Cu) || GUEST32(unit) != 0x1Cu ||
-        GUEST32(unit + 8u) == UINT32_MAX || GUEST32(unit + 8u) != GUEST32(unit + 4u)) return;
+        GUEST32(unit + 8u) == UINT32_MAX || GUEST32(unit + 8u) != GUEST32(unit + 4u)) return 0;
     InterlockedIncrement(&bo_unit_counts[BO_UNIT_PUBLISHED]);
-    mapped = bo_unit_mapping(unit, NULL);
+    mapped = bo_unit_mapping(unit, &range);
     InterlockedIncrement(&bo_unit_counts[mapped > 0 ? BO_UNIT_MAPPED :
                                             mapped == 0 ? BO_UNIT_EMPTY : BO_UNIT_MAP_FAILED]);
     if (mapped > 0 && bo_unit_slots[slot].unlinked &&
@@ -111,35 +114,40 @@ static void bo_unit_after_poll(int slot, uint32_t unit, uint32_t before, uint32_
     bo_unit_slots[slot].index = GUEST32(unit + 8u);
     bo_unit_slots[slot].active = mapped > 0;
     bo_unit_slots[slot].unlinked = 0;
+    return mapped > 0 ? range.count : 0;
 }
 
-static void bo_unit_after_link(int slot, uint32_t unit)
+static unsigned bo_unit_after_link(int slot, uint32_t unit)
 {
     BoUnitObjects range;
     int mapped;
     if (slot < 0 || bo_unit_world != GUEST32(0x2D45D4u) ||
         !black_pc_ram_span(unit, 0x3Cu) || GUEST32(unit) != 0x1Cu ||
-        GUEST8(unit + 0x38u) != 1u) return;
+        GUEST8(unit + 0x38u) != 1u) return 0;
     InterlockedIncrement(&bo_unit_counts[BO_UNIT_LINKED]);
     mapped = bo_unit_mapping(unit, &range);
-    if (mapped == 0) return; /* An empty unit has no membership witness. */
-    InterlockedIncrement(&bo_unit_counts[
-        mapped > 0 && bo_unit_world_members(range) == (int)range.count ?
-        BO_UNIT_WORLD_LINK_VERIFIED : BO_UNIT_WORLD_LINK_FAILED]);
+    if (mapped == 0) return 0; /* An empty unit has no membership witness. */
+    if (mapped > 0 && bo_unit_world_members(range) == (int)range.count) {
+        InterlockedIncrement(&bo_unit_counts[BO_UNIT_WORLD_LINK_VERIFIED]);
+        return range.count;
+    }
+    InterlockedIncrement(&bo_unit_counts[BO_UNIT_WORLD_LINK_FAILED]);
+    return 0;
 }
 
-static void bo_unit_after_unlink(int slot, uint32_t unit, uint32_t index, BoUnitObjects before)
+static int bo_unit_after_unlink(int slot, uint32_t unit, uint32_t index, BoUnitObjects before)
 {
     if (slot < 0 || bo_unit_world != GUEST32(0x2D45D4u) ||
-        !black_pc_ram_span(unit, 0x3Cu) || GUEST8(unit + 0x38u)) return;
+        !black_pc_ram_span(unit, 0x3Cu) || GUEST8(unit + 0x38u)) return 0;
     InterlockedIncrement(&bo_unit_counts[BO_UNIT_UNLINKED]);
     bo_unit_slots[slot].unlinked = bo_unit_slots[slot].active && bo_unit_slots[slot].index == index;
     if (bo_unit_slots[slot].unlinked)
         InterlockedIncrement(&bo_unit_counts[BO_UNIT_PAIRED_UNLINK]);
     bo_unit_slots[slot].active = 0;
-    if (before.count)
-        InterlockedIncrement(&bo_unit_counts[bo_unit_world_members(before) == 0 ?
-                             BO_UNIT_WORLD_UNLINK_VERIFIED : BO_UNIT_WORLD_UNLINK_FAILED]);
+    if (!before.count) return 0;
+    const int removed = bo_unit_world_members(before) == 0;
+    InterlockedIncrement(&bo_unit_counts[removed ? BO_UNIT_WORLD_UNLINK_VERIFIED : BO_UNIT_WORLD_UNLINK_FAILED]);
+    return removed;
 }
 
 static void bo_unit_write(void)

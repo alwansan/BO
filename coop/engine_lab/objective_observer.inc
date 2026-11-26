@@ -17,9 +17,9 @@ static struct {
 static BoObjectiveSource bo_objective_before;
 static BoObjectiveValue bo_objective_old[BO_OBJECTIVE_LIMIT], bo_objective_new[BO_OBJECTIVE_LIMIT];
 
-static int bo_objective_running(uint32_t world)
+static int bo_lab_world_running(uint32_t world)
 {
-    return !(world & 3u) && black_pc_ram_span(world, 0x5B30u) &&
+    return !(world & 3u) && black_pc_ram_span(world, 0x5CC0u) &&
         GUEST32(world + 0x5AE0u) == 0x1Cu && GUEST32(world + 0x5AE4u) == 0x1Du;
 }
 
@@ -60,7 +60,7 @@ static void bo_objective_begin(void)
 {
     const uint32_t world = GUEST32(0x2D45D4u);
     bo_objective_before.count = 0;
-    if (!bo_objective_running(world)) return;
+    if (!bo_lab_world_running(world)) return;
     if (!bo_objective_capture(world, &bo_objective_before, bo_objective_old))
         ++bo_objectives.rejected_frames;
 }
@@ -73,7 +73,7 @@ static void bo_objective_end(void)
     uint32_t i;
     if (!before.count) return;
     bo_objective_before.count = 0;
-    if (world != before.world || !bo_objective_running(world) ||
+    if (world != before.world || !bo_lab_world_running(world) ||
         !bo_objective_capture(world, &after, bo_objective_new) ||
         after.level_data != before.level_data || after.descriptors != before.descriptors ||
         after.rows != before.rows || after.count != before.count || after.scene != before.scene) {

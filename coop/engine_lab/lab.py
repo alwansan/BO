@@ -139,7 +139,8 @@ void sub_001EB7F0(void)
     const int slot = bo_unit_enter(BO_UNIT_POLL, unit);
     const uint32_t before = slot < 0 ? 0 : GUEST32(unit);
     sub_001EB7F0_gen();
-    bo_unit_after_poll(slot, unit, before, g_eax);
+    const unsigned mapped = bo_unit_after_poll(slot, unit, before, g_eax);
+    if (mapped) bo_lab_restart_after_poll(slot, unit, mapped);
 }
 
 void sub_001EB1F0(void)
@@ -148,15 +149,12 @@ void sub_001EB1F0(void)
     const int slot = bo_unit_enter(BO_UNIT_UNLINK, unit);
     const int linked = slot >= 0 && GUEST8(unit + 0x38u);
     const uint32_t index = linked ? GUEST32(unit + 8u) : 0;
-    const unsigned removals = bo_lab_unit_count(BO_UNIT_WORLD_UNLINK_VERIFIED);
     BoUnitObjects before = {0};
     if (linked && bo_unit_mapping(unit, &before) > 0 &&
         bo_unit_world_members(before) != (int)before.count) before.count = 0;
     sub_001EB1F0_gen();
-    if (linked) {
-        bo_unit_after_unlink(slot, unit, index, before);
-        bo_lab_restart_after_unlink(removals);
-    }
+    if (linked && bo_unit_after_unlink(slot, unit, index, before))
+        bo_lab_restart_after_unlink(slot, index, before.count);
 }
 
 void sub_001EB440(void)
@@ -165,7 +163,10 @@ void sub_001EB440(void)
     const int slot = bo_unit_enter(BO_UNIT_LINK, unit);
     const int linking = slot >= 0 && GUEST32(unit) == 0x1Cu && !GUEST8(unit + 0x38u);
     sub_001EB440_gen();
-    if (linking) bo_unit_after_link(slot, unit);
+    if (linking) {
+        const unsigned members = bo_unit_after_link(slot, unit);
+        if (members) bo_lab_restart_after_link(slot, unit, members);
+    }
 }
 
 void sub_001F1080(void)
@@ -568,8 +569,11 @@ def private_call(argv, cwd, timeout, env=None, progress=None, diagnostics=None):
                    b'BO_ENGINE_PAD_STARTED': 'usb_pad_polled',
                    b'BO_ENGINE_MENU_TICK': 'frontend_ui_polled',
                    b'BO_ENGINE_RESTART_ARMED': 'restart_armed',
+                   b'BO_ENGINE_RESTART_PAUSE_READY': 'restart_pause_ready',
+                   b'BO_ENGINE_RESTART_CONFIRM_READY': 'restart_confirm_ready',
                    b'BO_ENGINE_RESTART_GAMECODE_QUEUED': 'restart_gamecode_queued',
                    b'BO_ENGINE_RESTART_UNLOAD_REMOVAL': 'restart_unload_removal',
+                   b'BO_ENGINE_RESTART_SAME_UNIT_RELINKED': 'restart_same_unit_relinked',
                    b'BO_ENGINE_RESTART_LIFECYCLE_OBSERVED': 'restart_lifecycle_observed',
                    b'Game returned. Cleaning up...': 'guest_entry_returned',
                    b'BO_ENGINE_FIRMWARE_KIND_0': 'firmware_kind_0',
@@ -629,12 +633,14 @@ def private_call(argv, cwd, timeout, env=None, progress=None, diagnostics=None):
     return result
 
 
-def execute(bo, pc, out, seconds, restart=False):
-    report = {'schema': 1, 'scope': 'original_PC_engine_two_players_only',
+def execute(bo, pc, out, seconds, restart=False, lifecycle_only=False):
+    report = {'schema': 1,
+              'scope': ('original_PC_engine_unit_lifecycle_only' if lifecycle_only
+                        else 'original_PC_engine_two_players_only'),
               'android_runtime_verified': False, 'four_players_verified': False,
               'pc_pin': PC_PIN, 'runtime_pin': RUNTIME_PIN, 'dsp_pin': DSP_PIN,
               'passed': False, 'blocker': 'not_started', 'observations': {},
-              'restart_after_phases_requested': restart}
+              'restart_after_phases_requested': restart, 'unit_lifecycle_only_requested': lifecycle_only}
     out.mkdir(parents=True, exist_ok=True)
     phase = 'dependency_checkout'
     temp = Path(tempfile.mkdtemp(prefix='black-private-', dir=os.environ.get('RUNNER_TEMP')))
@@ -691,8 +697,10 @@ def execute(bo, pc, out, seconds, restart=False):
                    BO_LAB_AGGREGATE=str(temp / 'aggregate.json'),
                    BO_LAB_AUDIO_AGGREGATE=str(temp / 'audio-aggregate.json'),
                    BO_LAB_UNIT_AGGREGATE=str(temp / 'unit-aggregate.json'))
-        if restart:
+        if restart or lifecycle_only:
             env['BO_LAB_RESTART'] = '1'
+        if lifecycle_only:
+            env.update(BO_LAB_UNIT_LIFECYCLE_ONLY='1', RECOMP_SPLITSCREEN='0')
         progress = {}
         started = time.monotonic()
         code = private_call([executable], pc, seconds, env, progress)
@@ -725,10 +733,12 @@ def execute(bo, pc, out, seconds, restart=False):
                 report['blocker'] = 'usb_input_not_polled'
         report['bounded_run_finished'] = code != -1
         report['engine_exit_success'] = code == 0
-        if restart:
+        if restart or lifecycle_only:
             report['restart_lifecycle_passed'] = (
                 code == 0 and restart_lifecycle_observed(progress, report['unit_observations']))
-            if result['passed'] and not report['restart_lifecycle_passed']:
+            if lifecycle_only and report['restart_lifecycle_passed']:
+                report.update(passed=True, blocker='none', failed_checks=[])
+            elif lifecycle_only or (result['passed'] and not report['restart_lifecycle_passed']):
                 report.update(passed=False, blocker='restart_lifecycle_unverified',
                               failed_checks=['restart_lifecycle_unverified'])
         if code != 0:
@@ -752,12 +762,14 @@ def main():
     parser.add_argument('--pc', type=Path, required=True)
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--seconds', type=int, default=300)
-    parser.add_argument('--restart-after-phases', action='store_true')
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument('--restart-after-phases', action='store_true')
+    mode.add_argument('--unit-lifecycle-only', action='store_true')
     args = parser.parse_args()
     if not 60 <= args.seconds <= 1800:
         parser.error('run deadline must be 60..1800 seconds')
     return execute(args.bo.resolve(), args.pc.resolve(), args.out.resolve(), args.seconds,
-                   args.restart_after_phases)
+                   args.restart_after_phases, args.unit_lifecycle_only)
 
 if __name__ == '__main__':
     raise SystemExit(main())
