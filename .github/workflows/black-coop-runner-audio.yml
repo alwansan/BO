@@ -1,0 +1,28 @@
+name: BO actual Windows runner audio endpoint
+on:
+  workflow_dispatch:
+  push:
+    branches: [experiment/black-coop]
+    paths: ['coop/runner_audio/**', '.github/workflows/black-coop-runner-audio.yml']
+permissions:
+  contents: read
+jobs:
+  actual-output:
+    runs-on: windows-2025
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: coop/runner_audio
+          persist-credentials: false
+      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Activate existing Windows audio services
+        shell: pwsh
+        run: ./coop/runner_audio/prepare.ps1
+      - name: Compile and exercise real default endpoint and output callbacks
+        shell: pwsh
+        run: |
+          cl /nologo /W4 /WX /EHsc coop/runner_audio/probe.cpp /Fe:"$env:RUNNER_TEMP/audio-probe.exe" /Fo:"$env:RUNNER_TEMP/audio-probe.obj" /link ole32.lib xaudio2_8.lib
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & "$env:RUNNER_TEMP/audio-probe.exe"
+          exit $LASTEXITCODE
