@@ -14,8 +14,10 @@ static struct {
     unsigned verified_frames, rejected_frames, max_records;
     unsigned changed_records, counter_advances, entries_reaching_state_3;
     unsigned verified_writer_calls, rejected_writer_calls, changed_writer_calls;
+    unsigned verified_secondary_writer_calls, rejected_secondary_writer_calls, changed_secondary_writer_calls;
 } bo_objectives;
 static volatile LONG bo_objective_writer_other_thread_calls;
+static volatile LONG bo_objective_secondary_other_thread_calls;
 static BoObjectiveSource bo_objective_before;
 static BoObjectiveValue bo_objective_old[BO_OBJECTIVE_LIMIT], bo_objective_new[BO_OBJECTIVE_LIMIT];
 
@@ -139,19 +141,86 @@ static BoObjectiveWriterObservation bo_objective_writer_before(uint32_t row)
     return before;
 }
 
-static void bo_objective_writer_after(const BoObjectiveWriterObservation *before)
+static int bo_objective_writer_readback(const BoObjectiveWriterObservation *before, BoObjectiveValue *value)
 {
-    if (!before->source.count) return;
     const uint32_t world = GUEST32(0x2D45D4u);
     BoObjectiveSource after;
+    return world == before->source.world && bo_lab_world_running(world) &&
+        bo_objective_source(world, &after) && bo_objective_same_source(&before->source, &after) &&
+        bo_objective_read(&after, before->ordinal, value);
+}
+
+static void bo_objective_writer_after(const BoObjectiveWriterObservation *before)
+{
     BoObjectiveValue value;
-    if (world != before->source.world || !bo_lab_world_running(world) ||
-        !bo_objective_source(world, &after) || !bo_objective_same_source(&before->source, &after) ||
-        !bo_objective_read(&after, before->ordinal, &value)) {
+    if (!before->source.count) return;
+    if (!bo_objective_writer_readback(before, &value)) {
         ++bo_objectives.rejected_writer_calls;
         return;
     }
     ++bo_objectives.verified_writer_calls;
     if (value.counter != before->value.counter || value.state != before->value.state)
         ++bo_objectives.changed_writer_calls;
+}
+
+typedef struct BoObjectiveSecondaryObservation {
+    BoObjectiveWriterObservation row;
+    uint32_t selector_low, selector_high;
+} BoObjectiveSecondaryObservation;
+
+static int bo_objective_secondary_selector(const BoObjectiveSecondaryObservation *before, uint32_t ordinal)
+{
+    const uint32_t descriptor = before->row.source.descriptors + ordinal * 0x18u;
+    return GUEST32(descriptor) == before->selector_low &&
+        GUEST32(descriptor + 4u) == before->selector_high;
+}
+
+/* 001BA770 receives the table owner in EDI and the selector at entry
+ * ESP+4/+8. Only a unique authored match can witness the state write. */
+static BoObjectiveSecondaryObservation bo_objective_secondary_before(uint32_t table, uint32_t stack)
+{
+    BoObjectiveSecondaryObservation before = {0};
+    if (InterlockedCompareExchange(&bo_unit_frame_thread, 0, 0) != (LONG)GetCurrentThreadId()) {
+        InterlockedIncrement(&bo_objective_secondary_other_thread_calls);
+        return before;
+    }
+    const uint32_t world = GUEST32(0x2D45D4u);
+    if (!bo_lab_world_running(world)) return before;
+    BoObjectiveWriterObservation *const row = &before.row;
+    if (table == world + 0x930u && !(stack & 3u) && black_pc_ram_span(stack, 16u) &&
+        bo_objective_source(world, &row->source)) {
+        before.selector_low = GUEST32(stack + 4u);
+        before.selector_high = GUEST32(stack + 8u);
+        uint32_t match = row->source.count;
+        for (uint32_t i = 0; i < row->source.count; ++i) {
+            if (!bo_objective_secondary_selector(&before, i)) continue;
+            if (match != row->source.count) {
+                match = row->source.count;
+                break;
+            }
+            match = i;
+        }
+        if (match < row->source.count && bo_objective_read(&row->source, match, &row->value)) {
+            row->ordinal = match;
+            return before;
+        }
+    }
+    row->source.count = 0;
+    ++bo_objectives.rejected_secondary_writer_calls;
+    return before;
+}
+
+static void bo_objective_secondary_after(const BoObjectiveSecondaryObservation *before)
+{
+    const BoObjectiveWriterObservation *const row = &before->row;
+    BoObjectiveValue value;
+    if (!row->source.count) return;
+    if (!bo_objective_writer_readback(row, &value) ||
+        !bo_objective_secondary_selector(before, row->ordinal) ||
+        value.counter != row->value.counter || (value.state != row->value.state && value.state != 1u)) {
+        ++bo_objectives.rejected_secondary_writer_calls;
+        return;
+    }
+    ++bo_objectives.verified_secondary_writer_calls;
+    if (value.state != row->value.state) ++bo_objectives.changed_secondary_writer_calls;
 }

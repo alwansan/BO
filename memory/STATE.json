@@ -4532,5 +4532,22 @@
     "restartRetryLastCheckUtc": "2026-11-26T21:33:48Z",
     "restartRetryFollowUp": "aut_219c5f8eb001ZAJakFYKw6gYqY",
     "next": "verify same-unit removal and relink after the ready-tick menu dispatch change; keep synchronization gated"
+  },
+  "workBatch41": {
+    "date": "2026-11-27",
+    "session": "memory/sessions/2026-11-27_bo-coop-work41-secondary-objective-writer.md",
+    "restartRetryRun": 45898767177,
+    "restartRetryCommit": "c6d905912cae884cb03807b267ab451e7d0828e0",
+    "restartRetryStatus": "windows_engine_running_no_artifact_at_last_check",
+    "lastArtifactCheckUtc": "2026-11-26T21:43:18Z",
+    "secondaryWriterSplitGenerationVerified": true,
+    "localLabPythonTestsPassed": 40,
+    "localVerifierTestsPassed": 4,
+    "localNativeSanitizerFixturesPassed": 4,
+    "liveSecondaryWriterVerified": false,
+    "liveRemovalVerified": false,
+    "liveSameUnitReloadVerified": false,
+    "acceptanceApk": false,
+    "next": "verify the pending 45898767177 archive before using the mapping; a later private run is needed to observe the added writer"
   }
 }

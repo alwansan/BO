@@ -173,6 +173,10 @@ thread. The original runs once, and only a before/after change of that
 same row is counted. Absent, unmapped, replaced, or foreign-thread rows
 do not count as a verified transition. These observations remain separate
 from door or collision state.
+The separate `001BA770` witness checks the live table owner and both words
+of the entry-stack selector. It requires a unique authored match and the
+same row after the original call. Its change counter records transitions to
+raw state `1` with the objective counter unchanged.
 
 `summary.json` reports the exact fail-closed category and counters. A build failure
 is reported by stage (`runtime_dependency_checkout_failed`, `dsp_dependency_checkout_failed`,

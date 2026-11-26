@@ -26,6 +26,8 @@ FIELDS |= frozenset((
     'objective_changed_records', 'objective_counter_advances', 'objective_entries_reaching_state_3',
     'objective_verified_writer_calls', 'objective_rejected_writer_calls',
     'objective_changed_writer_calls', 'objective_writer_other_thread_calls',
+    'objective_verified_secondary_writer_calls', 'objective_rejected_secondary_writer_calls',
+    'objective_changed_secondary_writer_calls', 'objective_secondary_writer_other_thread_calls',
 ))
 MANUAL_ANCHOR = '''void sub_001F1080(void)
 {
@@ -124,7 +126,7 @@ def patch_text(text, kind):
         text = text.replace(audio_anchor, '#include "bo_audio_observer.inc"\n' + audio_anchor)
         text = text.replace('    black_p2_banks_take();',
                             '    black_p2_banks_take();\n    bo_audio_after_take();')
-        native_hooks = ('sub_001EB7F0', 'sub_001EB1F0', 'sub_001EB440', 'sub_001BA430')
+        native_hooks = ('sub_001EB7F0', 'sub_001EB1F0', 'sub_001EB440', 'sub_001BA430', 'sub_001BA770')
         if any(re.search(r'\bvoid\s+' + name + r'\s*\(', text) for name in native_hooks):
             raise ValueError('native observer source drift')
         return text.replace(MANUAL_ANCHOR, '''#include "bo_unit_observer.inc"
@@ -134,6 +136,7 @@ extern void sub_001EB7F0_gen(void);
 extern void sub_001EB1F0_gen(void);
 extern void sub_001EB440_gen(void);
 extern void sub_001BA430_gen(void);
+extern void sub_001BA770_gen(void);
 
 /* ECX is the stream poll descriptor; unlink receives it at entry ESP+4.
  * Define the wrappers in recomp_manual.c so generate.py finds both names. */
@@ -179,6 +182,13 @@ void sub_001BA430(void)
     const BoObjectiveWriterObservation before = bo_objective_writer_before(g_esi);
     sub_001BA430_gen();
     bo_objective_writer_after(&before);
+}
+
+void sub_001BA770(void)
+{
+    const BoObjectiveSecondaryObservation before = bo_objective_secondary_before(g_edi, g_esp);
+    sub_001BA770_gen();
+    bo_objective_secondary_after(&before);
 }
 
 void sub_001F1080(void)

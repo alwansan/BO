@@ -58,6 +58,12 @@ class UnitLabTests(unittest.TestCase):
         self.assertEqual(writer.count('sub_001BA430_gen();'), 1)
         self.assertLess(writer.index('bo_objective_writer_before(g_esi)'), writer.index('sub_001BA430_gen();'))
         self.assertLess(writer.index('sub_001BA430_gen();'), writer.index('bo_objective_writer_after(&before)'))
+        secondary = patched.split('void sub_001BA770(void)\n{', 1)[1].split('\n}', 1)[0]
+        self.assertEqual(secondary.count('sub_001BA770_gen();'), 1)
+        self.assertLess(secondary.index('bo_objective_secondary_before(g_edi, g_esp)'),
+                        secondary.index('sub_001BA770_gen();'))
+        self.assertLess(secondary.index('sub_001BA770_gen();'),
+                        secondary.index('bo_objective_secondary_after(&before)'))
         self.assertTrue(Path(lab.HERE, 'unit_observer.inc').is_file())
         unlink = patched.split('void sub_001EB1F0(void)\n{', 1)[1].split('\n}', 1)[0]
         self.assertLess(unlink.index('bo_prop_before_unlink(unit)'), unlink.index('sub_001EB1F0_gen();'))

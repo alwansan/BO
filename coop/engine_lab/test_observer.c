@@ -103,6 +103,41 @@ static void test_objective_frames(void)
     current_thread = 1;
     assert(bo_objective_writer_other_thread_calls == 1 && bo_objectives.verified_writer_calls == 1);
     puts("BO_ENGINE_OBJECTIVE_WRITER_FIXTURE_PASS");
+
+    const uint32_t stack = 0x26000;
+    GUEST32(stack + 4) = GUEST32(authored + 0x18) = 17;
+    GUEST32(stack + 8) = GUEST32(authored + 0x1C) = 23;
+    GUEST32(authored) = 17;
+    GUEST32(authored + 4) = 22; /* Same low word, different objective. */
+    BoObjectiveSecondaryObservation secondary = bo_objective_secondary_before(world + 0x930, stack);
+    assert(secondary.row.ordinal == 1 && secondary.row.source.count == 2);
+    GUEST32(live + 0x14) = 1;
+    bo_objective_secondary_after(&secondary);
+    assert(bo_objectives.verified_secondary_writer_calls == 1 && bo_objectives.changed_secondary_writer_calls == 1);
+
+    secondary = bo_objective_secondary_before(world + 0x930, stack);
+    bo_objective_secondary_after(&secondary);
+    assert(bo_objectives.verified_secondary_writer_calls == 2 && bo_objectives.changed_secondary_writer_calls == 1);
+    secondary = bo_objective_secondary_before(world + 0x930, stack);
+    ++GUEST32(live + 0x10); /* This writer changes state, never the counter. */
+    bo_objective_secondary_after(&secondary);
+    assert(bo_objectives.rejected_secondary_writer_calls == 1);
+
+    GUEST32(authored + 4) = 23;
+    secondary = bo_objective_secondary_before(world + 0x930, stack);
+    assert(!secondary.row.source.count && bo_objectives.rejected_secondary_writer_calls == 2);
+    GUEST32(authored + 4) = 22;
+    secondary = bo_objective_secondary_before(world + 0x934, stack);
+    assert(!secondary.row.source.count && bo_objectives.rejected_secondary_writer_calls == 3);
+    secondary = bo_objective_secondary_before(world + 0x930, stack);
+    GUEST32(authored + 0x1C) = 24;
+    bo_objective_secondary_after(&secondary);
+    assert(bo_objectives.rejected_secondary_writer_calls == 4);
+    current_thread = 2;
+    secondary = bo_objective_secondary_before(world + 0x930, stack);
+    current_thread = 1;
+    assert(!secondary.row.source.count && bo_objective_secondary_other_thread_calls == 1);
+    puts("BO_ENGINE_OBJECTIVE_SECONDARY_WRITER_FIXTURE_PASS");
 }
 
 int main(void) {
