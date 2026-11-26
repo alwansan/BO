@@ -24,6 +24,8 @@ FIELDS = frozenset('mission_ticks p2_ready_ticks phases_completed distinct_actor
 FIELDS |= frozenset((
     'objective_verified_frames', 'objective_rejected_frames', 'objective_max_records',
     'objective_changed_records', 'objective_counter_advances', 'objective_entries_reaching_state_3',
+    'objective_verified_writer_calls', 'objective_rejected_writer_calls',
+    'objective_changed_writer_calls', 'objective_writer_other_thread_calls',
 ))
 MANUAL_ANCHOR = '''void sub_001F1080(void)
 {
@@ -121,15 +123,16 @@ def patch_text(text, kind):
         text = text.replace(audio_anchor, '#include "bo_audio_observer.inc"\n' + audio_anchor)
         text = text.replace('    black_p2_banks_take();',
                             '    black_p2_banks_take();\n    bo_audio_after_take();')
-        unit_hooks = ('sub_001EB7F0', 'sub_001EB1F0', 'sub_001EB440')
-        if any(re.search(r'\bvoid\s+' + name + r'\s*\(', text) for name in unit_hooks):
-            raise ValueError('unit observer source drift')
+        native_hooks = ('sub_001EB7F0', 'sub_001EB1F0', 'sub_001EB440', 'sub_001BA430')
+        if any(re.search(r'\bvoid\s+' + name + r'\s*\(', text) for name in native_hooks):
+            raise ValueError('native observer source drift')
         return text.replace(MANUAL_ANCHOR, '''#include "bo_unit_observer.inc"
 #include "bo_objective_observer.inc"
 #include "bo_engine_lab.inc"
 extern void sub_001EB7F0_gen(void);
 extern void sub_001EB1F0_gen(void);
 extern void sub_001EB440_gen(void);
+extern void sub_001BA430_gen(void);
 
 /* ECX is the stream poll descriptor; unlink receives it at entry ESP+4.
  * Define the wrappers in recomp_manual.c so generate.py finds both names. */
@@ -167,6 +170,13 @@ void sub_001EB440(void)
         const unsigned members = bo_unit_after_link(slot, unit);
         if (members) bo_lab_restart_after_link(slot, unit, members);
     }
+}
+
+void sub_001BA430(void)
+{
+    const BoObjectiveWriterObservation before = bo_objective_writer_before(g_esi);
+    sub_001BA430_gen();
+    bo_objective_writer_after(&before);
 }
 
 void sub_001F1080(void)

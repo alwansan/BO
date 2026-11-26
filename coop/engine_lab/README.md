@@ -158,6 +158,12 @@ scene and table at both boundaries. Only aggregate counts are retained:
 verified/rejected frames, maximum matched records, changes, counter advances
 and entries reaching raw state 3. The update window does not cover every
 objective callback and cannot attribute a change to a particular input.
+The lab also observes the original `001BA430` objective state writer. Its
+entry ESI must be an exact row in the verified live table on the frame
+thread. The original runs once, and only a before/after change of that
+same row is counted. Absent, unmapped, replaced, or foreign-thread rows
+do not count as a verified transition. These observations remain separate
+from door or collision state.
 
 `summary.json` reports the exact fail-closed category and counters. A build failure
 is reported by stage (`runtime_dependency_checkout_failed`, `dsp_dependency_checkout_failed`,

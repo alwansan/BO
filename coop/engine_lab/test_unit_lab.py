@@ -51,6 +51,10 @@ class UnitLabTests(unittest.TestCase):
         self.assertLess(source_tick.index('bo_unit_bind_frame_thread();'), source_tick.index('bo_objective_begin();'))
         self.assertLess(source_tick.index('bo_objective_begin();'), source_tick.index('sub_001F1080_gen();'))
         self.assertLess(source_tick.index('sub_001F1080_gen();'), source_tick.index('bo_objective_end();'))
+        writer = patched.split('void sub_001BA430(void)\n{', 1)[1].split('\n}', 1)[0]
+        self.assertEqual(writer.count('sub_001BA430_gen();'), 1)
+        self.assertLess(writer.index('bo_objective_writer_before(g_esi)'), writer.index('sub_001BA430_gen();'))
+        self.assertLess(writer.index('sub_001BA430_gen();'), writer.index('bo_objective_writer_after(&before)'))
         self.assertTrue(Path(lab.HERE, 'unit_observer.inc').is_file())
 
     def test_headless_overlay_is_scoped_to_one_pinned_guard(self):

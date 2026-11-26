@@ -33,7 +33,8 @@ static int black_p2_state, black_p2_in;
 static uint32_t black_p2_shadow, black_p2_proxy;
 static uint32_t black_proxy_motion(uint32_t proxy) { return proxy == 0x9000 ? 0xA000 : proxy == 0x9100 ? 0xA100 : 0; }
 static void bo_audio_write(void) {}
-static LONG GetCurrentThreadId(void) { return 1; }
+static LONG current_thread = 1;
+static LONG GetCurrentThreadId(void) { return current_thread; }
 #include "unit_observer.inc"
 #include "objective_observer.inc"
 #include "observer.inc"
@@ -80,6 +81,27 @@ static void test_objective_frames(void)
     assert(bo_objectives.rejected_frames == 3 && bo_objectives.verified_frames == 1);
     GUEST8(world + 0x5AED) = 0;
     puts("BO_ENGINE_OBJECTIVE_FRAME_FIXTURE_PASS");
+
+    BoObjectiveWriterObservation writer = bo_objective_writer_before(live + 0xC);
+    GUEST32(live + 0x10)++;
+    bo_objective_writer_after(&writer);
+    assert(bo_objectives.verified_writer_calls == 1 && bo_objectives.changed_writer_calls == 1);
+
+    writer = bo_objective_writer_before(live + 4); /* Interior pointer fails before original call. */
+    bo_objective_writer_after(&writer);
+    assert(bo_objectives.rejected_writer_calls == 1);
+    writer = bo_objective_writer_before(live);
+    GUEST32(live) = authored + 0x18;
+    bo_objective_writer_after(&writer);
+    assert(bo_objectives.rejected_writer_calls == 2 && bo_objectives.changed_writer_calls == 1);
+    GUEST32(live) = authored;
+
+    current_thread = 2;
+    writer = bo_objective_writer_before(live);
+    bo_objective_writer_after(&writer);
+    current_thread = 1;
+    assert(bo_objective_writer_other_thread_calls == 1 && bo_objectives.verified_writer_calls == 1);
+    puts("BO_ENGINE_OBJECTIVE_WRITER_FIXTURE_PASS");
 }
 
 int main(void) {

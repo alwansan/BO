@@ -4398,5 +4398,22 @@
     "sharedWorldComplete": false,
     "acceptanceApk": false,
     "next": "read corrected Windows unit lifecycle run and validate removal and reload before any Android mapping use"
+  },
+  "workBatch35": {
+    "date": "2026-11-26",
+    "base": "522749c",
+    "scope": "read-only native objective writer observation",
+    "evidence": "memory/sessions/2026-11-26_bo-coop-work35-native-objective-writer.md",
+    "localPythonTestsPassed": 40,
+    "localNativeSanitizerFixturesPassed": 4,
+    "pinnedSplitGenerationVerified": true,
+    "unitLifecycleRun": 45883083661,
+    "unitLifecycleRunStatus": "original_engine_in_progress_no_artifact_at_last_check",
+    "nativeObjectiveWriterRuntimeVerified": false,
+    "liveRemovalVerified": false,
+    "liveSameUnitReloadVerified": false,
+    "sharedWorldComplete": false,
+    "acceptanceApk": false,
+    "next": "validate unit lifecycle aggregate, then exercise the native objective writer with an original in-game action"
   }
 }
