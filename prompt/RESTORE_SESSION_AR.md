@@ -1,3 +1,15 @@
+## آخر تحديث Work20 (2026-11-26)
+
+- الأساس `2e810f5`, الفرع `experiment/black-coop`. روابط ChatGPT المشاركة لم تُجلب ولا نص منها؛ الاستعادة من المستودع الحي.
+- رسالة الاستعادة + `docs/OWNER_PROJECT_OBJECTIVE_AR.md` قُرئت؛ الهدف: Start→مرحلة أولى+عالم واحد لكل البشر (2-4) + جسم كل لاعب + تزامن عالم/أهداف + APK قبول واحد. **غير مكتمل**.
+- أدلة مضافة `memory/evidence/WORK_BATCH20_WORLD_XREFS_PINNED_45843350617.json` (CI45843350617 SUCCESS، XBE مطابق، فقط أعداد مشتقة). `memory/sessions/2026-11-26_bo-coop-work20-shared-world-review.md`.
+- الحالة الصادقة: scaffolding مصدري مثبت لكن لا عالم مشترك حي؛ التفاصيل `docs/SHARED_WORLD_PROVIDER_INVESTIGATION_WORK18_AR.md`.
+- الخطوة التالية القابلة للتنفيذ: الربط الحي على خيط اللعبة الأصلي أو Work18 (unit-v24->constructor->teardown->stableKey->موفر أصلي). لا physical readiness.
+- APK الكامل يتطلب dispatch يدوي لـ `black-coop-room-network-apk.yml` **مع تصريح صريح باستخدام الأصول** المرفوعة (ISO لا تُعدّل)؛ البديل الحالي APKs ذات NO-GAMEPLAY. لا طلب اختبار هاتف جزئي.
+- كل العمل مرفوع على GitHub.
+
+---
+
 # رسالة استعادة جلسة BO
 
 انسخ نص المربع التالي والصقه في أي جلسة Codex جديدة. تتبع الجلسة الروابط الثابتة لقراءة آخر حالة منشورة.

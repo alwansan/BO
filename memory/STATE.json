@@ -4125,5 +4125,54 @@
     "audio_output_unavailable": true,
     "audio_lifecycle_verified": false,
     "shared_campaign_complete": false
+  },
+  "workBatch20": {
+    "date": "2026-11-26",
+    "branch": "experiment/black-coop",
+    "base": "2e810f5dcb81cdd8684913e07c50471afa9ff640",
+    "scope": "review restored session + pinned XBE read-only world-xref re-run + honest shared-world status; no gameplay claim",
+    "chatgptShareLinksReviewed": false,
+    "chatgptShareLinksNote": "public fetch disabled; transcripts NOT read; repo restored state used instead",
+    "restoredReferenceRead": [
+      "prompt/RESTORE_SESSION_AR.md",
+      "docs/OWNER_PROJECT_OBJECTIVE_AR.md",
+      "docs/SHARED_WORLD_PROVIDER_INVESTIGATION_WORK18_AR.md",
+      "memory/STATE.json",
+      "memory/MEMORY.md",
+      "memory/PLAN_AR.md",
+      "memory/ISSUES_AR.md"
+    ],
+    "ownerXbeSha1Matched": "c5bfed25449c8212d7a976f15246e87ead57713f",
+    "ownerXbeCopiedOrUploaded": false,
+    "ciRun": 45843350617,
+    "ciConclusion": "success",
+    "evidence": "memory/evidence/WORK_BATCH20_WORLD_XREFS_PINNED_45843350617.json",
+    "worldXrefs": {
+      "executable_section_count": 10,
+      "bytes_privately_disassembled": 2772164,
+      "instruction_xref_candidates": 892,
+      "read_or_address_candidates": 890,
+      "write_candidates": 2,
+      "read_modify_write_candidates": 0,
+      "writers": [
+        "0020BF48",
+        "0020BF51"
+      ],
+      "source_class": "register",
+      "true_scene_loader_proven": false,
+      "mission_identity_proven": false,
+      "world_epoch_proven": false,
+      "safe_hook_proven": false
+    },
+    "localEnvNote": "Termux LLVM objdump lacks i386 backend; objdump-dependent tests run on GitHub Actions; capstone used privately if needed",
+    "sharedWorldComplete": false,
+    "originalProducerResolverApplyPresent": false,
+    "originalHostP2P4ActorsLive": false,
+    "guestCanonicalWorldApplied": false,
+    "physicalReadinessOpened": false,
+    "ownerPhoneTestRequested": false,
+    "blocker": "source-only scaffolding is not a live native original-world producer/resolver/apply; needs source-proven native ABI on game thread + two-phone verification",
+    "firstPendingActionableStep": "live binding on original game thread (restored); fallback evidence docs/SHARED_WORLD_PROVIDER_INVESTIGATION_WORK18_AR.md; trace unit-v24 48B instance reader -> constructor -> state-change/teardown; prove stable original identity; then production OriginalScene/ResolveOriginalObject/StillOwnsOriginalObject/ApplyOriginalHostState/VerifyOriginalHostState provider; honest two-phone test only after genuine shared first stage + visible remote humans + shared world sync",
+    "allWorkPushedToGithub": true
   }
 }

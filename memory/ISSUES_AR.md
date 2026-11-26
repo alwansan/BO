@@ -1,3 +1,12 @@
+## Work20 — مراجعة الاستعادة + دليل العالم المشترك (2026-11-26)
+
+- الأساس `2e810f5`, دفع إلى `experiment/black-coop`. روابط ChatGPT المشاركة لم تُجلب (لا نص)؛ المصدر الحي + الاستعادة + الذاكرة.
+- XBE خاص مطابق SHA1 `c5bfed25...`; إعادة فحص `world_xref_static`+`world_writer_flow` عبر CI `45843350617` SUCCESS؛ الأدلة `memory/evidence/WORK_BATCH20_WORLD_XREFS_PINNED_45843350617.json`: 10 أقسام، 2772164 بايت، 892 مرشح xref، كتابتان `0020BF48`/`0020BF51` register-sourced فقط. لا scene loader/mission/epoch/safe hook.
+- **العالم المشترك غير مكتمل**: لا منتج أصلي + لا resolver/apply + لا `OriginalGuestCanonicalApplyFrame` caller إنتاجي + لا P2..P4 أصلية حية + لا تطبيق ضيف. لا physical readiness؛ AI/أصول/حفظ أصلية دون تغيير.
+- البيئة المحلية Termux LLVM objdump بلا i386؛ اختبارات objdump عبر GitHub Actions.
+- الخطوة التالية: الربط الحي على خيط اللعبة (استعادة Work19) أو متابعة Work18: قارئ unit-v24 (48B) -> constructor -> state-change/teardown -> هوية ثابتة -> موفر `OriginalScene/ResolveOriginalObject/StillOwnsOriginalObject/ApplyOriginalHostState/VerifyOriginalHostState`؛ لا ABI مخترع. ثم اختبار هاتفين كبير واحد للمالك بعد بلوغ المعيار.
+- بناء APK الكامل بالمسار `black-coop-room-network-apk.yml` (يستخدم ISO المرفوعة في المستودع، لا تعديل عليها) **manual dispatch يتطلب تصريحاً صريحاً بالأصول** وفق سياسة المستودع؛ حتى ذلك الحين الـAPKs ذات NO-GAMEPLAY عبر CI هي المتاحة.
+
 # Work19 — نتيجة المحرك الحقيقي ومراقبة الصوت (2026-11-26)
 
 نجح CI45807466769 على74653903: generation/build وتشغيل PC الأصلي مع مراقبة الصوت. create24/destroy0/restoreChecks1/retainedFpvStorage6، ولا otherThread/overlap/eviction/busy/untracked مرصود. audio_observer_executed=true. نجحت تجربة اللاعبين السابقة:1216 ticks فيزيائية مستقلة، ready768، حركة4527/6363mm،10shots لكل لاعب وثماني مراحل input. التقرير allowlisted وحده محفوظ في memory/evidence/WORK_BATCH19_REAL_AUDIO_OBSERVER_2026-11-26.json؛ SHA25646eb9505dc99fa332eccb9b77b4daec5c84d34f4ce68e4739a0326103716d04f.

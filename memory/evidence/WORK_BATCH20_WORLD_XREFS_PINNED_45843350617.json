@@ -1,0 +1,180 @@
+{
+  "provenance": {
+    "artifact_id": 15129936328,
+    "captured_run": 45843350617,
+    "captured_utc": "2026-11-26",
+    "head_sha": "052894bac36b576926dff606c5ecec7bd1dd5adb",
+    "origin": "GitHub Actions private XBE scan; derived bounded metadata only; no original bytes/disassembly exported",
+    "workflow": "black-coop-world-scene-xrefs.yml"
+  },
+  "report": {
+    "bounded_possible_writer_addresses": [
+      "0020BF48",
+      "0020BF51"
+    ],
+    "bounded_writer_operand_classes": [
+      {
+        "access": "write_candidate",
+        "address": "0020BF48",
+        "source_class": "register"
+      },
+      {
+        "access": "write_candidate",
+        "address": "0020BF51",
+        "source_class": "register"
+      }
+    ],
+    "bytes_privately_disassembled": 2772164,
+    "executable_section_count": 10,
+    "instruction_xref_candidates": 892,
+    "limitation": "Linear disassembly of executable sections may cross embedded data, thunks, misaligned instructions or unreachable code. Xrefs and writer addresses are candidates, not runtime traces or proof of a BLACK stage-loaded engine callback.",
+    "mission_identity_proven": false,
+    "no_gameplay_performed": true,
+    "owner_binary_or_disassembly_exported": false,
+    "owner_sha1_matched": true,
+    "read_modify_write_candidates": 0,
+    "read_or_address_candidates": 890,
+    "safe_hook_proven": false,
+    "schema": "BO-COOP-world-xrefs-heuristic-v1",
+    "source": "owner-pinned-XBE-executable-sections",
+    "true_scene_loader_proven": false,
+    "world_epoch_proven": false,
+    "world_global_address": "002D45D4",
+    "write_candidates": 2,
+    "writer_flow_context": {
+      "bounded_direct_branch_refs": [
+        {
+          "from": "0020BE5F",
+          "target": "0020BE9B"
+        },
+        {
+          "from": "0020BE99",
+          "target": "0020BEA1"
+        },
+        {
+          "from": "0020BEB4",
+          "target": "0020BEC4"
+        },
+        {
+          "from": "0020BEC2",
+          "target": "0020BECA"
+        },
+        {
+          "from": "0020BEEF",
+          "target": "0020BEFA"
+        },
+        {
+          "from": "0020BEF8",
+          "target": "0020BF00"
+        },
+        {
+          "from": "0020BF13",
+          "target": "0020BF28"
+        },
+        {
+          "from": "0020BF26",
+          "target": "0020BF2E"
+        },
+        {
+          "from": "0020BF3F",
+          "target": "0020BF51"
+        },
+        {
+          "from": "0020BF4F",
+          "target": "0020BF57"
+        },
+        {
+          "from": "0020BF6A",
+          "target": "0020BF7F"
+        },
+        {
+          "from": "0020BF7D",
+          "target": "0020BF85"
+        },
+        {
+          "from": "0020BFAA",
+          "target": "0020BFB8"
+        },
+        {
+          "from": "0020BFB6",
+          "target": "0020BFBE"
+        },
+        {
+          "from": "0020BFCF",
+          "target": "0020BFE7"
+        },
+        {
+          "from": "0020BFE5",
+          "target": "0020BFED"
+        },
+        {
+          "from": "0020BFFE",
+          "target": "0020C010"
+        }
+      ],
+      "bounded_direct_call_refs": [],
+      "caveat": "Linear x86 disassembly can cross data and indirect calls are not resolved. Nearness, source register and direct control references do not prove executable reachability, actual world creation or BLACK mission scene load.",
+      "expected_register_world_writes": 2,
+      "full_binary_or_instructions_exported": false,
+      "nearby_direct_branch_targets_count": 17,
+      "nearby_direct_call_targets_count": 0,
+      "schema": "BO-COOP-world-writer-neighborhood-v1",
+      "sha1_pinned_owner_xbe_matched": true,
+      "store_address_separation_bytes": [
+        9
+      ],
+      "verified_game_thread_hook": false,
+      "verified_mission_or_scene_epoch": false,
+      "verified_scene_loader": false,
+      "world_global": "002D45D4",
+      "writers": [
+        {
+          "following_instruction_family_counts": {
+            "arithmetic_or_test": 3,
+            "call": 1,
+            "conditional_branch": 1,
+            "data_transfer": 6,
+            "unconditional_branch": 1
+          },
+          "instructions_sampled_after": 12,
+          "instructions_sampled_before": 12,
+          "possible_zeroed_register_in_previous_six": false,
+          "preceding_instruction_family_counts": {
+            "arithmetic_or_test": 1,
+            "call": 2,
+            "conditional_branch": 1,
+            "data_transfer": 6,
+            "other": 1,
+            "unconditional_branch": 1
+          },
+          "same_linear_section_index": 0,
+          "source_register": "eax",
+          "writer_address": "0020BF48"
+        },
+        {
+          "following_instruction_family_counts": {
+            "arithmetic_or_test": 2,
+            "call": 1,
+            "conditional_branch": 1,
+            "data_transfer": 6,
+            "other": 1,
+            "unconditional_branch": 1
+          },
+          "instructions_sampled_after": 12,
+          "instructions_sampled_before": 12,
+          "possible_zeroed_register_in_previous_six": true,
+          "preceding_instruction_family_counts": {
+            "arithmetic_or_test": 2,
+            "call": 2,
+            "conditional_branch": 1,
+            "data_transfer": 5,
+            "unconditional_branch": 2
+          },
+          "same_linear_section_index": 0,
+          "source_register": "ebx",
+          "writer_address": "0020BF51"
+        }
+      ]
+    }
+  }
+}
