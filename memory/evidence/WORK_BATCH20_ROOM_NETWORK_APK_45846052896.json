@@ -1,0 +1,59 @@
+{
+  "apkArtifact": {
+    "digest": "sha256:488b54b531189db86c82d52e79231ef0f6eb85a7db001381a9c2cc162816fa0b",
+    "download": "https://github.com/alwansan/BO/actions/runs/45846052896/artifacts/15132610478",
+    "expires": "2026-12-10",
+    "id": 15132610478,
+    "name": "black-room-network-android-arm64-NO-GAMEPLAY-COOP",
+    "zip_bytes": 8892539
+  },
+  "conclusion": "success",
+  "fixCommit": "810013ffde701326fe68c6f9de899ff15cb15391",
+  "head_sha": "810013ffde701326fe68c6f9de899ff15cb15391",
+  "honest_flags": {
+    "gameplay_coop": false,
+    "guest_memory_writes_added": false,
+    "lobby_networking": true,
+    "multiplayer": false,
+    "no_game_actor_or_gameplay_sync": true,
+    "original_ai_modified": false,
+    "room_profile": 10,
+    "room_wire_version": 10,
+    "shared_world_complete": false,
+    "verified_game_scene_loaded": false
+  },
+  "independently_rechecked_on_pinned_xbe": true,
+  "innerApk": {
+    "apk_bytes": 22067735,
+    "apk_sha256": "87e99f17b62562d55da8b48a2389538b95834a3cb878b793b9da9fa5cd0e10d9",
+    "arch": "arm64-v8a",
+    "debug_signature_verified": true,
+    "device_tested": false,
+    "iso_modified": false,
+    "native_libs": [
+      "libSDL3.so",
+      "libc++_shared.so",
+      "libmain.so"
+    ],
+    "no_original_assets_in_apk": true,
+    "package": "org.bocoop.black.roomnet",
+    "path": "black-room-network-NO-GAMEPLAY-COOP.apk"
+  },
+  "metadataArtifact": {
+    "expires": "2027-02-24",
+    "id": 15132525606,
+    "name": "black-room-network-build-metadata"
+  },
+  "note": "room-only; NOT acceptance APK; NOT playable co-op; sharedWorldComplete=false; not device tested",
+  "original_xbe_sha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+  "previousFailedRun": 45844688050,
+  "run": 45846052896,
+  "verification": [
+    "sha256sum == apk_sha256",
+    "size==apk_bytes",
+    "AArch64 libmain.so + libSDL3.so",
+    "no iso/xbe inside",
+    "manifest+classes.dex"
+  ],
+  "workflow": "black-coop-room-network-apk.yml"
+}

@@ -4182,6 +4182,18 @@
       "failedRun": 45844688050,
       "reDispatchedRun": 45846052896,
       "note": "still not claiming APK success; not claiming shared world complete"
-    }
+    },
+    "apkRun": 45846052896,
+    "apkConclusion": "success_room_only_no_gameplay_coop",
+    "apkArtifact": {
+      "id": 15132610478,
+      "name": "black-room-network-android-arm64-NO-GAMEPLAY-COOP",
+      "zip_bytes": 8892539,
+      "digest": "sha256:488b54b531189db86c82d52e79231ef0f6eb85a7db001381a9c2cc162816fa0b",
+      "expires": "2026-12-10",
+      "download": "https://github.com/alwansan/BO/actions/runs/45846052896/artifacts/15132610478"
+    },
+    "apkEvidence": "memory/evidence/WORK_BATCH20_ROOM_NETWORK_APK_45846052896.json",
+    "acceptanceApk": false
   }
 }
