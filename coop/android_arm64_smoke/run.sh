@@ -17,7 +17,7 @@ bt="$ANDROID_HOME/build-tools/34.0.0"
 jar="$ANDROID_HOME/platforms/android-34/android.jar"
 cxx="$ANDROID_HOME/ndk/28.2.13676358/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android29-clang++"
 mkdir -p "$out/classes" "$out/dex" "$out/package/lib/arm64-v8a"
-"$cxx" -std=c++20 -Wall -Wextra -Werror -shared -fPIC coop/android_arm64_smoke/probe.cpp -o "$out/package/lib/arm64-v8a/libbo_arm64_smoke.so"
+"$cxx" -std=c++20 -Wall -Wextra -Werror -shared -fPIC -static-libstdc++ coop/android_arm64_smoke/probe.cpp -o "$out/package/lib/arm64-v8a/libbo_arm64_smoke.so"
 file "$out/package/lib/arm64-v8a/libbo_arm64_smoke.so" | tee "$out/elf.txt"
 grep -q 'ARM aarch64' "$out/elf.txt"
 javac --release 8 -Xlint:all,-options -Werror -cp "$jar" -d "$out/classes" coop/android_arm64_smoke/Arm64Instrumentation.java
@@ -53,6 +53,6 @@ for property in ro.product.cpu.abilist ro.dalvik.vm.native.bridge; do
 done
 timeout -k 5s 45s "$adb" -s emulator-5554 push "$out/test.apk" /data/local/tmp/bo-arm64-smoke.apk
 timeout -k 5s 60s "$adb" -s emulator-5554 shell pm install -t -r /data/local/tmp/bo-arm64-smoke.apk
-timeout -k 5s 90s "$adb" -s emulator-5554 shell am instrument -w org.bocoop.arm64smoke/org.bocoop.arm64smoke.Arm64Instrumentation | tee "$out/result.txt"
+timeout -k 5s 90s "$adb" -s emulator-5554 shell am instrument -w -r org.bocoop.arm64smoke/org.bocoop.arm64smoke.Arm64Instrumentation | tee "$out/result.txt"
 grep -q 'BO_ARM64_JNI_PASS:' "$out/result.txt"
 grep -q 'INSTRUMENTATION_CODE: -1' "$out/result.txt"
