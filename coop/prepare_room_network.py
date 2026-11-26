@@ -238,6 +238,8 @@ def prepare(root: pathlib.Path):
         else if (code == 2127) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_EXTRA_ACTOR_GATE_SOURCE_ELIGIBLE_NO_GAMEPLAY_ACTOR");
         else if (code == 2130) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_POST_1F1080_GAME_FRAME_STABLE_SOURCE_ONLY_NO_PLAYER2");
         else if (code == 2131) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_UNIT_ORDINALS_WORLD_LIST_MEMBERSHIP_OBSERVED");
+        else if (code == 2132) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_UNIT_EARLY_TEARDOWN_WORLD_LIST_REMOVAL_OBSERVED");
+        else if (code == 2133) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_SAME_UNIT_WORLD_LIST_RELINK_OBSERVED");
         else if (code == 20) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_EASY_NOT_MISSION");
         else if (code == 21) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_NORMAL_NOT_MISSION");
         else if (code == 22) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_HARD_NOT_MISSION");
@@ -500,6 +502,38 @@ X86_EXTERN_FUNC(__imp__sub_001F1080);
 X86_FUNC(sub_001F1080) {
     __imp__sub_001F1080(ctx,base); // original gameplay MUST execute once
     blackcoop::ObserveOriginalPostWorldFrame(); // no guest writes
+}
+
+// Original unit unlink and link both take the unit at entry ESP+4.
+// Only the pinned early teardown return sites can start a relink observation.
+X86_EXTERN_FUNC(__imp__sub_001EB1F0);
+X86_FUNC(sub_001EB1F0) {
+    auto* lifecycle=blackcoop::OriginalUnitLifecycleOnFrameThread();
+    const blackcoop::OriginalUnitMembershipMemory memory;
+    const auto before=lifecycle?lifecycle->BeforeUnlink(memory,ctx.esp):
+        blackcoop::OriginalUnitLifecycle::UnlinkSample{};
+    __imp__sub_001EB1F0(ctx,base);
+    if(lifecycle&&lifecycle->AfterUnlink(memory,before))
+        blackcoop::SendSafeWorldCodeToAndroid(2132);
+}
+
+// Stream publication passes the unit in ECX and returns readiness in AL.
+X86_EXTERN_FUNC(__imp__sub_001EB7F0);
+X86_FUNC(sub_001EB7F0) {
+    auto* lifecycle=blackcoop::OriginalUnitLifecycleOnFrameThread();
+    const blackcoop::OriginalUnitMembershipMemory memory;
+    const uint32_t unit=lifecycle?lifecycle->BeforePoll(memory,ctx.ecx):0;
+    __imp__sub_001EB7F0(ctx,base);
+    if(lifecycle)lifecycle->AfterPoll(memory,unit,ctx.eax);
+}
+
+X86_EXTERN_FUNC(__imp__sub_001EB440);
+X86_FUNC(sub_001EB440) {
+    auto* lifecycle=blackcoop::OriginalUnitLifecycleOnFrameThread();
+    const blackcoop::OriginalUnitMembershipMemory memory;
+    const uint32_t unit=lifecycle?lifecycle->BeforeLink(memory,ctx.esp):0;
+    __imp__sub_001EB440(ctx,base);
+    if(lifecycle)lifecycle->AfterLink(memory,unit);
 }
 '''
     pending[cheat]=game

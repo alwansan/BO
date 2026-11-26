@@ -5,51 +5,217 @@
 // NOT a loaded-scene event, peer COMMIT, player-2 setup or shared AI proof.
 #pragma once
 #include "room_original_running_scene_source_gate.hpp"
+#include <array>
 #include <cstdint>
 #include <thread>
 namespace blackcoop {
-// Read-only port of the Windows lab's unit+0x14 membership check. It exposes
-// no addresses, ordinals, or lifetime handles to the caller.
-template<class Memory>
-bool HasOriginalWorldUnitMembership(const Memory& memory, uint32_t world) noexcept {
- constexpr uint32_t kWorldRoot=0x002D45D4u, kRecordStride=0x30u, kObjectStride=0xF0u;
- if ((world&3u)||!memory.Contains(kWorldRoot,4u)||!memory.Contains(world,0x5CB8u))
-   return false;
- const auto running=[&] {
-   return memory.Read32(kWorldRoot)==world &&
-     IsOriginalWorldRunning(memory.Read32(world+0x5AE0u),memory.Read32(world+0x5AE4u));
- };
- if(!running())return false;
+namespace unit_observation {
+constexpr uint32_t kWorldRoot=0x002D45D4u, kObjectStride=0xF0u;
+constexpr std::array<uint32_t,2> kUnitOffsets{0x49D0u,0x5250u};
 
- const auto hasMembers=[&](uint32_t unit) {
-   if(memory.Read32(unit)!=0x1Cu||memory.Read8(unit+0x38u)!=1u)return false;
+struct Range {
+ uint32_t objects=0, count=0, index=0;
+};
+
+template<class Memory>
+uint32_t World(const Memory& memory) noexcept {
+ if(!memory.Contains(kWorldRoot,4u))return 0;
+ const uint32_t world=memory.Read32(kWorldRoot);
+ return !(world&3u)&&memory.Contains(world,0x5CB8u)?world:0;
+}
+
+template<class Memory>
+bool Running(const Memory& memory,uint32_t world) noexcept {
+ return world&&World(memory)==world&&
+   IsOriginalWorldRunning(memory.Read32(world+0x5AE0u),memory.Read32(world+0x5AE4u));
+}
+
+template<class Memory>
+uint32_t Scene(const Memory& memory,uint32_t world) noexcept {
+ return uint32_t(memory.Read8(world+0x5AECu))*256u+memory.Read8(world+0x5AEDu);
+}
+
+template<class Memory>
+Range ReadRange(const Memory& memory,uint32_t unit,bool linked=true) noexcept {
+   constexpr uint32_t kRecordStride=0x30u;
+   if(memory.Read32(unit)!=0x1Cu||memory.Read8(unit+0x38u)!=static_cast<uint8_t>(linked))return {};
    const uint32_t index=memory.Read32(unit+8u);
-   if(index==UINT32_MAX||index!=memory.Read32(unit+4u))return false;
+   if(index==UINT32_MAX||index!=memory.Read32(unit+4u))return {};
    const uint32_t header=memory.Read32(unit+0xCu), objects=memory.Read32(unit+0x14u);
-   if((header&3u)||!memory.Contains(header,0x92u))return false;
-   if(memory.Read32(header)!=24u)return false;
+   if((header&3u)||!memory.Contains(header,0x92u))return {};
+   if(memory.Read32(header)!=24u)return {};
    const uint32_t count=memory.Read16(header+0x90u), records=memory.Read32(header+0x1Cu);
    if(!count||count>1024u||(objects&3u)||(records&3u)||
       !memory.Contains(objects,count*kObjectStride)||!memory.Contains(records,count*kRecordStride))
-     return false;
+     return {};
    for(uint32_t ordinal=0;ordinal<count;++ordinal){
      const uint32_t object=objects+ordinal*kObjectStride;
      if(memory.Read32(object)!=0x28EA60u||
-        memory.Read32(object+0xD0u)!=records+ordinal*kRecordStride)return false;
+        memory.Read32(object+0xD0u)!=records+ordinal*kRecordStride)return {};
    }
+   return {objects,count,index};
+}
+
+template<class Memory>
+int CountMembers(const Memory& memory,uint32_t world,const Range& range) noexcept {
    uint32_t node=memory.Read32(world+0x5CB4u), visited=0, matches=0;
    while(node){
-     if(++visited>4096u||(node&3u)||!memory.Contains(node,0xB4u))return false;
-     if(node>=objects&&node-objects<count*kObjectStride){
-       if((node-objects)%kObjectStride)return false;
+     if(++visited>4096u||(node&3u)||!memory.Contains(node,0xB4u))return -1;
+     if(node>=range.objects&&node-range.objects<range.count*kObjectStride){
+       if((node-range.objects)%kObjectStride)return -1;
        ++matches;
      }
      node=memory.Read32(node+0xB0u);
    }
-   return matches==count;
- };
- return (hasMembers(world+0x49D0u)||hasMembers(world+0x5250u))&&running();
+   return static_cast<int>(matches);
 }
+
+inline int UnitSlot(uint32_t world,uint32_t unit) noexcept {
+ if(!world)return -1;
+ if(unit==world+kUnitOffsets[0])return 0;
+ if(unit==world+kUnitOffsets[1])return 1;
+ return -1;
+}
+} // namespace unit_observation
+
+// No addresses, ordinals, or lifetime handles leave this membership check.
+template<class Memory>
+bool HasOriginalWorldUnitMembership(const Memory& memory,uint32_t world) noexcept {
+ using namespace unit_observation;
+ if(!Running(memory,world))return false;
+ for(const auto offset:kUnitOffsets){
+   const auto range=ReadRange(memory,world+offset);
+   if(range.count&&CountMembers(memory,world,range)==static_cast<int>(range.count))
+     return Running(memory,world);
+ }
+ return false;
+}
+
+// Local diagnostic ledger only. The removals never export their ranges.
+class OriginalUnitLifecycle final {
+ using Range=unit_observation::Range;
+ struct Entry {
+   uint32_t scene=0, index=0, count=0, publishedWorld=0, publishedObjects=0;
+   bool linked=false;
+ };
+ std::array<Entry,2> entries_{};
+ const std::thread::id thread_=std::this_thread::get_id();
+ public:
+ struct UnlinkSample {
+   uint32_t world=0, scene=0;
+   int slot=-1;
+   Range range{};
+ };
+ bool OnFrameThread()const noexcept{return thread_==std::this_thread::get_id();}
+
+ template<class Memory>
+ UnlinkSample BeforeUnlink(const Memory& memory,uint32_t stack) noexcept {
+   using namespace unit_observation;
+   if(!OnFrameThread()||(stack&3u)||!memory.Contains(stack,8u))return {};
+   const uint32_t world=World(memory), unit=memory.Read32(stack+4u);
+   const int slot=UnitSlot(world,unit);
+   if(slot<0)return {};
+   if(memory.Read8(unit+0x38u)!=1u){
+     if(entries_[slot].linked)entries_[slot]={};
+     return {};
+   }
+   entries_[slot]={};
+   const uint32_t returnAddress=memory.Read32(stack);
+   constexpr std::array<uint32_t,2> kEarlyUnlinkReturns{0x001EBB62u,0x001EBB6Eu};
+   if(memory.Read32(world+0x5AE4u)!=0x1Du||returnAddress!=kEarlyUnlinkReturns[slot])return {};
+   const auto range=ReadRange(memory,unit);
+   if(!range.count||CountMembers(memory,world,range)!=static_cast<int>(range.count))return {};
+   return {world,Scene(memory,world),slot,range};
+ }
+
+ template<class Memory>
+ uint32_t BeforePoll(const Memory& memory,uint32_t unit) const noexcept {
+   using namespace unit_observation;
+   if(!OnFrameThread())return 0;
+   const int slot=UnitSlot(World(memory),unit);
+   return slot>=0&&entries_[slot].count&&memory.Read32(unit)!=0x1Cu?unit:0;
+ }
+
+ template<class Memory>
+ void AfterPoll(const Memory& memory,uint32_t unit,uint32_t result) noexcept {
+   using namespace unit_observation;
+   if(!OnFrameThread()||!unit||(result&0xFFu)!=1u)return;
+   const uint32_t world=World(memory);
+   const int slot=UnitSlot(world,unit);
+   if(slot<0)return;
+   auto& entry=entries_[slot];
+   const auto range=ReadRange(memory,unit,false);
+   if(!range.count||range.count!=entry.count||range.index!=entry.index||Scene(memory,world)!=entry.scene){
+     entry={};
+     return;
+   }
+   entry.publishedWorld=world;
+   entry.publishedObjects=range.objects;
+   entry.linked=false;
+ }
+
+ template<class Memory>
+ bool AfterUnlink(const Memory& memory,const UnlinkSample& before) noexcept {
+   using namespace unit_observation;
+   if(!OnFrameThread()||before.slot<0||World(memory)!=before.world||
+      Scene(memory,before.world)!=before.scene||
+      memory.Read8(before.world+kUnitOffsets[before.slot]+0x38u)||
+      CountMembers(memory,before.world,before.range)!=0)return false;
+   entries_[before.slot]={before.scene,before.range.index,before.range.count};
+   return true;
+ }
+
+ template<class Memory>
+ uint32_t BeforeLink(const Memory& memory,uint32_t stack) const noexcept {
+   using namespace unit_observation;
+   if(!OnFrameThread()||(stack&3u)||!memory.Contains(stack,8u))return 0;
+   const uint32_t unit=memory.Read32(stack+4u);
+   const uint32_t world=World(memory);
+   const int slot=UnitSlot(world,unit);
+   return slot>=0&&entries_[slot].publishedWorld==world&&memory.Read32(unit)==0x1Cu&&
+     !memory.Read8(unit+0x38u)?unit:0;
+ }
+
+ template<class Memory>
+ void AfterLink(const Memory& memory,uint32_t unit) noexcept {
+   using namespace unit_observation;
+   if(!OnFrameThread()||!unit)return;
+   const uint32_t world=World(memory);
+   const int slot=UnitSlot(world,unit);
+   if(slot<0)return;
+   auto& entry=entries_[slot];
+   const auto range=ReadRange(memory,unit);
+   if(!range.count||range.count!=entry.count||range.index!=entry.index||
+      world!=entry.publishedWorld||range.objects!=entry.publishedObjects||
+      Scene(memory,world)!=entry.scene||
+      CountMembers(memory,world,range)!=static_cast<int>(range.count)){
+     entry={};
+     return;
+   }
+   entry.linked=true;
+ }
+
+ template<class Memory>
+ bool ObserveRunningFrame(const Memory& memory,uint32_t world) noexcept {
+   using namespace unit_observation;
+   if(!OnFrameThread()||(!entries_[0].count&&!entries_[1].count)||!Running(memory,world))return false;
+   const uint32_t scene=Scene(memory,world);
+   bool relinked=false;
+   for(unsigned slot=0;slot<entries_.size();++slot){
+     auto& entry=entries_[slot];
+     if(!entry.count)continue;
+     if(scene!=entry.scene){entry={};continue;}
+     if(!entry.linked)continue;
+     if(entry.publishedWorld==world){
+       const auto range=ReadRange(memory,world+kUnitOffsets[slot]);
+       if(range.objects==entry.publishedObjects&&range.count==entry.count&&range.index==entry.index&&
+          CountMembers(memory,world,range)==static_cast<int>(range.count))relinked=true;
+     }
+     entry={};
+   }
+   return relinked&&Running(memory,world)&&Scene(memory,world)==scene;
+ }
+};
 
 struct OriginalPostFrameSample {
  uint32_t world=0,owner=0,physics=0,npcPool=0;

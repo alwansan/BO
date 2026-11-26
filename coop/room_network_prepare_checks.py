@@ -44,9 +44,23 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('RoomAppRooms.statusLine(row)',java)
             self.assertIn('public void coopRecordWorldTick(int code)',java)
             self.assertIn('ORIGINAL_UNIT_ORDINALS_WORLD_LIST_MEMBERSHIP_OBSERVED',java)
+            self.assertIn('ORIGINAL_UNIT_EARLY_TEARDOWN_WORLD_LIST_REMOVAL_OBSERVED',java)
+            self.assertIn('ORIGINAL_SAME_UNIT_WORLD_LIST_RELINK_OBSERVED',java)
             post_frame=(root/'src/coop/room_original_post_frame_witness.hpp').read_text(encoding='utf-8')
             self.assertIn('HasOriginalWorldUnitMembership(OriginalUnitMembershipMemory{},s.world)',post_frame)
             self.assertIn('if(hasUnitMembership)\n     SendSafeWorldCodeToAndroid(2131)',post_frame)
+            self.assertIn('lifecycle->ObserveRunningFrame(OriginalUnitMembershipMemory{},s.world)',post_frame)
+            cheats=(root/'src/game/cheats.cpp').read_text(encoding='utf-8')
+            for address, name, argument, after in (
+                ('001EB1F0','Unlink','ctx.esp','before'),
+                ('001EB7F0','Poll','ctx.ecx','unit,ctx.eax'),
+                ('001EB440','Link','ctx.esp','unit'),
+            ):
+                body=cheats.split(f'X86_FUNC(sub_{address}) {{',1)[1].split('\n}',1)[0]
+                original=f'__imp__sub_{address}(ctx,base);'
+                self.assertEqual(body.count(original),1)
+                self.assertLess(body.index(f'Before{name}(memory,{argument})'),body.index(original))
+                self.assertLess(body.index(original),body.index(f'After{name}(memory,{after})'))
             self.assertIn('coopRecordOriginalPlayerEye(int xCm,int yCm,int zCm,',java)
             self.assertIn('coopPollTrustedHumanInputsFromGameThread()',java)
             self.assertIn('coopPollHostWorldSnapshotFromGameThread()',java)

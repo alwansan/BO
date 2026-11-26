@@ -66,8 +66,98 @@ static void TestUnitMembership(){
  std::cout<<"ORIGINAL_UNIT_WORLD_LIST_MEMBERSHIP_FIXTURE_PASS\n";
 }
 
+static void TestUnitLifecycle(){
+ constexpr uint32_t oldWorld=0x100000,newWorld=0x180000,slotOffset=0x49D0;
+ constexpr uint32_t stack=0x130000;
+ UnitFixture memory;
+ OriginalUnitLifecycle lifecycle;
+ const auto prepare=[&](uint32_t world,uint32_t offset,uint32_t objects,uint32_t index,bool linked){
+   const uint32_t unit=world+offset,header=objects+0x1000,records=header+0x100;
+   memory.Write32(0x2D45D4,world);
+   memory.Write32(world+0x5AE0,0x1C);
+   memory.Write32(world+0x5AE4,0x1D);
+   memory.Write32(world+0x5AEC,0x100);
+   memory.Write32(world+0x5CB4,linked?objects:0);
+   memory.Write32(unit,0x1C);
+   memory.Write32(unit+4,index);
+   memory.Write32(unit+8,index);
+   memory.Write32(unit+0x38,linked?1:0);
+   memory.Write32(unit+0xC,header);
+   memory.Write32(unit+0x14,objects);
+   memory.Write32(header,24);
+   memory.Write32(header+0x90,1);
+   memory.Write32(header+0x1C,records);
+   memory.Write32(objects,0x28EA60);
+   memory.Write32(objects+0xD0,records);
+   memory.Write32(objects+0xB0,0);
+   memory.Write32(stack+4,unit);
+   return unit;
+ };
+ const auto remove=[&] {
+   const uint32_t unit=prepare(oldWorld,slotOffset,0x110000,7,true);
+   memory.Write32(stack,0x001EB6DC); // ordinary unlink path
+   assert(lifecycle.BeforeUnlink(memory,stack).slot==-1);
+   memory.Write32(stack,0x001EBB6E); // early path, wrong unit slot
+   assert(lifecycle.BeforeUnlink(memory,stack).slot==-1);
+   memory.Write32(stack,0x001EBB62);
+   std::thread foreign([&] { assert(lifecycle.BeforeUnlink(memory,stack).slot==-1); });
+   foreign.join();
+   const auto before=lifecycle.BeforeUnlink(memory,stack);
+   assert(before.slot==0);
+   memory.Write32(unit+0x38,0);
+   assert(!lifecycle.AfterUnlink(memory,before)); // object is still in the world list
+   memory.Write32(oldWorld+0x5CB4,0);
+   assert(lifecycle.AfterUnlink(memory,before));
+   assert(!lifecycle.ObserveRunningFrame(memory,oldWorld));
+   assert(lifecycle.BeforeUnlink(memory,stack).slot==-1); // redundant teardown call
+ };
+ const auto relink=[&](uint32_t index,uint32_t offset,uint32_t scene,bool publish=true){
+   constexpr uint32_t objects=0x190000;
+   const uint32_t unit=prepare(newWorld,offset,objects,index,false);
+   memory.Write32(newWorld+0x5AE4,0);
+   memory.Write32(newWorld+0x5AEC,scene);
+   assert(!lifecycle.BeforeLink(memory,stack)); // mapped memory alone is not a publication
+   if(publish){
+     memory.Write32(unit,0);
+     const auto loading=lifecycle.BeforePoll(memory,unit);
+     assert(loading==(offset==slotOffset?unit:0));
+     memory.Write32(unit,0x1C);
+     lifecycle.AfterPoll(memory,loading,1);
+   }
+   const auto candidate=lifecycle.BeforeLink(memory,stack);
+   assert(candidate==((publish&&offset==slotOffset&&scene==0x100&&index==7)?unit:0));
+   memory.Write32(unit+0x38,1);
+   memory.Write32(newWorld+0x5CB4,objects);
+   lifecycle.AfterLink(memory,candidate);
+   assert(!lifecycle.ObserveRunningFrame(memory,newWorld));
+   memory.Write32(newWorld+0x5AE4,0x1D);
+ };
+ remove();
+ relink(7,slotOffset,0x100,false);
+ assert(!lifecycle.ObserveRunningFrame(memory,newWorld));
+ remove();
+ relink(8,slotOffset,0x100); // different authored index
+ assert(!lifecycle.ObserveRunningFrame(memory,newWorld));
+ remove();
+ relink(7,0x5250,0x100); // same authored index, different role
+ assert(!lifecycle.ObserveRunningFrame(memory,newWorld));
+ remove();
+ relink(7,slotOffset,0x200); // same role and index, different scene
+ assert(!lifecycle.ObserveRunningFrame(memory,newWorld));
+ remove();
+ relink(7,slotOffset,0x100);
+ memory.Write32(newWorld+0x5CB4,0);
+ assert(!lifecycle.ObserveRunningFrame(memory,newWorld)); // lost membership after link
+ remove();
+ relink(7,slotOffset,0x100);
+ assert(lifecycle.ObserveRunningFrame(memory,newWorld));
+ assert(!lifecycle.ObserveRunningFrame(memory,newWorld));
+ std::cout<<"ORIGINAL_EARLY_UNIT_UNLINK_AND_RELINK_FIXTURE_PASS\n";
+}
+
 int main(){
  TestUnitMembership();
+ TestUnitLifecycle();
  OriginalPostFrameGate gate;
  const OriginalPostFrameSample valid{0x100000,0x120000,0x140000,0x150000,0x1C,0x1D,2,0x28CFE0};
  assert(!gate.Observe(valid,false));

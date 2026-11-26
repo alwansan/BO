@@ -12,6 +12,7 @@
 #include "coop/room_original_bot_pool_witness.hpp"
 #include "coop/room_world_tick.hpp"
 #include "kernel/kernel.h"
+#include <atomic>
 #include <cstdint>
 namespace blackcoop {
 struct OriginalUnitMembershipMemory {
@@ -24,6 +25,16 @@ struct OriginalUnitMembershipMemory {
    return *static_cast<const uint8_t*>(kernel::HostPtr(addr));
  }
 };
+
+inline OriginalUnitLifecycle* OriginalUnitLifecycleOnFrameThread(bool bind=false)noexcept{
+ static std::atomic<OriginalUnitLifecycle*> state{nullptr};
+ if(bind){
+   static OriginalUnitLifecycle observer;
+   state.store(&observer,std::memory_order_release);
+ }
+ auto* observer=state.load(std::memory_order_acquire);
+ return observer&&observer->OnFrameThread()?observer:nullptr;
+}
 
 inline void ObserveOriginalPostWorldFrame()noexcept{
  static OriginalPostFrameGate gate;
@@ -54,12 +65,17 @@ inline void ObserveOriginalPostWorldFrame()noexcept{
  s.unloadPhase=kernel::R32(s.world+0x5AE4u);
  s.localKind=kernel::R32(s.world+0x30u+0xC4u);
  s.localVtable=kernel::R32(s.world+0x30u); // exact ORIGINAL P1 identity
- if(gate.Observe(s,true)){
+ const bool stableFrame=gate.Observe(s,true);
+ if(stableFrame){
    const bool hasUnitMembership=HasOriginalWorldUnitMembership(OriginalUnitMembershipMemory{},s.world);
+   OriginalUnitLifecycleOnFrameThread(true);
    SendSafeWorldCodeToAndroid(2130); // candidate, NOT P2 ready
    if(hasUnitMembership)
      SendSafeWorldCodeToAndroid(2131); // local membership only; no handles retained
  }
+ if(auto* lifecycle=OriginalUnitLifecycleOnFrameThread();
+    lifecycle&&lifecycle->ObserveRunningFrame(OriginalUnitMembershipMemory{},s.world))
+   SendSafeWorldCodeToAndroid(2133);
  (void)humanLanes.Progress(2);(void)humanLanes.Progress(3);
  (void)humanLanes.Progress(4); // never marks a lane ready
  (void)humanSetup.At(2);(void)humanSetup.At(3);(void)humanSetup.At(4);
