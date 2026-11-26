@@ -1,0 +1,174 @@
+{
+  "code_commit": "5aacc1d6c7054bbd7cc54523c79db1be2463c9f2",
+  "native_source_commit": "fa4e30a7de2a156a07024304a1150386f4ea05be",
+  "native_source_unchanged_in_sparse_fix": true,
+  "source_preflight": {
+    "run": 45801633177,
+    "job": 139846065270,
+    "conclusion": "success",
+    "new_native_jni_bridge_fixture": "passed actual production bridge against pinned SDK with synthetic memory, JNI and deferred backend"
+  },
+  "parallel_source": {
+    "run": 45801632999,
+    "conclusion": "success"
+  },
+  "udp": {
+    "run": 45802030316,
+    "conclusion": "success"
+  },
+  "warp": {
+    "run": 45802030321,
+    "job": 139847441538,
+    "conclusion": "success",
+    "artifact_id": 15108595426,
+    "artifact_bytes": 9173,
+    "artifact_sha256": "39f3c50efddeff3f836375e40e7c94ed30fb50f266d99114c81c4ada591bf18f",
+    "download_and_hash_verified": true,
+    "actual_adapter": "Microsoft Basic Render Driver (required WARP)",
+    "compiler": "Visual Studio clang-cl 22.1.3",
+    "ctest_passed": 1,
+    "ctest_test_seconds": 0.32,
+    "pixel_checks": [
+      {
+        "name": "owned_clear_center",
+        "actual": "ff102030",
+        "expected": "ff102030"
+      },
+      {
+        "name": "outside_box_unchanged",
+        "actual": "ff102030",
+        "expected": "ff102030"
+      },
+      {
+        "name": "visible_mod_box",
+        "actual": "ffe02040",
+        "expected": "ffe02040"
+      },
+      {
+        "name": "outside_box_unchanged",
+        "actual": "ff102030",
+        "expected": "ff102030"
+      },
+      {
+        "name": "far_box_proves_no_placeholder_depth_write",
+        "actual": "ff30d060",
+        "expected": "ff30d060"
+      },
+      {
+        "name": "owned_clear_center",
+        "actual": "ff102030",
+        "expected": "ff102030"
+      },
+      {
+        "name": "outside_box_unchanged",
+        "actual": "ff102030",
+        "expected": "ff102030"
+      },
+      {
+        "name": "owned_depth_occludes_box",
+        "actual": "ff102030",
+        "expected": "ff102030"
+      },
+      {
+        "name": "owned_clear_center",
+        "actual": "ff102030",
+        "expected": "ff102030"
+      },
+      {
+        "name": "outside_box_unchanged",
+        "actual": "ff102030",
+        "expected": "ff102030"
+      },
+      {
+        "name": "depth_clear_restores_visibility",
+        "actual": "ff30d060",
+        "expected": "ff30d060"
+      },
+      {
+        "name": "owned_clear_center",
+        "actual": "ff102030",
+        "expected": "ff102030"
+      },
+      {
+        "name": "peer_two_marker",
+        "actual": "ff40c0ff",
+        "expected": "ff40c0ff"
+      },
+      {
+        "name": "peer_three_marker",
+        "actual": "ff70e080",
+        "expected": "ff70e080"
+      },
+      {
+        "name": "peer_four_marker",
+        "actual": "ffd080ff",
+        "expected": "ffd080ff"
+      },
+      {
+        "name": "human_markers_exterior_unchanged",
+        "actual": "ff102030",
+        "expected": "ff102030"
+      }
+    ],
+    "runtime_result": {
+      "passed": true,
+      "backend": "actual pinned SDK D3D12 through actual threaded backend",
+      "adapter": "required WARP software",
+      "owned_color_readback": true,
+      "depth_occlusion_verified": true,
+      "depth_readback_available": false,
+      "placeholder_depth_write_absent": true,
+      "kernel_upload_allocations": 7,
+      "fenced_upload_frees": 7,
+      "full_ticket_three_human_markers": true,
+      "source_state_unchanged": true,
+      "assets_used": false,
+      "game_camera_verified": false,
+      "gameplay_verified": false
+    },
+    "artifact_files_sha256": {
+      "NOTICES.txt": "c2ba2c9455d0a732d20006a5dc6df3fe2899b65c21fe0c4a2e9da7dd0f7beb81",
+      "build.log": "4e59a5bcf50d31f904a7616e251d22cbc389cd61bf3503204545ed2936d1f995",
+      "configure.log": "91c258f861b5b52678980fa1b19c46e07ece94917ef3de4cf3ae75f57d753e9f",
+      "ctest.log": "502902b16e3a5fb5e2b45dff07d647b5d82958928d0743352b070a0d9681aae4",
+      "lab-scope.json": "a63e03a5b0fa486ade12a3b1be8e686455df9a8733a312e01b12d019c291b5a3",
+      "rasterization-result.json": "68dcaa8e2f342c3fd37273457d1cabb2501a25c00ef2ebc9c0c58efac59cfc24",
+      "rasterization.log": "42c0c51fb63da66da81948f778509ff51993b3d2619591c30bdc10c1f578b768",
+      "sdk-render-lab.log": "e95dd803a4bfc3baf3c1fa8921028f1ce1a8042dc5a2bd850608eb2c18344d26",
+      "source-manifest.json": "eac7db24d135584228152803d3b1131110665e5c1717c2263482e32424ff4310",
+      "source-prepare.log": "86844ef1cdc48eb56d96e274e1b4799a5818b9dec3a15ba85870a5540bc58aea"
+    }
+  },
+  "first_warp_attempt": {
+    "run": 45801633132,
+    "conclusion": "failure",
+    "cause": "New presentation and camera frame headers omitted from sparse checkout; compilation stopped before rasterization",
+    "fixed_in": "5aacc1d6c7054bbd7cc54523c79db1be2463c9f2"
+  },
+  "local": {
+    "asan_ubsan_decode": true,
+    "asan_ubsan_actual_bridge_synthetic_memory_jni_backend": true,
+    "lsan_disabled_for_android_local_environment": true,
+    "source_stage_tests": 6,
+    "diff_check_passed": true
+  },
+  "source_files_sha256": {
+    "coop/room_network/room_mod_human_presentation.hpp": "67701b69effc64df43c186a0626d83cb774e723e5bfd812b20d7033cc42c763c",
+    "coop/room_network/room_mod_human_presentation_witness.hpp": "6dca7f5b6eeb113a3a7d24ce0b9f4368f748a815b33a5ec767cf063da1f19fcb",
+    "coop/room_network/room_mod_human_render_bridge.inc": "2f29dbb7d89cefb37dcd68c722e3021ff0057fbb178d994d480709de80029dc7",
+    "coop/room_network/test_room_mod_human_presentation.cpp": "54efa3ba50af2ecd64fb8b2b53036a9de51d284eb1174233ed07009d9a33d5c5",
+    "coop/room_network/test_room_mod_human_render_bridge.cpp": "8869c528550b7447a1b9a6ff4f37bf2edf3b29555bb4f10af69dafd226065718",
+    "coop/room_network/room_original_eye_witness.hpp": "98dc371005d2375ce56c7058738a7ee1ef34131db42744c5cd7c34f6db8a5bc6",
+    "coop/prepare_room_network.py": "caf7c1c4e1748b5b791807be5d438f1edc1cb91288c65a0f8cdfa3c677df6e9c",
+    "coop/room_network_prepare_checks.py": "84c1a3b1c4ac1ce0210f23948938e3a1bb5899016b1071ad4f50e4fe519bcc3f",
+    "coop/render_lab/render_lab.cpp": "c8b424d016f6aca17db39a4a57f726cbdb2b4d4fa51ff426233c8c304afa8074"
+  },
+  "limits": [
+    "Only original draw source staging; no actual Android BLACK runtime",
+    "Actual SDK WARP rasterization uses synthetic camera, surfaces and ticket, no BLACK assets",
+    "JNI bridge uses synthetic JNI/memory/deferred backend in fixture",
+    "Full Android game translation units/link/APK not built for this change",
+    "No original physical human actor, collision, weapons, shared host world actions or story transitions proved",
+    "Original AI/assets/save/checkpoints unchanged; legacy NPC clone invocation removed"
+  ]
+}

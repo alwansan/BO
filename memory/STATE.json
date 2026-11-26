@@ -4066,7 +4066,7 @@
     "evidence": "memory/evidence/WORK_BATCH15_SCOPED_PRESENTATION_2026-11-26.json"
   },
   "work16NativeRenderConsumer": {
-    "status": "local_sanitizers_and_six_source_stage_tests_pass_ci_pending",
+    "status": "local_sanitizers_source_and_actual_warp_three_human_raster_pass",
     "modOwnedBoxes": true,
     "originalBackendBridgeStaged": true,
     "legacyNpcCloneInvocationRemoved": true,
@@ -4075,6 +4075,14 @@
     "androidRuntimeVerified": false,
     "sharedWorldComplete": false,
     "documentation": "docs/ORIGINAL_MOD_HUMAN_RENDER_CONSUMER_WORK16_AR.md",
-    "next": "Verify actual WARP three-peer raster and source CI; continue true original human bodies/physics/weapons and shared original host world plus story transition"
+    "next": "Compile staged Android translation units without assets; continue real original P2 actor/physics/weapons/presentation ownership and original shared host world plus story transition",
+    "nativeSourceCode": "fa4e30a7de2a156a07024304a1150386f4ea05be",
+    "sparseCheckoutFix": "5aacc1d6c7054bbd7cc54523c79db1be2463c9f2",
+    "sourceRun": 45801633177,
+    "parallelRun": 45801632999,
+    "actualWarpRun": 45802030321,
+    "udpRun": 45802030316,
+    "evidence": "memory/evidence/WORK_BATCH16_NATIVE_RENDER_CONSUMER_2026-11-26.json",
+    "wholeAndroidTranslationUnitCompileVerified": false
   }
 }
