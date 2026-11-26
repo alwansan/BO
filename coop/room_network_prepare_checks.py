@@ -13,6 +13,18 @@ class RoomNetPrepareTests(unittest.TestCase):
             destination=root/name
             destination.parent.mkdir(parents=True,exist_ok=True)
             shutil.copy2(upstream/name,destination)
+    def test_camera_hle_binding_mismatch_is_atomic(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=pathlib.Path(directory)
+            self.source(root)
+            config=root/'config/game.toml'
+            config.write_text(config.read_text().replace('0x26AAE0','0x26AAE4'))
+            before={name:(root/name).read_bytes() for name in INPUTS}
+            with self.assertRaisesRegex(ValueError,'SetTransform HLE binding'):
+                prepare(root)
+            self.assertFalse((root/'src/coop').exists())
+            for name,content in before.items():
+                self.assertEqual((root/name).read_bytes(),content)
     def test_network_test_package_has_real_but_isolated_android_bridge(self):
         with tempfile.TemporaryDirectory() as directory:
             root=pathlib.Path(directory)
@@ -110,6 +122,19 @@ class RoomNetPrepareTests(unittest.TestCase):
             # A sampled local game-player update is not proof of an actually
             # loaded campaign stage. Source-only witness; never sends READY.
             native=(root/'src/game/cheats.cpp').read_text(encoding='utf-8')
+            camera_hook=(root/'src/game/hooks.cpp').read_text(encoding='utf-8')
+            self.assertIn('X86_FUNC(sub_0002B830)',camera_hook)
+            self.assertEqual(camera_hook.count('__imp__sub_0002B830(ctx,base);'),1)
+            self.assertIn('kernel::R32(ctx.esp+8u)',camera_hook)
+            self.assertIn('ObserveOriginalWorldCameraAfterBegin(sourceRwCamera,ctx.eax)',camera_hook)
+            self.assertTrue((root/'src/coop/room_original_world_camera_witness.hpp').is_file())
+            witness=(root/'src/coop/room_original_world_camera_witness.hpp').read_text(encoding='utf-8')
+            self.assertNotIn('kernel::W32',witness)
+            self.assertNotIn('CallGuest(',witness)
+            self.assertNotIn('SubmitModPlaceholder',witness)
+            self.assertIn('d3d::State()',witness)
+            self.assertIn('d3d::Lock()',witness)
+
             self.assertIn('blackcoop::ObserveLocalWorldTick(R32(kWorld))',native)
             self.assertIn('blackcoop::ObserveOriginalPlayerEye(me)',native)
             self.assertIn('blackcoop::ObserveOriginalHostInputTick(me)',native)

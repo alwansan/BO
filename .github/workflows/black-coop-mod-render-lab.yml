@@ -1,0 +1,113 @@
+name: BO asset-free actual SDK WARP rasterization lab
+on:
+  workflow_dispatch:
+  push:
+    branches: [experiment/black-coop]
+    paths:
+      - '.github/workflows/black-coop-mod-render-lab.yml'
+      - 'coop/render_lab/**'
+      - 'coop/room_network/room_mod_placeholder_draw.hpp'
+      - 'coop/room_network/room_mod_placeholder_submit.hpp'
+      - 'coop/room_network/room_mod_placeholder_upload_kernel.hpp'
+permissions:
+  contents: read
+concurrency:
+  group: bo-asset-free-render-lab
+  cancel-in-progress: false
+jobs:
+  actual-sdk-warp:
+    runs-on: windows-2025
+    timeout-minutes: 20
+    env:
+      CMAKE_BUILD_PARALLEL_LEVEL: 2
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: bo
+          persist-credentials: false
+          lfs: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /coop/render_lab/
+            /coop/room_network/room_mod_placeholder_draw.hpp
+            /coop/room_network/room_mod_placeholder_submit.hpp
+            /coop/room_network/room_mod_placeholder_upload_kernel.hpp
+      - uses: actions/checkout@v4
+        with:
+          repository: TGP482/XboxXBE-Recomp
+          ref: 99078b119b5d5e0d1d6afb1390e29437c0c984c0
+          path: sdk
+          persist-credentials: false
+          lfs: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /runtime/
+            /LICENSE
+      - uses: actions/checkout@v4
+        with:
+          repository: ocornut/imgui
+          # Exact v1.91.0, matching the pinned SDK's cmake/XbeRecomp.cmake.
+          ref: 8199457a7d9e453f8d3d9cadc14683fb54a858b5
+          path: imgui
+          persist-credentials: false
+          lfs: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      - name: Prepare only disposable test adapter-selection copy
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force evidence | Out-Null
+          python bo/coop/render_lab/prepare_sdk.py --sdk sdk --output prepared 2>&1 | Tee-Object evidence/source-prepare.log
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Copy-Item prepared/source-manifest.json evidence/source-manifest.json
+          $imguiHead = git -C imgui rev-parse HEAD
+          if ($imguiHead -ne '8199457a7d9e453f8d3d9cadc14683fb54a858b5') { throw 'ImGui pin mismatch' }
+          @{
+            bo_commit = '${{ github.sha }}'
+            imgui_commit = $imguiHead
+            scope = 'asset-free actual SDK D3D12 WARP; no game camera, original assets, Android or gameplay'
+          } | ConvertTo-Json | Set-Content -Encoding utf8 evidence/lab-scope.json
+          Get-Content sdk/LICENSE,imgui/LICENSE.txt | Set-Content -Encoding utf8 evidence/NOTICES.txt
+      - name: Configure actual pinned SDK renderer with Visual Studio clang-cl
+        shell: pwsh
+        run: |
+          $compiler = Join-Path $env:VCINSTALLDIR 'Tools/Llvm/x64/bin/clang-cl.exe'
+          $linker = Join-Path $env:VCINSTALLDIR 'Tools/Llvm/x64/bin/lld-link.exe'
+          if (-not (Test-Path $compiler)) { throw 'Visual Studio clang-cl missing' }
+          if (-not (Test-Path $linker)) { throw 'Visual Studio lld-link missing' }
+          & $compiler --version
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cmake -S bo/coop/render_lab -B build -G Ninja -DCMAKE_BUILD_TYPE=Release "-DCMAKE_CXX_COMPILER=$compiler" "-DCMAKE_LINKER=$linker" "-DSDK_ROOT=$pwd/sdk" "-DIMGUI_ROOT=$pwd/imgui" "-DPREPARED_ROOT=$pwd/prepared" 2>&1 | Tee-Object evidence/configure.log
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Compile real backend with two workers
+        shell: pwsh
+        run: |
+          cmake --build build --parallel 2 2>&1 | Tee-Object evidence/build.log
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Rasterize owned box and check color depth occlusion and upload fences
+        shell: pwsh
+        run: |
+          ctest --test-dir build --output-on-failure --verbose --timeout 180 2>&1 | Tee-Object evidence/rasterization.log
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Copy-Item build/rasterization-result.json evidence/rasterization-result.json
+          $result = Get-Content evidence/rasterization-result.json -Raw | ConvertFrom-Json
+          if (-not $result.passed) { throw 'Missing passing rasterization result' }
+      - name: Collect asset-free diagnostics only
+        if: always()
+        shell: pwsh
+        run: |
+          if (Test-Path build/sdk-render-lab.log) { Copy-Item build/sdk-render-lab.log evidence/sdk-render-lab.log }
+          if (Test-Path build/Testing/Temporary/LastTest.log) { Copy-Item build/Testing/Temporary/LastTest.log evidence/ctest.log }
+          git -C sdk diff --exit-code
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bo-asset-free-sdk-warp-evidence
+          path: evidence/
+          if-no-files-found: error
+          retention-days: 14

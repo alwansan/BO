@@ -7,18 +7,23 @@ import argparse
 import hashlib
 import json
 import pathlib
+import re
 import tempfile
 from prepare_probe import BASE_FILES, GAME_FILES, once
 from prepare_room_ui import prepare as prepare_room_ui
 
 HERE = pathlib.Path(__file__).resolve().parent
 PACKAGE = 'org.bocoop.black.roomnet'
-INPUTS = BASE_FILES + GAME_FILES + ('src/game/exit_menu.cpp','src/game/difficulty.cpp','src/d3d/d3d8.cpp','native/input.cpp')
+INPUTS = BASE_FILES + GAME_FILES + ('src/game/exit_menu.cpp','src/game/difficulty.cpp','src/d3d/d3d8.cpp','native/input.cpp','config/game.toml')
 
 
 def prepare(root: pathlib.Path):
     root = root.resolve()
     originals = {name: (root / name).read_bytes() for name in INPUTS}
+    transforms = re.findall(r'(?m)^D3DDevice_SetTransform[ \t]*=[ \t]*(0x[0-9a-fA-F]+)[ \t]*(?:#.*)?$',
+                            originals['config/game.toml'].decode('utf-8').replace('\r\n','\n'))
+    if len(transforms) != 1 or int(transforms[0],16) != 0x26AAE0:
+        raise ValueError('Original world camera requires the pinned SetTransform HLE binding')
     with tempfile.TemporaryDirectory(prefix='bo-room-net-stage-') as directory:
         stage = pathlib.Path(directory)
         for name, data in originals.items():
@@ -314,6 +319,8 @@ def prepare(root: pathlib.Path):
         pending[destination] = content
 
     pending['src/coop/room_net_ui.hpp'] = (HERE / 'room_network/room_net_ui.hpp').read_text(encoding='utf-8')
+    for camera_header in ('room_original_world_camera_frame.hpp', 'room_original_world_camera_witness.hpp'):
+        pending['src/coop/' + camera_header] = (HERE / 'room_network' / camera_header).read_text(encoding='utf-8')
     pending['src/coop/room_original_post_frame_contract.hpp'] = (HERE / 'room_network/room_original_post_frame_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_host_multi_actor_lanes.hpp'] = (HERE / 'room_network/room_original_host_multi_actor_lanes.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_host_setup_tick.hpp'] = (HERE / 'room_network/room_original_host_setup_tick.hpp').read_text(encoding='utf-8')
@@ -435,6 +442,18 @@ X86_FUNC(sub_000D1500) {
     __imp__sub_000D1500(ctx,base);
     for(uint8_t peer=1;peer<=4;peer++)
         blackcoop::OriginalRemoteHumanBotVisual(peer).Draw(ctx,originalGrid);
+}
+'''
+    visual += '\n#include "coop/room_original_world_camera_witness.hpp"\n'
+    visual += '''
+// Exact original RW device camera begin callback: cdecl(0, RwCamera*, 0).
+// Read-only capture of the SDK matrices it just produced. NO GPU draw.
+X86_EXTERN_FUNC(__imp__sub_0002B830);
+X86_FUNC(sub_0002B830) {
+    const uint32_t sourceRwCamera = blackcoop::OriginalCameraSpan(ctx.esp,12)
+        ? kernel::R32(ctx.esp+8u) : 0;
+    __imp__sub_0002B830(ctx,base); // original executes exactly once
+    blackcoop::ObserveOriginalWorldCameraAfterBegin(sourceRwCamera,ctx.eax);
 }
 '''
     pending[draw]=visual

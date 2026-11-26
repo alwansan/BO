@@ -1,3 +1,15 @@
+# Work-Batch14 — مختبر رسم SDK فعلي بلا أصول، CI غير متحقق بعد (2026-11-26)
+
+أضيف coop/render_lab وworkflow black-coop-mod-render-lab.yml: SDK مثبت، WARP إلزامي في نسخة cpp اختبارية خارج SDK، backend D3D12 وqueue وallocator فعليون، أسطح/مجسم اصطناعية مملوكة، readback لون وocclusion وعدم كتابة العمق وfence قبل Free. التحضير/hash/عدم تعديل SDK نجح محليًا؛ Windows compile/rasterization ينتظر CI ولا نجاح مُدّعى. لا أصل لعبة أو ISO/XBE/APK أو AI/حفظ أو اختبار هاتف جزئي. التفاصيل docs/MOD_PLACEHOLDER_RASTER_LAB_WORK14_AR.md. تابع نتيجة هذا الـrun وأصلحها، ثم اربط consumer مرئي بـsigned story/scene/frame ومصدر كاميرا Work13؛ العالم المشترك غير مكتمل.
+
+---
+
+# Work-Batch13 — تحقيق كاميرا العالم قيد العمل (2026-11-26)
+
+عُثر على المنتج الأصلي2B830 الذي يرسل view/projection الفعليتين إلى XDK SetTransform0/1؛ SDK يحتفظ بهما في transforms2/3. أضيف hook مصدري للقراءة فقط بعد original مرة واحدة، مع entryESP+8 وbooleanEAX=1 موثّقين. يحفظ لقطة تحت d3d::Lock ويُبطل الكاميرا الثانوية/الفاشلة ويعيد فحص الهوية والمصفوفات والtargets عند القراءة. لا كتابة لعبة/State أو GPU submit أو أصل شُغّل. اختبار memory ASAN/UBSAN وSDK syntax-only وخمسة source-stage checks نجحت محليًا؛ CI الجديد غير متحقق بعد. لا signed-room authorization أو camera/runtime أو rasterization أو لعب مشترك مثبت. التالي ربط المستهلك بـstory scope وإطار العالم ثم rasterization بلا أصول قبل العرض. التفاصيل docs/ORIGINAL_WORLD_CAMERA_SOURCE_WORK13_AR.md والأداة/الأدلة محفوظة. لا AI/تعديل أصول/حفظ أو workflow ISO/APK يدوي أو اختبار هاتف جزئي.
+
+---
+
 # Work-Batch12 — رفع مجسم المود مع fence (2026-11-26)
 
 أضيف SubmitModPlaceholder وbridge SDK فعلي لتخصيص ورفع رؤوس مستقلة؛ Draw→Fence→WaitFence قبل التحرير، وعزل عند الاستثناء/فشل التأكيد، مع هوية backend وخيط واحد وحاجز قبل الإرسال. اختبار الذاكرة المؤجلة ASAN/UBSAN وSDK syntax-only نجحا محليًا؛ CI ناجح على2fd2e636: source45779897152، parallel45779897167، UDP45779897210؛ نجحت استعادة الملفات الأربعة من GitHub ومطابقة بايتاتها واختبارها محليًا. الأدلة memory/evidence/WORK_BATCH12_FENCED_SUBMIT_2026-11-26.json. لا GPU rasterization أو gameplay في هذه النتائج. ليس GPU rasterization أو كاميرا BLACK أو hook/roster حي. التفاصيل docs/MOD_PLACEHOLDER_FENCED_SUBMIT_WORK12_AR.md. التالي مصدر كاميرا العالم الحالية ثم rasterization بلا أصول؛ الفعل المشترك وانتقال القصة غير مكتملين. لا AI/أصول/حفظ/APK يدوي/هاتف جزئي. الأساس e809cbd، مع حفظ التغييرات المحلية القديمة في stash دون فقد قبل مزامنة الرأس.

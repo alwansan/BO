@@ -4011,5 +4011,30 @@
     },
     "codeCommit": "2fd2e63605ab8841037983a2bee5545e5ce9fa45",
     "cleanGitHubRecovery": "passed_source_only"
+  },
+  "workBatch13": {
+    "date": "2026-11-26",
+    "base": "a20b777611fc3e52bd35df8f58a10ace811b417c",
+    "cameraSourceSurvey": "numeric_candidate_metadata_saved",
+    "gpuRasterization": false,
+    "sharedCampaignAccepted": false,
+    "cameraBeginAbiSourceVerified": true,
+    "cameraReadOnlyHookStaged": true,
+    "nativeMatrixSource": "original_2b830_SetTransform_0_1_to_SDK_transforms_2_3",
+    "localChecks": "two_sanitized_camera_fixtures_sdk_syntax_and_five_source_stage_checks_pass",
+    "ci": "pending_after_publish",
+    "visualSubmissionEnabled": false,
+    "nativeCameraRuntimeAccepted": false,
+    "liveVisualHookEnabled": false
+  },
+  "workBatch14": {
+    "date": "2026-11-26",
+    "scope": "asset_free_actual_sdk_d3d12_warp_and_threaded_backend",
+    "sdk": "99078b119b5d5e0d1d6afb1390e29437c0c984c0",
+    "localPreparation": "pin_hash_anchor_and_outside_sdk_output_guards_pass_sdk_unchanged",
+    "windowsBuild": "not_verified_pending_ci",
+    "rasterizationAccepted": false,
+    "assetsUsed": false,
+    "androidGameAccepted": false
   }
 }

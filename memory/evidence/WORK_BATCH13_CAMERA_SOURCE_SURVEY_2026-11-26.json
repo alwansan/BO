@@ -1,0 +1,504 @@
+{
+  "schema": 1,
+  "ownerSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+  "scope": "bounded static candidate metadata only; not runtime or camera ABI acceptance",
+  "windows": {
+    "2b830:2ba5f": {
+      "fieldOffsetsByRegister": {
+        "ebp": [
+          12
+        ],
+        "esi": [
+          4,
+          20,
+          112,
+          116,
+          120,
+          124,
+          128,
+          132,
+          136
+        ],
+        "esp": [
+          16,
+          24,
+          28,
+          32,
+          44,
+          48,
+          56,
+          60,
+          64,
+          68,
+          84
+        ]
+      },
+      "directCalls": [
+        194400,
+        205584,
+        2534112,
+        2534112,
+        177984,
+        172032,
+        172032
+      ],
+      "returnAddresses": [
+        178782
+      ]
+    },
+    "d2f40:d30ea": {
+      "fieldOffsetsByRegister": {
+        "esp": [
+          24,
+          28,
+          32,
+          36,
+          40,
+          48,
+          52,
+          56,
+          64,
+          68,
+          72,
+          80,
+          84,
+          88,
+          96,
+          100
+        ],
+        "edi": [
+          0,
+          16,
+          32,
+          48,
+          64,
+          72,
+          76,
+          80,
+          88,
+          104,
+          108,
+          112,
+          116
+        ],
+        "eax": [
+          0,
+          16,
+          32,
+          48
+        ],
+        "ecx": [
+          4
+        ],
+        "ebx": [
+          16
+        ],
+        "esi": [
+          0,
+          4,
+          8,
+          12,
+          16,
+          20,
+          24,
+          32,
+          36,
+          40,
+          48,
+          52,
+          56
+        ],
+        "edx": [
+          16
+        ]
+      },
+      "directCalls": [
+        79616,
+        205328,
+        194304,
+        187712,
+        132768
+      ],
+      "returnAddresses": [
+        864489
+      ]
+    },
+    "2db60:2dc14": {
+      "fieldOffsetsByRegister": {
+        "esp": [
+          8
+        ],
+        "esi": [
+          4,
+          20,
+          128,
+          132,
+          140,
+          144
+        ]
+      },
+      "directCalls": [
+        194304
+      ],
+      "returnAddresses": [
+        187411
+      ]
+    },
+    "2dc20:2dd40": {
+      "fieldOffsetsByRegister": {
+        "esp": [
+          8,
+          12
+        ],
+        "esi": [
+          4,
+          20,
+          96,
+          128,
+          132,
+          140,
+          144
+        ]
+      },
+      "directCalls": [
+        194304,
+        199120
+      ],
+      "returnAddresses": [
+        187603,
+        187649,
+        187698
+      ]
+    },
+    "2d1a0:2d33a": {
+      "fieldOffsetsByRegister": {
+        "esi": [
+          4,
+          32,
+          112,
+          116,
+          120,
+          124
+        ],
+        "eax": [
+          16,
+          20,
+          24,
+          32,
+          36,
+          40,
+          48,
+          52,
+          56,
+          80,
+          84,
+          88,
+          116
+        ],
+        "ecx": [
+          0,
+          4,
+          8,
+          16,
+          20,
+          24,
+          32,
+          36,
+          40,
+          48,
+          52,
+          56
+        ]
+      },
+      "directCalls": [
+        204976
+      ],
+      "returnAddresses": [
+        185145
+      ]
+    },
+    "2d9f0:2da70": {
+      "fieldOffsetsByRegister": {
+        "esp": [
+          8
+        ],
+        "esi": [
+          20,
+          268,
+          292
+        ]
+      },
+      "directCalls": [
+        184736,
+        181840,
+        186464,
+        185152,
+        237488
+      ],
+      "returnAddresses": [
+        186928,
+        186981,
+        186985
+      ]
+    }
+  },
+  "clipSetterDirectCallCandidates": [
+    {
+      "caller": 799452,
+      "target": 187232,
+      "nearbyCandidateFields": [
+        [
+          "edx",
+          100
+        ],
+        [
+          "esi",
+          88
+        ],
+        [
+          "esi",
+          96
+        ],
+        [
+          "esi",
+          100
+        ],
+        [
+          "esi",
+          132
+        ]
+      ]
+    },
+    {
+      "caller": 799482,
+      "target": 187424,
+      "nearbyCandidateFields": [
+        [
+          "esi",
+          88
+        ],
+        [
+          "esi",
+          100
+        ],
+        [
+          "esi",
+          132
+        ],
+        [
+          "esi",
+          136
+        ]
+      ]
+    },
+    {
+      "caller": 799664,
+      "target": 187232,
+      "nearbyCandidateFields": [
+        [
+          "ecx",
+          100
+        ],
+        [
+          "edx",
+          96
+        ],
+        [
+          "esi",
+          88
+        ],
+        [
+          "esi",
+          100
+        ],
+        [
+          "esi",
+          132
+        ]
+      ]
+    },
+    {
+      "caller": 799694,
+      "target": 187424,
+      "nearbyCandidateFields": [
+        [
+          "esi",
+          88
+        ],
+        [
+          "esi",
+          132
+        ],
+        [
+          "esi",
+          136
+        ]
+      ]
+    },
+    {
+      "caller": 1418002,
+      "target": 187232,
+      "nearbyCandidateFields": [
+        [
+          "esi",
+          88
+        ],
+        [
+          "esi",
+          132
+        ]
+      ]
+    },
+    {
+      "caller": 1418032,
+      "target": 187424,
+      "nearbyCandidateFields": [
+        [
+          "esi",
+          88
+        ],
+        [
+          "esi",
+          132
+        ],
+        [
+          "esi",
+          136
+        ]
+      ]
+    },
+    {
+      "caller": 1419861,
+      "target": 187232,
+      "nearbyCandidateFields": [
+        [
+          "esi",
+          54440
+        ],
+        [
+          "esi",
+          54464
+        ],
+        [
+          "esi",
+          54468
+        ],
+        [
+          "esi",
+          54484
+        ],
+        [
+          "esp",
+          8
+        ]
+      ]
+    },
+    {
+      "caller": 1419962,
+      "target": 187232,
+      "nearbyCandidateFields": [
+        [
+          "ebp",
+          88
+        ],
+        [
+          "ebp",
+          132
+        ]
+      ]
+    },
+    {
+      "caller": 1419992,
+      "target": 187424,
+      "nearbyCandidateFields": [
+        [
+          "ebp",
+          88
+        ],
+        [
+          "ebp",
+          132
+        ],
+        [
+          "ebp",
+          136
+        ]
+      ]
+    },
+    {
+      "caller": 1420062,
+      "target": 187232,
+      "nearbyCandidateFields": [
+        [
+          "ebp",
+          144
+        ],
+        [
+          "esi",
+          88
+        ],
+        [
+          "esi",
+          132
+        ]
+      ]
+    },
+    {
+      "caller": 1420092,
+      "target": 187424,
+      "nearbyCandidateFields": [
+        [
+          "esi",
+          88
+        ],
+        [
+          "esi",
+          132
+        ],
+        [
+          "esi",
+          136
+        ]
+      ]
+    },
+    {
+      "caller": 1420157,
+      "target": 187232,
+      "nearbyCandidateFields": [
+        [
+          "esi",
+          88
+        ],
+        [
+          "esi",
+          132
+        ]
+      ]
+    },
+    {
+      "caller": 1420187,
+      "target": 187424,
+      "nearbyCandidateFields": [
+        [
+          "esi",
+          88
+        ],
+        [
+          "esi",
+          132
+        ],
+        [
+          "esi",
+          136
+        ]
+      ]
+    }
+  ],
+  "cameraCallbackStaticFacts": {
+    "framePointerPrologueRecognized": true,
+    "cameraLoadEbpPlus12Recognized": true,
+    "derivedCameraEntryStackOffset": 8,
+    "directSetTransformCallCount": 2,
+    "plainReturnAtExpectedEnd": true
+  }
+}

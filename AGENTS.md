@@ -1,3 +1,6 @@
+### Work13 — 2026-11-26: source camera-to-SDK connection
+Read prompt/RESTORE_SESSION_AR.md Work13 first. Exact original2B830 callback is cdecl(0,RwCamera,0), true entryESP+8, booleanEAX1/plainret. OriginalSetTransform0/1 becomes SDKtransforms2/3; do not use RW20 or randomshaderconstants as ordinaryview. Read-only capture hook staged, originalexecutesonce, no GPU/originalwrites; independentreview revocationrace reproducedRED andfixedGREEN. Local source/sanitizer/SDKsyntaxchecks pass, newCIpending. No runtimecamera/rasterization/sharedworld proved. Next asset-free actualSDKbackend rasterization and signedstory/frame consumer before visualactivation. Preserve AI/assets/save; no manualISO/APK workflows or phone microtests. Sourcefacts/tool: docs/ORIGINAL_WORLD_CAMERA_SOURCE_WORK13_AR.md.
+
 ### Session148 (2026-11-24): independent original weapon manager preparation
 
 - Code e23256548a608ed844edb9ed883198a94aadc09f implements OriginalWeaponManagerImage from pinned PC black_p2_banks_take. Detached 0xD0 manager preparation rebases internal record pointers +7C/+80, assigns independent heap pair, remaps two original sound-bank references, resets original load/weapon record fields. Requires initialized donor and original pool signature +130C=9; rejects aliases and unexplained bank/record pointers. Preserves original donor and output on failure.

@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "date": "2026-11-26",
+  "base": "a20b777611fc3e52bd35df8f58a10ace811b417c",
+  "cameraBeginSourceAbi": {
+    "entry": "0x0002B830",
+    "rwCameraEntryStackOffset": 8,
+    "argumentCount": 3,
+    "callingConvention": "cdecl",
+    "successEax": 1,
+    "originalInvocationsPerHook": 1
+  },
+  "sdkPin": "99078b119b5d5e0d1d6afb1390e29437c0c984c0",
+  "sourceChecksLocal": 5,
+  "sourceChecksScope": "atomic prepare transformation, no original executable run",
+  "frameSanitizer": "pass local clang21 Android aarch64; LSAN disabled",
+  "nativeWitnessSanitizer": "pass production observer on synthetic SDK memory and real mutex; observed RED before lost-revocation fix, GREEN after",
+  "sdkSyntax": "pass",
+  "cameraRuntimeVerified": false,
+  "gpuRasterization": false,
+  "visualSubmitEnabled": false,
+  "sharedCampaignAccepted": false,
+  "sha256": {
+    "coop/room_network/room_original_world_camera_frame.hpp": "0d0802b8eb2a12861a7b0e094c0496a6f0aedbc0047c027e5822bfab13cc302c",
+    "coop/room_network/room_original_world_camera_witness.hpp": "06f40228391c237351a17cdfb2cf95f18097203951c128f3757cf101f32a792b",
+    "coop/room_network/test_room_original_world_camera_frame.cpp": "85f8c55c434d88c382e320b779efb86060fe570a9de5d00b51b7cf4227b724ec",
+    "coop/room_network/test_room_original_world_camera_witness.cpp": "c70a3938a5cec4687d18fcb683888d735f400976753ff3ac1ca67932a3faf8f2",
+    "coop/prepare_room_network.py": "557a95589a8688ad7e7a25de1ff6ec51d2081ba4aa3ef70b035089c773d5cebf"
+  },
+  "configHleBinding": "pinned Android config/game.toml SetTransform=0x26AAE0 checked atomically"
+}
