@@ -64,6 +64,7 @@ static void bo_lab_write(void)
 {
     const char *path = getenv("BO_LAB_AGGREGATE");
     FILE *file;
+    bo_audio_write();
     if (!path || !(file = fopen(path, "wb"))) return;
     fprintf(file,
         "{\"mission_ticks\":%u,\"p2_ready_ticks\":%u,\"phases_completed\":%u,"

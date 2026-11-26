@@ -12,6 +12,7 @@ import sys
 import tempfile
 import threading
 import time
+from audio_lab import instrument_generated, parse as parse_audio
 
 PC_PIN = 'b2512fafd3e181e4febfb298f297245b845ef628'
 RUNTIME_PIN = 'e4b621706a3b5e58c084838d1f27547548cf27a8'
@@ -108,6 +109,12 @@ def patch_text(text, kind):
     if kind == 'manual':
         if text.count(MANUAL_ANCHOR) != 1:
             raise ValueError('manual source drift')
+        audio_anchor = 'static int black_p2_banks_make(void)\n{'
+        if text.count(audio_anchor) != 1 or text.count('    black_p2_banks_take();') != 1:
+            raise ValueError('audio source drift')
+        text = text.replace(audio_anchor, '#include "bo_audio_observer.inc"\n' + audio_anchor)
+        text = text.replace('    black_p2_banks_take();',
+                            '    black_p2_banks_take();\n    bo_audio_after_take();')
         return text.replace(MANUAL_ANCHOR, '''#include "bo_engine_lab.inc"
 void sub_001F1080(void)
 {
@@ -292,6 +299,7 @@ def prepare(pc):
     for path, text in patched:
         path.write_text(text, encoding='utf-8')
     shutil.copyfile(HERE / 'observer.inc', pc / 'src/bo_engine_lab.inc')
+    shutil.copyfile(HERE / 'audio_observer.inc', pc / 'src/bo_audio_observer.inc')
     shutil.copyfile(HERE / 'schedule.h', pc / 'src/schedule.h')
 
 
@@ -370,7 +378,7 @@ def collect_diagnostics(line, result):
         if all(fragment in lowered for fragment in fragments) and category not in categories:
             categories.append(category)
     # These filenames are public host/lab source, never generated game bodies.
-    sources = {'main.c', 'recomp_manual.c', 'black_native_menu.inc', 'bo_engine_lab.inc', 'schedule.h'}
+    sources = {'main.c', 'recomp_manual.c', 'black_native_menu.inc', 'bo_engine_lab.inc', 'bo_audio_observer.inc', 'schedule.h'}
     match = re.search(r'(?i)\b(?:fatal\s+)?error\s+(C[0-9]{4}|LNK[0-9]{4}|MSB[0-9]{4})\b', line)
     rust = re.search(r'\berror\[(E[0-9]{4})\]', line)
     if not match and not rust:
@@ -575,6 +583,8 @@ def execute(bo, pc, out, seconds):
         phase = 'original_code_generation'
         if private_call([pc / '.venv/Scripts/python.exe', 'scripts/generate.py'], pc, 1800):
             raise RuntimeError('generation')
+        phase = 'audio_observer_generation'
+        instrument_generated(pc / 'src/recomp/gen')
         phase = 'engine_toolchain'
         configure, build, executable = windows_build_commands(pc, os.environ)
         if not shutil.which('ninja') or not shutil.which('cl'):
@@ -599,7 +609,8 @@ def execute(bo, pc, out, seconds):
                    RECOMP_KELVIN_THREADS='2', RECOMP_SPLITSCREEN='1',
                    RECOMP_BLACK_INPUT_MODE='controller', RECOMP_BLACK_PROMPT_MODE='controller',
                    RECOMP_BLACK_SKIP_MOVIES='1', RECOMP_BLACK_SKIP_STARTUP_VIDEOS='1',
-                   BO_LAB_AGGREGATE=str(temp / 'aggregate.json'))
+                   BO_LAB_AGGREGATE=str(temp / 'aggregate.json'),
+                   BO_LAB_AUDIO_AGGREGATE=str(temp / 'audio-aggregate.json'))
         progress = {}
         started = time.monotonic()
         code = private_call([executable], pc, seconds, env, progress)
@@ -608,6 +619,11 @@ def execute(bo, pc, out, seconds):
         raw = temp / 'aggregate.json'
         if raw.is_file():
             report['observations'] = parse_aggregate(raw.read_text(encoding='ascii'))
+        audio_raw = temp / 'audio-aggregate.json'
+        report['audio_observations'] = parse_audio(audio_raw.read_text(encoding='ascii')) if audio_raw.is_file() else None
+        report['audio_observer_executed'] = bool(report['audio_observations'] and
+            report['audio_observations']['create_calls'] > 0 and
+            report['audio_observations']['restore_checks'] > 0)
         result = evaluate(report['observations'])
         report.update(result)
         if report['blocker'] == 'mission_not_reached':

@@ -1,0 +1,16 @@
+{
+  "code": "6d3b5e3adac063f232206b668abf3211a9abf319",
+  "checks": {
+    "source": 45806572808,
+    "android_units": 45806572911,
+    "android_diagnostics": 45806572806,
+    "java_tls": 45806572833,
+    "parallel_engine_contracts": 45806572877,
+    "udp": 45806572853
+  },
+  "conclusions": "all_success",
+  "source_units": 7,
+  "actual_black_android_runtime_verified": false,
+  "shared_campaign_complete": false,
+  "apk_acceptance_produced": false
+}

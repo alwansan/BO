@@ -32,6 +32,8 @@ jobs:
           "$RUNNER_TEMP/schedule-test"
           cc -std=c11 -Wall -Wextra -Werror -Wno-unused-function coop/engine_lab/test_observer.c -lm -o "$RUNNER_TEMP/observer-test"
           "$RUNNER_TEMP/observer-test"
+          cc -std=c11 -Wall -Wextra -Werror coop/engine_lab/test_audio_observer.c -o "$RUNNER_TEMP/audio-observer-test"
+          "$RUNNER_TEMP/audio-observer-test"
   original-engine:
     needs: harness-checks
     runs-on: windows-2025
