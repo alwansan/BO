@@ -1,3 +1,13 @@
+# إغلاق نشر Chat-Batch01..07 بعد CI — 2026-11-26
+
+- **الرأس المتحقق قبل إضافة سجل الإغلاق هذا:** `d831fd97cc559578d21ec8bb33f2750c91790a6c` (تصحيح اختبار البروتوكول موثّق أدناه). بعد تحديث ملف الاستعادة فقط، رأس الفرع النهائي هو commit الوثائق الجديد: **تحقق بـ GitHub API أو `git rev-parse HEAD`**؛ لا تعوّل على SHA ذي المرجع السابق بوصفه الرأس الأخير.
+- **أربعة سير CI ناجحة على الرأس `d831fd97…`:** `real TLS room core` run `45769416875`؛ `Android Keystore and real TLS platform test` الاصطناعي run `45769416865`؛ `room network game bridge source preflight` run `45769417022`؛ `isolated UDP probe` run `45769416922`. لا يثبت أي منها أصل BLACK أو APK اللعبة أو اختبار هاتف. **لم ينطلق** `black-coop-room-network-apk.yml` المعتمد على ISO، وقد ظل يدويًا فقط.
+- **أدلة مفهرسة بلا أسرار:** `memory/evidence/CHAT_BATCH07_SYNC_FINAL_CI_2026-11-26.json` و`memory/evidence/CHAT_BATCH07_CI_POSTPUSH_2026-11-26.json`، مع الروابط، وحدود الاختبارات، وإثبات اختبار جاف من نسخة نظيفة جزئية.
+- **الاستعادة النظيفة:** فشل `git clone` المحلي المباشر من GitHub بسبب `Could not resolve host: github.com`؛ لا يُعد نجاح checkout بعيدًا. أنشئ checkout محليًا نظيفًا من لقطة المصدر الجزئية المطابقة لبصمات GitHub، ونجح `check_objective_tls.py` و`check_objective_story_scope_parity.py` و`check_objective_chunks_interop.py` (الثالث بعد إعادة تشغيل منفصلة عندما توقف الاستدعاء المجمع بسبب مهلة التنفيذ). كما يثبت سجل CI أن GitHub runner نفسه نفّذ `actions/checkout@v4` عند الرأس المذكور، واجتاز اختبار Java/TLS الأساسي.
+- **التالي:** فحص حداثة لقطة الأهداف لحظة الاستهلاك، وتأخير/إبطال/تغير تذكرة المهمة؛ لا تفعّل engine apply أو تطلب اختبارات هاتف صغيرة قبل جاهزية APK وقبول هاتفين واحد.
+
+---
+
 # تكملة تحقق CI بعد نشر Chat-Batch07 — 2026-11-26
 
 - عند أول push على رأس `60963d8b2bae3e295e933103c0868aa4d5487a75`: أربع عمليات GitHub Actions **SUCCESS** (Android synthetic TLS platform `45769044893`، source preflight `45769044780`، UDP `45769044807`، parallel source `45769044966`) وعملية **FAILURE** (`real TLS room core` run `45769044777`). السبب المثبت من job log: اختبار `RoomObjectEventWireTest` ظل يقارن `f[4]==9` بينما `RoomWire.VERSION=10`. لم يُشغّل سير ISO/owner-asset APK.

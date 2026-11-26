@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "date_utc": "2026-11-26",
+  "repository": "alwansan/BO",
+  "branch": "experiment/black-coop",
+  "verified_code_head": "d831fd97cc559578d21ec8bb33f2750c91790a6c",
+  "source_migration_base": "f7551ada9e7e352f937bd24e7b5ba405b947602d",
+  "initial_failure": {
+    "run_id": 45769044777,
+    "reason": "Stale v9 literal in RoomObjectEventWireTest; production RoomWire version 10",
+    "fixed_in_commit": "360c70323c61c95ba0b52c080da1123da1e029fd"
+  },
+  "verified_ci": [
+    {
+      "name": "real TLS room core",
+      "run_id": 45769416875,
+      "conclusion": "success",
+      "url": "https://github.com/alwansan/BO/actions/runs/45769416875"
+    },
+    {
+      "name": "Android Keystore and real TLS platform test (synthetic)",
+      "run_id": 45769416865,
+      "conclusion": "success",
+      "url": "https://github.com/alwansan/BO/actions/runs/45769416865"
+    },
+    {
+      "name": "room network game bridge source preflight",
+      "run_id": 45769417022,
+      "conclusion": "success",
+      "url": "https://github.com/alwansan/BO/actions/runs/45769417022"
+    },
+    {
+      "name": "isolated UDP probe",
+      "run_id": 45769416922,
+      "conclusion": "success",
+      "url": "https://github.com/alwansan/BO/actions/runs/45769416922"
+    }
+  ],
+  "owner_asset_ci": "No automatically triggered run of room-network APK after changing workflow to workflow_dispatch-only",
+  "clean_checkout": {
+    "remote_git_clone": "failed locally (DNS could not resolve github.com); not claimed successful",
+    "github_actions_checkout": "Verified in real-tls job logs on GitHub runner at d831fd97… and all tests passed",
+    "local_partial_clone": "fresh git clone from a partial source snapshot with checked source Git blob SHA",
+    "checks": [
+      {
+        "name": "objective TLS",
+        "passed": true,
+        "report_sha256": "da106d02e23d024f735135ce07509b521548ff53c3f150a42e3aed8813e7a5d0"
+      },
+      {
+        "name": "Ticket scalar parity",
+        "passed": true,
+        "cases": 157,
+        "report_sha256": "e977e757e17b0284a656ef39febaff7c16e5f7476df9a65e4f855c7439c96c98"
+      },
+      {
+        "name": "objective chunks C++/Java",
+        "passed": true,
+        "scenarios": 12,
+        "guests": 3,
+        "records_per_guest": 4096,
+        "report_sha256": "89540e6a6915e5a2273235e7750f636f4b5ec0e4e0be3a6a2e32ac65a466ef71"
+      }
+    ]
+  },
+  "limits": [
+    "No actual owner game assets or BLACK engine used",
+    "Android synthetic platform testing is not a native BLACK APK build",
+    "LSAN disabled in C++ interop due environment ptrace restriction",
+    "No live objective source, native apply, or two-phone gameplay acceptance"
+  ]
+}
