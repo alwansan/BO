@@ -563,7 +563,7 @@ X86_FUNC(sub_001EDC90) {
     # Six fixed-code categories, each emitted ONCE; never record shader bytes,
     # shader registers/constants, guest addresses or vertex payloads.
     d3d='src/d3d/d3d8.cpp'
-    shader=pending.get(d3d,originals[d3d].decode('utf-8'))
+    shader=pending.get(d3d,originals[d3d].decode('utf-8')).replace('\r\n','\n')
     backend_once='void EnsureBackend(uint32_t w, uint32_t h) {\n    if (g_backend) return;\n    g_backend = gpu::CreateBackend();\n    if (!g_backend->Init(w, h)) LOGE("d3d: renderer init failed");\n    if (kRenderThread) g_backend = gpu::CreateThreadedBackend(std::move(g_backend));\n}'
     if shader.count(backend_once)!=1 or 'g_backend.reset(' in shader:
         raise ValueError('Pinned process-lifetime backend changed; mod upload lifetime unproven')
