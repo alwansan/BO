@@ -55,3 +55,21 @@ python3 coop/analysis/world_xref_static.py \
 ```
 
 بعد إثبات دالة الباب، يُضاف اختبار ABI على مصدر/صورة مثبتين، ثم موفر original IO مع revalidation للمشهد والعمر قبل وبعد callback وreadback للحالة. اختبار التكامل المطلوب هو فعل ضيف موثوق ينفذه المضيف مرة واحدة، ثم نفس الهوية والحالة الأصلية على الضيف، مع رفض replay وإعادة تحميل المرحلة وتبدل عمر الكائن. تشغيل هذا المسار داخل المحرك ما زال غير متحقق.
+
+## تحقيق تخصيص core/controller/input الأصلي
+
+جرت قراءة submodule `third_party/xboxrecomp` في مرجع PC عند commit المثبت في شجرة المرجع `e4b621706a3b5e58c084838d1f27547548cf27a8`. مصدره `portingpete/xboxrecomp`، ومساره المحلي `/workspace/bo-tools/pc-reference/third_party/xboxrecomp`. يخص هذا البحث قدرة موفر `OriginalActorExchangeKernelIO` على إثبات العمر، ولا يقدم موفر generation أصليًا جاهزًا.
+
+في `src/recomp_manual.c` لمرجع PC، الدالة `black_p2_make` عند السطر1968 تخصص عبر helper المضيف `xbox_HeapAlloc(size,16)` خمسة مخازن مستقلة. owner بحجم`0x16C0` وsource بحجم`0x40` وweapons بحجم`16*4` وshadow بحجم`0x900` وparts بحجم`0x430+0x200`. بعدها تنادي constructor الكاميرا `sub_00014380` مع ESI مساويًا owner وبدون stack arguments، عبر `black_guest_call` مع return-site `0x0020BDD1`. هذه مواصفات استدعاءات المرجع، ولم تُشغّل في هذه الدفعة.
+
+core الذي يستعمله `black_p2_tick` عند السطر2396 مقروء من `[0x002D45D4]`. يختبر المرجع span بحجم`0x5CC0` ثم phase عند`core+0x5AE0`. controller مستعار من `[core+0x354]`، وsource الأصلي مستعار من `[controller+0xA8]` في `black_p2_update` عند السطر2250 تقريبًا. لا يثبت هذا الكود allocator أو deallocator الخاصين بهذه الكائنات الأصلية. مخزن source المستقل للمود يختلف عن source الأصلي المستعار.
+
+في submodule PC، `src/kernel/xbox_memory_layout.c` عند السطر2788 يعرّف `xbox_HeapAlloc(uint32_t size,uint32_t alignment)`. يبحث عن block محرر قابل لإعادة الاستخدام ثم يستعمل bump allocation عند الحاجة. `xbox_HeapFree(uint32_t va)` عند السطر2910 يطابق base الدقيق، ويعلم block بأنه محرر ويدمج الجيران. تعليق header الذي يصف Free بأنه no-op قديم ويخالف جسم التنفيذ في هذا pin. لذلك يمكن إعادة استعمال العنوان والحجم نفسيهما لعمر جديد.
+
+`xbox_HeapBlockSize` عند السطر2895 يقبل interior pointer ويعيد البايتات المتبقية من block المحيط. لا يعيد generation، ولا يثبت عمر كائن فرعي داخل arena. رصد تخصيص SDK الخارجي وحده قد يفوّت إعادة استعمال core/controller/input إذا كانت تلك الكائنات مخصصة داخل arena أصلية.
+
+في `src/kernel/kernel_bridge.c` لنفس submodule، `bridge_ExAllocatePool` عند السطر1244 يقرأ الحجم من `STACK_ARG(0)` ويعيد عنوان guest في EAX، و`bridge_ExAllocatePoolWithTag` عند السطر1258 يضيف tag من`STACK_ARG(1)`. `bridge_ExFreePool` عند السطر4414 يمرر عنوان guest إلى `xbox_HeapFree`.
+
+dispatch الفعلي عند السطر9077 وجدول تنظيف stdcall عند السطر8601 يحددان ordinal14 لـExAllocatePool بوسيط واحد، وordinal15 لـExAllocatePoolWithTag بوسيطين، وordinal17 لـExFreePool بوسيط واحد. التعليق القريب الذي يذكر15/16 قديم. تعريف `STACK_ARG` عند السطر346 يعمل بعد إسقاط dummy return في dispatch، فيكون arg0 عند`g_esp+0` داخل bridge، بينما موضعه عند دخول guest العادي هو`entryESP+4`.
+
+هذه الواجهات تثبت حدود مخازن SDK التي تمر بها فقط. لإكمال lifetime source لـ`OriginalActorExchangeKernelIO` و`ControllerGeneration` و`InputGeneration` يلزم تتبع allocator الأصلي للكائن وعملية تحريره وإعادة تخصيصه، ثم إسناد generation لكل عمر كائن والتحقق من أن جميع مسارات التحرير تمر بالشاهد. لا يكفي committed page أو pointer ثابت أو phase أو حجم block أو رقم المشهد. لم تُعثر في البحث الحالي على دالة malloc/free أصلية موثقة لـcore/controller/input يمكن وصلها بأمان.

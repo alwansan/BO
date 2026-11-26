@@ -4109,7 +4109,12 @@
   },
   "work19": {
     "audio_observer": "implemented_calibration_passed",
-    "original_engine_ci": "pending",
-    "android_gameplay": false
+    "original_engine_ci": 45807466769,
+    "android_gameplay": false,
+    "original_engine_result": "success",
+    "audio_observer_executed": true,
+    "audio_output_unavailable": true,
+    "audio_lifecycle_verified": false,
+    "shared_campaign_complete": false
   }
 }
