@@ -1,3 +1,10 @@
+## Work23b — قرار بموجب الصلاحية (2026-11-26)
+
+- قراري بموجب تفويض المستخدم: **قبول مجسم placeholder مُعدّل (mod-owned) للبشر الآخرين** كما هو مرحليًا (`room_mod_placeholder_*`, مجسم ملون لكل peer، مع شاشة اللاعب الأول الأصلية دون تعديل)، **دون** الادّعاء بمزامنة عالم أصلية أو `sharedWorldComplete`. المسار الأصلي الكامل `P2..P4 + shared world` يبقى هدفًا أعلى من القبول المؤقت.
+- `Peterson047/BLACK-Coop` `feat/windows-multiplayer`: **لا يُحلّ المرجع (404)**؛ لا نسخ. `Peterson047/BLACK-XBEMultiplayer@main`: Windows **binary-only TDM** (`BLACK.exe` 24MB + assets + tools + README + notices؛ 8p UDP1508/1510)، **لا مصدر story-coop أصلي** للنقل؛ `assets/anim/body.bca` **ترخيص مُقيّد لا يُعاد توزيعه/استخدامه**؛ **لا تعديل/نسخ ABI/assets/saves/main**. البحث على الإنترنت (`websearch`) غير متاح الآن.
+- `ranggacasper/black-android@f3754d69`, `alwansan/biso@9ceb6a65`, `portingpete/Black-2006-Recomp@b2512faf`(MIT) متاحة للقراءة. `sub_00014380` جسمه غير موجود؛ `third_party/xboxrecomp` غير مُهيّأ؛ `unit-v24` constructor غير مثبت → **لا ABI مخترع**.
+- `sharedWorldComplete=false`. السبب المتبقي ليس الإذن بعد الآن، بل **دليل أصلي على خيط اللعبة** أو البناء/الاختبار الفعلي.
+
 ## Work23 — قرار المستخدم: قبول كل شيء + صلاحية كاملة (2026-11-26)
 
 - **المستخدم يقبل كل شيء** ويأذن صراحة: **أتخذ كل القرارات بنفسي** (بما فيها قبول مجسم placeholder مُعدّل بدون مزامنة عالم أصلية إن لزم، وتصريح اختبار القبول)؛ **لا يحتاج تأكيدًا إضافيًا منه**. تُسجَّل هذه الصلاحية هنا.
