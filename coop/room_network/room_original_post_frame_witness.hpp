@@ -14,6 +14,17 @@
 #include "kernel/kernel.h"
 #include <cstdint>
 namespace blackcoop {
+struct OriginalUnitMembershipMemory {
+ bool Contains(uint32_t addr,uint32_t size)const noexcept{
+   return OriginalGuestSpanCommitted(addr,size);
+ }
+ uint32_t Read32(uint32_t addr)const noexcept{return kernel::R32(addr);}
+ uint16_t Read16(uint32_t addr)const noexcept{return kernel::R16(addr);}
+ uint8_t Read8(uint32_t addr)const noexcept{
+   return *static_cast<const uint8_t*>(kernel::HostPtr(addr));
+ }
+};
+
 inline void ObserveOriginalPostWorldFrame()noexcept{
  static OriginalPostFrameGate gate;
  // Three native host-player lanes and guest canonical source are kept
@@ -43,8 +54,12 @@ inline void ObserveOriginalPostWorldFrame()noexcept{
  s.unloadPhase=kernel::R32(s.world+0x5AE4u);
  s.localKind=kernel::R32(s.world+0x30u+0xC4u);
  s.localVtable=kernel::R32(s.world+0x30u); // exact ORIGINAL P1 identity
- if(gate.Observe(s,true))
-  SendSafeWorldCodeToAndroid(2130); // candidate, NOT P2 ready
+ if(gate.Observe(s,true)){
+   const bool hasUnitMembership=HasOriginalWorldUnitMembership(OriginalUnitMembershipMemory{},s.world);
+   SendSafeWorldCodeToAndroid(2130); // candidate, NOT P2 ready
+   if(hasUnitMembership)
+     SendSafeWorldCodeToAndroid(2131); // local membership only; no handles retained
+ }
  (void)humanLanes.Progress(2);(void)humanLanes.Progress(3);
  (void)humanLanes.Progress(4); // never marks a lane ready
  (void)humanSetup.At(2);(void)humanSetup.At(3);(void)humanSetup.At(4);

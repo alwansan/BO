@@ -4584,5 +4584,20 @@
     "mappingUsedForSynchronization": false,
     "acceptanceApk": false,
     "next": "verify game-thread unit identity and lifetime in Android and an independently observable native prop transition before enabling host production and guest application"
+  },
+  "workBatch44": {
+    "date": "2026-11-27",
+    "base": "2ad7c97",
+    "session": "memory/sessions/2026-11-27_bo-coop-work44-android-unit-membership.md",
+    "windowsLifecycleRun": 45904704260,
+    "androidUnitMembershipDiagnostic": 2131,
+    "localAndroidArm64Api": 24,
+    "localAndroidFrontendUnitsPassed": 7,
+    "localSourceStagingTestsPassed": 6,
+    "localSanitizerMembershipFixturePassed": true,
+    "androidRuntimeVerified": false,
+    "mappingUsedForSynchronization": false,
+    "acceptanceApk": false,
+    "next": "inspect source CI and add Android observation of native unlink/relink, including early teardown, before enabling any synchronization"
   }
 }

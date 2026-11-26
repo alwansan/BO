@@ -8,6 +8,49 @@
 #include <cstdint>
 #include <thread>
 namespace blackcoop {
+// Read-only port of the Windows lab's unit+0x14 membership check. It exposes
+// no addresses, ordinals, or lifetime handles to the caller.
+template<class Memory>
+bool HasOriginalWorldUnitMembership(const Memory& memory, uint32_t world) noexcept {
+ constexpr uint32_t kWorldRoot=0x002D45D4u, kRecordStride=0x30u, kObjectStride=0xF0u;
+ if ((world&3u)||!memory.Contains(kWorldRoot,4u)||!memory.Contains(world,0x5CB8u))
+   return false;
+ const auto running=[&] {
+   return memory.Read32(kWorldRoot)==world &&
+     IsOriginalWorldRunning(memory.Read32(world+0x5AE0u),memory.Read32(world+0x5AE4u));
+ };
+ if(!running())return false;
+
+ const auto hasMembers=[&](uint32_t unit) {
+   if(memory.Read32(unit)!=0x1Cu||memory.Read8(unit+0x38u)!=1u)return false;
+   const uint32_t index=memory.Read32(unit+8u);
+   if(index==UINT32_MAX||index!=memory.Read32(unit+4u))return false;
+   const uint32_t header=memory.Read32(unit+0xCu), objects=memory.Read32(unit+0x14u);
+   if((header&3u)||!memory.Contains(header,0x92u))return false;
+   if(memory.Read32(header)!=24u)return false;
+   const uint32_t count=memory.Read16(header+0x90u), records=memory.Read32(header+0x1Cu);
+   if(!count||count>1024u||(objects&3u)||(records&3u)||
+      !memory.Contains(objects,count*kObjectStride)||!memory.Contains(records,count*kRecordStride))
+     return false;
+   for(uint32_t ordinal=0;ordinal<count;++ordinal){
+     const uint32_t object=objects+ordinal*kObjectStride;
+     if(memory.Read32(object)!=0x28EA60u||
+        memory.Read32(object+0xD0u)!=records+ordinal*kRecordStride)return false;
+   }
+   uint32_t node=memory.Read32(world+0x5CB4u), visited=0, matches=0;
+   while(node){
+     if(++visited>4096u||(node&3u)||!memory.Contains(node,0xB4u))return false;
+     if(node>=objects&&node-objects<count*kObjectStride){
+       if((node-objects)%kObjectStride)return false;
+       ++matches;
+     }
+     node=memory.Read32(node+0xB0u);
+   }
+   return matches==count;
+ };
+ return (hasMembers(world+0x49D0u)||hasMembers(world+0x5250u))&&running();
+}
+
 struct OriginalPostFrameSample {
  uint32_t world=0,owner=0,physics=0,npcPool=0;
  uint32_t corePhase=0,unloadPhase=0,localKind=0,localVtable=0;
