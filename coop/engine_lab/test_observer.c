@@ -107,8 +107,9 @@ static void test_objective_frames(void)
 
 int main(void) {
     unsigned char report[20];
+    int restart_start;
     g_xbox_mem_offset=(uintptr_t)memory;
-    assert(bo_lab_pad_report(1,report)==1 && report[4]==0);
+    assert(bo_lab_pad_report(1,report,&restart_start)==1 && report[4]==0 && !restart_start);
     bo_lab_ui_page("ProfileOptions");
     assert(bo_lab_ui_now==5 && bo_lab_ui_ticks==1);
     bo_lab_ui_page("PrivateUnrecognizedPage");
@@ -159,7 +160,7 @@ int main(void) {
     assert(bo_lab.phases_completed==0);
     /* Header is encoded by the actual scheduler; phase-separated delivery. */
     InterlockedExchange(&bo_lab_phase,3);
-    assert(bo_lab_pad_report(1,report)==1 && report[13]==0x80);
+    assert(bo_lab_pad_report(1,report,&restart_start)==1 && report[13]==0x80 && !restart_start);
     assert(bo_lab_moves[1]==1 && bo_lab_fires[1]==0);
     /* The legitimate original world-grid node head can change without any
      * P1 actor context or neighbor link corruption. Count it separately. */
@@ -176,6 +177,15 @@ int main(void) {
     assert(!bo_lab_restart_headless_menu("PauseMenu"));
     InterlockedExchange(&bo_lab_restart_action, BO_RESTART_OPEN);
     assert(bo_lab_restart_headless_menu("PauseMenu") && !bo_lab_restart_headless_menu("OptionsMenuXbox"));
+    assert(bo_unit_enter(BO_UNIT_POLL, 0x1000+0x49D0) == 0);
+    assert(!bo_lab_restart_tick());
+    assert(bo_lab_pad_report(0,report,&restart_start)==1 && restart_start && report[2]==0x10);
+    assert(bo_lab_pad_report(1,report,&restart_start)==1 && !restart_start && report[2]==0);
+    bo_lab_restart_menu_enter("OptionsMenuXbox");
+    assert(bo_lab_restart_action == BO_RESTART_OPEN);
+    bo_lab_restart_menu_enter("PauseMenu");
+    assert(bo_lab_restart_action == BO_RESTART_NEUTRAL);
+    assert(bo_lab_pad_report(0,report,&restart_start)==1 && !restart_start && report[2]==0);
     bo_lab_restart_menu_tick("PauseMenu", 3, 1);
     bo_lab_restart_menu_tick("PauseMenu", 3, 0);
     assert(bo_lab_restart_armed && bo_lab_restart_action == BO_RESTART_NEUTRAL);

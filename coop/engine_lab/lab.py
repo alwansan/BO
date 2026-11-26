@@ -208,10 +208,12 @@ void sub_001F1080(void)
             '    ExitProcess(0);', '    fputs("BO_ENGINE_FIRMWARE_SHUTDOWN\\n", stderr);\n    ExitProcess(0);'))
         return '#include <stdio.h>\n' + text
     if kind == 'menu':
+        input_anchor = '    active = pc_menu_tick('
         focus_anchor = '    if (active) {\n        /* Hidden once the page is loaded'
         request_anchor = '    GUEST32(reg + 0x370u) = 1u;\n    fprintf(stderr, "[MENU] gamecode'
-        if any(text.count(anchor) != 1 for anchor in (MENU_ANCHOR, focus_anchor, request_anchor)):
+        if any(text.count(anchor) != 1 for anchor in (MENU_ANCHOR, input_anchor, focus_anchor, request_anchor)):
             raise ValueError('frontend source drift')
+        text = text.replace(input_anchor, '    bo_lab_restart_menu_enter(page);\n' + input_anchor)
         text = text.replace(focus_anchor, '''    bo_lab_restart_menu_tick(page, pc_menu_test_focus(),
         ready && active && GUEST32(ui + 0x3884u) == 0u && GUEST32(ui + 0x388Cu) == 0u);
 ''' + focus_anchor)
@@ -227,14 +229,19 @@ void sub_001F1080(void)
     if kind == 'usb':
         if text.count(USB_ANCHOR) != 1:
             raise ValueError('USB source drift')
-        text = text.replace(USB_ANCHOR, '''    out[0] = 0;
+        text = text.replace(USB_ANCHOR, '''    int restart_start;
+    out[0] = 0;
     out[1] = 20;
-    if (bo_lab_pad_report(pad, out)) {
-        if (!pad) pc_input_apply_report(out, 1);
+    if (bo_lab_pad_report(pad, out, &restart_start)) {
+        if (!pad) {
+            pc_input_apply_report(out, 1);
+            if (restart_start && (out[2] & 0x10)) bo_lab_restart_start_forwarded();
+        }
         return 20;
     }
     if (pad) {''')
-        return 'extern int bo_lab_pad_report(int, unsigned char *);\n' + text
+        return ('extern int bo_lab_pad_report(int, unsigned char *, int *);\n'
+                'extern void bo_lab_restart_start_forwarded(void);\n' + text)
     if kind == 'menu_overlay':
         if text.count(MENU_OVERLAY_ANCHOR) != 1:
             raise ValueError('pinned native menu overlay source drift')
@@ -580,6 +587,8 @@ def private_call(argv, cwd, timeout, env=None, progress=None, diagnostics=None):
                    b'BO_ENGINE_PAD_STARTED': 'usb_pad_polled',
                    b'BO_ENGINE_MENU_TICK': 'frontend_ui_polled',
                    b'BO_ENGINE_RESTART_ARMED': 'restart_armed',
+                   b'BO_ENGINE_RESTART_START_FORWARDED': 'restart_start_forwarded',
+                   b'BO_ENGINE_RESTART_PAUSE_SEEN': 'restart_pause_seen',
                    b'BO_ENGINE_RESTART_PAUSE_READY': 'restart_pause_ready',
                    b'BO_ENGINE_RESTART_CONFIRM_READY': 'restart_confirm_ready',
                    b'BO_ENGINE_RESTART_GAMECODE_QUEUED': 'restart_gamecode_queued',

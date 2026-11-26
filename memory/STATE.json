@@ -4456,6 +4456,25 @@
     "propRuntimeVerified": false,
     "sharedWorldComplete": false,
     "acceptanceApk": false,
-    "next": "validate pending unit lifecycle summary before mapping use and read prop observations when the updated lab runs"
+    "next": "read prop observations when the updated lab runs; Work38 records the earlier lifecycle result"
+  },
+  "workBatch38": {
+    "date": "2026-11-26",
+    "verifiedRun": 45883083661,
+    "verifiedCommit": "0c7755d19cf1b046c6e718eb7a7cde3d1b561056",
+    "verifiedArtifact": 15150840246,
+    "evidence": "memory/evidence/WORK_BATCH38_RESTART_TIMEOUT_45883083661.json",
+    "session": "memory/sessions/2026-11-26_bo-coop-work38-restart-input.md",
+    "firstMissingRestartMarker": "restart_pause_ready",
+    "unitWorldMembershipsVerified": 1,
+    "runtimeElapsedMs": 1800203,
+    "liveRemovalVerified": false,
+    "liveSameUnitReloadVerified": false,
+    "sharedWorldComplete": false,
+    "acceptanceApk": false,
+    "localPythonTestsPassed": 40,
+    "localNativeSanitizerFixturesPassed": 4,
+    "pinnedUsbAndMenuStagingVerified": true,
+    "next": "inspect the original-engine aggregate for forwarded Start, observed pause page, and same-unit removal/relink; keep synchronization gated"
   }
 }

@@ -41,6 +41,16 @@ int main(void) {
     assert(bo_lab_restart_menu("ConfirmWarning", 1, &armed) == BO_RESTART_UP);
     assert(bo_lab_restart_menu("ConfirmWarning", 0, &armed) == BO_RESTART_CONFIRM);
     assert(bo_lab_restart_menu("Other", 0, &armed) == BO_RESTART_NEUTRAL && !armed);
+    assert(!bo_lab_restart_open_input(0, 0).start);
+    for (unsigned attempt = 0; attempt < 4; ++attempt) {
+        const unsigned first = 1 + attempt * 6;
+        assert(bo_lab_restart_open_input(0, first).start);
+        assert(bo_lab_restart_open_input(0, first + 2).start);
+        assert(!bo_lab_restart_open_input(0, first + 3).start);
+        assert(!bo_lab_restart_open_input(0, first + 5).start);
+        assert(!bo_lab_restart_open_input(1, first).start);
+    }
+    assert(!bo_lab_restart_open_input(0, BO_RESTART_OPEN_FRAMES + 1).start);
     bo_lab_encode(bo_lab_restart_input(0, 1000, BO_RESTART_DOWN), report);
     assert(report[2] == 2 && report[4] == 0);
     bo_lab_encode(bo_lab_restart_input(0, 1250, BO_RESTART_DOWN), report);

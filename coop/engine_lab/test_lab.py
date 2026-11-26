@@ -174,7 +174,9 @@ class LabTests(unittest.TestCase):
         patched = lab.patch_text(lab.USB_ANCHOR, 'usb')
         self.assertIn('pc_input_apply_report(out, 1)', patched)
         self.assertIn('if (pad) {', patched)
-        self.assertEqual(patched.count('bo_lab_pad_report(pad, out)'), 1)
+        self.assertEqual(patched.count('bo_lab_pad_report(pad, out, &restart_start)'), 1)
+        self.assertLess(patched.index('pc_input_apply_report(out, 1)'),
+                        patched.index('if (restart_start && (out[2] & 0x10))'))
 
     def test_engine_output_is_never_forwarded(self):
         lab = self.module()

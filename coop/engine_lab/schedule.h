@@ -8,6 +8,7 @@ enum BoLabRestartAction {
     BO_RESTART_NORMAL, BO_RESTART_NEUTRAL, BO_RESTART_OPEN,
     BO_RESTART_UP, BO_RESTART_DOWN, BO_RESTART_CONFIRM
 };
+enum { BO_RESTART_OPEN_FRAMES = 24 };
 static int bo_lab_prefix(const char *text, const char *prefix)
 {
     for (; *prefix; ++prefix, ++text) {
@@ -66,11 +67,19 @@ static int bo_lab_restart_menu(const char *page, int focus, int *armed)
     *armed = 0;
     return BO_RESTART_NEUTRAL;
 }
+/* A slow software-rendered game frame can miss a wall-clock pulse.
+ * Give each of four attempts three original frames down and three up. */
+static BoLabInput bo_lab_restart_open_input(unsigned port, unsigned frames)
+{
+    BoLabInput in = {0};
+    in.start = port == 0 && frames > 0 && frames <= BO_RESTART_OPEN_FRAMES && (frames - 1u) % 6u < 3u;
+    return in;
+}
+
 static BoLabInput bo_lab_restart_input(unsigned port, uint64_t now_ms, int action)
 {
     BoLabInput in = {0};
     if (port != 0 || now_ms % 1000u >= 250u) return in;
-    in.start = action == BO_RESTART_OPEN;
     in.confirm = action == BO_RESTART_CONFIRM;
     in.menu_dir = action == BO_RESTART_UP ? -1 : action == BO_RESTART_DOWN ? 1 : 0;
     return in;

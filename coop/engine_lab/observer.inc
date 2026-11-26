@@ -42,7 +42,7 @@ static unsigned bo_lab_ammo_was[2];
 static int bo_lab_control_ready;
 static unsigned bo_lab_ui_ticks, bo_lab_ui_now, bo_lab_ui_changes;
 static int bo_lab_ui_marker_emitted;
-static volatile LONG bo_lab_restart_action;
+static volatile LONG bo_lab_restart_action, bo_lab_restart_open_frames;
 static int bo_lab_restart_armed, bo_lab_restart_confirming, bo_lab_restart_requested;
 static int bo_lab_restart_pause_seen, bo_lab_restart_confirmation_seen;
 static unsigned bo_lab_restart_scene;
@@ -63,11 +63,21 @@ int bo_lab_restart_headless_menu(const char *page)
         (!strcmp(page, "PauseMenu") || !strcmp(page, "ConfirmWarning"));
 }
 
-int bo_lab_pad_report(int pad, unsigned char *out)
+void bo_lab_restart_start_forwarded(void)
+{
+    static int seen;
+    if (!seen) {
+        seen = 1;
+        fputs("BO_ENGINE_RESTART_START_FORWARDED\n", stderr);
+    }
+}
+
+int bo_lab_pad_report(int pad, unsigned char *out, int *restart_start)
 {
     ULONGLONG now = GetTickCount64();
     BoLabInput in;
     int restart;
+    *restart_start = 0;
     if (pad < 0 || pad > 1) return 0;
     /* Only the USB thread initializes this clock; observer never writes it. */
     if (!bo_lab_boot) { bo_lab_boot = now; fputs("BO_ENGINE_PAD_STARTED\n", stderr); }
@@ -76,16 +86,18 @@ int bo_lab_pad_report(int pad, unsigned char *out)
         in = bo_lab_input((unsigned)pad, now - bo_lab_boot,
             InterlockedCompareExchange(&bo_lab_mission, 0, 0) != 0,
             (unsigned)InterlockedCompareExchange(&bo_lab_phase, 0, 0));
+    } else if (restart == BO_RESTART_OPEN) {
+        in = bo_lab_restart_open_input((unsigned)pad,
+            (unsigned)InterlockedCompareExchange(&bo_lab_restart_open_frames, 0, 0));
+        *restart_start = in.start;
     } else {
-        /* Only one button per window, even if the menu focus changes before
-         * release. Never send another Start that could close the pause menu. */
+        /* Only one navigation button per window, even if focus changes. */
         static ULONGLONG window;
-        static int pulsed_action, opened;
+        static int pulsed_action;
         const ULONGLONG current_window = now / 1000u + 1u;
         if (pad == 0 && window != current_window) {
             window = current_window;
-            pulsed_action = restart == BO_RESTART_OPEN && opened ? BO_RESTART_NEUTRAL : restart;
-            if (pulsed_action == BO_RESTART_OPEN && now % 1000u < 250u) opened = 1;
+            pulsed_action = restart;
         }
         in = bo_lab_restart_input((unsigned)pad, now,
             pulsed_action == restart ? restart : BO_RESTART_NEUTRAL);
@@ -179,6 +191,16 @@ static void bo_lab_ui_page(const char *page)
     if (changed || bo_lab_ui_ticks % 60u == 0) bo_lab_write();
 }
 
+static void bo_lab_restart_menu_enter(const char *page)
+{
+    /* Release Start before the native menu starts consuming pad edges, even
+     * when its first PauseMenu tick is not ready to navigate. */
+    if (bo_lab_restart_headless_menu(page) && !strcmp(page, "PauseMenu") &&
+        InterlockedCompareExchange(&bo_lab_restart_action, BO_RESTART_NEUTRAL,
+            BO_RESTART_OPEN) == BO_RESTART_OPEN)
+        fputs("BO_ENGINE_RESTART_PAUSE_SEEN\n", stderr);
+}
+
 static void bo_lab_restart_menu_tick(const char *page, int focus, int ready)
 {
     const LONG action = InterlockedCompareExchange(&bo_lab_restart_action, 0, 0);
@@ -269,6 +291,9 @@ static int bo_lab_restart_tick(void)
         bo_lab_write();
     }
     if (!running || core != bo_unit_world || bo_lab_scene(core) != bo_lab_restart_scene) return 0;
+    if (InterlockedCompareExchange(&bo_lab_restart_action, 0, 0) == BO_RESTART_OPEN &&
+        InterlockedCompareExchange(&bo_lab_restart_open_frames, 0, 0) <= BO_RESTART_OPEN_FRAMES)
+        InterlockedIncrement(&bo_lab_restart_open_frames);
     for (unsigned slot = 0; slot < 2u; ++slot) {
         const BoLabRestartUnit *const entry = &bo_lab_restart_units[slot];
         const uint32_t unit = core + (slot == 0 ? 0x49D0u : 0x5250u);
