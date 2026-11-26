@@ -13,6 +13,7 @@ import tempfile
 import threading
 import time
 from audio_lab import instrument_generated, parse as parse_audio
+from unit_lab import parse as parse_units
 
 PC_PIN = 'b2512fafd3e181e4febfb298f297245b845ef628'
 RUNTIME_PIN = 'e4b621706a3b5e58c084838d1f27547548cf27a8'
@@ -115,9 +116,38 @@ def patch_text(text, kind):
         text = text.replace(audio_anchor, '#include "bo_audio_observer.inc"\n' + audio_anchor)
         text = text.replace('    black_p2_banks_take();',
                             '    black_p2_banks_take();\n    bo_audio_after_take();')
-        return text.replace(MANUAL_ANCHOR, '''#include "bo_engine_lab.inc"
+        unit_hooks = ('sub_001EB7F0', 'sub_001EB1F0')
+        if any(re.search(r'\bvoid\s+' + name + r'\s*\(', text) for name in unit_hooks):
+            raise ValueError('unit observer source drift')
+        return text.replace(MANUAL_ANCHOR, '''#include "bo_unit_observer.inc"
+#include "bo_engine_lab.inc"
+extern void sub_001EB7F0_gen(void);
+extern void sub_001EB1F0_gen(void);
+
+/* ECX is the stream poll descriptor; unlink receives it at entry ESP+4.
+ * Define the wrappers in recomp_manual.c so generate.py finds both names. */
+void sub_001EB7F0(void)
+{
+    const uint32_t unit = g_ecx;
+    const int slot = bo_unit_enter(0, unit);
+    const uint32_t before = slot < 0 ? 0 : GUEST32(unit);
+    sub_001EB7F0_gen();
+    bo_unit_after_poll(slot, unit, before, g_eax);
+}
+
+void sub_001EB1F0(void)
+{
+    const uint32_t unit = black_pc_ram_span(g_esp, 8u) ? GUEST32(g_esp + 4u) : 0;
+    const int slot = bo_unit_enter(1, unit);
+    const int linked = slot >= 0 && GUEST8(unit + 0x38u);
+    const uint32_t index = linked ? GUEST32(unit + 8u) : 0;
+    sub_001EB1F0_gen();
+    if (linked) bo_unit_after_unlink(slot, unit, index);
+}
+
 void sub_001F1080(void)
 {
+    bo_unit_bind_frame_thread();
     sub_001F1080_gen();
     bo_lab_before();
     black_p2_tick();
@@ -300,6 +330,7 @@ def prepare(pc):
         path.write_text(text, encoding='utf-8')
     shutil.copyfile(HERE / 'observer.inc', pc / 'src/bo_engine_lab.inc')
     shutil.copyfile(HERE / 'audio_observer.inc', pc / 'src/bo_audio_observer.inc')
+    shutil.copyfile(HERE / 'unit_observer.inc', pc / 'src/bo_unit_observer.inc')
     shutil.copyfile(HERE / 'schedule.h', pc / 'src/schedule.h')
 
 
@@ -378,7 +409,8 @@ def collect_diagnostics(line, result):
         if all(fragment in lowered for fragment in fragments) and category not in categories:
             categories.append(category)
     # These filenames are public host/lab source, never generated game bodies.
-    sources = {'main.c', 'recomp_manual.c', 'black_native_menu.inc', 'bo_engine_lab.inc', 'bo_audio_observer.inc', 'schedule.h'}
+    sources = {'main.c', 'recomp_manual.c', 'black_native_menu.inc', 'bo_engine_lab.inc',
+               'bo_audio_observer.inc', 'bo_unit_observer.inc', 'schedule.h'}
     match = re.search(r'(?i)\b(?:fatal\s+)?error\s+(C[0-9]{4}|LNK[0-9]{4}|MSB[0-9]{4})\b', line)
     rust = re.search(r'\berror\[(E[0-9]{4})\]', line)
     if not match and not rust:
@@ -610,7 +642,8 @@ def execute(bo, pc, out, seconds):
                    RECOMP_BLACK_INPUT_MODE='controller', RECOMP_BLACK_PROMPT_MODE='controller',
                    RECOMP_BLACK_SKIP_MOVIES='1', RECOMP_BLACK_SKIP_STARTUP_VIDEOS='1',
                    BO_LAB_AGGREGATE=str(temp / 'aggregate.json'),
-                   BO_LAB_AUDIO_AGGREGATE=str(temp / 'audio-aggregate.json'))
+                   BO_LAB_AUDIO_AGGREGATE=str(temp / 'audio-aggregate.json'),
+                   BO_LAB_UNIT_AGGREGATE=str(temp / 'unit-aggregate.json'))
         progress = {}
         started = time.monotonic()
         code = private_call([executable], pc, seconds, env, progress)
@@ -624,6 +657,8 @@ def execute(bo, pc, out, seconds):
         report['audio_observer_executed'] = bool(report['audio_observations'] and
             report['audio_observations']['create_calls'] > 0 and
             report['audio_observations']['restore_checks'] > 0)
+        unit_raw = temp / 'unit-aggregate.json'
+        report['unit_observations'] = parse_units(unit_raw.read_text(encoding='ascii')) if unit_raw.is_file() else None
         result = evaluate(report['observations'])
         report.update(result)
         if report['blocker'] == 'mission_not_reached':

@@ -1,0 +1,32 @@
+"""Validate the aggregate output of the private PC unit observer."""
+import json
+
+FIELDS = frozenset((
+    "poll_calls", "unlink_calls", "before_frame_thread_calls", "other_thread_calls",
+    "unit_publications", "ordinal_maps_verified", "ordinal_map_failures",
+    "empty_publications", "unit_unlinks", "paired_unit_unlinks",
+    "same_slot_unit_republications",
+))
+
+
+def parse(text):
+    def unique(pairs):
+        result = dict(pairs)
+        if len(result) != len(pairs):
+            raise ValueError("duplicate unit field")
+        return result
+
+    if len(text) > 2048:
+        raise ValueError("oversized unit aggregate")
+    data = json.loads(text, object_pairs_hook=unique)
+    if (not isinstance(data, dict) or set(data) != FIELDS or
+            any(type(value) is not int or not 0 <= value <= 100000000 for value in data.values())):
+        raise ValueError("invalid unit aggregate")
+    if (data["unit_publications"] != data["ordinal_maps_verified"] +
+            data["ordinal_map_failures"] + data["empty_publications"] or
+            data["unit_publications"] > data["poll_calls"] or
+            data["unit_unlinks"] > data["unlink_calls"] or
+            data["paired_unit_unlinks"] > min(data["unit_unlinks"], data["ordinal_maps_verified"]) or
+            data["same_slot_unit_republications"] > data["paired_unit_unlinks"]):
+        raise ValueError("inconsistent unit observation counts")
+    return data

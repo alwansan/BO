@@ -4229,5 +4229,18 @@
     "next": "observe native unit publication, teardown and reload to validate thread and ordinal/lifetime before wiring sync",
     "sharedWorldComplete": false,
     "acceptanceApk": false
+  },
+  "workBatch27": {
+    "date": "2026-11-26",
+    "base": "9063c41",
+    "scope": "private PC lab observation of unit publication, ordinal mapping and unlink",
+    "localPythonTestsPassed": 38,
+    "localCObserverASanUBSan": "passed",
+    "originalRuntimeObservationVerified": false,
+    "androidRuntimeVerified": false,
+    "evidence": "memory/sessions/2026-11-26_bo-coop-work27-unit-lifecycle-observer.md",
+    "next": "read original engine CI unit_observations before choosing identity/lifetime boundaries",
+    "sharedWorldComplete": false,
+    "acceptanceApk": false
   }
 }

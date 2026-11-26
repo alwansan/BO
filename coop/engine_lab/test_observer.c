@@ -33,6 +33,7 @@ static int black_p2_state, black_p2_in;
 static uint32_t black_p2_shadow, black_p2_proxy;
 static uint32_t black_proxy_motion(uint32_t proxy) { return proxy == 0x9000 ? 0xA000 : proxy == 0x9100 ? 0xA100 : 0; }
 static void bo_audio_write(void) {}
+static void bo_unit_write(void) {}
 #include "observer.inc"
 int main(void) {
     unsigned char report[20];
