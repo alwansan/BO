@@ -4173,6 +4173,15 @@
     "ownerPhoneTestRequested": false,
     "blocker": "source-only scaffolding is not a live native original-world producer/resolver/apply; needs source-proven native ABI on game thread + two-phone verification",
     "firstPendingActionableStep": "live binding on original game thread (restored); fallback evidence docs/SHARED_WORLD_PROVIDER_INVESTIGATION_WORK18_AR.md; trace unit-v24 48B instance reader -> constructor -> state-change/teardown; prove stable original identity; then production OriginalScene/ResolveOriginalObject/StillOwnsOriginalObject/ApplyOriginalHostState/VerifyOriginalHostState provider; honest two-phone test only after genuine shared first stage + visible remote humans + shared world sync",
-    "allWorkPushedToGithub": true
+    "allWorkPushedToGithub": true,
+    "crlfWindowsApkFix": {
+      "file": "coop/prepare_room_network.py",
+      "bug": "EnsureBackend pinned anchor match on src/d3d/d3d8.cpp failed on Windows CRLF checkout -> ValueError 'Pinned process-lifetime backend changed; mod upload lifetime unproven'",
+      "fix": "normalize shader = pending.get(...).replace('\\r\\n','\\n') before anchor check",
+      "repro": "CRLF pinned reference copy -> 3 errors; after fix 22/22 prepare_checks pass on CRLF and LF",
+      "failedRun": 45844688050,
+      "reDispatchedRun": 45846052896,
+      "note": "still not claiming APK success; not claiming shared world complete"
+    }
   }
 }
