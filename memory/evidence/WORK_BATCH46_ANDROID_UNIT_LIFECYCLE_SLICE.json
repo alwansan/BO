@@ -1,0 +1,30 @@
+{
+  "commit": "7acb0901f6c084013dc72f810e5188a6b3af3e9c",
+  "source_ci": {
+    "android_arm64_frontend_run": 45910176234,
+    "android_arm64_frontend_units_passed": 7,
+    "source_transform_run": 45910176273,
+    "conclusion": "success"
+  },
+  "private_runtime": {
+    "platform": "Android",
+    "abi": "arm64-v8a",
+    "runtime_api": 35,
+    "android_linker": "/system/bin/linker64",
+    "sanitizers": ["address", "undefined"],
+    "owner_xbe_pin_verified": true,
+    "original_unit_functions_executed": ["001EB1F0", "001EB7F0", "001EB440"],
+    "original_world_list_functions_executed": ["001BEB40", "001CE1F0"],
+    "synthetic_unit_scene_and_game_memory": true,
+    "unrelated_engine_subsystems_stubbed": true,
+    "post_world_frame_and_event_sink_simulated": true,
+    "event_sequence": [2132, 2133],
+    "event_order_verified": true,
+    "verified_removal_from_original_list": true,
+    "verified_relink_to_replacement_world_in_slice": true,
+    "full_campaign_runtime_verified": false,
+    "apk_event_export_verified": false,
+    "mapping_used_for_synchronization": false,
+    "acceptance_apk": false
+  }
+}

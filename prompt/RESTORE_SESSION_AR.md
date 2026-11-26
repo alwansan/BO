@@ -1,4 +1,9 @@
-## آخر تحديث Work45 (2026-11-27)
+## آخر تحديث Work46 (2026-11-27)
+
+- نجح [CI وحدات Android](https://github.com/alwansan/BO/actions/runs/45910176234) و[تحويل المصدر](https://github.com/alwansan/BO/actions/runs/45910176273) على `7acb090`.
+- نفذ اختبار Android ARM64 خاص دوال النشر والفصل والربط المولّدة مع قائمة العالم الأصلية فوق ذاكرة اصطناعية؛ خرجت `2132` ثم `2133`. لم يشغّل تطبيق الحملة أو يثبت تصدير Java. [الدليل والحدود](../memory/sessions/2026-11-27_bo-coop-work46-private-android-lifecycle-slice.md). أول خطوة تالية اختبار التطبيق الأصلي كاملًا وإثبات أثر تفاعل أصلي. لا مزامنة مفعلة ولا APK قبول.
+
+## سجل Work45 (2026-11-27)
 
 - نجح [فحص Android 45909204876](https://github.com/alwansan/BO/actions/runs/45909204876) و[فحص التجهيز 45909204989](https://github.com/alwansan/BO/actions/runs/45909204989) لرصد العضوية. أُضيف رصد الفصل المبكر والنشر وإعادة ربط الوحدة نفسها في Android؛ نجحت الوحدات المحلية السبع والعينة المعقّمة والتوليد الخاص بالـSDK. [التفاصيل](../memory/sessions/2026-11-27_bo-coop-work45-android-unit-lifecycle.md).
 - رمزا Android `2132` و`2133` مخصصان للدليل الحي على الفصل وإعادة الربط، ولم يُرصدا على Android بعد. [فحص وحدات Android الجديد](https://github.com/alwansan/BO/actions/runs/45910176234) و[فحص التجهيز](https://github.com/alwansan/BO/actions/runs/45910176273) جاريان على `7acb090`. التالي: اربط فعلًا أصليًا محددًا بأثره قبل تفعيل مزامنة حالة العالم. لا APK قبول.
