@@ -4479,5 +4479,22 @@
     "restartRetryCommit": "b84c49bfdbffc2c4f5225f3214a4667276a1923b",
     "restartRetryStatus": "pending_behind_prop_run_at_last_check",
     "next": "inspect the original-engine aggregate for forwarded Start, observed pause page, and same-unit removal/relink; keep synchronization gated"
+  },
+  "workBatch39": {
+    "date": "2026-11-26",
+    "session": "memory/sessions/2026-11-26_bo-coop-work39-unit-lifecycle-verification.md",
+    "restartRetryRun": 45888999187,
+    "restartRetryCommit": "b84c49bfdbffc2c4f5225f3214a4667276a1923b",
+    "restartRetryStatus": "pending_no_artifact_at_last_check",
+    "propRun": 45885832477,
+    "propRunStatus": "windows_engine_running_no_artifact_at_last_check",
+    "artifactVerifier": "coop/analysis/verify_unit_lifecycle_artifact.py",
+    "localVerifierTestsPassed": 4,
+    "localLabPythonTestsPassed": 40,
+    "nativePauseChainSourceVerified": true,
+    "liveRemovalVerified": false,
+    "liveSameUnitReloadVerified": false,
+    "acceptanceApk": false,
+    "next": "download the published ZIP and artifact metadata for 45888999187, run the verifier, and inspect the first missing boundary before using the mapping"
   }
 }
