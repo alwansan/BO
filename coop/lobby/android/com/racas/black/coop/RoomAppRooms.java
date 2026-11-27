@@ -331,10 +331,17 @@ public final class RoomAppRooms {
   * Source values only; no game memory, bot AI, or object mutation.
   */
  public static int[] pollHostObjectEventFromGameThread(){
-  RoomSession s;
-  synchronized(RoomAppRooms.class){s=active;}
+   RoomSession s;
+   synchronized(RoomAppRooms.class){s=active;}
   return s==null?new int[]{-1}:
       s.pollOriginalHostObjectEventFrameFromGameThread();
+ }
+ public static boolean offerOriginalHostPropDepletionFromGameThread(int episode,int level,int stage,
+     long key,int part,int count,int definition,int healthBits){
+  RoomSession s;
+  synchronized(RoomAppRooms.class){s=active;}
+  return s!=null&&s.offerOriginalHostPropDepletionFromGameThread(
+      episode,level,stage,key,part,count,definition,healthBits);
  }
  // Source-only native gamepad -> authenticated GUEST TLS inputs.
  // Exact COMMITTED ticket scope resets the per-story sequence.

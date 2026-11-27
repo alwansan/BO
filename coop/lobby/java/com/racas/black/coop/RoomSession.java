@@ -822,35 +822,36 @@ public final class RoomSession implements AutoCloseable {
      */
     public boolean offerOriginalHostObjectEventFromGameThread(
            int episode,int sequence,int tick,long stableKey,int kind,int state){
-        return offerOriginalHostObjectEventFromGameThread(episode,sequence,tick,stableKey,
-            kind,state,0,0,0,0);
-    }
-    public boolean offerOriginalHostPropDepletionFromGameThread(
-           int episode,int sequence,int tick,long stableKey,int part,int count,int definition,int healthBits){
-        return offerOriginalHostObjectEventFromGameThread(episode,sequence,tick,stableKey,
-            RoomObjectEventWire.PART_DEPLETED,1,part,count,definition,healthBits);
-    }
-    private boolean offerOriginalHostObjectEventFromGameThread(
-           int episode,int sequence,int tick,long stableKey,int kind,int state,
-           int part,int count,int definition,int healthBits){
         synchronized(lock){
-            if(closed||!validStoryThread()||phase!=Phase.HOSTING||
-               host==null||!host.isRunning()||!host.storyCommitted()||
-               episode<=0||lastSourceStage==null||
-               lastSourceStage.originalEpisode!=episode||
-               System.nanoTime()-lastSourceStageAtNs>3000000000L||
-               originalRunningReadyTicket==null)return false;
-            RoomStoryWire.Ticket t=host.storyTicket();
-            if(t==null||!t.same(originalRunningReadyTicket)||
-               t.mission!=lastSourceStage.level||t.stage!=lastSourceStage.stage)
-                return false;
+            RoomStoryWire.Ticket t=originalHostObjectTicketLocked(episode);
+            if(t==null)return false;
             try{
-                RoomObjectEventWire.Event event=kind==RoomObjectEventWire.PART_DEPLETED?
-                    RoomObjectEventWire.depletedPart(t,sequence,tick,stableKey,part,count,definition,healthBits):
-                    new RoomObjectEventWire.Event(t,sequence,tick,stableKey,kind,state);
-                return host.offerObjectEvent(event);
+                return host.offerObjectEvent(
+                    new RoomObjectEventWire.Event(t,sequence,tick,stableKey,kind,state));
             }catch(IOException unavailable){return false;}
         }
+    }
+    public boolean offerOriginalHostPropDepletionFromGameThread(
+           int episode,int level,int stage,long stableKey,int part,int count,int definition,int healthBits){
+        synchronized(lock){
+            RoomStoryWire.Ticket t=originalHostObjectTicketLocked(episode);
+            if(t==null||t.mission!=level||t.stage!=stage)return false;
+            try{
+                return host.offerOriginalPartDepletion(t,stableKey,part,count,definition,healthBits);
+            }catch(IOException unavailable){return false;}
+        }
+    }
+    private RoomStoryWire.Ticket originalHostObjectTicketLocked(int episode){
+        if(closed||!validStoryThread()||phase!=Phase.HOSTING||
+           host==null||!host.isRunning()||!host.storyCommitted()||
+           episode<=0||lastSourceStage==null||
+           lastSourceStage.originalEpisode!=episode||
+           originalRunningReadyEpisode!=episode||
+           System.nanoTime()-lastSourceStageAtNs>3000000000L||
+           originalRunningReadyTicket==null)return null;
+        RoomStoryWire.Ticket t=host.storyTicket();
+        return t!=null&&t.same(originalRunningReadyTicket)&&
+            t.mission==lastSourceStage.level&&t.stage==lastSourceStage.stage?t:null;
     }
     /** Guest consumes one signed change; never writes guest BLACK memory. */
     public RoomObjectEventWire.Event pollHostObjectEventFromGameThread(){

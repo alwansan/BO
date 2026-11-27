@@ -1,8 +1,8 @@
 {
   "latestRestoreVerification": {
     "date": "2026-11-28",
-    "verified_commit": "cda3fa1776fcb12ddc45bfa244dc7ca9bc2075a2",
-    "source_preflight_run": 46079525974,
+    "verified_commit": "67219e7c7e37ff1ca7c1aa14976b515a4ddffadb",
+    "source_preflight_run": 46081140841,
     "source_preflight": "success",
     "android_synthetic_diagnostic_export_run": 45922634177,
     "android_shared_campaign_verified": false,
@@ -4676,15 +4676,23 @@
     "evidence": "memory/evidence/WORK_BATCH51_NATIVE_INPUT_AND_PROP_SCOPE.json",
     "retirementEvidence": "memory/evidence/WORK_BATCH49_ANDROID_P2_VOICE_RETIREMENT.json",
     "wireVersion": 12,
+    "verifiedCodeRevision": "67219e7c7e37ff1ca7c1aa14976b515a4ddffadb",
+    "successfulSourceAndTransportChecks": [46081140841, 46081140798, 46081140732, 46081140836, 46081140831, 46081140708],
     "realTlsRelayBetweenNativeTrials": true,
     "relayedPartAndCollisionReadbacksPassedInTwoIndependentEngines": true,
     "guardedNativeFifoAppliedMatchedFrameAndRejectedStaleHealthBeforeWriter": true,
+    "hostSourcePublisherStagedThroughBlackActivity": true,
+    "hostSourcePublisherObservedFromStockDamage": false,
     "allFivePlayerStorageBlocksReclaimedAndIntactFor240FramesInPrivateTrial": true,
     "p2NativeFireTrialSignal": 11,
+    "p2FireAudioBankEntriesAtFailure": 0,
+    "p2FireEmptyAudioBankIsSoundRowBase": true,
+    "p2FireSoundTableOwnershipAndShotReadbackVerified": false,
+    "stockPropObserverStockInputTrialTimedOutWithoutGuardedCall": true,
     "liveBlackActivityHostPublishToGuestWriteVerified": false,
     "productionActorRetirementVerified": false,
     "acceptanceApk": false,
-    "next": "capture a stock damage callback, then wire source and guest engines into the actual Android room and fix the fire-time audio bank"
+    "next": "aim stock P1 at a source-matched breakable prop and verify the native publisher; prove guest publication lifetime during application and trace the stock sound table's external entry allocations before equivalent P2 loading"
   },
   "workBatch52": {
     "date": "2026-11-28",

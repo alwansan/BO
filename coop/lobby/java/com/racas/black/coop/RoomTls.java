@@ -223,6 +223,18 @@ public final class RoomTls {
                 return true;
             }
         }
+        boolean offerOriginalPartDepletion(RoomStoryWire.Ticket ticket,long key,int part,
+                int count,int definition,int healthBits)throws IOException{
+            synchronized(lock){
+                if(lastObjectEventSequence==Integer.MAX_VALUE)return false;
+                int sequence=lastObjectEventSequence+1;
+                // Keep the event stream's tick nondecreasing if a previous
+                // publisher supplied a larger original tick.
+                return offerObjectEvent(RoomObjectEventWire.depletedPart(
+                    ticket,sequence,Math.max(sequence,lastObjectEventTick),key,
+                    part,count,definition,healthBits));
+            }
+        }
         public List<TrustedInput> drainLatestTrustedInputs(){
             synchronized(lock){
                 if(closed||story==null||!storyCommitted||revision!=story.rosterRevision)

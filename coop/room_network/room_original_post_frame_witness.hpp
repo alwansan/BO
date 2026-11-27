@@ -11,6 +11,7 @@
 #include "coop/room_original_guest_launch_match_witness.hpp"
 #include "coop/room_original_bot_pool_witness.hpp"
 #include "coop/room_original_objective_source.hpp"
+#include "coop/room_mod_human_presentation_witness.hpp"
 #include "coop/room_world_tick.hpp"
 #include "kernel/kernel.h"
 #include <atomic>
@@ -66,6 +67,35 @@ struct OriginalPropDamageObservation {
  OriginalUnitPropPartSample before{};
 };
 
+inline void OfferOriginalPropDepletionToHostRoom(const OriginalPropDamageObservation& observed) noexcept {
+ const auto now=static_cast<uint64_t>(SDL_GetTicks());
+ ModHumanOriginalScene scene{};
+ const auto& key=observed.key;
+ if(!OriginalModHumanScenes().Read(now,scene)||scene.world!=observed.world||
+    scene.level!=key.level||scene.stage!=key.stage||scene.episode>INT32_MAX||
+    !OriginalModHumanSceneCurrent(scene,now)||key.unitIndex>INT32_MAX)return;
+ const auto& part=observed.before;
+ const uint64_t packed=(uint64_t(key.unitIndex)<<32)|(uint64_t(key.recordCount)<<16)|key.ordinal;
+ auto* env=static_cast<JNIEnv*>(SDL_GetAndroidJNIEnv());
+ if(!env)return;
+ if(env->PushLocalFrame(4)<0){
+   if(env->ExceptionCheck())env->ExceptionClear();
+   return;
+ }
+ const auto activity=static_cast<jobject>(SDL_GetAndroidActivity());
+ const auto cls=activity&&!env->ExceptionCheck()?env->GetObjectClass(activity):nullptr;
+ const auto method=cls&&!env->ExceptionCheck()?
+   env->GetMethodID(cls,"coopOfferOriginalHostPropDepletion","(IIIJIIII)Z"):nullptr;
+ if(method&&!env->ExceptionCheck()&&OriginalModHumanSceneCurrent(scene,SDL_GetTicks())&&
+    OriginalUnitPublications().Generation()==part.prop.generation)
+   env->CallBooleanMethod(activity,method,static_cast<jint>(scene.episode),
+      static_cast<jint>(key.level),static_cast<jint>(key.stage),static_cast<jlong>(packed),
+      static_cast<jint>(part.partIndex),static_cast<jint>(part.partCount),
+      static_cast<jint>(part.definition),static_cast<jint>(part.healthBits));
+ if(env->ExceptionCheck())env->ExceptionClear();
+ env->PopLocalFrame(nullptr);
+}
+
 inline OriginalPropDamageObservation ObserveOriginalPropDamageBefore(
     uint32_t object,uint32_t stack) noexcept {
  const OriginalUnitMembershipMemory memory;
@@ -74,6 +104,8 @@ inline OriginalPropDamageObservation ObserveOriginalPropDamageBefore(
  if(caller!=0x001E58E8u&&caller!=0x001E55C5u)return {};
  const auto part=memory.Read32(stack+4u);
  if(part>UINT8_MAX)return {};
+ const auto generation=OriginalUnitPublications().Generation();
+ if(!generation)return {};
  const auto world=unit_observation::World(memory);
  OriginalUnitPropKey key;
  if(!IdentifyOriginalUnitProp(memory,[](uint32_t,uint32_t) noexcept {
@@ -81,7 +113,8 @@ inline OriginalPropDamageObservation ObserveOriginalPropDamageBefore(
     },world,object,key))return {};
  OriginalUnitPropPartSample before;
  if(!SampleOriginalPropPartOnFrameThread(world,key,static_cast<uint8_t>(part),before)||
-    before.prop.object!=object||!before.healthBits||before.definition==UINT32_MAX)return {};
+    before.prop.generation!=generation||before.prop.object!=object||
+    !before.healthBits||before.definition==UINT32_MAX)return {};
  return {world,key,before};
 }
 
@@ -90,6 +123,7 @@ inline void ObserveOriginalPropDamageAfter(const OriginalPropDamageObservation& 
  OriginalUnitPropPartSample after;
  if(!SampleOriginalPropPartOnFrameThread(observed.world,observed.key,
       observed.before.partIndex,after)||!IsOriginalPartDepletion(observed.before,after))return;
+ OfferOriginalPropDepletionToHostRoom(observed);
  static bool firstDepletion=false;
  if(!firstDepletion){
    firstDepletion=true;

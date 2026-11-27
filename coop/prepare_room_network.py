@@ -108,6 +108,11 @@ def prepare(root: pathlib.Path):
     public int[] coopPollHostObjectEventFromGameThread() {
         return com.racas.black.coop.RoomAppRooms.pollHostObjectEventFromGameThread();
     }
+    public boolean coopOfferOriginalHostPropDepletion(int episode, int level, int stage, long key,
+            int part, int count, int definition, int healthBits) {
+        return com.racas.black.coop.RoomAppRooms.offerOriginalHostPropDepletionFromGameThread(
+            episode, level, stage, key, part, count, definition, healthBits);
+    }
     public void coopPublishOriginalHostObjectives(int episode, long sequence, byte[] records) {
         com.racas.black.coop.RoomAppRooms.publishOriginalHostObjectivesFromGameThread(
             episode,sequence,records);

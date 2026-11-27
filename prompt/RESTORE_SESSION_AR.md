@@ -1,6 +1,6 @@
 ## آخر تحديث Work53 (2026-11-28)
 
-- نقل بروتوكول 12 حالة جزء عبر TLS حقيقي بين مختبري محرك مستقلين؛ تحقق التحول إلى «لا إصابة» في الاثنين. استُخدم وسيط محلي، ولم يثبت `BlackActivity`. نجح المختبر في تحرير كتل P2 الخمس وإعادة تخصيصها، وظهر عطل صوت عند تجربة زناد P2. تابع رصد الضرر الطبيعي وإصلاح بنك الصوت وربط النشر والتطبيق. لا APK قبول. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-28_bo-coop-work53-part-event-and-camera-reuse.md).
+- نقل بروتوكول 12 حالة الجزء عبر TLS بين مختبري محرك؛ طبّقها الطابور ورفض صحة قديمة. رُبط مصدر المضيف بـ`BlackActivity` في الكود، وبقي كاتب الضيف مختبريًا. تحررت كتل P2 الخمس في المختبر. الزناد يتعطل في صف صوت بلا جدول. نجحت [فحوص `67219e7`](https://github.com/alwansan/BO/actions/runs/46081140841). لا APK قبول. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-28_bo-coop-work53-part-event-and-camera-reuse.md).
 
 ## آخر تحديث Work52 (2026-11-28)
 

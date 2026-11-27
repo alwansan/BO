@@ -218,6 +218,48 @@
     "roundConsumptionVerified": false,
     "allowlistedMarkersSha256": "e3acb036149289b67a478d32aa2d6576a59f505f18f61875d05b21b63c3a9408"
   },
+  "nativeP2TriggerBankReadback": {
+    "dateVerified": "2026-11-28",
+    "audioCall": "001416D0",
+    "observedBankInsideLabOwnedAudioAllocation": true,
+    "bankHeaderReadable": true,
+    "bankEntryCount": 0,
+    "readableEntryTable": false,
+    "readableEntries": 0,
+    "framesAtLeast": 2400,
+    "processExit": 139,
+    "signal": 11,
+    "allowlistedMarkersSha256": "6a206f526370477bed836bbe27ab2f820c8312ce87cc658544af623fbaa4737e"
+  },
+  "nativeP2FireSoundRowOwnershipSurvey": {
+    "dateVerified": "2026-11-28",
+    "failedBankIsBaseOfOwned0x290SoundRow": true,
+    "failedBankIsIndependent0xC0Bank": false,
+    "stockRowsWithReadablePopulatedTables": 1,
+    "stockSoundTableEntriesInDonorRowOrItsSampleBacking": 0,
+    "originalLoadCallbacksWithImmediateZeroEntryReadback": 4,
+    "headlessKnownCallIsolationReachedAnotherAudioFunction": "000BC860",
+    "callIsolationTrialExit": 134,
+    "callIsolationTrialSignal": 6,
+    "roundConsumptionVerified": false,
+    "allowlistedMarkersSha256": [
+      "c36d37a69c91c443ba97041bbc43fa40ad9922cfb66081259cfc6401e896af57",
+      "fff2b3838a93c9c2bb506aa2fe6669411ea6cabe0709870437d6f9566b16977e"
+    ]
+  },
+  "stockPropDamageObserverTrial": {
+    "dateVerified": "2026-11-28",
+    "sourceRevision": "67219e7c7e37ff1ca7c1aa14976b515a4ddffadb",
+    "nativeStageAndControlsReached": true,
+    "directPropDamageWritesInTrial": false,
+    "guardedStockPropDamageCallObserved": false,
+    "guardedPartDepletionDiagnosticObserved": false,
+    "framesAtLeast": 4980,
+    "processExit": 124,
+    "exitCause": "trial_timeout",
+    "engineSignalObserved": false,
+    "allowlistedMarkersSha256": "ebdc2db89063c567ae3842abbb9796e6b96291d1c59ab17c8ae60e83f5748f6d"
+  },
   "nativeGuardedPartInboxWithRealTlsRelay": {
     "dateVerified": "2026-11-28",
     "realTlsGuestFrameWords": 14,

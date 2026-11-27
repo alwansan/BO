@@ -62,9 +62,11 @@ public final class RoomObjectEventTlsTest {
          frame[8]==RoomObjectEventWire.DESTROYED&&frame[9]==1);
      final long key=RoomObjectEventWire.propKey(7,20,14);
      final int health=Float.floatToRawIntBits(35f);
-     yes(!guest.offerOriginalHostPropDepletionFromGameThread(61,2,2,key,1,2,3,health));
-     yes(!host.offerOriginalHostPropDepletionFromGameThread(54,2,2,key,1,2,3,health));
-     yes(host.offerOriginalHostPropDepletionFromGameThread(55,2,2,key,1,2,3,health));
+     yes(!guest.offerOriginalHostPropDepletionFromGameThread(61,0,1,key,1,2,3,health));
+     yes(!host.offerOriginalHostPropDepletionFromGameThread(54,0,1,key,1,2,3,health));
+     yes(!host.offerOriginalHostPropDepletionFromGameThread(55,0,2,key,1,2,3,health));
+     yes(!host.offerOriginalHostPropDepletionFromGameThread(55,0,1,key,1,2,3,0));
+     yes(host.offerOriginalHostPropDepletionFromGameThread(55,0,1,key,1,2,3,health));
      received[0]=null;
      until(()->{
       int[] reply=guest.pollOriginalHostObjectEventFrameFromGameThread();
