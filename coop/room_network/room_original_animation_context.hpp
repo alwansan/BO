@@ -47,6 +47,7 @@ class OriginalAnimationContext {
            poolGeneration_ = 0;
   uint32_t pool_ = 0;
   std::array<Piece, 3> emptyCache_;
+  std::array<std::vector<uint8_t>, 3> primaryCache_;
   Piece workspace_;
   std::vector<Piece> pieces_, blocks_;
   std::vector<uint32_t> shadowTops_;
@@ -204,6 +205,7 @@ public:
           return false;
       if (!take(io, at, bytes, next[i]))
         return false;
+      primaryCache_[i].resize(bytes);
     }
     scene_ = io.Scene();
     cache_ = cache;
@@ -400,8 +402,18 @@ public:
       if (lengths[i] && !blockMappings[i])
         return false;
     exchange(work, workspace_.kept, kWorkBytes);
-    for (size_t i = 0; i < cacheMappings.size(); ++i)
-      std::memcpy(cacheMappings[i], emptyCache_[i].kept.data(), emptyCache_[i].kept.size());
+    for (size_t i = 0; i < cacheMappings.size(); ++i) {
+      auto *const mapping = cacheMappings[i];
+      auto &primary = primaryCache_[i];
+      if (entered_) {
+        std::memcpy(mapping, primary.data(), primary.size());
+      } else {
+        // The extra context starts with an empty cache. Restore the original
+        // player and shared animation entries on exit, at their same addresses.
+        std::memcpy(primary.data(), mapping, primary.size());
+        std::memcpy(mapping, emptyCache_[i].kept.data(), primary.size());
+      }
+    }
     for (uint32_t i = 0; i < count_; i++)
       if (blockMappings[i]) {
         exchange(blockMappings[i], blocks_[i].kept, lengths[i]);

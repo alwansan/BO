@@ -102,13 +102,18 @@ int main() {
   io.w(0x500000, 0xabcdef);
   io.w(0x502000, 0x123456);
   io.w(0x320010, 0x998877);
+  io.w(0x600080, 231);
+  io.w(0x604004, 241);
+  io.w(0x606000, 251);
   assert(c.Exchange(io));
   assert(!c.Entered());
+  assert(io.r(0x600080) == 123 && io.r(0x604004) == 124 && io.r(0x606000) == 125);
   assert(io.r(0x300000 + 0x470 + 0x58) == 99);
   assert(io.r(0x320004) == 77);
   assert(io.r(0x500000) == 0x0a0a0a0a);
   assert(io.r(0x502000) == 0x123456);
   assert(c.Exchange(io));
+  assert(io.r(0x600080) == 0 && io.r(0x604004) == 0 && io.r(0x606000) == 0);
   assert(io.r(0x500000) == 0xabcdef);
   assert(io.r(0x320010) == 0x998877);
   assert(c.Exchange(io));
