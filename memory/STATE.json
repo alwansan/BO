@@ -4687,8 +4687,16 @@
     "androidNativeHostObjectiveReaderVerifiedHeadless": true,
     "androidHostObjectivePublicationAndGuestIdentityBindingStaged": true,
     "androidObjectiveTransportVerifiedWithSyntheticNativeInputs": true,
-    "androidObjectiveGuestEngineApplicationVerified": false,
+    "objectiveSourceCommit": "fe5b3aac7ce355b440891ee4418cb5100f19ace7",
+    "androidObjectiveCrossEngineOfflineState1Verified": true,
+    "androidObjectiveChangedIdentityRejectedBeforeWriter": true,
+    "androidObjectiveProductionGuestEngineApplicationVerified": false,
+    "androidObjectiveSourceUnitsCi": 45919841804,
+    "androidObjectiveSourcePreflightCi": 45919841793,
+    "androidObjectiveJvmTlsCi": 45919842037,
+    "androidObjectivePlatformTlsCi": 45919842052,
+    "androidLivePropInstrumentedTrialPending": true,
     "acceptanceApk": false,
-    "next": "verify an exact-scoped objective transfer and application across two independent Android engine runs, then verify APK diagnostics"
+    "next": "verify live Android prop effect; connect authenticated current objective snapshot to scoped state-1 application and post-frame readback, then verify APK diagnostics"
   }
 }
