@@ -242,9 +242,29 @@ template<class Presentation>class OriginalSetupKernelIO final {
   return OwnsHumanInput(p)&&InputGeneration(p)&&storage_.Span(p,0x40u)?
    static_cast<uint32_t*>(kernel::HostPtr(p+0xCu)):nullptr;
  }
- uint32_t* MapControllerSource(uint32_t ctl)const noexcept{
-  return ControllerGeneration(ctl)?static_cast<uint32_t*>(kernel::HostPtr(ctl+0xA8u)):nullptr;
- }
+  uint32_t* MapControllerSource(uint32_t ctl)const noexcept{
+   return ControllerGeneration(ctl)?static_cast<uint32_t*>(kernel::HostPtr(ctl+0xA8u)):nullptr;
+  }
+  bool HasOriginalHumanRegistrationCapacity()const noexcept{
+   // 001E0E40 completes with two registrations. 001899F0 requires
+   // a non-null preconstructed kind-2 resource in its own free slot.
+   constexpr uint32_t root=0x2D1988u;
+   uint32_t ai=0,targets=0,resources=0,occupancy=0,count=0;
+   if(!Read32(root,ai)||!storage_.Span(ai,0x22CDCu)||
+      !Read32(ai+0xFA8u,targets)||targets==UINT32_MAX||
+      !Read32(ai+0x22CD0u,resources)||!Read32(ai+0x22CD4u,occupancy)||
+      !Read32(ai+0x22CD8u,count)||!count||count>32u||
+      !storage_.Span(resources,count*4u)||!storage_.Span(occupancy,count))return false;
+   for(uint32_t slot=0;slot<count;++slot){
+    uint32_t resource=0,actor=0,current=0;uint8_t taken=1;
+    if(!storage_.Read8(occupancy+slot,taken))return false;
+    if(taken)continue;
+    // Native registration picks the first free flag and dereferences its row.
+    return Read32(resources+slot*4u,resource)&&storage_.Span(resource,0x24u)&&
+     Read32(resource+0x20u,actor)&&!actor&&Read32(root,current)&&current==ai;
+   }
+   return false;
+  }
 public:
  OriginalSetupKernelIO(X86Context& ctx,OriginalPlayerStorageKernelIO& storage,
      const OriginalPlayerStorageScene& binding,const OriginalPlayerStorageView& materialized,
@@ -291,8 +311,9 @@ public:
  bool GuestSetup1E0E40(uint32_t world,uint32_t eax,uint32_t& result){
   uint32_t current=0;
   if(!owner()||poisoned_||!entered_||!actor_.Entered()||!camera_.Entered()||
-     world!=binding_.core||eax||!dispatch::Find(0x1E0E40u)||
-     !Read32(0x2D12B8u,current)||current!=view_.owner)return false;
+      world!=binding_.core||eax||!dispatch::Find(0x1E0E40u)||
+      !Read32(0x2D12B8u,current)||current!=view_.owner||
+      !HasOriginalHumanRegistrationCapacity())return false;
   X86Context call=ctx_;
   call.eax=0;call.edx=world;call.ecx=call.ebx=call.esi=call.edi=0;
   result=kernel::CallGuest(call,0x1E0E40u,{});

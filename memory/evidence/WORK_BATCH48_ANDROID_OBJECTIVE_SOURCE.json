@@ -505,6 +505,29 @@
     "nativeSetupCompletedOrInputOnActiveP2Exercised": false,
     "allowlistedMarkersSha256": "5caab89f2ce3f66769f1cdf3bb97826fc4ce56d1a982de157d4e5f24c2dce02a"
   },
+  "originalCombinedMultiframeP2SetupFirstAttempt": {
+    "sourceRevision": "fd0afcf0ac8eaed3067342e596fd04548c24fc6b",
+    "framesAtLeast": 2280,
+    "processExit": 139,
+    "signal": 11,
+    "firstSetupStepRestored": true,
+    "faultInNativeSoundReset00141AA0ViaWeaponLoader001D4F30": true,
+    "detachedManagerProvidedNoVoiceObjects": true,
+    "setupCompleted": false,
+    "allowlistedMarkersSha256": "5caab89f2ce3f66769f1cdf3bb97826fc4ce56d1a982de157d4e5f24c2dce02a"
+  },
+  "originalCombinedMultiframeP2OwnedVoiceAttempt": {
+    "sourceRevision": "fd0afcf0ac8eaed3067342e596fd04548c24fc6b",
+    "framesAtLeast": 1680,
+    "processExit": 139,
+    "signal": 11,
+    "ownedWeaponVoiceBankBindingsSucceeded": true,
+    "ownedSetupPhases": [1, 2, 3, 28],
+    "p1ActorCameraObjectiveAndPresentationRestoredAtObservedTransitions": true,
+    "faultInNativeHumanRegistration001899F0": true,
+    "setupCompleted": false,
+    "allowlistedMarkersSha256": "80e7499f7f924e4b7c84e6d2a601c31e8f299b4f7cf2abe66b7aebc8ae0687d8"
+  },
   "ci": {
     "commit": "fe5b3aac7ce355b440891ee4418cb5100f19ace7",
     "androidSourceUnitsRun": 45919841804,
