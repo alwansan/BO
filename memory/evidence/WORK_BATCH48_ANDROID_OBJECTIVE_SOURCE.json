@@ -476,6 +476,35 @@
     "nativeWeaponLoadedOrPublished": false,
     "allowlistedMarkersSha256": "aeb0a635a53cf82c69e963ebdde89e510c7380cace04ee976bdf9a7de5e43c0f"
   },
+  "originalCombinedWeaponAudioScopeTrial": {
+    "sourceRevision": "6ad31f27f029c6fca74d346a34ccc85d01496c11",
+    "framesAtLeast": 2280,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "originalAllocationMatches": 6,
+    "detachedOriginalWeaponManagerImageUsed": true,
+    "nativeBankReserveAndReturnVerified": true,
+    "ownedNativeEffectRowsCleared": 32,
+    "p1ManagerPoolBanksEffectsAndSelectorsRestoredOrUnchanged": true,
+    "stationaryResourcesRemovedBeforeCleanup": 10,
+    "livePlaybackOrConcurrentCallbacksExercised": false,
+    "allowlistedMarkersSha256": "b7ea2c67ce5f3b4190887a4439824f5cc115e8ef6ebda17fc223d70e555afd68"
+  },
+  "originalCombinedFirstP2SetupStepTrial": {
+    "sourceRevision": "6ad31f27f029c6fca74d346a34ccc85d01496c11",
+    "framesAtLeast": 2340,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "nativeFirstP2SetupCall": "001E0E40",
+    "nativeSetupReturnLowByte": 0,
+    "ownedSetupPhase": [1, 2],
+    "p1ActorAndCameraBytesExact": true,
+    "observedObjectivePageAtCorePlus930ByteExact": true,
+    "animationAudioAndEffectsScopesReportedRestored": true,
+    "sceneResourcesRetainedUntilProcessExit": true,
+    "nativeSetupCompletedOrInputOnActiveP2Exercised": false,
+    "allowlistedMarkersSha256": "5caab89f2ce3f66769f1cdf3bb97826fc4ce56d1a982de157d4e5f24c2dce02a"
+  },
   "ci": {
     "commit": "fe5b3aac7ce355b440891ee4418cb5100f19ace7",
     "androidSourceUnitsRun": 45919841804,

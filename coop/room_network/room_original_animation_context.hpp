@@ -882,6 +882,7 @@ class OriginalWeaponHeapInstall final {
  const std::thread::id thread_=std::this_thread::get_id();
  uint64_t scene_=0,generation_=0;
  uint32_t base_=0,ids_[2]{};
+ uint8_t peer_=0;
  bool installed_=false,uncertain_=false;
  static constexpr uint32_t table_=0x2D12ECu;
  using Words=std::array<uint32_t,9>;
@@ -917,7 +918,7 @@ public:
   }
   if(maps[0]==maps[1]||!backing.MarkEngineTouched())return false;
   uncertain_=true;scene_=io.Scene();generation_=gen;base_=base;
-  ids_[0]=first;ids_[1]=second;
+   ids_[0]=first;ids_[1]=second;peer_=peer;
   for(unsigned i=0;i<2;++i){
    const auto words=descriptor(layout.weapon[i]);
    std::memcpy(maps[i],words.data(),0x24u);
@@ -928,15 +929,17 @@ public:
  }
  template<class IO,class Backing>bool Live(IO& io,Backing& backing)const{
   if(!owner()||!installed_||io.Scene()!=scene_||
-     backing.Generation(base_,OriginalWeaponBankLayout::Total)!=generation_)return false;
+      backing.Generation(base_,OriginalWeaponBankLayout::Total)!=generation_||
+      !io.OwnsReservedHeapPair(peer_,ids_[0],ids_[1],base_,generation_))return false;
   for(unsigned i=0;i<2;++i){
    auto* p=io.MapHeapDescriptor(table_+ids_[i]*0x24u,0x24u);
    if(!p)return false;
    Words words{};std::memcpy(words.data(),p,0x24u);
    const auto at=base_+i*OriginalWeaponBankLayout::WeaponBytes;
    // Cursor/usage may evolve during original loads. Check ownership fields.
-   if(words[0]!=1u||words[2]!=at||words[3]!=at+OriginalWeaponBankLayout::WeaponBytes||
-      words[8]!=at)return false;
+    if(words[0]!=1u||words[2]!=at||words[3]!=at+OriginalWeaponBankLayout::WeaponBytes||
+       words[4]<at||words[4]>words[3]||
+       words[8]!=at)return false;
   }
   return true;
  }

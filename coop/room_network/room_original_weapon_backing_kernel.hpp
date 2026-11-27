@@ -36,10 +36,16 @@ public:
  OriginalWeaponHeapKernelIO(uint64_t(*scene)()noexcept,Proof proof):scene_(scene),proof_(proof){}
  uint64_t Scene()const noexcept{return owner()&&scene_?scene_():0;}
  bool VerifiedUnusedOriginalWeaponHeap(uint32_t id)const noexcept{
-  if(id!=16u&&id!=18u)return false;
-  auto* p=MapHeapDescriptor(0x2D12ECu+id*0x24u,0x24u);
-  uint32_t active=1;if(p)std::memcpy(&active,p,4);
-  return p&&active==0;
+   if(id!=16u&&id!=18u)return false;
+   const auto address=0x2D12ECu+id*0x24u;
+   auto* p=MapHeapDescriptor(address,0x24u);
+   constexpr uint32_t selectedHeap=0x2D164Cu,selectedIndex=0x2D1654u;
+   if(!p||!mem::IsCommitted(selectedHeap)||!mem::IsCommitted(selectedIndex+3u))return false;
+   uint32_t enabled=0,active=0,index=0;
+   std::memcpy(&enabled,p,4u);
+   std::memcpy(&active,mem::Base()+selectedHeap,4u);
+   std::memcpy(&index,mem::Base()+selectedIndex,4u);
+   return !enabled&&active!=address&&index!=id;
  }
  bool OwnsReservedHeapPair(uint8_t peer,uint32_t first,uint32_t second,
        uint32_t base,uint64_t generation)const noexcept{

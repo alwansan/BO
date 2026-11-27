@@ -10,12 +10,13 @@ struct IO {
   uint64_t scene = 7, generation = 1;
   uint32_t blocked = 0;
   bool audioEffectsOwned = true;
+  bool weaponHeapReserved = true;
   bool OwnsCompletePresentation(const OriginalSetupScene& s)const {return s.nativeScene==scene;}
   bool VerifyRestoredPresentation(const OriginalSetupScene& s)const {return s.nativeScene==scene;}
   bool VerifiedUnusedOriginalWeaponHeap(uint32_t id)const{return id==16||id==18||id==20||id==21||id==22||id==23;}
   uint64_t IndependentWeaponBackingGeneration(uint32_t,uint32_t)const{return generation;}
   bool OwnsReservedHeapPair(uint8_t p,uint32_t a,uint32_t b,uint32_t base,uint64_t g)const{
-    return p==2&&a==16&&b==18&&base==0x1000000u&&g==1;
+    return weaponHeapReserved&&p==2&&a==16&&b==18&&base==0x1000000u&&g==1;
   }
   uint8_t* MapHeapDescriptor(uint32_t p,uint32_t n){return Map(p,n);}
   uint64_t Scene() const { return scene; }
@@ -293,39 +294,39 @@ int main() {
   {
     IO snd;OriginalWeaponSoundContext sound;
     snd.w(0x2D12D8u,0x180000u);snd.w(0x2D0D60u,0x100000u);
-     snd.w(0x100000u+0xD3C8u,0x170000u);snd.w(0x17000Cu,0x190000u);
-     snd.w(0x170010u,77u);snd.w(0x170014u,0x198000u);
-     snd.w(0x190000u,11u);
-     snd.w(0x194000u,44u);
-     snd.w(0x198000u,22u);snd.w(0x199000u,33u);
-     assert(!sound.Bind(snd,0x181000u,0x190000u,0x199000u));
-     assert(!sound.Bind(snd,0x181000u,0x195000u,0x199000u)); // unproven pool
-     assert(!sound.Bind(snd,0x181000u,0x194000u,0x194004u)); // aliased effects
-     snd.audioEffectsOwned=false;
-     assert(!sound.Bind(snd,0x181000u,0x194000u,0x199000u));
-     snd.audioEffectsOwned=true;
-     assert(sound.Bind(snd,0x181000u,0x194000u,0x199000u));
-     snd.w(0x170014u,0x199000u);
-     before=snd.m;
-     assert(!sound.CanExchange(snd)&&!sound.Exchange(snd)&&snd.m==before);
-     snd.w(0x170014u,0x198000u);
-     before=snd.m;
-     snd.blocked=0x170014u;
+    snd.w(0x100000u+0xD3C8u,0x170000u);snd.w(0x17000Cu,0x190000u);
+    snd.w(0x170010u,77u);snd.w(0x170014u,0x198000u);
+    snd.w(0x190000u,11u);
+    snd.w(0x194000u,44u);
+    snd.w(0x198000u,22u);snd.w(0x199000u,33u);
+    assert(!sound.Bind(snd,0x181000u,0x190000u,0x199000u));
+    assert(!sound.Bind(snd,0x181000u,0x195000u,0x199000u)); // unproven pool
+    assert(!sound.Bind(snd,0x181000u,0x194000u,0x194004u)); // aliased effects
+    snd.audioEffectsOwned=false;
+    assert(!sound.Bind(snd,0x181000u,0x194000u,0x199000u));
+    snd.audioEffectsOwned=true;
+    assert(sound.Bind(snd,0x181000u,0x194000u,0x199000u));
+    snd.w(0x170014u,0x199000u);
+    before=snd.m;
+    assert(!sound.CanExchange(snd)&&!sound.Exchange(snd)&&snd.m==before);
+    snd.w(0x170014u,0x198000u);
+    before=snd.m;
+    snd.blocked=0x170014u;
     assert(!sound.CanExchange(snd)&&!sound.Exchange(snd)&&snd.m==before);
     snd.blocked=0;
     assert(sound.Exchange(snd)&&sound.Entered());
-     assert(snd.r(0x2D12D8u)==0x181000u&&snd.r(0x17000Cu)==0x194000u);
-     assert(snd.r(0x170010u)==77u&&snd.r(0x170014u)==0x199000u);
-     assert(snd.r(0x190000u)==11u&&snd.r(0x194000u)==44u);
-     snd.w(0x194000u,55u);
-     snd.w(0x199000u,66u);
+    assert(snd.r(0x2D12D8u)==0x181000u&&snd.r(0x17000Cu)==0x194000u);
+    assert(snd.r(0x170010u)==77u&&snd.r(0x170014u)==0x199000u);
+    assert(snd.r(0x190000u)==11u&&snd.r(0x194000u)==44u);
+    snd.w(0x194000u,55u);
+    snd.w(0x199000u,66u);
     assert(sound.Exchange(snd)&&!sound.Entered());
-     assert(snd.r(0x2D12D8u)==0x180000u&&snd.r(0x17000Cu)==0x190000u);
-     assert(snd.r(0x170010u)==77u&&snd.r(0x170014u)==0x198000u);
-     assert(snd.r(0x198000u)==22u&&snd.r(0x199000u)==66u);
+    assert(snd.r(0x2D12D8u)==0x180000u&&snd.r(0x17000Cu)==0x190000u);
+    assert(snd.r(0x170010u)==77u&&snd.r(0x170014u)==0x198000u);
+    assert(snd.r(0x198000u)==22u&&snd.r(0x199000u)==66u);
     assert(snd.r(0x190000u)==11u&&snd.r(0x194000u)==55u);
     assert(sound.Exchange(snd)&&snd.r(0x17000Cu)==0x194000u);
-     snd.audioEffectsOwned=false;before=snd.m;
+    snd.audioEffectsOwned=false;before=snd.m;
     assert(!sound.Exchange(snd)&&sound.Quarantined()&&snd.m==before);
   }
   {
@@ -333,9 +334,9 @@ int main() {
     OriginalEffectsContext effects;OriginalPresentationArbiter arbiter;
     assert(anim.ObserveOriginalCacheConstructor(io,0x600000)&&anim.Capture(io));
     io.w(0x2D12D8u,0x180000u);io.w(0x2D0D60u,0x100000u);
-     io.w(0x100000u+0xD3C8u,0x170000u);io.w(0x17000Cu,0x190000u);
-     io.w(0x170014u,0x198000u);
-     assert(sound.Bind(io,0x181000u,0x194000u,0x199000u));
+    io.w(0x100000u+0xD3C8u,0x170000u);io.w(0x17000Cu,0x190000u);
+    io.w(0x170014u,0x198000u);
+    assert(sound.Bind(io,0x181000u,0x194000u,0x199000u));
     constexpr uint32_t at=0x100000u+0x65690u;
     io.w(0x2D1990u,0x100000u);
     io.w(at+0x3440u,0x192000u);io.w(at+0x3444u,0x193000u);
@@ -344,8 +345,8 @@ int main() {
     OriginalPresentationTransaction tx(io,arbiter,anim,sound,effects,scope);
     assert(tx.CanEnterOriginal(scope)&&tx.EnterOriginal(scope)&&tx.OriginalContextActive(scope));
     assert(!arbiter.Acquire(7,3)&&!arbiter.Acquire(7,4));
-     assert(tx.RestoreOriginal(scope)&&tx.OriginalP1Restored(scope));
-     assert(io.r(0x170014u)==0x198000u);
+    assert(tx.RestoreOriginal(scope)&&tx.OriginalP1Restored(scope));
+    assert(io.r(0x170014u)==0x198000u);
     assert(arbiter.Acquire(7,3)&&arbiter.Release(7,3,true));
     // Failed FX entry after animation/audio entry must unwind both.
     io.w(at+0x3458u,33u);
@@ -392,6 +393,10 @@ int main() {
     assert(install.Install(io,backing,2,16,18,layout)&&backing.touched&&install.Live(io,backing));
     assert(io.r(a+8)==layout.weapon[0]&&io.r(b+8)==layout.weapon[1]);
     assert(io.r(a+0xC)==layout.weapon[0]+OriginalWeaponBankLayout::WeaponBytes);
+    io.w(a+0x10,layout.weapon[0]+16u);assert(install.Live(io,backing));
+    io.weaponHeapReserved=false;assert(!install.Live(io,backing));
+    io.weaponHeapReserved=true;
+    io.w(a+0x10,layout.weapon[0]-4u);assert(!install.Live(io,backing));
     io.w(a+0x10,layout.weapon[0]+16u);assert(install.Live(io,backing));
     io.w(b+8,0);assert(!install.Live(io,backing));
   }
