@@ -4757,6 +4757,8 @@
     "androidPrivateNativeColliderRebindTrialPending": true,
     "androidPrivateNativeEffectsActorCameraRoundTripVerified": true,
     "androidPrivateNativeAnimationCaptureRejectedAtNonzeroTransform": true,
+    "androidPrivateNativeAnimationNonzeroTransformsInLiveArenaWithoutExactGeneration": 6,
+    "androidPrivateNativeColliderFirstRebindTeardownRejected": true,
     "androidNativeAnimationCaptureSourceUnitsCi": 45939862438,
     "androidNativeAnimationCapturePreflightCi": 45939862548,
     "androidNativeAnimationCaptureParallelSourceCi": 45939862610,

@@ -336,6 +336,15 @@
       "originalCacheConstructorCaptureSucceeded": true,
       "optionalNonzeroTransformMappingRejectedBeforeMutation": true,
       "allowlistedMarkersSha256": "1dced76bf192292cfb205f5232dab0fb35d549720bf49a15573fd6167621287a"
+    },
+    "liveTransformArenaReadback": {
+      "framesAtLeast": 1440,
+      "intentionalExit": 89,
+      "nonzeroTransformRegions": 6,
+      "regionsInsideLiveArenas": 6,
+      "regionsWithExactAllocationWitness": 0,
+      "regionsInsideP1ActorOrViewmodelRoot": 0,
+      "allowlistedMarkersSha256": "ec24d95252bb26cde352c4d0a0609fe4aebb1ccbb5b9584e229112954dca51f5"
     }
   },
   "originalEffectsActorCameraRoundTripTrial": {
@@ -373,6 +382,14 @@
     "originalPhysicsProxyAndMotionDistinctFromP1": true,
     "proxySlotAndP1StateRestored": true,
     "colliderReferenceRemainedAfterNativeProxyRelease": true,
+    "ownedColliderBlocksRetained": true,
+    "allowlistedMarkersSha256": "5e852eff9c4830bbe80755eb306dd61a89c982714b680c073bfc14260006fa4c"
+  },
+  "ownedOriginalP2ColliderFirstRebindTrial": {
+    "framesAtLeast": 2340,
+    "intentionalExit": 100,
+    "engineSignalObserved": false,
+    "rebindTeardownChecksPassed": false,
     "ownedColliderBlocksRetained": true,
     "allowlistedMarkersSha256": "5e852eff9c4830bbe80755eb306dd61a89c982714b680c073bfc14260006fa4c"
   },
