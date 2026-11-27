@@ -4723,13 +4723,19 @@
     "androidOriginalGameCameraAndCoreArenaAllocationsVerified": true,
     "androidOriginalGameRootArenaMatchingRunningFrames": 1026,
     "androidOriginalGameRootArenaResetAndTeardownVerified": false,
-    "androidPropGeometryGuardSplitTrialPending": true,
+    "androidPropGeometryBoundsOrientationCorrected": true,
+    "androidPrivateTargetedPropCollisionHitBeforeAndAfterWriter": true,
+    "androidPrivateTargetedPropSinglePartControlMatchedParts": 7,
+    "androidPrivateTargetedPropSinglePartControlWriterEligibleParts": 0,
+    "androidPrivateOneStationaryOwnedAudioBankLifecycleVerified": true,
+    "androidPrivateOneStationaryOwnedSoundObjectLifecycleTrialPending": true,
+    "androidPrivateFullP2PresentationResourceLifecycleVerified": false,
     "androidPrivatePropSinglePartTargetedGeometryQueryFrameLowerBound": 5220,
     "androidLivePropInstrumentedTrialFrameLowerBound": 2940,
     "androidLivePropImpactOrAreaWriterObserved": false,
     "androidLivePropDirectNativeWriterReadbackVerified": true,
     "androidLivePropCollisionEffectVerified": false,
     "acceptanceApk": false,
-    "next": "verify exact Android APK JNI objective and lifecycle diagnostics; distinguish live prop collision branches using the matched authored parts; verify native root arena and P2 presentation lifetimes"
+    "next": "verify owned sound cleanup then the full P2 camera, animation, weapon and FX scope; compare a bounded set of native line queries on the same multipart prop; verify original-game APK diagnostics after gameplay integration"
   }
 }

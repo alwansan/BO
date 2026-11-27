@@ -134,7 +134,21 @@
     "partsPassedAllGeometryGuards": 0,
     "rayQueriesExecuted": 0,
     "collisionEffectVerified": false,
-    "multipartAllowlistedMarkersSha256": "e8d77bc539055baee244a32923542cd122e27750eb600535dec0c70cea191da7"
+    "multipartAllowlistedMarkersSha256": "e8d77bc539055baee244a32923542cd122e27750eb600535dec0c70cea191da7",
+    "guardSplitReadBothMeshAndTransformForAll178FilteredParts": true,
+    "guardSplitBoundsAccepted": 0,
+    "guardSplitAllowlistedMarkersSha256": "64063f92a1425364d8ec70536a6cfdf01f61e9c0864d0457b40d471f509aa4a3",
+    "nativeMeshLowerUpperBoundOffsetsCorrected": true,
+    "correctedMultipartFramesAtLeast": 2280,
+    "correctedMultipartProcessExit": 22,
+    "correctedMultipartRayQueriesUntilFirstHit": 4,
+    "identicalNativeQueryHitBeforeAndAfterScopedWriter": true,
+    "correctedMultipartAllowlistedMarkersSha256": "02feb986e46581319fa20aacec96009781e25b4322caa6634fbfe304a6352d47",
+    "singlePartControlFramesAtLeast": 2340,
+    "singlePartControlIntentionalExit": 42,
+    "singlePartControlMatchedLiveParts": 7,
+    "singlePartControlPassedDamageFlagFilter": 0,
+    "singlePartControlAllowlistedMarkersSha256": "4db1e3a133423b58f6620cd461b4caecff9ef250cdcb84bfd7e958651b38d9d7"
   },
   "ownedP2StorageTrial": {
     "framesAtLeast": 2280,
@@ -173,6 +187,20 @@
     "otherArenaResetCallsObserved": 1,
     "rootArenaTeardownVerified": false,
     "allowlistedMarkersSha256": "f2f632bc663e6da2e85124b965b56e8f51d02a187bad2768323ff0ef000b2468"
+  },
+  "ownedAudioBankLifecycleTrial": {
+    "framesAtLeast": 2400,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "originalBankSourceMatched": true,
+    "stationaryOwnBankAndContiguousBackingAllocated": true,
+    "ownEmbeddedAudioRegistryMembershipVerified": true,
+    "originalCleanupUnpublishedOwnAddressBeforeFree": true,
+    "borrowedBankRemainedPublishedAndByteIdentical": true,
+    "independentBankBlocksFreed": 2,
+    "headlessAudioOutputNotTested": true,
+    "fullP2PresentationOrWeaponSetupVerified": false,
+    "allowlistedMarkersSha256": "9ca8af2923b2d9086c69946888228ec0811a1fbe782562de3d6e5460e76a7690"
   },
   "ci": {
     "commit": "fe5b3aac7ce355b440891ee4418cb5100f19ace7",
