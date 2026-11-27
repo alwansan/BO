@@ -38,6 +38,7 @@ static LONG current_thread = 1;
 static LONG GetCurrentThreadId(void) { return current_thread; }
 #include "unit_observer.inc"
 #include "objective_observer.inc"
+#include "prop_damage_observer.inc"
 #include "observer.inc"
 
 static void test_objective_frames(void)
@@ -138,6 +139,72 @@ static void test_objective_frames(void)
     current_thread = 1;
     assert(!secondary.row.source.count && bo_objective_secondary_other_thread_calls == 1);
     puts("BO_ENGINE_OBJECTIVE_SECONDARY_WRITER_FIXTURE_PASS");
+}
+
+static void test_prop_damage(void)
+{
+    const uint32_t world = 0x1000, unit = world + 0x49D0;
+    const uint32_t header = 0x24000, rows = header + 0x100;
+    const uint32_t object = 0x25000, parts = 0x26000, stack = 0x27000;
+    bo_unit_world = world;
+    GUEST32(0x2D45D4) = world;
+    GUEST32(world + 0x5AE0) = 0x1C;
+    GUEST32(world + 0x5AE4) = 0x1D;
+    GUEST32(world + 0x5CB4) = object;
+    GUEST32(unit) = 0x1C;
+    GUEST32(unit + 4) = GUEST32(unit + 8) = 9;
+    GUEST32(unit + 0xC) = header;
+    GUEST32(unit + 0x1C) = object;
+    GUEST32(unit + 0x34) = 1;
+    GUEST8(unit + 0x38) = 1;
+    GUEST32(header) = 24;
+    GUEST32(header + 0x2C) = rows;
+    GUEST16(header + 0x92) = 2;
+    GUEST32(object) = 0x28ED98;
+    GUEST32(object + 0xC4) = 4;
+    GUEST32(object + 0x114) = rows + 0x50; /* packed index 0, authored ordinal 1 */
+    GUEST32(object + 0x1A0) = parts;
+    GUEST8(object + 0x1F5) = 2;
+    GUEST32(parts) = 0x42C80000; /* 100 */
+    GUEST32(parts + 0xC) = 0x42480000; /* 50 */
+    GUEST32(parts + 0x10) = 7;
+
+    GUEST32(stack) = 0x1E58E8;
+    GUEST32(stack + 4) = 1;
+    BoPropDamage observation = bo_prop_damage_before(object, stack);
+    assert(observation.authored_row == rows + 0x50 && observation.part == parts + 0xC);
+    GUEST32(parts + 0xC) = 0x41C80000; /* 25 */
+    bo_prop_damage_after(object, &observation);
+    assert(bo_prop_damage.verified == 1 && bo_prop_damage.impact_decreases == 1);
+    assert(bo_prop_damage.depleted == 0 && GUEST32(parts) == 0x42C80000);
+
+    GUEST32(stack) = 0x1E55C5;
+    observation = bo_prop_damage_before(object, stack);
+    GUEST32(parts + 0xC) = 0;
+    bo_prop_damage_after(object, &observation);
+    assert(bo_prop_damage.verified == 2 && bo_prop_damage.area_decreases == 1 && bo_prop_damage.depleted == 1);
+
+    observation = bo_prop_damage_before(object, stack);
+    GUEST32(object + 0x1A0) = parts + 0x20;
+    bo_prop_damage_after(object, &observation);
+    GUEST32(object + 0x1A0) = parts;
+    observation = bo_prop_damage_before(object, stack);
+    assert(bo_unit_enter(BO_UNIT_UNLINK, unit) >= 0);
+    bo_prop_damage_after(object, &observation);
+    GUEST32(object + 0xB0) = object;
+    assert(!bo_prop_damage_before(object, stack).unit);
+    GUEST32(object + 0xB0) = 0;
+    GUEST32(stack + 4) = 2;
+    assert(!bo_prop_damage_before(object, stack).unit);
+    GUEST32(stack + 4) = 1;
+    GUEST32(parts + 0xC) = 0x7FC00000; /* NaN */
+    assert(!bo_prop_damage_before(object, stack).unit);
+    current_thread = 2;
+    assert(!bo_prop_damage_before(object, stack).unit);
+    current_thread = 1;
+    assert(bo_prop_damage.verified == 2 && bo_prop_damage.rejected == 5);
+    assert(bo_prop_damage_other_thread == 1);
+    puts("BO_ENGINE_PROP_DAMAGE_READBACK_FIXTURE_PASS");
 }
 
 int main(void) {
@@ -283,5 +350,6 @@ int main(void) {
     assert(!bo_unit_counts[BO_UNIT_REPUBLISHED]);
     assert(bo_lab_restart_tick());
     puts("BO_ENGINE_RESTART_FIXTURE_PASS");
+    test_prop_damage();
     return 0;
 }

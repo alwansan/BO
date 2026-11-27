@@ -136,7 +136,10 @@ static void bo_lab_write(void)
         "\"objective_verified_writer_calls\":%u,\"objective_rejected_writer_calls\":%u,"
          "\"objective_changed_writer_calls\":%u,\"objective_writer_other_thread_calls\":%lu,"
          "\"objective_verified_secondary_writer_calls\":%u,\"objective_rejected_secondary_writer_calls\":%u,"
-         "\"objective_changed_secondary_writer_calls\":%u,\"objective_secondary_writer_other_thread_calls\":%lu}\n",
+         "\"objective_changed_secondary_writer_calls\":%u,\"objective_secondary_writer_other_thread_calls\":%lu,"
+         "\"prop_damage_verified_calls\":%u,\"prop_damage_rejected_calls\":%u,"
+         "\"prop_damage_other_thread_calls\":%lu,\"prop_damage_impact_decreases\":%u,"
+         "\"prop_damage_area_decreases\":%u,\"prop_damage_part_depletions\":%u}\n",
         bo_lab.mission_ticks, bo_lab.p2_ready_ticks, bo_lab.phases_completed,
         bo_lab.distinct_actor_ticks, bo_lab.distinct_proxy_ticks, bo_lab.distinct_weapon_ticks,
         bo_lab.restored_ticks, bo_lab.restore_failures, bo_lab.proxy_failures,
@@ -170,7 +173,10 @@ static void bo_lab_write(void)
            (unsigned long)InterlockedCompareExchange(&bo_objective_writer_other_thread_calls, 0, 0),
            bo_objectives.verified_secondary_writer_calls, bo_objectives.rejected_secondary_writer_calls,
            bo_objectives.changed_secondary_writer_calls,
-           (unsigned long)InterlockedCompareExchange(&bo_objective_secondary_other_thread_calls, 0, 0));
+           (unsigned long)InterlockedCompareExchange(&bo_objective_secondary_other_thread_calls, 0, 0),
+           bo_prop_damage.verified, bo_prop_damage.rejected,
+           (unsigned long)InterlockedCompareExchange(&bo_prop_damage_other_thread, 0, 0),
+           bo_prop_damage.impact_decreases, bo_prop_damage.area_decreases, bo_prop_damage.depleted);
     fclose(file);
 }
 

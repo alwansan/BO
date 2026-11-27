@@ -4637,5 +4637,16 @@
     "mappingUsedForSynchronization": false,
     "acceptanceApk": false,
     "next": "validate lifecycle diagnostics in the full private Android campaign runtime and independently prove a native item/objective effect before enabling synchronization"
+  },
+  "workBatch47": {
+    "date": "2026-11-27",
+    "session": "memory/sessions/2026-11-27_bo-coop-work47-prop-damage.md",
+    "windowsPropDamageObserverFixturePassed": true,
+    "windowsPropDamageRuntimeVerified": false,
+    "privateHeadlessAndroidGeneratedUnitsCompiled": 65,
+    "androidCampaignLifecycleVerified": false,
+    "mappingUsedForSynchronization": false,
+    "acceptanceApk": false,
+    "next": "check original Windows prop damage readback and run private headless Android campaign with ordered native lifecycle diagnostics"
   }
 }

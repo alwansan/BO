@@ -64,6 +64,10 @@ class UnitLabTests(unittest.TestCase):
                         secondary.index('sub_001BA770_gen();'))
         self.assertLess(secondary.index('sub_001BA770_gen();'),
                         secondary.index('bo_objective_secondary_after(&before)'))
+        damage = patched.split('void sub_001E5070(void)\n{', 1)[1].split('\n}', 1)[0]
+        self.assertEqual(damage.count('sub_001E5070_gen();'), 1)
+        self.assertLess(damage.index('bo_prop_damage_before(object, g_esp)'), damage.index('sub_001E5070_gen();'))
+        self.assertLess(damage.index('sub_001E5070_gen();'), damage.index('bo_prop_damage_after(object, &before)'))
         self.assertTrue(Path(lab.HERE, 'unit_observer.inc').is_file())
         unlink = patched.split('void sub_001EB1F0(void)\n{', 1)[1].split('\n}', 1)[0]
         self.assertLess(unlink.index('bo_prop_before_unlink(unit)'), unlink.index('sub_001EB1F0_gen();'))
@@ -71,6 +75,16 @@ class UnitLabTests(unittest.TestCase):
         self.assertLess(unlink.index('return_pc = stack_valid ? GUEST32(g_esp)'),
                         unlink.index('sub_001EB1F0_gen();'))
         self.assertIn('bo_lab_restart_after_unlink(slot, index, before.count, return_pc)', unlink)
+
+    def test_prop_damage_report_requires_verified_decreases(self):
+        counts = dict.fromkeys(lab.FIELDS, 0)
+        counts.update(prop_damage_verified_calls=2, prop_damage_impact_decreases=1,
+                      prop_damage_area_decreases=1, prop_damage_part_depletions=2)
+        self.assertEqual(lab.parse_aggregate(json.dumps(counts)), counts)
+        for invalid in (dict(counts, prop_damage_verified_calls=1),
+                        dict(counts, prop_damage_part_depletions=3)):
+            with self.assertRaises(ValueError):
+                lab.parse_aggregate(json.dumps(invalid))
 
     def test_headless_overlay_is_scoped_to_one_pinned_guard(self):
         source = lab.MENU_OVERLAY_ANCHOR + '\n' + lab.MENU_ACTION_ANCHOR

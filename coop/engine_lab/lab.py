@@ -28,6 +28,8 @@ FIELDS |= frozenset((
     'objective_changed_writer_calls', 'objective_writer_other_thread_calls',
     'objective_verified_secondary_writer_calls', 'objective_rejected_secondary_writer_calls',
     'objective_changed_secondary_writer_calls', 'objective_secondary_writer_other_thread_calls',
+    'prop_damage_verified_calls', 'prop_damage_rejected_calls', 'prop_damage_other_thread_calls',
+    'prop_damage_impact_decreases', 'prop_damage_area_decreases', 'prop_damage_part_depletions',
 ))
 MANUAL_ANCHOR = '''void sub_001F1080(void)
 {
@@ -62,6 +64,9 @@ def parse_aggregate(text):
         raise ValueError('non-aggregate field')
     if any(type(v) is not int or not 0 <= v <= 100000000 for v in data.values()):
         raise ValueError('non-aggregate value')
+    decreases = data['prop_damage_impact_decreases'] + data['prop_damage_area_decreases']
+    if not data['prop_damage_part_depletions'] <= decreases <= data['prop_damage_verified_calls']:
+        raise ValueError('inconsistent prop damage counts')
     return data
 
 
@@ -126,17 +131,20 @@ def patch_text(text, kind):
         text = text.replace(audio_anchor, '#include "bo_audio_observer.inc"\n' + audio_anchor)
         text = text.replace('    black_p2_banks_take();',
                             '    black_p2_banks_take();\n    bo_audio_after_take();')
-        native_hooks = ('sub_001EB7F0', 'sub_001EB1F0', 'sub_001EB440', 'sub_001BA430', 'sub_001BA770')
+        native_hooks = ('sub_001EB7F0', 'sub_001EB1F0', 'sub_001EB440', 'sub_001BA430', 'sub_001BA770',
+                        'sub_001E5070')
         if any(re.search(r'\bvoid\s+' + name + r'\s*\(', text) for name in native_hooks):
             raise ValueError('native observer source drift')
         return text.replace(MANUAL_ANCHOR, '''#include "bo_unit_observer.inc"
 #include "bo_objective_observer.inc"
+#include "bo_prop_damage_observer.inc"
 #include "bo_engine_lab.inc"
 extern void sub_001EB7F0_gen(void);
 extern void sub_001EB1F0_gen(void);
 extern void sub_001EB440_gen(void);
 extern void sub_001BA430_gen(void);
 extern void sub_001BA770_gen(void);
+extern void sub_001E5070_gen(void);
 
 /* ECX is the stream poll descriptor; unlink receives it at entry ESP+4.
  * Define the wrappers in recomp_manual.c so generate.py finds both names. */
@@ -191,6 +199,14 @@ void sub_001BA770(void)
     const BoObjectiveSecondaryObservation before = bo_objective_secondary_before(g_edi, g_esp);
     sub_001BA770_gen();
     bo_objective_secondary_after(&before);
+}
+
+void sub_001E5070(void)
+{
+    const uint32_t object = g_eax;
+    const BoPropDamage before = bo_prop_damage_before(object, g_esp);
+    sub_001E5070_gen();
+    bo_prop_damage_after(object, &before);
 }
 
 void sub_001F1080(void)
@@ -434,6 +450,7 @@ def prepare(pc):
     shutil.copyfile(HERE / 'audio_observer.inc', pc / 'src/bo_audio_observer.inc')
     shutil.copyfile(HERE / 'unit_observer.inc', pc / 'src/bo_unit_observer.inc')
     shutil.copyfile(HERE / 'objective_observer.inc', pc / 'src/bo_objective_observer.inc')
+    shutil.copyfile(HERE / 'prop_damage_observer.inc', pc / 'src/bo_prop_damage_observer.inc')
     shutil.copyfile(HERE / 'schedule.h', pc / 'src/schedule.h')
 
 

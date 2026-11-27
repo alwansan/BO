@@ -16,6 +16,7 @@ enum BoUnitCounter {
 static volatile LONG bo_unit_counts[BO_UNIT_COUNTER_COUNT];
 static volatile LONG bo_unit_frame_thread;
 static uint32_t bo_unit_world;
+static uint64_t bo_unit_link_serial;
 static struct {
     uint32_t index;
     int active, unlinked;
@@ -42,6 +43,7 @@ static int bo_unit_enter(enum BoUnitCounter call, uint32_t unit)
     if ((world & 3u) || !black_pc_ram_span(world, 0x5CB8u) ||
         !black_pc_ram_span(unit, 0x3Cu)) return -1;
     if (unit != world + 0x49D0u && unit != world + 0x5250u) return -1;
+    if (call != BO_UNIT_POLL) ++bo_unit_link_serial;
     if (world != bo_unit_world) {
         memset(bo_unit_slots, 0, sizeof(bo_unit_slots));
         bo_unit_world = world;
