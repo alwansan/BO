@@ -171,7 +171,7 @@ class OriginalSetupModelRoute final {
  OriginalSetupModelRoute& operator=(const OriginalSetupModelRoute&)=delete;
  ~OriginalSetupModelRoute(){if(armed_)active_=nullptr;}
  bool Armed()const noexcept{return armed_;}
- bool UsedOnce()const noexcept{return route_.uses==1;}
+ unsigned UseCount()const noexcept{return route_.uses;}
  static void AtModelSelection(X86Context& ctx)noexcept{
   if(!active_||!active_->actor||ctx.ebx!=active_->actor||ctx.ecx!=active_->baseline)return;
   ctx.ecx=active_->owned;
@@ -389,7 +389,7 @@ public:
    if(!route.Armed())return false;
    result=kernel::CallGuest(call,0x1E0E40u,{});
    const bool completed=(result&255u)==1u;
-   return (completed?finalPhase&&route.UsedOnce():!route.UsedOnce())&&
+   return (!completed||finalPhase)&&route.UseCount()==unsigned(completed)&&
     Read32(actor+0x320u,model)&&model==ownedModel&&
     storage_.CopyGuest(primaryModel,after.data(),after.size())&&before==after;
  }
