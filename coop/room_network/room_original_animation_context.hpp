@@ -690,14 +690,16 @@ public:
     io_.VerifyRestoredPresentation(s);
  }
 };
-// Source-reviewed layout from black_p2_banks_make/take. No assumption
-// that P3/P4 may reuse the two PC P2 heap IDs (16,18). Each lane needs
+// Weapon heaps follow black_p2_banks_make/take. The original Android pool
+// constructor at 00152180 uses six sound buffers and two pairs of banks.
+// P3/P4 cannot reuse the two PC P2 heap IDs (16,18). Each lane needs
 // two independently verified unused original descriptors and its own
 // backing memory. This planner does not write heap tables.
 struct OriginalWeaponBankLayout {
- uint32_t weapon[2]{},sound[4]{},bank[2]{};
+ uint32_t weapon[2]{},sound[6]{},bank[4]{};
  static constexpr uint32_t WeaponBytes=0xE1800u,SoundBytes=0x18000u,
-  BankBytes=0x38000u,Total=2*WeaponBytes+4*SoundBytes+2*BankBytes;
+   BankBytes=0x38000u,SmallBankBytes=0xE000u,
+   Total=2*WeaponBytes+6*SoundBytes+2*BankBytes+2*SmallBankBytes;
  static bool Build(uint32_t base,uint32_t size,OriginalWeaponBankLayout& out)noexcept{
   if(base<0x10000u||(base&0xFFFu)||size<Total||
      uint64_t(base)+Total>0x100000000ull)return false;
@@ -705,7 +707,10 @@ struct OriginalWeaponBankLayout {
   uint32_t at=base;
   for(auto& p:next.weapon){p=at;at+=WeaponBytes;}
   for(auto& p:next.sound){p=at;at+=SoundBytes;}
-  for(auto& p:next.bank){p=at;at+=BankBytes;}
+  for(unsigned i=0;i<4;++i){
+   next.bank[i]=at;
+   at+=i<2?BankBytes:SmallBankBytes;
+  }
   out=next;return true;
  }
 };

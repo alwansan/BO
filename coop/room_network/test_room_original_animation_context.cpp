@@ -330,7 +330,9 @@ int main() {
     assert(!heaps.Reserve(io,2,13,18,0x1000000u,bytes,p2));
     assert(heaps.Reserve(io,2,16,18,0x1000000u,bytes,p2));
     assert(p2.weapon[0]==0x1000000u&&p2.weapon[1]==p2.weapon[0]+OriginalWeaponBankLayout::WeaponBytes);
-    assert(p2.bank[1]+OriginalWeaponBankLayout::BankBytes==0x1000000u+bytes);
+    assert(p2.sound[5]+OriginalWeaponBankLayout::SoundBytes==p2.bank[0]);
+    assert(p2.bank[1]+OriginalWeaponBankLayout::BankBytes==p2.bank[2]);
+    assert(p2.bank[3]+OriginalWeaponBankLayout::SmallBankBytes==p2.weapon[0]+bytes);
     assert(!heaps.Reserve(io,3,16,20,0x2000000u,bytes,p3));
     assert(!heaps.Reserve(io,3,20,21,0x1001000u,bytes,p3));
     assert(heaps.Reserve(io,3,20,21,0x2000000u,bytes,p3));
