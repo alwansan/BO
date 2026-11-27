@@ -488,10 +488,14 @@ X86_FUNC(sub_0002B830) {
     game=pending.get(cheat,originals[cheat].decode('utf-8'))
     game=once(game,'#include "game/layout.h"',
               '#include "game/layout.h"\n#include "coop/room_world_tick.hpp"\n#include "coop/room_original_post_frame_witness.hpp"\n#include "coop/room_original_eye_witness.hpp"\n#include "coop/room_original_trusted_input_witness.hpp"\n#include "coop/room_original_host_player_storage_kernel.hpp"\n#include "coop/room_original_host_player_shadow_plan.hpp"',cheat)
+    game=once(game,'X86_FUNC(sub_001E5FA0) {\n    uint32_t me = ctx.ecx;',
+        '''X86_FUNC(sub_001E5FA0) {
+    uint32_t me = ctx.ecx;
+    const bool extraHuman = blackcoop::OriginalHumanUpdateDispatch::ActiveFor(me);''',cheat)
     game=once(game,'    __imp__sub_001E5FA0(ctx, base);',
         '''    // Candidate only: first original-player update in this world is
     // NOT proof that host-selected mission/stage loaded on both phones.
-    if (me && me == Player() && R32(me + kCharKind) == kPlayerKind) {
+    if (!extraHuman && me && me == Player() && R32(me + kCharKind) == kPlayerKind) {
         blackcoop::ObserveLocalWorldTick(R32(kWorld));
         // Original BLACK eye vector known from pinned upstream hooks.cpp;
         // sample only, never a proxy actor or fabricated scene READY.
@@ -501,6 +505,9 @@ X86_FUNC(sub_0002B830) {
         blackcoop::ObserveOriginalHostInputTick(me);
     }
     __imp__sub_001E5FA0(ctx, base);''',cheat)
+    game=once(game,'    bo_probe::ObservePlayer(me,base);\n    if (me && me == Player() && R32(me + kCharKind) == kPlayerKind) {',
+        '''    if (!extraHuman) bo_probe::ObservePlayer(me,base);
+    if (!extraHuman && me && me == Player() && R32(me + kCharKind) == kPlayerKind) {''',cheat)
     # Verified same original post-frame boundary as native PC dual-control
     # source. No extra actor setup or second world tick.
     config = originals['config/game.toml'].decode('utf-8').replace('\r\n', '\n')

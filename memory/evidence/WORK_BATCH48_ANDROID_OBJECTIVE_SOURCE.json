@@ -637,6 +637,21 @@
     "completeStorageTeardownVerified": false,
     "allowlistedMarkersSha256": "6bd2756d610376acc377ad33f4bc1191bf181ee99f37ffc65d57dac87a50073e"
   },
+  "originalP2PostSetupCameraHoldControlTrial": {
+    "repositorySourceBaseline": "ed935285104cb0b8ed323adda27a5fc771dbe5b5",
+    "framesAtLeast": 1740,
+    "intentionalExit": 139,
+    "engineSignalObserved": false,
+    "originalHumanFramesCompleted": 104,
+    "positiveOrNegativeConvertedSamples": 96,
+    "neutralConvertedSamples": 8,
+    "p1CameraHoldFrames": 0,
+    "p2CameraHoldFrames": 0,
+    "p2HorizontalFootTravelMillimetres": 0,
+    "p2HorizontalMotionRowTravelMillimetres": 0,
+    "nativeProxyPoolFlagAndBacklinksCleared": true,
+    "allowlistedMarkersSha256": "99ffff2756bcc53f62dd62197a3bbb8124191313634fe88c03679d8c425d0652"
+  },
   "originalSimpleObjectiveCompletionRoomAndJniVerification": {
     "sourceRevision": "0ea1eeefce95c1214cc924aa027637d4830097b9",
     "authenticatedLoopbackTlsAfterStoryCommit": true,

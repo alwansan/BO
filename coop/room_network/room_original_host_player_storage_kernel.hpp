@@ -178,6 +178,18 @@ class OriginalSetupModelRoute final {
   ++active_->uses;
  }
 };
+// The dispatched local-player wrapper also reports P1 to JNI. The original
+// update still runs when the embedded actor temporarily holds an extra human.
+class OriginalHumanUpdateDispatch final {
+ inline static thread_local uint32_t activeActor_=0;
+ template<class Presentation>friend class OriginalSetupKernelIO;
+ explicit OriginalHumanUpdateDispatch(uint32_t actor)noexcept{activeActor_=actor;}
+ OriginalHumanUpdateDispatch(const OriginalHumanUpdateDispatch&)=delete;
+ OriginalHumanUpdateDispatch& operator=(const OriginalHumanUpdateDispatch&)=delete;
+ ~OriginalHumanUpdateDispatch(){activeActor_=0;}
+ public:
+ static bool ActiveFor(uint32_t actor)noexcept{return actor&&activeActor_==actor;}
+};
 // Original camera singleton mapping, separate from actor IO (which requires
 // P1 owner restored). All writable access restricted to camera scope.
 class OriginalCameraKernelIO final {
@@ -382,9 +394,10 @@ public:
   return match(s)&&frame&&FullP1Restored(s)&&
     presentation_.ReadyForHumanFrame(s,frame);
  }
- bool CallOriginalHumanUpdate(const OriginalSetupScene& s,uint32_t frame){
-  uint32_t ctl=0,source=0,dt=0,cv=0,av=0,cf=0,af=0,post=0;
-  if(!match(s)||!frame||poisoned_||!entered_||!actor_.Entered()||
+  bool CallOriginalHumanUpdate(const OriginalSetupScene& s,uint32_t frame){
+   uint32_t ctl=0,source=0,dt=0,cv=0,av=0,cf=0,af=0,post=0;
+   if(!match(s)||!frame||poisoned_||OriginalHumanUpdateDispatch::activeActor_||
+      !entered_||!actor_.Entered()||
      !camera_.Entered()||!presentation_.OriginalContextActive(s)||
      !Read32(binding_.core+0x354u,ctl)||!storage_.Span(ctl,0xB0u)||
      !Read32(binding_.core+0x1Cu,dt)||!Read32(ctl,cv)||
@@ -397,9 +410,10 @@ public:
       !EnterControllerSource(s,ctl)||
      !Read32(ctl+0xA8u,source)||
      !presentation_.OriginalHumanInputActive(s,frame,ctl,source))return false;
-  // Exact thiscall ABI: controller receives ESI=actor; actor methods
-  // receive dt bits on the stack. All calls isolate original CPU context.
-  X86Context c=ctx_;
+   // Exact thiscall ABI: controller receives ESI=actor; actor methods
+   // receive dt bits on the stack. All calls isolate original CPU context.
+   const OriginalHumanUpdateDispatch humanDispatch(s.p1Actor);
+   X86Context c=ctx_;
   c.eax=c.edx=c.ebx=c.edi=0;c.ecx=ctl;c.esi=s.p1Actor;
   (void)kernel::CallGuest(c,cf,{});
   if(!presentation_.OriginalContextActive(s))return false;

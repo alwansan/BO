@@ -58,6 +58,11 @@ class RoomNetPrepareTests(unittest.TestCase):
             config=(root/'config/game.toml').read_text(encoding='utf-8')
             self.assertIn('at = 0x001DEDC9\ncall = "CoopRouteOriginalSetupModel"',config)
             self.assertIn('OriginalSetupModelRoute::AtModelSelection(ctx)',cheats)
+            local_update=cheats.split('X86_FUNC(sub_001E5FA0) {',1)[1].split('\n}',1)[0]
+            self.assertIn('OriginalHumanUpdateDispatch::ActiveFor(me)',local_update)
+            self.assertIn('if (!extraHuman) bo_probe::ObservePlayer(me,base);',local_update)
+            self.assertEqual(local_update.count('if (!extraHuman && me && me == Player()'),2)
+            self.assertEqual(local_update.count('__imp__sub_001E5FA0(ctx, base);'),1)
             for address, name, argument, after in (
                 ('001EB1F0','Unlink','ctx.esp','before'),
                 ('001EB7F0','Poll','ctx.ecx','unit,ctx.eax'),
