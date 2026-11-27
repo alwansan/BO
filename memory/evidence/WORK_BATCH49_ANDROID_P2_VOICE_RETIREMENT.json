@@ -90,6 +90,25 @@
     "actorStorageFreed": false,
     "allowlistedMarkersSha256": "078ce394d0b50c79291bf4fd4a8280a65c443fe9b906e92e4c4ab8c676632bf7"
   },
+  "detachedActorNativeCleanupPilot": {
+    "repositorySourceBaseline": "c85db719846646d2d33c946c818500893dc72fb8",
+    "nativeCleanupEntry": "001D5D90",
+    "nativeMotionUpdates": 104,
+    "borrowedWeaponRecordsDetachedAndByteExact": 3,
+    "nativeActorTerminalStateVerified": true,
+    "trackedP1ActorCameraModelControllerNpcAndFxByteExact": true,
+    "nativeAttachmentViewmodelAuxiliaryAndAudioRetiredFirst": true,
+    "framesAtLeast": 3000,
+    "postRelinkRunningFrames": 1205,
+    "naturalTargetProxyBodyAndMotionReuses": [1, 1, 1, 1],
+    "sampledActorReferencesRemaining": 0,
+    "actorAllocationGenerationStillLive": true,
+    "cameraOwnerResourceCleanupVerified": false,
+    "finalActorAndSiblingFreeVerified": false,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "allowlistedMarkersSha256": "7f0738b5f3d373c6740d4d7ca1e16c0c5441f726af81949c03ad20c1276477d2"
+  },
   "originalActorCleanupSource": {
     "ownerXbeSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
     "firstPersonVtablePlus0C": "001D5D90",

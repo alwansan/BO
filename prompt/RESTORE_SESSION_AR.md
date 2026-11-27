@@ -1,7 +1,7 @@
 ## آخر تحديث Work49 (2026-11-27)
 
 - في مختبر Android، فُصل سجلّا صوت سلاح P2 وأُزيلت عضوية كائناته الصوتية العشرة بعد 104 تحديثات. تطابقت بيانات P1 ومحددات الصوت، ومر 1180 إطارًا بعد الإعادة وإعادة الربط. الكود `e976234` اجتاز [تجهيز المصدر](https://github.com/alwansan/BO/actions/runs/46051621633) و[وحدات Android](https://github.com/alwansan/BO/actions/runs/46051621595). [الدليل](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/evidence/WORK_BATCH49_ANDROID_P2_VOICE_RETIREMENT.json).
-- أُلغي تسجيل عرض سلاح P2 وحُرّر صفّا المرفق في المختبر، ثم تطابقت بيانات P1 وHUD بعد الاستعادة. نجح [تجهيز المصدر على `a7f202c`](https://github.com/alwansan/BO/actions/runs/46054488216). التالي فصل السجلات الثلاثة المستعارة ثم اختبار التفكيك الكامل للكاميرا والممثل. لا APK قبول. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-27_bo-coop-work49-android-p2-voice-retirement.md).
+- حُرّر المرفق، ثم نجح `001D5D90` على ممثل P2 بعد فصل السجلات المستعارة. بقيت بيانات P1 والكاميرا والعرض وNPC/FX مطابقة، ومر 1205 إطارًا بعد إعادة الربط. التالي إثبات موارد كاميرا P2 والتحرير النهائي؛ لا APK قبول. [فحوص المصدر](https://github.com/alwansan/BO/actions/runs/46054488216) · [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-27_bo-coop-work49-android-p2-voice-retirement.md).
 
 ## آخر تحديث Work48 (2026-11-27)
 

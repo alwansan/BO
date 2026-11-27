@@ -4709,10 +4709,15 @@
     "p2ClaimedWeaponAttachmentAndNestedSlotRetiredInPrivateLab": true,
     "p1ActorAndHudBytesExactAfterAttachmentRetirement": true,
     "p2AttachmentViewmodelAndAudioRetirementPostRelinkFrames": 1084,
+    "p2DetachedActorNativeCleanupPilotVerified": true,
+    "p2DetachedActorCleanupBorrowedP1WeaponRecordsPreserved": 3,
+    "p2DetachedActorCleanupP1ActorCameraModelControllerNpcAndFxPreserved": true,
+    "p2DetachedActorCleanupPostRelinkFrames": 1205,
+    "p2CameraOwnerResourceCleanupVerified": false,
     "p2AttachmentRowReferencesInP1And32NpcWeaponTables": 0,
     "actorStorageFreed": false,
     "acceptanceApk": false,
-    "next": "isolate the three borrowed weapon records and exercise the detached actor cleanup with the guarded animation context after weapon, audio and proxy retirement; verify camera and allocation release separately"
+    "next": "track the detached camera owner's remaining resource lifetimes, distinguish borrowed and owned references, then verify final allocator release and subsequent original frames; port the guarded retirement sequence onto the original game thread before networking"
   },
   "workBatch48": {
     "date": "2026-11-27",
