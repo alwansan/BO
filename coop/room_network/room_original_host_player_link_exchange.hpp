@@ -256,12 +256,22 @@ class OriginalCameraOwnerScope final {
     io.CameraGeneration(first_,0x16C0u)==p1Gen_&&p1Gen_&&
     io.CameraGeneration(extra_,0x16C0u)==extraGen_&&extraGen_;
  }
+ template<class IO>uint8_t* activeRoot(IO& io)const noexcept{
+  if(!owner()||!entered_||poisoned_||!live(io)||!io.OwnsExtraCamera(extra_,0x16C0u))
+   return nullptr;
+  auto* root=io.MapCameraOwnerRoot();
+  if(!root||!live(io))return nullptr;
+  uint32_t current=0;
+  std::memcpy(&current,root,4u);
+  return current==extra_?root:nullptr;
+ }
 public:
  OriginalCameraOwnerScope()=default;
  OriginalCameraOwnerScope(const OriginalCameraOwnerScope&)=delete;
  OriginalCameraOwnerScope& operator=(const OriginalCameraOwnerScope&)=delete;
  bool Entered()const noexcept{return owner()&&entered_;}
  bool Quarantined()const noexcept{return owner()&&poisoned_;}
+ template<class IO>bool Active(IO& io)const noexcept{return activeRoot(io)!=nullptr;}
  template<class IO>bool Enter(IO& io,uint64_t scene,uint32_t p1,uint32_t extra)noexcept{
   if(!owner()||entered_||poisoned_||!scene||p1<0x10000u||extra<0x10000u||
     uint64_t(p1)+0x16C0u>0x100000000ull||
@@ -280,13 +290,8 @@ public:
  }
  template<class IO>bool Restore(IO& io)noexcept{
   if(!owner()||!entered_||poisoned_)return false;
-  if(!live(io)||!io.OwnsExtraCamera(extra_,0x16C0u)){
-   poisoned_=true;return false;
-  }
-  auto* root=io.MapCameraOwnerRoot();uint32_t current=0;
-  if(!root||!live(io)){poisoned_=true;return false;}
-  std::memcpy(&current,root,4u);
-  if(current!=extra_){poisoned_=true;return false;}
+  auto* root=activeRoot(io);
+  if(!root){poisoned_=true;return false;}
   std::memcpy(root,&first_,4u);
   entered_=false;return true;
  }

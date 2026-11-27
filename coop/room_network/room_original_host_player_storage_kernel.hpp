@@ -264,12 +264,9 @@ template<class Presentation>class OriginalSetupKernelIO final {
  friend class OriginalHumanControllerSource;
  friend class OriginalHumanPadBinding;
  uint64_t ControllerGeneration(uint32_t ctl)const noexcept{
-  uint32_t current=0,core=0,camera=0;
-  if(!owner()||!lifetime_||!entered_||!actor_.Entered()||!camera_.Entered()||
-     storage_.Scene()!=binding_.scene||
-     !storage_.Read32(0x2D45D4u,core)||core!=binding_.core||
-     !storage_.Read32(0x2D12B8u,camera)||camera!=view_.owner||
-     !storage_.Read32(core+0x354u,current)||current!=ctl||
+  uint32_t current=0;
+  if(!owner()||!lifetime_||!entered_||!actor_.Entered()||!camera_.Active(cameraIo_)||
+     !storage_.Read32(binding_.core+0x354u,current)||current!=ctl||
      !storage_.Span(ctl,0xB0u))return 0;
   return lifetime_(ctl,0xB0u);
  }
@@ -361,17 +358,16 @@ private:
   }else if(!actor_.EnterActorOnly(actorIo_))return false;
   if(!camera_.Enter(cameraIo_,binding_.scene,binding_.owner,view_.owner))return false;
   presentationAttempted_=true;
-  if(!presentation_.EnterOriginal(s)||!presentation_.OriginalContextActive(s))return false;
+   if(!presentation_.EnterOriginal(s)||!presentation_.OriginalContextActive(s)||
+      !camera_.Active(cameraIo_))return false;
   entered_=true;return true;
  }
 public:
  bool EnterOwnedOriginalContext(const OriginalSetupScene& s){return EnterContext(s,false);}
  bool EnterOwnedOriginalHumanContext(const OriginalSetupScene& s){return EnterContext(s,true);}
   bool GuestSetup1E0E40(uint32_t world,uint32_t eax,uint32_t& result){
-  uint32_t current=0;
-   if(!owner()||poisoned_||!entered_||!actor_.Entered()||!camera_.Entered()||
-      world!=binding_.core||eax||!dispatch::Find(0x1E0E40u)||
-      !Read32(0x2D12B8u,current)||current!=view_.owner)return false;
+   if(!owner()||poisoned_||!entered_||!actor_.Entered()||!camera_.Active(cameraIo_)||
+      world!=binding_.core||eax||!dispatch::Find(0x1E0E40u))return false;
    X86Context call=ctx_;
    call.eax=0;call.edx=world;call.ecx=call.ebx=call.esi=call.edi=0;
    constexpr uint32_t modelBytes=0x200u;
@@ -393,7 +389,7 @@ public:
    if(!route.Armed())return false;
    result=kernel::CallGuest(call,0x1E0E40u,{});
    const bool completed=(result&255u)==1u;
-   return (!completed||finalPhase)&&route.UseCount()==unsigned(completed)&&
+   return camera_.Active(cameraIo_)&&(!completed||finalPhase)&&route.UseCount()==unsigned(completed)&&
     Read32(actor+0x320u,model)&&model==ownedModel&&
     storage_.CopyGuest(primaryModel,after.data(),after.size())&&before==after;
  }
@@ -408,7 +404,7 @@ public:
    uint32_t ctl=0,source=0,dt=0,cv=0,av=0,cf=0,af=0,post=0;
    if(!match(s)||!frame||poisoned_||OriginalHumanUpdateDispatch::activeActor_||
       !entered_||!actor_.Entered()||
-     !camera_.Entered()||!presentation_.OriginalContextActive(s)||
+     !presentation_.OriginalContextActive(s)||!camera_.Active(cameraIo_)||
      !Read32(binding_.core+0x354u,ctl)||!storage_.Span(ctl,0xB0u)||
      !Read32(binding_.core+0x1Cu,dt)||!Read32(ctl,cv)||
      !Read32(s.p1Actor,av)||av!=0x28CFE0u||
@@ -419,23 +415,24 @@ public:
    if(!padBinding_.Active(*this,view_.input,s.peer)||
       !EnterControllerSource(s,ctl)||
      !Read32(ctl+0xA8u,source)||
-     !presentation_.OriginalHumanInputActive(s,frame,ctl,source))return false;
+     !presentation_.OriginalHumanInputActive(s,frame,ctl,source)||
+     !camera_.Active(cameraIo_))return false;
    // Exact thiscall ABI: controller receives ESI=actor; actor methods
    // receive dt bits on the stack. All calls isolate original CPU context.
    const OriginalHumanUpdateDispatch humanDispatch(s.p1Actor);
    X86Context c=ctx_;
   c.eax=c.edx=c.ebx=c.edi=0;c.ecx=ctl;c.esi=s.p1Actor;
   (void)kernel::CallGuest(c,cf,{});
-  if(!presentation_.OriginalContextActive(s))return false;
+  if(!presentation_.OriginalContextActive(s)||!camera_.Active(cameraIo_))return false;
   c=ctx_;c.eax=c.edx=c.ebx=c.esi=c.edi=0;c.ecx=s.p1Actor;
   (void)kernel::CallGuest(c,af,{dt});
-  if(!presentation_.OriginalContextActive(s))return false;
+  if(!presentation_.OriginalContextActive(s)||!camera_.Active(cameraIo_))return false;
   c=ctx_;c.eax=c.edx=c.ebx=c.esi=c.edi=0;c.ecx=s.p1Actor;
   (void)kernel::CallGuest(c,post,{dt});
   // Original FX aging and use/pickup context are part of the provider,
   // not new bot AI logic. Do not mark a human frame complete without them.
-  return presentation_.OriginalContextActive(s)&&
-    presentation_.FinishOriginalHumanFrame(s,frame);
+  return presentation_.OriginalContextActive(s)&&camera_.Active(cameraIo_)&&
+    presentation_.FinishOriginalHumanFrame(s,frame)&&camera_.Active(cameraIo_);
  }
  bool RestoreOriginalP1(const OriginalSetupScene& s){
   if(!match(s)||!attempted_||poisoned_)return false;

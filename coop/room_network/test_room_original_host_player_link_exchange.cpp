@@ -122,15 +122,18 @@ int main(){
  {
   LinkIO io;OriginalPlayerLinkExchangePlan actorPlan;OriginalCameraOwnerScope camera;
   assert(actorPlan.Prepare(io,b,p2)&&actorPlan.EnterActorOnly(io));
-  assert(camera.Enter(io,b.scene,b.owner,0x310000u));
+  assert(!camera.Active(io)&&camera.Enter(io,b.scene,b.owner,0x310000u)&&camera.Active(io));
   uint32_t current=0;
   assert(io.Read32(0x2D12B8u,current)&&current==0x310000u);
-  assert(camera.Restore(io)&&actorPlan.RestoreActorOnly(io));
+  io.set(0x2D12B8u,0x320000u);
+  assert(!camera.Active(io));
+  io.set(0x2D12B8u,0x310000u);
+  assert(camera.Active(io)&&camera.Restore(io)&&!camera.Active(io)&&actorPlan.RestoreActorOnly(io));
   assert(io.Read32(0x2D12B8u,current)&&current==b.owner);
   assert(camera.Enter(io,b.scene,b.owner,0x310000u));
   ++io.extraCameraGen;
   const auto before=io.bytes;
-  assert(!camera.Restore(io)&&camera.Quarantined()&&io.bytes==before);
+  assert(!camera.Active(io)&&!camera.Restore(io)&&camera.Quarantined()&&io.bytes==before);
  }
  {
    LinkIO io;OriginalPlayerLinkExchangePlan plan;

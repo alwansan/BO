@@ -4714,10 +4714,17 @@
     "p2DetachedActorCleanupP1ActorCameraModelControllerNpcAndFxPreserved": true,
     "p2DetachedActorCleanupPostRelinkFrames": 1205,
     "p2CameraOwnerResourceCleanupVerified": false,
+    "p2CameraOwnerChangedWordsSinceShadowMaterialization": 0,
+    "p2CameraOwnerGuardRechecksWithinNativeSetupAndUpdate": true,
+    "p2CameraOwnerGuardPinnedSdkHeaderSmokeAndSanitizersPassed": true,
+    "p2RetiredOwnedStorageExternalAlignedReferencesIn16Regions": [0, 0, 0, 0, 0],
+    "p2RetiredOwnedStorageInternalAlignedReferences": [0, 0, 0, 1, 3],
+    "p2RetiredStorageAlignedMatchesOutsideOwnedAllocationsInCommittedGuestPages": [1, 3, 0, 0, 0],
+    "p2RetiredStorageMatchesProvenLiveReferences": false,
     "p2AttachmentRowReferencesInP1And32NpcWeaponTables": 0,
     "actorStorageFreed": false,
     "acceptanceApk": false,
-    "next": "track the detached camera owner's remaining resource lifetimes, distinguish borrowed and owned references, then verify final allocator release and subsequent original frames; port the guarded retirement sequence onto the original game thread before networking"
+    "next": "classify one actor address match in user memory and three camera address matches in physical memory against the pre-publication baseline and tracked allocation owners. Verify ownership and complete lifetime proof before freeing any detached block."
   },
   "workBatch48": {
     "date": "2026-11-27",
