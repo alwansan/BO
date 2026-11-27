@@ -4799,7 +4799,8 @@
     "androidPrivatePostRestartRetiredBodyColliderReferenceOffsets": [0, 84],
     "androidPrivatePostMotionOldColliderBodyAndMotionReferencesReplacedByNativeReuse": true,
     "androidPrivatePostMotionNativeProxyReuseCycles": 59,
-    "androidPrivatePostMotionColliderFreeAfterNativeBodyReusePending": true,
+    "androidPrivatePostMotionOldColliderFreedAfterNativeBodyAndMotionReuse": true,
+    "androidPrivatePostMotionNativeProxyReuseCyclesBeforeFree": 60,
     "androidRegistrationLifetimeVerifiedRevision": "d33fd80da3ce7d249c01b2b6e3475c27451e94f2",
     "androidRegistrationLifetimeSourceUnitsCi": 46020681432,
     "androidRegistrationLifetimePreflightCi": 46020681548,
@@ -4894,6 +4895,6 @@
     "androidLivePropDirectNativeWriterReadbackVerified": true,
     "androidLivePropCollisionEffectVerified": false,
     "acceptanceApk": false,
-    "next": "check the guarded SDK free after 59 native proxy reuse cycles replaced both old-body and motion-row references; the inactive AI target backlink still prevents actor free. Continue rendering and production allocator integration"
+    "next": "prove native retirement of the inactive AI target backlink, integrate collider retirement without forced proxy churn, and verify visible avatars. Old collider and shape SDK generations were revoked after native body and motion-row reuse; the replacement collider and actor remained live"
   }
 }
