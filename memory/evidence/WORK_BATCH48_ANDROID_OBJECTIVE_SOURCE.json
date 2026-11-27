@@ -125,6 +125,17 @@
     "collisionEffectVerified": false,
     "allowlistedMarkersSha256": "ebdc2db89063c567ae3842abbb9796e6b96291d1c59ab17c8ae60e83f5748f6d"
   },
+  "targetedPropGeometryTrial": {
+    "singlePartRunFramesAtLeast": 5220,
+    "multipartRunFramesAtLeast": 4980,
+    "multipartProcessExit": 124,
+    "liveAuthoredPartsMatched": 309,
+    "partsPassedDamageFlagFilter": 178,
+    "partsPassedAllGeometryGuards": 0,
+    "rayQueriesExecuted": 0,
+    "collisionEffectVerified": false,
+    "multipartAllowlistedMarkersSha256": "e8d77bc539055baee244a32923542cd122e27750eb600535dec0c70cea191da7"
+  },
   "ownedP2StorageTrial": {
     "framesAtLeast": 2280,
     "processExit": 0,
@@ -149,6 +160,19 @@
     "constructorOnlyReleaseCorrectlyRefused": true,
     "p2NativeSetupOrPhysicalRegistrationInvoked": false,
     "allowlistedMarkersSha256": "12b1dc94f417ce277d519b50159fef7e01443dca617ff691a107372eb63fb63b"
+  },
+  "originalGameRootArenaTrial": {
+    "framesAtLeast": 1800,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "orderedLifecycleEvents": [2130, 2131, 2132, 2133],
+    "originalCameraArenaAllocationMatched": true,
+    "originalCoreArenaAllocationMatched": true,
+    "runningFramesMatchingBothPublishedRoots": 1026,
+    "matchingRootArenaResetCallsObserved": 0,
+    "otherArenaResetCallsObserved": 1,
+    "rootArenaTeardownVerified": false,
+    "allowlistedMarkersSha256": "f2f632bc663e6da2e85124b965b56e8f51d02a187bad2768323ff0ef000b2468"
   },
   "ci": {
     "commit": "fe5b3aac7ce355b440891ee4418cb5100f19ace7",
