@@ -428,6 +428,25 @@
     "productionRecyclingPolicyImplemented": false,
     "allowlistedMarkersSha256": "9e8020c1569b8ab00bc4a29333e4be557c6220066bcace13c0c7af0b7812006f"
   },
+  "originalWeaponArenaAvailabilityTrial": {
+    "framesAtLeast": 1800,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "nativeRestartEvents": [2130, 2131, 2132, 2133],
+    "liveManagerSamples": 1026,
+    "originalDescriptors16And18DisabledSamples": 1026,
+    "bothDescriptorsNeitherActiveNorSelectedForInlineAllocationSamples": 1026,
+    "ownedDescriptorsInstalled": false,
+    "allowlistedMarkersSha256": "a6b4b9823e975cf57abc52389a9bc6a256bb3857efa2ceb4b05408ed688495da"
+  },
+  "originalAudioEffectsFirstScopeTrial": {
+    "framesAtLeast": 2580,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "originalCampaignControlsObserved": true,
+    "constructorOrOwnedScopeObserved": false,
+    "allowlistedMarkersSha256": "ebdc2db89063c567ae3842abbb9796e6b96291d1c59ab17c8ae60e83f5748f6d"
+  },
   "ci": {
     "commit": "fe5b3aac7ce355b440891ee4418cb5100f19ace7",
     "androidSourceUnitsRun": 45919841804,
