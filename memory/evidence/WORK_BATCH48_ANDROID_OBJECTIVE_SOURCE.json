@@ -850,6 +850,31 @@
     "freedActorOrColliderOnRestart": false,
     "allowlistedMarkersSha256": "5c9a5f6698696306442adcf1b9b58b16e3b3ad3c418ba7e137a469b0fcaad4f1"
   },
+  "originalAndroidPostRestartColliderReleaseGuardTrial": {
+    "repositorySourceBaseline": "cf23422f0a8b93df6a764e6f9579599876cd45c9",
+    "framesAtLeast": 2460,
+    "intentionalExit": 143,
+    "engineSignalObserved": false,
+    "nativeLifecycleEventsInOrder": [2130, 2131, 2132, 2133],
+    "oldMotionRowStillReferencesColliderAfterRestart": false,
+    "inactiveTargetRowStillReferencesRetiredActorAfterRestart": true,
+    "colliderStorageReleaseVerified": false,
+    "allowlistedMarkersSha256": "1630de4723e9f83d6d67de8fca876d3c470d2f61e650ee9efc4262130d93bcfb"
+  },
+  "originalAndroidPostRestartRetiredBodyColliderReferenceTrial": {
+    "repositorySourceBaseline": "cf23422f0a8b93df6a764e6f9579599876cd45c9",
+    "framesAtLeast": 2460,
+    "intentionalExit": 143,
+    "engineSignalObserved": false,
+    "allFiveColliderOwnershipAndLifetimeGuardsPassed": true,
+    "unavailableScopeMask": 0,
+    "retainedReferenceScopeMask": 4,
+    "oldBodyStillReferencesColliderAfterRestart": true,
+    "oldMotionRowStillReferencesColliderAfterRestart": false,
+    "inactiveTargetRowStillReferencesRetiredActorAfterRestart": true,
+    "colliderStorageRetained": true,
+    "allowlistedMarkersSha256": "d4fd56d5e0deb3b7b0967c895cacecdba508c0b2d299d4860cb176ec83e0794b"
+  },
   "originalSimpleObjectiveCompletionRoomAndJniVerification": {
     "sourceRevision": "0ea1eeefce95c1214cc924aa027637d4830097b9",
     "authenticatedLoopbackTlsAfterStoryCommit": true,
