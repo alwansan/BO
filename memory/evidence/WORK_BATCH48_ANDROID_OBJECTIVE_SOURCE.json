@@ -911,6 +911,26 @@
     "replacementColliderAndActorRetained": true,
     "allowlistedMarkersSha256": "da2a356ec0ca58ce5b0fa276f171ef35786adc8b20f10f6e42d6192dca6e0d28"
   },
+  "originalAndroidInactiveTargetBacklinkReplacedByNativeReuseTrial": {
+    "repositorySourceBaseline": "ffd67d600b11d4763ad062a1e1471f0bef5efd49",
+    "nativeAllocator": "001880C0",
+    "framesAtLeast": 2520,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "nativeLifecycleEventsInOrder": [2130, 2131, 2132, 2133],
+    "sameAiRootAndAllocationGeneration": true,
+    "inactiveTargetBacklinkStillPointsToP2AtTrialStart": true,
+    "nativeClaimsOfEarlierFreeRows": 1,
+    "nativeAllocatorReturnedExactRetiredRow": true,
+    "retiredTargetRowNowOccupiedAndPointsToIndependentAllocation": true,
+    "allUnclaimedTableWordsAndClaimedRowIdsUnchanged": true,
+    "p1AndRetiredP2ActorBytesUnchanged": true,
+    "remainingP2BacklinksAcross32TargetRows": 0,
+    "retiredActorAndTrialReplacementAllocationsRetainedUntilExit": true,
+    "stockFramesWithTrialTargets": 0,
+    "retiredActorStorageFreed": false,
+    "allowlistedMarkersSha256": "b4554c100662fb1e89d802097752d26bff3ccb051936ee504288b6b770d8c676"
+  },
   "originalSimpleObjectiveCompletionRoomAndJniVerification": {
     "sourceRevision": "0ea1eeefce95c1214cc924aa027637d4830097b9",
     "authenticatedLoopbackTlsAfterStoryCommit": true,
