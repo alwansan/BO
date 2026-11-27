@@ -104,12 +104,14 @@ struct OriginalObjectiveActivation {
     uint32_t selectorHigh = 0;
 };
 
-// Only the native 0 -> 1 writer's observed effect is supported. The receiver
-// obtains local from CaptureOriginalObjectiveRecords on its original thread;
-// remote is a complete current host snapshot, never an identity source.
-inline bool SelectOriginalObjectiveActivation(std::span<const uint8_t> local,
-                                              std::span<const uint8_t> remote,
-                                              OriginalObjectiveActivation& out) noexcept {
+// Match one state difference with unchanged authored identity and counter.
+// Local comes from CaptureOriginalObjectiveRecords on the original thread.
+// Remote is a complete current host snapshot, never an identity source.
+namespace objective_source {
+inline bool SelectOneStateTransition(std::span<const uint8_t> local,
+                                     std::span<const uint8_t> remote,
+                                     uint8_t from, uint8_t to,
+                                     OriginalObjectiveActivation& out) noexcept {
     constexpr auto stride = objective_source::kWireRecordSize;
     if (local.size() != remote.size() || local.size() % stride ||
         local.size() / stride > objective_source::kMaxRecords) return false;
@@ -119,7 +121,7 @@ inline bool SelectOriginalObjectiveActivation(std::span<const uint8_t> local,
         const auto current = local.subspan(offset, stride);
         const auto host = remote.subspan(offset, stride);
         if (std::equal(current.begin(), current.end(), host.begin())) continue;
-        if (found || current[12] != 0 || host[12] != 1 ||
+        if (found || current[12] != from || host[12] != to ||
             !std::equal(current.begin(), current.begin() + 12, host.begin()) ||
             !std::equal(current.begin() + 13, current.end(), host.begin() + 13)) return false;
         selected.ordinal = static_cast<uint32_t>(offset / stride);
@@ -130,6 +132,33 @@ inline bool SelectOriginalObjectiveActivation(std::span<const uint8_t> local,
         found = true;
     }
     if (!found) return false;
+    out = selected;
+    return true;
+}
+}  // namespace objective_source
+
+inline bool SelectOriginalObjectiveActivation(std::span<const uint8_t> local,
+                                              std::span<const uint8_t> remote,
+                                              OriginalObjectiveActivation& out) noexcept {
+    return objective_source::SelectOneStateTransition(local, remote, 0, 1, out);
+}
+
+template<class Memory>
+bool SelectOriginalSimpleObjectiveCompletion(const Memory& memory, const objective_source::Table& table,
+                                             std::span<const uint8_t> local,
+                                             std::span<const uint8_t> remote,
+                                             OriginalObjectiveActivation& out) noexcept {
+    OriginalObjectiveActivation selected{};
+    if (local.size() != uint64_t(table.count) * objective_source::kWireRecordSize ||
+        !objective_source::SelectOneStateTransition(local, remote, 1, 3, selected)) return false;
+    const uint32_t descriptor = table.descriptors + selected.ordinal * objective_source::kDescriptorSize;
+    // 001BA430 completes threshold 1 without incrementing the row counter.
+    // Other flags can request statistics and original scene/menu transitions.
+    if (!memory.Contains(descriptor, objective_source::kDescriptorSize) ||
+        memory.Read32(descriptor) != selected.selectorLow ||
+        memory.Read32(descriptor + 4u) != selected.selectorHigh ||
+        memory.Read8(descriptor + 0x14u) != 1u ||
+        memory.Read8(descriptor + 0x15u) != 0u) return false;
     out = selected;
     return true;
 }

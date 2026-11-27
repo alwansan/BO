@@ -528,6 +528,45 @@
     "setupCompleted": false,
     "allowlistedMarkersSha256": "80e7499f7f924e4b7c84e6d2a601c31e8f299b4f7cf2abe66b7aebc8ae0687d8"
   },
+  "originalP2AuxiliaryRegistrationCapacityTrial": {
+    "sourceRevision": "fd0afcf0ac8eaed3067342e596fd04548c24fc6b",
+    "framesAtLeast": 1680,
+    "intentionalExit": 129,
+    "engineSignalObserved": false,
+    "kind2AuxiliarySlotCount": 1,
+    "kind2AuxiliaryFreeSlots": 0,
+    "originalP1ResourceAndBacklinkMatched": 1,
+    "completionCallSkipped": true,
+    "allowlistedMarkersSha256": "e791d5ae300fe3a6f40f19d67269ed9520100ed0c2a9cd0097ae339175dbbcdc"
+  },
+  "originalOwnedP2AuxiliaryFirstSetupCompletionTrial": {
+    "sourceRevision": "8280734e2f21dd47167bc723b242357a5367668b",
+    "framesAtLeast": 2280,
+    "intentionalExit": 125,
+    "engineSignalObserved": false,
+    "ownedAuxiliaryConstructor": "00189860",
+    "nativeSetupReturnLowByte": 1,
+    "ownedSetupTerminalPhase": 55,
+    "p1ActorRestorationCheckPassed": false,
+    "p1CameraObjectiveAndPresentationRestorationChecksPassed": true,
+    "registeredProxyOrNativeTeardownExercised": false,
+    "allowlistedMarkersSha256": "abf287052a10979a245a4eebfeb2a7542836d3bd6f99ced7dfde9023d7acaf7b"
+  },
+  "originalObjectiveSimpleCompletionTrial": {
+    "sourceRevision": "8280734e2f21dd47167bc723b242357a5367668b",
+    "framesAtLeast": 2340,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "activeRows": 6,
+    "eligibleRows": 1,
+    "matchedOriginal001BA430WriterCalls": 1,
+    "fullTableChangedRows": 1,
+    "changedState": [1, 3],
+    "counterUnchanged": true,
+    "originalWriter001BA710InvokedByLab": true,
+    "stockCompletionOrStageAdvanceObserved": false,
+    "allowlistedMarkersSha256": "6b997f3266408c5b6712b6cb19504ba123a446bc011dcb2349d072c5b2e22f87"
+  },
   "ci": {
     "commit": "fe5b3aac7ce355b440891ee4418cb5100f19ace7",
     "androidSourceUnitsRun": 45919841804,

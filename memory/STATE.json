@@ -4769,7 +4769,18 @@
     "androidPrivateP2NativeWeaponVoicesAndBanksBound": true,
     "androidPrivateP2NativeSetupReachedPhase28": true,
     "androidPrivateP2NativeRegistrationFault001899F0": true,
-    "androidPrivateP2NativeHumanRegistrationCapacityTrialPending": true,
+    "androidPrivateNativeKind2AuxiliarySlots": 1,
+    "androidPrivateNativeKind2AuxiliaryFreeSlots": 0,
+    "androidPrivateNativeKind2AuxiliaryP1OccupancyVerified": true,
+    "androidPrivateNativeSimpleObjectiveOneToThreeVerified": true,
+    "androidGuestSimpleObjectiveCompletionScopedSourceImplemented": true,
+    "androidPrivateNativeObjectiveCompletionJniTrialPending": true,
+    "androidPrivateP2AuxiliaryConstructorAndReleaseRetestPending": true,
+    "androidPrivateP2OwnedAuxiliaryConstructed": true,
+    "androidPrivateP2NativeSetupReturnedOneButP1ActorCheckFailed": true,
+    "androidRegistrationGuardSourceUnitsCi": 45944020753,
+    "androidRegistrationGuardPreflightCi": 45944020883,
+    "androidRegistrationGuardParallelSourceCi": 45944020720,
     "androidVerifiedInitialP2SetupSourceUnitsCi": 45943092223,
     "androidVerifiedInitialP2SetupPreflightCi": 45943092132,
     "androidVerifiedInitialP2SetupParallelSourceCi": 45943092167,
@@ -4799,6 +4810,6 @@
     "androidLivePropDirectNativeWriterReadbackVerified": true,
     "androidLivePropCollisionEffectVerified": false,
     "acceptanceApk": false,
-    "next": "prove the kind-2 auxiliary registration pool capacity and lifetime, create an independent registration resource, verify original registration and release, then measure P2 input-driven movement"
+    "next": "isolate the P1 actor restoration failure after native setup phase 55, verify original target and auxiliary retirement, then measure P2 input-driven movement"
   }
 }

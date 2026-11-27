@@ -67,6 +67,8 @@ public final class RoomDiagnostics {
             case 2133: event("ORIGINAL_SAME_UNIT_WORLD_LIST_RELINK_OBSERVED"); break;
             case 2134: event("ORIGINAL_GUEST_OBJECTIVE_ACTIVATION_READBACK_VERIFIED"); break;
             case 2135: event("ORIGINAL_GUEST_OBJECTIVE_ACTIVATION_READBACK_FAILED"); break;
+            case 2136: event("ORIGINAL_GUEST_SIMPLE_OBJECTIVE_COMPLETION_READBACK_VERIFIED"); break;
+            case 2137: event("ORIGINAL_GUEST_SIMPLE_OBJECTIVE_COMPLETION_READBACK_FAILED"); break;
             default: break;
         }
     }

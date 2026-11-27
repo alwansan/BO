@@ -79,6 +79,28 @@ int main() {
     unsupported[28] = 1;
     local[28] = 0;
     assert(!SelectOriginalObjectiveActivation(local, unsupported, plan));
+
+    using blackcoop::SelectOriginalSimpleObjectiveCompletion;
+    blackcoop::objective_source::Table table{};
+    assert(blackcoop::objective_source::ReadTable(memory, world, 1, 1, table));
+    auto completed = records;
+    completed[12] = 3;
+    assert(!SelectOriginalSimpleObjectiveCompletion(memory, table, records, completed, plan));
+    memory.Write32(descriptors + 0x14, 1);
+    assert(SelectOriginalSimpleObjectiveCompletion(memory, table, records, completed, plan));
+    assert(plan.ordinal == 0 && plan.selectorLow == 0x04030201 && plan.selectorHigh == 0x88070605);
+    assert(!SelectOriginalSimpleObjectiveCompletion(memory, table, local, completed, plan));
+    completed[8] ^= 1;
+    assert(!SelectOriginalSimpleObjectiveCompletion(memory, table, records, completed, plan));
+    completed[8] ^= 1;
+    completed[28] = 1;
+    assert(!SelectOriginalSimpleObjectiveCompletion(memory, table, records, completed, plan));
+    completed[28] = 3;
+    memory.Write32(descriptors + 0x14, 0x101);
+    assert(!SelectOriginalSimpleObjectiveCompletion(memory, table, records, completed, plan));
+    memory.Write32(descriptors + 0x14, 2);
+    assert(!SelectOriginalSimpleObjectiveCompletion(memory, table, records, completed, plan));
+
     assert(!CaptureOriginalObjectiveRecords(memory, world, 1, 0, records));
     memory.Write32(rows + 12, descriptors);
     assert(!CaptureOriginalObjectiveRecords(memory, world, 1, 1, records));

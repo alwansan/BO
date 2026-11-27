@@ -1,6 +1,6 @@
 // Copyright 2026 BO-COOP contributors. SPDX-License-Identifier: MIT
 // ORIGINAL game-thread hook after 0x001F1080 (same boundary as proven PC
-// 2-player runtime). Lifecycle observations and scoped goal activation.
+// 2-player runtime). Lifecycle observations and scoped objective replication.
 #pragma once
 #include "coop/room_original_post_frame_contract.hpp"
 #include "coop/room_original_host_multi_actor_lanes.hpp"
@@ -16,6 +16,7 @@
 #include <atomic>
 #include <cstdint>
 #include <new>
+namespace dispatch { X86Func* Find(uint32_t); }
 namespace blackcoop {
 struct OriginalUnitMembershipMemory {
  bool Contains(uint32_t addr,uint32_t size)const noexcept{
@@ -38,7 +39,7 @@ inline OriginalUnitLifecycle* OriginalUnitLifecycleOnFrameThread(bool bind=false
  return observer&&observer->OnFrameThread()?observer:nullptr;
 }
 
-inline void ApplyOriginalGuestObjectiveActivation(
+inline void ApplyOriginalGuestObjectiveTransition(
     X86Context& ctx, uint32_t world, const OriginalGuestLaunchMatchKey& key) noexcept {
   static bool quarantined=false;
   static uint64_t lastPollAt=0, appliedSequence=0;
@@ -54,7 +55,7 @@ inline void ApplyOriginalGuestObjectiveActivation(
     if(env->ExceptionCheck())env->ExceptionClear();
     return;
   }
-  int diagnostic=0;
+   int diagnostic=0, failedReadback=2135;
   try {
     diagnostic=[&]() -> int {
       jobject activity=static_cast<jobject>(SDL_GetAndroidActivity());
@@ -95,34 +96,52 @@ inline void ApplyOriginalGuestObjectiveActivation(
       std::vector<uint8_t> local;
       if(!objective_source::ReadTable(memory,world,key.level,key.stage,table)||
          !CaptureOriginalObjectiveRecords(memory,world,key.level,key.stage,local))return 0;
-      OriginalObjectiveActivation target{};
-      const auto remote=std::span<const uint8_t>(bytes).subspan(8);
-      if(!SelectOriginalObjectiveActivation(local,remote,target))return 0;
+       OriginalObjectiveActivation target{};
+       const auto remote=std::span<const uint8_t>(bytes).subspan(8);
+       const bool activation=SelectOriginalObjectiveActivation(local,remote,target);
+       if(!activation&&!SelectOriginalSimpleObjectiveCompletion(memory,table,local,remote,target))return 0;
+       const auto selected=target;
       const auto accepted=env->CallBooleanMethod(activity,current,scope,static_cast<jlong>(sequence));
       if(env->ExceptionCheck()||accepted!=JNI_TRUE)return 0;
       objective_source::Table reread{};
-      if(!objective_source::ReadTable(memory,world,key.level,key.stage,reread)||reread!=table||
-         !CaptureOriginalObjectiveRecords(memory,world,key.level,key.stage,local)||
-         !SelectOriginalObjectiveActivation(local,remote,target))return 0;
-      const uint32_t descriptor=table.descriptors+target.ordinal*objective_source::kDescriptorSize;
-      if(memory.Read8(descriptor+0x15u)&0x3Eu)return 0; // exclude initialization rows
-
-      X86Context invocation=ctx;
-      invocation.edi=world+0x930u;
-      // Actual 001C2290 ABI and private Android campaign readback: low/high
-      // authored selector and notify=1. Uncertainty after the call quarantines.
-      quarantined=true;
-      kernel::CallGuest(invocation,0x001BA770u,{target.selectorLow,target.selectorHigh,1u});
-      if(!objective_source::ReadTable(memory,world,key.level,key.stage,reread)||reread!=table||
-         !CaptureOriginalObjectiveRecords(memory,world,key.level,key.stage,local)||
-         !std::equal(local.begin(),local.end(),remote.begin(),remote.end()))return 2135;
+       if(!objective_source::ReadTable(memory,world,key.level,key.stage,reread)||reread!=table||
+          !CaptureOriginalObjectiveRecords(memory,world,key.level,key.stage,local))return 0;
+       if(!(activation?SelectOriginalObjectiveActivation(local,remote,target):
+            SelectOriginalSimpleObjectiveCompletion(memory,table,local,remote,target))||
+          target.ordinal!=selected.ordinal||target.selectorLow!=selected.selectorLow||
+          target.selectorHigh!=selected.selectorHigh)return 0;
+       const uint32_t descriptor=table.descriptors+target.ordinal*objective_source::kDescriptorSize;
+       X86Context invocation=ctx;
+       uint32_t writer=0, parameter=0;
+       if(activation){
+         if(memory.Read8(descriptor+0x15u)&0x3Eu)return 0; // exclude initialization rows
+         invocation.edi=world+0x930u;
+         writer=0x001BA770u;
+         parameter=1u; // 001C2290 subtype 0, notify
+       }else{
+         constexpr uint32_t menuRoot=0x2D45F0u;
+         if(!memory.Contains(menuRoot,4u))return 0;
+         const auto menu=memory.Read32(menuRoot);
+         if(!memory.Contains(menu,0x21074u)||
+            memory.Read32(menu+0x21070u)!=menu+0x20F78u)return 0;
+         invocation.ebx=world+0x930u;
+         writer=0x001BA710u;
+         parameter=memory.Read32(descriptor+0x10u); // threshold-1 path uses the local descriptor
+         failedReadback=2137;
+       }
+       if(!dispatch::Find(writer))return 0;
+       quarantined=true;
+       kernel::CallGuest(invocation,writer,{target.selectorLow,target.selectorHigh,parameter});
+       if(!objective_source::ReadTable(memory,world,key.level,key.stage,reread)||reread!=table||
+          !CaptureOriginalObjectiveRecords(memory,world,key.level,key.stage,local)||
+          !std::equal(local.begin(),local.end(),remote.begin(),remote.end()))return failedReadback;
       appliedEpisode=key.originalEpisode;appliedEpoch=key.sceneEpoch;
       appliedTokenHi=key.tokenHi;appliedTokenLo=key.tokenLo;appliedSequence=sequence;
       quarantined=false;
-      return 2134;
+       return activation?2134:2136;
     }();
   } catch (...) {
-    if(quarantined)diagnostic=2135;
+     if(quarantined)diagnostic=failedReadback;
   }
   if(env->ExceptionCheck())env->ExceptionClear();
   env->PopLocalFrame(nullptr);
@@ -180,7 +199,7 @@ inline void ObserveOriginalPostWorldFrame(X86Context& ctx)noexcept{
    const auto& npcs=GuestOriginalHostNpcs();
    guestBarrier.Observe(signedMatch,nativeScene,players,npcs,now);
    if(guestBarrier.MatchesForApplication(signedMatch,nativeScene,players,npcs,now))
-     ApplyOriginalGuestObjectiveActivation(ctx,s.world,signedMatch);
+      ApplyOriginalGuestObjectiveTransition(ctx,s.world,signedMatch);
  }else guestBarrier.Reset();
 }
 } // namespace blackcoop

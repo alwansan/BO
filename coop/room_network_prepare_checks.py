@@ -43,7 +43,7 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('public void openCoopRoom(int row)',java)
             self.assertIn('RoomAppRooms.statusLine(row)',java)
             self.assertIn('public void coopRecordWorldTick(int code)',java)
-            self.assertIn('code >= 2130 && code <= 2135',java)
+            self.assertIn('code >= 2130 && code <= 2137',java)
             self.assertIn('RoomDiagnostics.originalPostFrameEvent(code)',java)
             post_frame=(root/'src/coop/room_original_post_frame_witness.hpp').read_text(encoding='utf-8')
             self.assertIn('HasOriginalWorldUnitMembership(OriginalUnitMembershipMemory{},s.world)',post_frame)
