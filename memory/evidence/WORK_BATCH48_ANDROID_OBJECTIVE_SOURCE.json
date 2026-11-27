@@ -89,6 +89,31 @@
     "authoredPropPartHealthChangeVerified": false,
     "collisionEffectVerified": false
   },
+  "livePropNativeWriterTrial": {
+    "framesAtLeast": 1680,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "independentAuthoredPropRowAndPartMatched": true,
+    "originalWriterInvokedByPrivateTest": true,
+    "sameLivePartHealthDecreased": true,
+    "stockImpactOrAreaInputVerified": false,
+    "collisionEffectVerified": false,
+    "allowlistedMarkersSha256": "25eba44e697d2edeee52c5c3958d4a3155b5063208facede07abfc1716edfc09"
+  },
+  "stockActorResourceRestartTrial": {
+    "framesAtLeast": 2460,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "lifecycleEvents": [2130, 2131, 2132, 2133],
+    "cameraConstructorVerified": 1,
+    "cameraSingletonPublicationVerified": 1,
+    "embeddedAudioRegistryMembershipsVerified": 16,
+    "audioRegistryRemovalsVerified": 0,
+    "removedAudioAddressesReused": 0,
+    "audioRegistryReadRejected": 0,
+    "p2ConstructionExercised": false,
+    "allowlistedMarkersSha256": "d71ab8e519f0a8ffc1e305e28fa549d803f2f250f000952078e6555bb91cf118"
+  },
   "ci": {
     "commit": "fe5b3aac7ce355b440891ee4418cb5100f19ace7",
     "androidSourceUnitsRun": 45919841804,
@@ -99,6 +124,18 @@
     "verifiedAndroidSourceArtifact": 15164500708,
     "verifiedAndroidSourceArtifactSha256": "a2b9ff540f677c3cb2abdb2a7f18c0e4db670fd1519e1cef3cfd053b869ed7a9",
     "androidSourceArtifactMinApi": 29
+  },
+  "guestActivationCi": {
+    "commit": "4f5c919366a591d63f6d2aaf68a9c438ea4815d6",
+    "androidSourceUnitsRun": 45922089367,
+    "sourcePreflightRun": 45922089278,
+    "jvmTlsRun": 45922089399,
+    "androidPlatformTlsRun": 45922089438,
+    "allFourPassed": true,
+    "verifiedAndroidSourceArtifact": 15165175791,
+    "verifiedAndroidSourceArtifactSha256": "db3dd79a02303ca16f128f5d2c3c033be41765af41445c837cfc2e62d664d84b",
+    "androidSourceArtifactMinApi": 29,
+    "originalGameApkStarted": false
   },
   "localChecks": {
     "androidArm64FrontendUnitsPassed": 7,

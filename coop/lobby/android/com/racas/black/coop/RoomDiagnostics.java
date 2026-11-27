@@ -58,6 +58,18 @@ public final class RoomDiagnostics {
             dropped.incrementAndGet(); // no IO, no callbacks, no user data
         }
     }
+    /** Fixed original post-frame diagnostics, shared with the export fixture. */
+    public static void originalPostFrameEvent(int code){
+        switch(code){
+            case 2130: event("ORIGINAL_POST_1F1080_GAME_FRAME_STABLE_SOURCE_ONLY_NO_PLAYER2"); break;
+            case 2131: event("ORIGINAL_UNIT_ORDINALS_WORLD_LIST_MEMBERSHIP_OBSERVED"); break;
+            case 2132: event("ORIGINAL_UNIT_EARLY_TEARDOWN_WORLD_LIST_REMOVAL_OBSERVED"); break;
+            case 2133: event("ORIGINAL_SAME_UNIT_WORLD_LIST_RELINK_OBSERVED"); break;
+            case 2134: event("ORIGINAL_GUEST_OBJECTIVE_ACTIVATION_READBACK_VERIFIED"); break;
+            case 2135: event("ORIGINAL_GUEST_OBJECTIVE_ACTIVATION_READBACK_FAILED"); break;
+            default: break;
+        }
+    }
     private static boolean safeCode(String code){
         if(code==null||code.isEmpty()||code.length()>70)return false;
         for(int i=0;i<code.length();i++){

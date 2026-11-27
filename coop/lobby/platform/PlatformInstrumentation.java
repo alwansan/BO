@@ -11,6 +11,25 @@ import java.security.MessageDigest;
 /** Standalone emulator test; no game, XBE, assets, JNI, or native library. */
 public final class PlatformInstrumentation extends Instrumentation {
     private static void check(boolean value){if(!value)throw new AssertionError("Platform invariant failed");}
+    private void verifyPublishedRoomExport(android.content.Context context,String expected)throws Exception{
+        android.content.ContentResolver resolver=context.getContentResolver();
+        android.net.Uri downloads=android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI;
+        String id=android.provider.MediaStore.MediaColumns._ID;
+        try(android.database.Cursor rows=resolver.query(downloads,new String[]{id},
+                android.provider.MediaStore.MediaColumns.DISPLAY_NAME+" LIKE ? AND "+
+                android.provider.MediaStore.MediaColumns.IS_PENDING+"=0",
+                new String[]{"BLACK-Room-%-events.txt"},id+" DESC")){
+            check(rows!=null&&rows.moveToFirst());
+            android.net.Uri file=android.content.ContentUris.withAppendedId(downloads,rows.getLong(0));
+            try(java.io.InputStream input=resolver.openInputStream(file)){
+                check(input!=null);
+                java.io.BufferedInputStream buffered=new java.io.BufferedInputStream(input);
+                byte[] expectedBytes=expected.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+                for(byte value:expectedBytes)check(buffered.read()==(value&255));
+                check(buffered.read()==-1);
+            }
+        }
+    }
     private void verifySafeRotatedRoomLogs()throws Exception{
         android.content.Context context=getTargetContext().getApplicationContext();
         RoomDiagnostics.init(context);
@@ -25,6 +44,9 @@ public final class PlatformInstrumentation extends Instrumentation {
         RoomDiagnostics.event("STORY_DIAGNOSTICS_BEGIN");
         for(int i=0;i<900;i++)
             RoomDiagnostics.event("STORY_SAFE_ROTATION_SAMPLE_ABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789");
+        // Exercise the production Java mapping and export with native event
+        // values supplied by this fixture; the BLACK game does not execute.
+        for(int code=2129;code<=2136;code++)RoomDiagnostics.originalPostFrameEvent(code);
         RoomDiagnostics.event("STORY_DIAGNOSTICS_END");
         // Event producer is nonblocking by design; read() is the explicit
         // export barrier that flushes the dedicated bounded IO worker.
@@ -45,7 +67,23 @@ public final class PlatformInstrumentation extends Instrumentation {
         for(byte value:apkDigest.digest())expectedHash.append(String.format(java.util.Locale.ROOT,"%02x",value&255));
         check(exported.contains("\nBASE_APK_SHA256="+expectedHash+"\n\n"));
         check(exported.endsWith(safe));
+        String[] nativeEvents={
+            "ORIGINAL_POST_1F1080_GAME_FRAME_STABLE_SOURCE_ONLY_NO_PLAYER2",
+            "ORIGINAL_UNIT_ORDINALS_WORLD_LIST_MEMBERSHIP_OBSERVED",
+            "ORIGINAL_UNIT_EARLY_TEARDOWN_WORLD_LIST_REMOVAL_OBSERVED",
+            "ORIGINAL_SAME_UNIT_WORLD_LIST_RELINK_OBSERVED",
+            "ORIGINAL_GUEST_OBJECTIVE_ACTIVATION_READBACK_VERIFIED",
+            "ORIGINAL_GUEST_OBJECTIVE_ACTIVATION_READBACK_FAILED"
+        };
+        int prior=exported.indexOf("STORY_DIAGNOSTICS_BEGIN");
+        for(String code:nativeEvents){
+            int found=exported.indexOf(" "+code+"\n");
+            check(found>prior&&exported.lastIndexOf(" "+code+"\n")==found);
+            prior=found;
+        }
+        check(prior<exported.indexOf("STORY_DIAGNOSTICS_END"));
         check(RoomDiagnostics.exportToDownloads(context));
+        verifyPublishedRoomExport(context,exported);
         try(java.io.FileOutputStream write=new java.io.FileOutputStream(older,true)){
             write.write("UNTRUSTED_RAW_ADDRESS_OR_SECRET\n".getBytes(java.nio.charset.StandardCharsets.UTF_8));
         }
@@ -53,6 +91,7 @@ public final class PlatformInstrumentation extends Instrumentation {
         check(!RoomDiagnostics.exportToDownloads(context));
         check(recent.delete()&&older.delete());
         RoomDiagnostics.event("ROOM_SAFE_LOG_EXPORT_VERIFIED");
+        android.util.Log.i("BlackTlsPlatform","ORIGINAL_POST_FRAME_JAVA_EXPORT_PASS");
     }
     @Override public void onCreate(Bundle arguments){super.onCreate(arguments);start();}
     @Override public void onStart(){
