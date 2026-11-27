@@ -44,6 +44,28 @@
     "allowlistedMarkersSha256ForEachProcess": "6713666e3e526479e6cbffdf3e53edc959b71b864f426402a6dfcd8887a311d5",
     "propHealthAndCollisionReplicated": false
   },
+  "isolatedAndroidArm64JniBridgeTrial": {
+    "dateVerified": "2026-11-28",
+    "realAuthenticatedLoopbackTls": true,
+    "roomAppRoomsInputFacade": true,
+    "actualJniArrayPollWithCheckJni": true,
+    "hostReservedPortAxesReadBackExactly": true,
+    "portNeutralAfterGuestDisconnect": true,
+    "marker": "BO_ANDROID_PRIVATE_ROOM_TLS_ACTUAL_HOST_JNI_PORT_READBACK_PASS",
+    "standInActivityAndSyntheticStageCallbacks": true,
+    "originalEngineProcessInThisTrial": false
+  },
+  "initialNativeAvatarSoftwareRasterTrial": {
+    "dateVerified": "2026-11-28",
+    "actorAndPrimaryCameraReachedOriginalGridDraw": true,
+    "framesAtLeast": 840,
+    "processExit": 139,
+    "signal": 11,
+    "faultSite": "pinned SDK reference_renderer.cpp:1110",
+    "faultDescription": "reference CPU renderer read the converted vertex array after the SDK selected raw vertex assembly for the avatar FVF",
+    "presentationPixelsVerified": false,
+    "allowlistedMarkersSha256": "e3acb036149289b67a478d32aa2d6576a59f505f18f61875d05b21b63c3a9408"
+  },
   "blackActivityOriginalGameInputVerified": false,
   "productionHostRemotePadActivation": false,
   "acceptanceApk": false

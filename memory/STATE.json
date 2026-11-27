@@ -1,6 +1,6 @@
 {
   "latestRestoreVerification": {
-    "date": "2026-11-27",
+    "date": "2026-11-28",
     "verified_commit": "708d8f2eea37b6d959f630e93514f0805b4efa58",
     "source_preflight_run": 46065451120,
     "source_preflight": "success",
@@ -4684,6 +4684,7 @@
     "nativeP2ControlRevokedWhenGuestDisconnected": true,
     "nativeP2SameOriginalGridAndPrimaryCameraFrames": 104,
     "nativePropAuthoredKeyResolvedByIndependentOriginalProcesses": 2,
+    "isolatedRealTlsToNativeJniPadReadbackPassed": true,
     "originalBlackActivityToHostNativeActorVerified": false,
     "originalHostRemotePadActivation": false,
     "acceptanceApk": false,
