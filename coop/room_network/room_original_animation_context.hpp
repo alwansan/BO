@@ -515,10 +515,11 @@ class OriginalWeaponSoundContext final {
  const std::thread::id thread_=std::this_thread::get_id();
  static constexpr uint32_t managerRoot_=0x2D12D8u, soundRoot_=0x2D0D60u;
  static constexpr uint32_t bytes_=0x1330u;
- // The provider must prove that both stationary pools retain their original
- // registry memberships and exclude concurrent consumers of the selectors.
+ // The provider must prove registry membership for the stationary pools,
+ // independent lifetime for the effects objects and their row/table backing,
+ // and exclusive access to the selectors for the entire scope.
  struct Region {uint32_t address=0,bytes=0;uint64_t generation=0;};
- Region firstManager_,extraManager_,firstPool_,extraPool_,selector_;
+ Region firstManager_,extraManager_,firstPool_,extraPool_,firstEffects_,extraEffects_,selector_;
  uint64_t scene_=0;
  uint32_t selectorParent_=0;
  bool bound_=false,entered_=false,poisoned_=false;
@@ -536,24 +537,27 @@ class OriginalWeaponSoundContext final {
   uint32_t a=word(root);if(!span(a,0xD3CCu))return 0;
   parent=a+0xD3C8u;
   auto* second=io.Map(parent,4u);if(!second)return 0;
-  uint32_t b=word(second);if(!span(b,16u))return 0;
-  return b+0xCu;
- }
- template<class IO>bool resolveExchange(IO& io,uint8_t*& manager,uint8_t*& pool)const{
+   uint32_t b=word(second);if(!span(b,0x18u))return 0;
+   return b+0xCu;
+  }
+  template<class IO>bool resolveExchange(IO& io,uint8_t*& manager,uint8_t*& selectors)const{
   uint32_t parent=0;
   if(!owner()||!bound_||poisoned_||io.Scene()!=scene_||
      resolveSelector(io,parent)!=selector_.address||parent!=selectorParent_)return false;
-  for(const auto& region:{firstManager_,extraManager_,firstPool_,extraPool_,selector_}){
+   for(const auto& region:{firstManager_,extraManager_,firstPool_,extraPool_,
+                           firstEffects_,extraEffects_,selector_}){
    if(!io.Map(region.address,region.bytes)||
       io.Generation(region.address,region.bytes)!=region.generation)return false;
   }
   manager=io.Map(managerRoot_,4u);
-  pool=io.Map(selector_.address,4u);
-  return manager&&pool&&manager!=pool&&
-    word(manager)==(entered_?extraManager_:firstManager_).address&&
-    word(pool)==(entered_?extraPool_:firstPool_).address&&
-    io.OwnsLiveWeaponSoundContext(firstManager_.address,extraManager_.address,
-                                  firstPool_.address,extraPool_.address);
+   selectors=io.Map(selector_.address,selector_.bytes);
+   return manager&&selectors&&manager!=selectors&&
+     word(manager)==(entered_?extraManager_:firstManager_).address&&
+     word(selectors)==(entered_?extraPool_:firstPool_).address&&
+     word(selectors+8u)==(entered_?extraEffects_:firstEffects_).address&&
+     io.OwnsLiveWeaponSoundContext(firstManager_.address,extraManager_.address,
+                                   firstPool_.address,extraPool_.address)&&
+     io.OwnsLiveAudioEffectsContext(firstEffects_.address,extraEffects_.address);
  }
 public:
  OriginalWeaponSoundContext()=default;
@@ -561,16 +565,17 @@ public:
  OriginalWeaponSoundContext& operator=(const OriginalWeaponSoundContext&)=delete;
  bool Entered()const noexcept{return owner()&&entered_;}
  bool Quarantined()const noexcept{return owner()&&poisoned_;}
- template<class IO>bool Bind(IO& io,uint32_t extraManager,uint32_t extraPool){
+  template<class IO>bool Bind(IO& io,uint32_t extraManager,uint32_t extraPool,uint32_t extraEffects){
   if(!owner()||bound_||poisoned_||!io.Scene())return false;
   uint32_t parent=0;
   const auto selector=resolveSelector(io,parent);
   if(!selector||parent==managerRoot_||parent==soundRoot_)return false;
   auto* managerRoot=io.Map(managerRoot_,4u);
-  auto* poolRoot=io.Map(selector,4u);
-  if(!managerRoot||!poolRoot||managerRoot==poolRoot)return false;
-  std::array<Region,5> regions{{{word(managerRoot),0xD0u},{extraManager,0xD0u},
-     {word(poolRoot),bytes_},{extraPool,bytes_},{selector,4u}}};
+   auto* selectors=io.Map(selector,0xCu);
+   if(!managerRoot||!selectors||managerRoot==selectors)return false;
+   std::array<Region,7> regions{{{word(managerRoot),0xD0u},{extraManager,0xD0u},
+      {word(selectors),bytes_},{extraPool,bytes_},{word(selectors+8u),0x290u},
+      {extraEffects,0x290u},{selector,0xCu}}};
   for(unsigned i=0;i<regions.size();++i){
    auto& item=regions[i];
    if(!span(item.address,item.bytes)||overlap(item,{managerRoot_,4u})||
@@ -580,28 +585,32 @@ public:
    item.generation=io.Generation(item.address,item.bytes);
    if(!item.generation)return false;
   }
-  if(!io.OwnsLiveWeaponSoundContext(regions[0].address,extraManager,regions[2].address,extraPool))
-   return false;
-  firstManager_=regions[0];extraManager_=regions[1];
-  firstPool_=regions[2];extraPool_=regions[3];selector_=regions[4];
+   if(!io.OwnsLiveWeaponSoundContext(regions[0].address,extraManager,regions[2].address,extraPool)||
+      !io.OwnsLiveAudioEffectsContext(regions[4].address,extraEffects))
+    return false;
+   firstManager_=regions[0];extraManager_=regions[1];
+   firstPool_=regions[2];extraPool_=regions[3];
+   firstEffects_=regions[4];extraEffects_=regions[5];selector_=regions[6];
   selectorParent_=parent;
   scene_=io.Scene();bound_=true;return true;
  }
  template<class IO>bool CanExchange(IO& io)const{
-  uint8_t *manager=nullptr,*pool=nullptr;
-  return resolveExchange(io,manager,pool);
+   uint8_t *manager=nullptr,*selectors=nullptr;
+   return resolveExchange(io,manager,selectors);
  }
  template<class IO>bool Exchange(IO& io){
   if(!owner()||!bound_||poisoned_)return false;
-  uint8_t *manager=nullptr,*pool=nullptr;
-  if(!resolveExchange(io,manager,pool)){
+   uint8_t *manager=nullptr,*selectors=nullptr;
+   if(!resolveExchange(io,manager,selectors)){
    if(entered_)poisoned_=true;
    return false;
   }
-  const auto nextManager=(entered_?firstManager_:extraManager_).address;
-  const auto nextPool=(entered_?firstPool_:extraPool_).address;
-  std::memcpy(manager,&nextManager,4u);
-  std::memcpy(pool,&nextPool,4u);
+   const auto nextManager=(entered_?firstManager_:extraManager_).address;
+   const auto nextPool=(entered_?firstPool_:extraPool_).address;
+   const auto nextEffects=(entered_?firstEffects_:extraEffects_).address;
+   std::memcpy(manager,&nextManager,4u);
+   std::memcpy(selectors,&nextPool,4u);
+   std::memcpy(selectors+8u,&nextEffects,4u);
   entered_=!entered_;return true;
  }
 };

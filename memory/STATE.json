@@ -4759,8 +4759,9 @@
     "androidPrivateDetachedColliderFreedAfterOriginalMotionReuseVerified": true,
     "androidPrivateDetachedColliderMotionReusesUntilOriginalRow": 59,
     "androidPrivateWeaponHeap16And18UnusedAndInactiveFrameSamples": 1026,
-    "androidPrivateOwnedAudioEffectsScopePending": true,
-    "androidPrivateOwnedWeaponHeapAllocationTrialPending": true,
+    "androidPrivateOwnedAudioEffectsNativeClearAndRestoreVerified": true,
+    "androidPrivateOwnedWeaponHeap16And18NativeAllocationAndRestoreVerified": true,
+    "androidStationaryWeaponAndAudioEffectsScopeFixturePassed": true,
     "androidPrivateNativeEffectsActorCameraRoundTripVerified": true,
     "androidPrivateNativeAnimationCaptureRejectedAtNonzeroTransform": true,
     "androidPrivateNativeAnimationNonzeroTransformsInLiveArenaWithoutExactGeneration": 6,
@@ -4784,6 +4785,6 @@
     "androidLivePropDirectNativeWriterReadbackVerified": true,
     "androidLivePropCollisionEffectVerified": false,
     "acceptanceApk": false,
-    "next": "integrate passive motion-row retirement, verify and isolate the separate +0x14 audio effects object and weapon heaps, then combine the native animation/FX scopes for 001E0E40 and input-driven movement"
+    "next": "verify the combined weapon manager, stationary audio pool and audio effects selector scope using exact original allocations; integrate passive motion-row retirement and combine all presentation scopes for 001E0E40"
   }
 }

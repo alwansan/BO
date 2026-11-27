@@ -447,6 +447,35 @@
     "constructorOrOwnedScopeObserved": false,
     "allowlistedMarkersSha256": "ebdc2db89063c567ae3842abbb9796e6b96291d1c59ab17c8ae60e83f5748f6d"
   },
+  "originalAudioEffectsOwnedScopeTrial": {
+    "sourceRevision": "60c4b6ee7a70c668ceec97a2af55829b31a74aa6",
+    "framesAtLeast": 1680,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "constructor": "00145650",
+    "nativeClear": "0013FAA0",
+    "ownedRowsCleared": 32,
+    "p1SelectorObjectRowsAndPointerTableRestoredOrUnchanged": true,
+    "ownedGenerationsRevoked": 3,
+    "playbackOrConcurrentCallbacksExercised": false,
+    "allowlistedMarkersSha256": "db65f16c491abfd62652c45989a0ee28ba7f1c34cfb28a8aef9e5486662dd83d"
+  },
+  "originalWeaponArenaNativeAllocationTrial": {
+    "sourceRevision": "60c4b6ee7a70c668ceec97a2af55829b31a74aa6",
+    "firstNativeAttemptIntentionalExit": 111,
+    "framesAtLeast": 2280,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "validatedOriginalHeapIds": [16, 18],
+    "nativeSelector": "001F4110",
+    "nativeAllocator": "001F3FC0",
+    "allocatedAndVerifiedBytesPerHeap": 128,
+    "originalAllocatorModeWasZero": true,
+    "originalAllocatorModeSelectionAndP1DescriptorsRestored": true,
+    "ownedDescriptorsRestoredAndBackingGenerationRevoked": true,
+    "nativeWeaponLoadedOrPublished": false,
+    "allowlistedMarkersSha256": "aeb0a635a53cf82c69e963ebdde89e510c7380cace04ee976bdf9a7de5e43c0f"
+  },
   "ci": {
     "commit": "fe5b3aac7ce355b440891ee4418cb5100f19ace7",
     "androidSourceUnitsRun": 45919841804,
