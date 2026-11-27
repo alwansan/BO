@@ -552,6 +552,17 @@
     "registeredProxyOrNativeTeardownExercised": false,
     "allowlistedMarkersSha256": "abf287052a10979a245a4eebfeb2a7542836d3bd6f99ced7dfde9023d7acaf7b"
   },
+  "originalOwnedP2AuxiliarySetupRestoreDiagnosticTrial": {
+    "sourceRevision": "0ea1eeefce95c1214cc924aa027637d4830097b9",
+    "framesAtLeast": 2220,
+    "intentionalExit": 125,
+    "engineSignalObserved": false,
+    "newNativeTargetSlotObserved": true,
+    "actorExchangeRefusedRestore": true,
+    "wordDifferencesAreFromUnrestoredCoreAndAreNotAReconciledP1State": true,
+    "teardownNotAttempted": true,
+    "allowlistedMarkersSha256": "2bb9486ccf102bf1af1c14fa8bb775429e5b6bf36ad451621570096df649f1b9"
+  },
   "originalObjectiveSimpleCompletionTrial": {
     "sourceRevision": "8280734e2f21dd47167bc723b242357a5367668b",
     "framesAtLeast": 2340,
