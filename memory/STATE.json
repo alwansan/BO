@@ -4805,6 +4805,14 @@
     "androidPrivateNativeTargetReuseRemainingP2BacklinksAcross32Rows": 0,
     "androidPrivateNativeTargetReuseRetiredP2AllocationRetained": true,
     "androidNativeTargetReuseVerifiedRevision": "ffd67d600b11d4763ad062a1e1471f0bef5efd49",
+    "androidPrivateNaturalReuseVerifiedRevision": "c972a65fd3434ca3585578b9cf79151d472f3bce",
+    "androidPrivateNaturalReusePostRelinkFrames": 2400,
+    "androidPrivateNaturalRetiredMotionRowReused": true,
+    "androidPrivateNaturalRetiredTargetProxyAndBodyReused": true,
+    "androidPrivateNaturalRetiredActorAiAndPhysicsReferencesRemainedAt900Frames": true,
+    "androidPrivateNaturalRetiredActorReferencesInSixSampledRootsAt2400Frames": 0,
+    "androidPrivateNaturalRetiredActorReferencesInElevenRootRegionsAndFourSiblingsAt1138Frames": 0,
+    "androidPrivateNaturalRetiredActorStorageFreed": false,
     "androidRegistrationLifetimeVerifiedRevision": "d33fd80da3ce7d249c01b2b6e3475c27451e94f2",
     "androidRegistrationLifetimeSourceUnitsCi": 46020681432,
     "androidRegistrationLifetimePreflightCi": 46020681548,
@@ -4899,6 +4907,6 @@
     "androidLivePropDirectNativeWriterReadbackVerified": true,
     "androidLivePropCollisionEffectVerified": false,
     "acceptanceApk": false,
-    "next": "wire passive observation of natural target and solver reuse to the retired allocation ledger and prove the remaining actor references and destructors before freeing its storage. Native reuse cleared all 32 target-row backlinks to retired P2 in the private lab. Continue visible avatars and end-to-end campaign integration"
+    "next": "verify ownership and native destructors for the remaining actor-owned weapon, camera and presentation resources, then confirm retirement across their engine holders before a guarded free. Natural reuse of the target, proxy, body and motion and zero actor-address matches in eleven sampled root regions and four owned sibling allocations are verified"
   }
 }
