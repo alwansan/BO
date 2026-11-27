@@ -241,7 +241,9 @@ public:
       const uint32_t slot = set_ + 0x470 + k * 0x240;
       for (uint32_t off = 0x30; off < 0x50; off += 4) {
         uint32_t address = 0;
-        if (!bind(io, slot + off, address) || !add(io, address, 0xA0))
+        // The original first-person constructor passes 1 to 0017EAE0,
+        // which initializes these optional transform pointers to null.
+        if (!bind(io, slot + off, address) || (address && !add(io, address, 0xA0)))
           return false;
       }
       if (!bind(io, slot + 0x54, controllers[k]) ||
@@ -278,7 +280,7 @@ public:
     for (uint32_t i = 0; i < count_; i++) {
       uint32_t at = 0, top = 0;
       if (!read(io, table_ + i * 4, at) || !read(io, tops_ + i * 4, top) ||
-          top < at || uint64_t(top) > uint64_t(at) + bytes_)
+          (top && (top < at || uint64_t(top) > uint64_t(at) + bytes_)))
         return false;
       if (rootOverlap(at, bytes_) || overlaps(at, bytes_, set_, 0x970) ||
           overlaps(at, bytes_, kWork, kWorkBytes) ||
@@ -840,7 +842,10 @@ public:
    auto* rec=next.data()+8u+k*0x38u;
    const auto had=get(rec+0x10u);
    if(had&&had!=firstBanks[0]&&had!=firstBanks[1])return false;
-   put(rec,heaps[k]);put(rec+4u,0);put(rec+0x10u,0);
+    put(rec,heaps[k]);put(rec+4u,0);
+    // The native manager constructor clears the two active sound pointers.
+    // Detached pool ownership does not make the donor's voices shareable.
+    put(rec+8u,0);put(rec+0xCu,0);put(rec+0x10u,0);
    for(unsigned j=0;j<2;j++)if(had==firstBanks[j])put(rec+0x10u,extraBanks[j]);
    put(rec+0x14u,0);put(rec+0x18u,0);put(rec+0x1Cu,0);
    std::memset(rec+0x20u,0,0x12u);

@@ -69,11 +69,14 @@ struct IO {
       w(slot + 0x58, 99);
       w(slot + 0xAC, k);
       w(slot + 0x90, 88);
+      w(slot + 0x4C, 0); // optional first-person transform
       w(0x320004 + k * 0x1000, 77);
       w(s + 0x398 + k * 0x6C + 0xC, 66);
     }
     w(0x4000A0 + 0x328, 0x340000);
     w(0x340000 + 0xAC, 2);
+    // Original 0017A5E0 uses a zero top for an unallocated block.
+    w(0x330100 + 3 * 4, 0);
   }
 };
 int main() {
@@ -157,6 +160,11 @@ int main() {
   OriginalAnimationContext shapeCtx;
   assert(shapeCtx.ObserveOriginalCacheConstructor(shape, 0x600000));
   assert(shapeCtx.Capture(shape));
+  shape.w(0x300000 + 0x470 + 0x4C, 0x315000u);
+  before = shape.m;
+  assert(!shapeCtx.Exchange(shape));
+  assert(shape.m == before);
+  shape.w(0x300000 + 0x470 + 0x4C, 0);
   shape.w(0x300000 + 0x470 + 0x54, 0x350000);
   before = shape.m;
   assert(!shapeCtx.Exchange(shape));
@@ -373,12 +381,15 @@ int main() {
     put(pool,0,0x190000u);put(pool,0x10u,0x191000u);put(pool,0x130Cu,9);
     put(donor,0x7Cu,first+8);put(donor,0x80u,first+0x40u);
     put(donor,0x18u,0x190000u);put(donor,0x50u,0x191000u);
+    put(donor,0x10u,0x190360u);put(donor,0x14u,0x1905F0u);
+    put(donor,0x48u,0x190880u);put(donor,0x4Cu,0x190B10u);
     put(donor,0xCu,77);put(donor,0x24u,99);put(donor,0x28u,88);
     const auto saved=donor;
     assert(OriginalWeaponManagerImage::Build(donor,pool,first,extra,banks,heaps,out));
     assert(donor==saved);
     assert(get(out,8)==16u&&get(out,0x40u)==18u);
     assert(get(out,0x18u)==banks[0]&&get(out,0x50u)==banks[1]);
+    assert(get(out,0x10u)==0&&get(out,0x14u)==0&&get(out,0x48u)==0&&get(out,0x4Cu)==0);
     assert(get(out,0x7Cu)==extra+8&&get(out,0x80u)==extra+0x40u);
     assert(get(out,0xCu)==0&&get(out,0x24u)==0&&get(out,0x28u)==0);
     const auto ready=out;
