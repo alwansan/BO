@@ -114,6 +114,42 @@
     "p2ConstructionExercised": false,
     "allowlistedMarkersSha256": "d71ab8e519f0a8ffc1e305e28fa549d803f2f250f000952078e6555bb91cf118"
   },
+  "nativePropCollisionObservationTrial": {
+    "framesAtLeast": 5640,
+    "timeoutSeconds": 125,
+    "processExit": 124,
+    "engineSignalObserved": false,
+    "stockControlsAvailable": true,
+    "matchingStockCollisionQueryHitObserved": false,
+    "beforeAfterQueryExecuted": false,
+    "collisionEffectVerified": false,
+    "allowlistedMarkersSha256": "ebdc2db89063c567ae3842abbb9796e6b96291d1c59ab17c8ae60e83f5748f6d"
+  },
+  "ownedP2StorageTrial": {
+    "framesAtLeast": 2280,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "distinctSdkAllocations": 5,
+    "originalCameraConstructorReadbackVerified": true,
+    "detachedInputIsolated": true,
+    "detachedModelIsolated": true,
+    "allFiveAllocationGenerationsRevokedAfterRelease": true,
+    "originalP1ActorAndCameraBytesUnchanged": true,
+    "p2MaterializedOrRegistered": false,
+    "allowlistedMarkersSha256": "a60f68243bf87e53e0e8300e8a275fa039595f48ab24778e6237e398d4c79a46"
+  },
+  "ownedP2MaterializationTrial": {
+    "framesAtLeast": 1680,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "allFiveOwnedBuffersMaterialized": true,
+    "rebasedModelPartsWeaponStorageAndAbsentProxyReadBack": true,
+    "readOnlyWorldLinkPlanPrepared": true,
+    "originalP1ActorAndCameraBytesUnchanged": true,
+    "constructorOnlyReleaseCorrectlyRefused": true,
+    "p2NativeSetupOrPhysicalRegistrationInvoked": false,
+    "allowlistedMarkersSha256": "12b1dc94f417ce277d519b50159fef7e01443dca617ff691a107372eb63fb63b"
+  },
   "ci": {
     "commit": "fe5b3aac7ce355b440891ee4418cb5100f19ace7",
     "androidSourceUnitsRun": 45919841804,
@@ -164,10 +200,14 @@
     "staleExit": 0,
     "staleRejectedWithUnchangedNativeTable": true,
     "staleMarkersSha256": "20076e6250e5f5a7114acbebe70b00c16ff29f838a154fe5c1329f37885d063e",
+    "staleRepeatedWithVmStartedBeforeEngine": true,
+    "staleRepeatFramesAtLeast": 2340,
+    "staleRepeatMarkersSha256": "f9b40d1ba22a1f044d22204678b12deff312ce902b304b357dc9dd4d7842c117",
     "someSeparateTrialsStoppedDuringVmStartupOrBeforeCampaign": true,
     "realBlackActivityOrAndroidArtUsed": false,
     "coOpRoomAndJniTogetherVerified": false
   },
+  "ownerIsoStillMatchedPrivateManifestAfterTrials": true,
   "localChecks": {
     "androidArm64FrontendUnitsPassed": 7,
     "localCompilerMinApi": 24,
