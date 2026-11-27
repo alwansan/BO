@@ -374,6 +374,33 @@
     "engineSignalObserved": false,
     "allowlistedMarkersSha256": "da7a3d1cd761ba18dd2bbfce5779292e3030480fc9cb6be380ac5499ffa49ef4"
   },
+  "stockSustainedP1ImpactTrial": {
+    "dateVerified": "2026-11-28",
+    "originalP1RoundsConsumed": 33,
+    "matchingNonDepletingPartReadbacks": 15,
+    "samePartGeometryReacquisitions": 5,
+    "directWriterRejectionMarkerCount": 0,
+    "selectedPartReachedPublisher": false,
+    "framesAtLeast": 7260,
+    "processExit": 124,
+    "engineSignalObserved": false,
+    "allowlistedMarkersSha256": "f52ff898412019027a812621ef8f922ff5f097c27feac63a8039bc8a7ba762d5"
+  },
+  "stockImpactReachedStagedPublisherDuringAimTrial": {
+    "dateVerified": "2026-11-28",
+    "guardedOriginalImpactWriterObserved": true,
+    "stockHitReachedPublisherEntry": true,
+    "sameAuthoredPartWasAtZeroWithInvalidatedDefinition": true,
+    "chosenAimTargetWasThePartPublished": false,
+    "damageOccurredBeforeFirstObservedAimedFire": true,
+    "currentOriginalSceneCheckPassed": false,
+    "jniOfferOrTlsPublicationExercised": false,
+    "directDamageCallRejectionMarkerCount": 0,
+    "framesAtLeast": 5400,
+    "processExit": 124,
+    "engineSignalObserved": false,
+    "allowlistedMarkersSha256": "acfb6eb8cde7122c07af16bf23c66fac2fcfc0375fc32f258ad69f833f16be5d"
+  },
   "nativeGuardedPartInboxWithRealTlsRelay": {
     "dateVerified": "2026-11-28",
     "realTlsGuestFrameWords": 14,

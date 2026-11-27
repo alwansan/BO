@@ -1,6 +1,6 @@
 ## آخر تحديث Work54 (2026-11-28)
 
-- عزل العرض الفوري في المختبر أتاح 3480 إطارًا بلا تعطل. أطلق P1 خمس طلقات وقرأ المحرك ضررًا في الجزء المؤلّف المختار. بقي الجزء دون نفاد ولم يبلغ الحدث الناشر. تابع إعادة التقاط هندسة الجزء وتجربة ضرر المنطقة الأصلي. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-28_bo-coop-work54-stock-prop-publisher.md). لا APK قبول.
+- عزل `EndImmediate` في المختبر أتاح 7260 إطارًا بلا تعطل. أضرّ P1 بالجزء المختار، ووصل نفاد أصلي لجزء آخر إلى مدخل الناشر دون استدعاء ضرر مباشر. بقي فحص المشهد قبل JNI، ولم تثبت نسبة النفاد إلى طلقة P1. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-28_bo-coop-work54-stock-prop-publisher.md). لا APK قبول.
 
 ## آخر تحديث Work53 (2026-11-28)
 

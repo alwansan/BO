@@ -7,7 +7,7 @@
     "android_synthetic_diagnostic_export_run": 45922634177,
     "android_shared_campaign_verified": false,
     "acceptance_apk_ready": false,
-    "next": "Prove an aimed stock hit reaches the staged host publisher after isolating private immediate rendering. Establish guest publication lifetime and owned P2 sound table loading."
+    "next": "Explain why the private trial's natural depletion reaches the publisher but fails the independent original scene check. Match a depletion on the aimed P1 part before testing live Android publication."
   },
   "schema": 1,
   "agent": "BO-COOP",
@@ -4681,9 +4681,11 @@
     "aimedP1ExactTargetDamageReadbacks": 3,
     "differentAuthoredPartDepletionReachedPublisherWithoutVerifiedShooter": true,
     "samePartReacquisitionsAndOriginalP1Rounds": [4, 13],
-    "stockHitReachedPublisher": false,
+    "stockHitReachedPublisher": true,
+    "stockHitOnAimedTargetReachedPublisher": false,
+    "stockHitPassedPublisherSceneCheck": false,
     "acceptanceApk": false,
-    "next": "Finish the lower-health authored-part variant and verify both publisher entry and its current original scene check for the aimed P1 hit."
+    "next": "Read the original episode, stream, resource-pair and stability booleans in the private hub; tie a selected authored part depletion to a P1 shot and pass the native scene check."
   },
   "workBatch53": {
     "date": "2026-11-28",
