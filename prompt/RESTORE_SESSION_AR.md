@@ -1,3 +1,8 @@
+## آخر تحديث Work49 (2026-11-27)
+
+- في مختبر Android، فُصل سجلّا صوت سلاح P2 بعد 104 تحديثات، وتطابقت بيانات P1 ومحددات الصوت. الكود يعزل أي فشل جزئي بعد محاولة إرجاع P1. [الدليل](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/evidence/WORK_BATCH49_ANDROID_P2_VOICE_RETIREMENT.json).
+- بقي الممثل حيًا: مدخل التفكيك الأصلي `001D5D90` يصل إلى ثلاثة سجلات ومساحة عرض مشتركة مع P1. تحقق من إزالة كائنات الصوت المنشورة ومن ملكية كل مورد قبل نداء التفكيك. لا APK قبول؛ العرض والتحكم الشبكي والعالم المشترك قيد العمل. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-27_bo-coop-work49-android-p2-voice-retirement.md).
+
 ## آخر تحديث Work48 (2026-11-27)
 
 - ثبت تفعيل هدف مؤلف على Android واكتمال صف بسيط `1 → 3` دون تغيير العداد. تطابقت اللقطة عبر TLS وقرأ JNI الجدول كاملاً ورفض التسلسل المنتهي دون تغيير. يبقى إثبات عرض HUD وتقدم المرحلة وAPK اللعبة. [الدليل](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/evidence/WORK_BATCH48_ANDROID_OBJECTIVE_SOURCE.json).

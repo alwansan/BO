@@ -329,6 +329,42 @@ int main() {
     snd.audioEffectsOwned=false;before=snd.m;
     assert(!sound.Exchange(snd)&&sound.Quarantined()&&snd.m==before);
   }
+  for(const bool failSecond:{false,true}){
+    IO io;OriginalWeaponSoundContext sound;
+    constexpr uint32_t manager=0x181000u,pool=0x194000u;
+    io.w(0x2D12D8u,0x180000u);io.w(0x2D0D60u,0x100000u);
+    io.w(0x100000u+0xD3C8u,0x170000u);io.w(0x17000Cu,0x190000u);
+    io.w(0x170010u,77u);io.w(0x170014u,0x198000u);
+    for(uint32_t i=0;i<2u;++i){
+      const uint32_t bank=pool+i*0x10u,record=manager+8u+i*0x38u;
+      const uint32_t voice=pool+0x360u+i*2u*0x290u;
+      io.w(bank,0x196000u+i*0xC0u);
+      io.m[bank+0xFu]=1u;
+      io.w(record+8u,voice+0x290u);io.w(record+0xCu,voice);
+      io.w(record+0x10u,io.r(bank));io.m[record+0x30u]=1u;
+    }
+    assert(sound.Bind(io,manager,pool,0x199000u));
+    unsigned calls=0;
+    const auto release=[&](uint32_t record){
+      const uint32_t i=calls++;
+      assert(i<2u&&record==manager+8u+i*0x38u);
+      assert(io.r(0x2D12D8u)==manager&&io.r(0x17000Cu)==pool&&io.r(0x170014u)==0x199000u);
+      if(i==1u&&failSecond)throw i;
+      io.w(record+8u,0);io.w(record+0xCu,0);io.w(record+0x10u,0);
+      io.m[record+0x30u]=0;io.m[pool+i*0x10u+0xFu]=0;
+      return true;
+    };
+    io.m[pool+0x1Fu]=0;
+    before=io.m;
+    assert(!sound.RetireWeaponVoices(io,release)&&calls==0&&io.m==before);
+    io.m[pool+0x1Fu]=1;
+    assert(sound.RetireWeaponVoices(io,release)==!failSecond&&calls==2u);
+    assert(!sound.Entered()&&sound.Quarantined()==failSecond&&!sound.CanExchange(io));
+    assert(io.r(0x2D12D8u)==0x180000u&&io.r(0x17000Cu)==0x190000u);
+    assert(io.r(0x170010u)==77u&&io.r(0x170014u)==0x198000u);
+    assert(io.m[pool+0xFu]==0u&&io.m[pool+0x1Fu]==unsigned(failSecond));
+    assert(!sound.RetireWeaponVoices(io,release)&&calls==2u);
+  }
   {
     IO io;OriginalAnimationContext anim;OriginalWeaponSoundContext sound;
     OriginalEffectsContext effects;OriginalPresentationArbiter arbiter;

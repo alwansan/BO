@@ -522,7 +522,7 @@ class OriginalWeaponSoundContext final {
  Region firstManager_,extraManager_,firstPool_,extraPool_,firstEffects_,extraEffects_,selector_;
  uint64_t scene_=0;
  uint32_t selectorParent_=0;
- bool bound_=false,entered_=false,poisoned_=false;
+ bool bound_=false,entered_=false,poisoned_=false,voicesRetired_=false;
  bool owner()const noexcept{return thread_==std::this_thread::get_id();}
  static uint32_t word(const uint8_t* p){uint32_t v=0;std::memcpy(&v,p,4);return v;}
  static bool span(uint32_t p,uint32_t n){
@@ -542,7 +542,7 @@ class OriginalWeaponSoundContext final {
   }
   template<class IO>bool resolveExchange(IO& io,uint8_t*& manager,uint8_t*& selectors)const{
   uint32_t parent=0;
-  if(!owner()||!bound_||poisoned_||io.Scene()!=scene_||
+  if(!owner()||!bound_||poisoned_||voicesRetired_||io.Scene()!=scene_||
      resolveSelector(io,parent)!=selector_.address||parent!=selectorParent_)return false;
    for(const auto& region:{firstManager_,extraManager_,firstPool_,extraPool_,
                            firstEffects_,extraEffects_,selector_}){
@@ -613,6 +613,45 @@ public:
    std::memcpy(selectors+8u,&nextEffects,4u);
   entered_=!entered_;return true;
  }
+
+  // Final use of the two independently bound first-person voice records.
+  // The caller must have stopped P2 updates and provide exclusive use of the
+  // selectors. invokeRelease calls 001BC580 with EDX=record and checks AL.
+  // Returning the reservations does not unpublish or destroy audio objects.
+  template<class IO,class Release>bool RetireWeaponVoices(IO& io,Release invokeRelease){
+   if(!owner()||entered_||!CanExchange(io))return false;
+   const auto* pool=io.Map(extraPool_.address,extraPool_.bytes);
+   const auto* records=io.Map(extraManager_.address,extraManager_.bytes);
+   if(!pool||!records)return false;
+   const uint32_t firstBank=word(pool),secondBank=word(pool+0x10u);
+   if(!firstBank||!secondBank||firstBank==secondBank)return false;
+   for(uint32_t i=0;i<2u;++i){
+    const auto* record=records+8u+i*0x38u;
+    const uint32_t sound=extraPool_.address+0x360u+i*2u*0x290u;
+    const auto* bank=pool+i*0x10u;
+    if(word(record+8u)!=sound+0x290u||word(record+0xCu)!=sound||
+       word(record+0x10u)!=word(bank)||bank[0xFu]!=1u)return false;
+   }
+   if(!Exchange(io))return false;
+   bool released=false;
+   try{
+    released=true;
+    for(uint32_t i=0;i<2u&&released;++i){
+     const uint32_t address=extraManager_.address+8u+i*0x38u;
+     const bool returned=invokeRelease(address);
+     if(!returned||!entered_||!CanExchange(io)){released=false;break;}
+     const auto* record=io.Map(address,0x38u);
+     const auto* bank=io.Map(extraPool_.address+i*0x10u,0x10u);
+     released=record&&bank&&!word(record+8u)&&!word(record+0xCu)&&
+              !word(record+0x10u)&&!record[0x30u]&&!bank[0xFu];
+    }
+   }catch(...){released=false;}
+   bool restored=false;
+   try{restored=(!entered_||Exchange(io))&&CanExchange(io);}catch(...){}
+   voicesRetired_=released&&restored;
+   if(!voicesRetired_)poisoned_=true;
+   return voicesRetired_;
+  }
 };
 // One shared arbiter for all P2/P3/P4 presentation scopes in a scene.
 // Retain through original engine teardown. No parallel access to singleton

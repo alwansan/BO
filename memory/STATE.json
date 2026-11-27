@@ -4670,6 +4670,20 @@
     "acceptanceApk": false,
     "next": "trace the original objective writer and its UI readback in the Android campaign, then verify scoped guest effect and APK diagnostics before activation"
   },
+  "workBatch49": {
+    "date": "2026-11-27",
+    "session": "memory/sessions/2026-11-27_bo-coop-work49-android-p2-voice-retirement.md",
+    "evidence": "memory/evidence/WORK_BATCH49_ANDROID_P2_VOICE_RETIREMENT.json",
+    "verifiedBaseline": "af952d073a08b4bf79313c265cfaaecabc61779d",
+    "p2NativeWeaponVoiceReservationsRetired": 2,
+    "p1WeaponSoundManagerPoolAndSelectorsRestoredExactly": true,
+    "nativeVoiceRetirementPostRelinkRunningFrames": 1086,
+    "p2ActorCleanupRecordsSharedWithP1": 3,
+    "p2FirstPersonWorkspaceAddressSharedWithP1": true,
+    "actorStorageFreed": false,
+    "acceptanceApk": false,
+    "next": "verify unpublication of the stationary audio objects after sustained P2 movement, and establish which remaining actor and viewmodel resources may be destroyed without touching P1's shared records"
+  },
   "workBatch48": {
     "date": "2026-11-27",
     "session": "memory/sessions/2026-11-27_bo-coop-work48-android-objective.md",

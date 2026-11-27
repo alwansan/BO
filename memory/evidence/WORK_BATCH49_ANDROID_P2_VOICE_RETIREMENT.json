@@ -1,0 +1,44 @@
+{
+  "date": "2026-11-27",
+  "repositorySourceBaseline": "af952d073a08b4bf79313c265cfaaecabc61779d",
+  "testedAnimationContextHeaderSha256": "a1b086973a66d291a05558cfe5c8930a573d49bc62620e5c46779917a760c2cc",
+  "runtime": "private pinned original BLACK Android ARM64 ABI headless lab with isolated saves",
+  "sourceFixtureAddressAndUndefinedBehaviorSanitizersPassed": true,
+  "nativeVoiceRetirementAndRestart": {
+    "compiledHostUnits": 50,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "framesAtLeast": 2880,
+    "nativeMotionUpdates": 104,
+    "nativeReleaseEntry": "001BC580",
+    "weaponVoiceReservationsReturned": 2,
+    "stockManagerPoolAndSelectorsByteExact": true,
+    "postRelinkRunningFrames": 1086,
+    "lostRootScopeFrames": 0,
+    "naturalTargetProxyBodyAndMotionReuses": [1, 1, 1, 1],
+    "sampledActorReferencesRemaining": 0,
+    "allowlistedMarkersSha256": "9f3e609de7f1eff4ebbe4197337d4d3aa64eb8c39724794b5c40425272920267"
+  },
+  "originalActorCleanupSource": {
+    "ownerXbeSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
+    "firstPersonVtablePlus0C": "001D5D90",
+    "resourceCleanupCallee": "001D2DD0",
+    "cleanupCalledOnP2": false
+  },
+  "actorCleanupInputCensus": {
+    "nativeMotionUpdates": 104,
+    "nonNullActorRecordsAt258Through274": 3,
+    "readableRecords": 3,
+    "recordsAliasedWithP1": 3,
+    "nonNullRecordChildrenAt04": 0,
+    "firstPersonWorkspaceReadable": true,
+    "firstPersonWorkspaceAliasesP1": true,
+    "workspaceHas54Link": true,
+    "workspaceHas58Link": false
+  },
+  "physicalAudioOutputVerified": false,
+  "audioCallbackConcurrencyVerified": false,
+  "actorStorageFreed": false,
+  "productionEnabled": false,
+  "acceptanceApk": false
+}
