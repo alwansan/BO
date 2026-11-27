@@ -4776,7 +4776,11 @@
     "androidGuestSimpleObjectiveCompletionScopedSourceImplemented": true,
     "androidPrivateNativeObjectiveCompletionJniAndStaleRejectionVerified": true,
     "androidPrivateNativeObjectiveCompletionRealTlsExactSnapshotVerified": true,
-    "androidPrivateP2ModelSlotDiversionTrialPending": true,
+    "androidPrivateP2ModelSlotDiversionVerified": true,
+    "androidPrivateP2NativeSetupFiveCallsWithP1ExactVerified": true,
+    "androidPrivateP2TargetAndAuxiliarySameFrameRetirementVerified": true,
+    "androidPrivateP2PostSetupMotionTrialPending": true,
+    "androidOriginalApkEmbeddedPythonSyntaxChecked": true,
     "androidPrivateP2NativeSetupChangedOnlyPinnedP1ModelWitness": true,
     "androidPrivateP2OwnedAuxiliaryConstructed": true,
     "androidPrivateP2NativeSetupReturnedOneButP1ActorCheckFailed": true,
@@ -4818,6 +4822,6 @@
     "androidLivePropDirectNativeWriterReadbackVerified": true,
     "androidLivePropCollisionEffectVerified": false,
     "acceptanceApk": false,
-    "next": "verify narrow P2-only routing of the hard-coded model holder at 001DEDC3, verify original target and auxiliary retirement, then measure P2 input-driven movement"
+    "next": "check the post-setup independent collider and control trial; verify sustained second-port input changes the P2 actor and motion while P1 is restored; prove resource teardown and integrate the original Android APK"
   }
 }

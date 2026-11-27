@@ -573,6 +573,21 @@
     "changedWitnessPointerField": "actor+0x320",
     "allowlistedMarkersSha256": "1ab5c9ecff5c3c61250635026c85645732fb1794d59f94827d8467ef23c2d3e6"
   },
+  "originalOwnedP2SetupWithPrivateModelRouteTrial": {
+    "repositorySourceBaseline": "42574a0e5a637eaf3f6b95558d375bd353bf9394",
+    "framesAtLeast": 1380,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "originalSetupCalls": 5,
+    "ownedSetupPhases": [1, 2, 3, 28, 55],
+    "ownedModelRouteUses": 1,
+    "p1ModelBytesCompared": 512,
+    "p1ModelActorCameraAndSampledObjectiveBytesExact": true,
+    "nativeTargetAndAuxiliaryRegistrationRetirementVerified": true,
+    "auxiliaryMemoryAndOtherResourcesRetainedUntilExit": true,
+    "postSetupMovementOrLinkedPhysicsExercised": false,
+    "allowlistedMarkersSha256": "51164dd6363117e47ac8ff837dbe8648eff76974214d85ae11993a242f4e9f92"
+  },
   "originalSimpleObjectiveCompletionRoomAndJniVerification": {
     "sourceRevision": "0ea1eeefce95c1214cc924aa027637d4830097b9",
     "authenticatedLoopbackTlsAfterStoryCommit": true,

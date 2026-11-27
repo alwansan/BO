@@ -112,25 +112,23 @@ jobs:
           os.environ['BO_UPSTREAM_REFERENCE'] = str(pathlib.Path('reference').resolve())
           subprocess.run([sys.executable, '-m', 'unittest', 'discover', '-s', 'bo/coop', '-p', '*prepare_checks.py', '-v'], check=True)
           changed = prepare(pathlib.Path('reference'))
-          # Strict allowlist includes the TWO original source wrappers now
-          # observed read-only: original player update + launch *attempt*.
-          # Never allow game loader/actor writes or an automatic story READY.
+          # Keep the staged changes within the reviewed title and room bridge.
           actual=set(subprocess.check_output(['git','-C','reference','diff','--name-only','--','src','native','config','CMakeLists.txt'],text=True).splitlines())
           if actual != {'src/game/cheats.cpp','src/game/hooks.cpp','src/game/options_menu.cpp','src/game/exit_menu.cpp','src/game/difficulty.cpp','src/d3d/d3d8.cpp','native/input.cpp'}:
               raise SystemExit('Native/gameplay change outside the observer and title/room UI allowlist: '+str(actual))
-           additions={p.name for p in pathlib.Path('reference/src/coop').iterdir()}
-           if 'room_original_objective_source.hpp' not in additions:
-               raise SystemExit('Missing read-only original objective source')
-           additions.remove('room_original_objective_source.hpp')  # checked separately above
+          additions={p.name for p in pathlib.Path('reference/src/coop').iterdir()}
+          if 'room_original_objective_source.hpp' not in additions:
+              raise SystemExit('Missing original objective source')
+          additions.remove('room_original_objective_source.hpp')  # checked separately above
           if additions != {'probe.cpp','probe.h','probe_core.hpp','pool_snapshot.hpp','pool_observer.inc','instance_graph.hpp','room_ui.h','room_route.hpp','room_net_ui.hpp','room_world_tick.hpp','room_original_world_camera_frame.hpp','room_original_world_camera_witness.hpp','room_mod_human_presentation.hpp','room_mod_human_presentation_witness.hpp','room_mod_placeholder_draw.hpp','room_mod_placeholder_submit.hpp','room_mod_placeholder_upload_kernel.hpp','room_original_post_frame_contract.hpp','room_original_post_frame_witness.hpp','room_original_host_multi_actor_lanes.hpp','room_original_host_setup_tick.hpp','room_original_guest_canonical_source_barrier.hpp','world_tick_contract.hpp','room_original_eye_contract.hpp','room_original_eye_witness.hpp','room_nonfrontend_original_player.hpp','room_original_launch_difficulty_contract.hpp','room_original_launch_difficulty_witness.hpp','room_original_mission_field_hint.hpp','room_original_streaming_stage_contract.hpp','room_original_streaming_stage_witness.hpp','room_original_core_phase_witness.hpp','room_original_core_stage_identity_contract.hpp','room_original_bot_pool_contract.hpp','room_original_bot_pool_witness.hpp','room_original_trusted_input_contract.hpp','room_original_host_remote_pad_plan.hpp','room_original_host_inbox.hpp','room_original_host_pad_port_bridge.hpp','room_original_trusted_input_witness.hpp','room_original_guest_host_world_contract.hpp','room_original_guest_host_world_witness.hpp','room_original_guest_prepared_story_contract.hpp','room_original_guest_prepared_story_witness.hpp','room_original_guest_launch_match_contract.hpp','room_original_guest_launch_match_witness.hpp','room_original_running_scene_source_gate.hpp','room_original_guest_pad_contract.hpp','room_original_guest_pad_witness.hpp','room_original_local_pad_tap.hpp','original_other_human_body_source.hpp','original_all_other_humans_contract.hpp','room_other_human_body_source_witness.hpp','room_original_live_remote_bot.hpp','room_original_soldier_copy.hpp','room_original_remote_human_motion_contract.hpp','room_original_ai_target_contract.hpp','room_original_ai_target_witness.hpp','room_original_host_proxy_engine.hpp','room_original_host_proxy_kernel.hpp','room_original_host_player_storage.hpp','room_original_host_player_storage_kernel.hpp','room_original_host_player_link_exchange.hpp','room_original_host_player_shadow_plan.hpp','room_original_host_physics_proxy_contract.hpp','room_original_host_physics_proxy_witness.hpp','room_original_host_extra_actor_contract.hpp','room_original_host_extra_actor_witness.hpp','room_original_host_npc_source_witness.hpp','room_original_guest_host_npc_contract.hpp','room_original_guest_host_npc_witness.hpp','room_original_guest_host_object_contract.hpp','room_original_guest_host_object_witness.hpp','original_first_stage_auto_menu_contract.hpp','room_original_first_stage_auto_menu_witness.hpp','gpu_decl_contract.hpp','gpu_decl_witness.hpp'}:
               raise SystemExit('Missing or unexpected probe source files: '+str(additions))
           if not pathlib.Path('reference/app/src/main/java/com/racas/black/ProbeLogExporter.java').is_file():
               raise SystemExit('Missing scoped-storage diagnostics exporter')
           p = pathlib.Path(os.environ['RUNNER_TEMP']) / 'candidate-identity.json'
           report = json.loads(p.read_text())
-          report.update(package=PACKAGE, changed_packaging=changed, observer_hook_source_allowlist_verified=True, read_only_room_menu=False, authenticated_lobby_network=True, no_game_actor_or_gameplay_sync=True, top_level_coop_entry=True, direct_room_route=True, iso_modified=False,
-                        shared_download_export=True, guest_memory_writes_added=False, probe_off_by_default=True,
-                         original_level_resource_open_witness_source_only=True, verified_game_scene_loaded=False,
+          report.update(package=PACKAGE, changed_packaging=changed, observer_hook_source_allowlist_verified=True, read_only_room_menu=False, authenticated_lobby_network=True, shared_campaign_verified=False, top_level_coop_entry=True, direct_room_route=True, iso_modified=False,
+                        shared_download_export=True, guest_original_objective_writes_scoped=True, probe_off_by_default=True,
+                        original_level_resource_open_witness_source_only=True, verified_game_scene_loaded=False,
                         pool_snapshot_max_kernel_copies=300, pool_snapshot_max_hz=1, reset_hook_successful_AL1_only=True, instance_graph_max_npc_per_sample=4, instance_graph_local_sample=True)
           p.write_text(json.dumps(report, indent=2))
       - name: Source-observe successful ORIGINAL Xbox level resource opens (read-only)
