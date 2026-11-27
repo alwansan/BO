@@ -2,7 +2,7 @@
 // READ ONLY! The original BLACK player-update hook already independently
 // confirms the local original first-person player kind and identity.
 // The source-confirmed eye at +0x100 is CAMERA EYE, NOT body root or stage ID.
-// No network writing here, no guest memory writes, no scene READY signal.
+// Native state is only read. Java checks the room and scene before publication.
 #pragma once
 #include "coop/room_original_eye_contract.hpp"
 #include "coop/room_nonfrontend_original_player.hpp"
@@ -23,14 +23,43 @@
 #include "coop/room_original_host_npc_source_witness.hpp"
 #include "coop/room_original_guest_host_npc_witness.hpp"
 #include "coop/room_original_guest_host_object_witness.hpp"
+#include "coop/room_original_objective_source.hpp"
 #include "game/layout.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_system.h>
 #include <jni.h>
 #include <atomic>
 #include <cstdint>
+#include <new>
 
 namespace blackcoop {
+inline jbyteArray ReadOriginalObjectiveRecords(JNIEnv* env, uint32_t world,
+                                               uint8_t level, uint8_t stage) noexcept {
+    struct Memory {
+        bool Contains(uint32_t at, uint32_t bytes) const {
+            return OriginalGuestSpanCommitted(at, bytes);
+        }
+        uint32_t Read32(uint32_t at) const { return kernel::R32(at); }
+        uint8_t Read8(uint32_t at) const { return kernel::G<uint8_t>(at); }
+    };
+    std::vector<uint8_t> records;
+    try {
+        if (!CaptureOriginalObjectiveRecords(Memory{}, world, level, stage, records)) return nullptr;
+    } catch (const std::bad_alloc&) {
+        return nullptr;
+    }
+    jbyteArray bytes = env->NewByteArray(static_cast<jsize>(records.size()));
+    if (!env->ExceptionCheck() && bytes && !records.empty())
+        env->SetByteArrayRegion(bytes, 0, static_cast<jsize>(records.size()),
+                                reinterpret_cast<const jbyte*>(records.data()));
+    if (env->ExceptionCheck()) {
+        env->ExceptionClear();
+        if (bytes) env->DeleteLocalRef(bytes);
+        return nullptr;
+    }
+    return bytes;
+}
+
 inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
     if(!original_player)return;
     static std::atomic<uint64_t> lastMs{0};
@@ -170,25 +199,32 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
         // 2nd independent 30-sample original level-running gate. Host may
         // register its LOCAL stage readiness; guest must ALSO have the exact
         // source-matched original launch and same authenticated TLS ticket.
-        // No game scene-loader, actor creation, NPC AI or guest memory writes.
         static uint64_t lastReadyAt=0;
-        if(originalLocalSceneRunning&&
-           (!lastReadyAt||at<lastReadyAt||at-lastReadyAt>=1000u)){
+        const bool sampleScene=originalLocalSceneRunning&&
+            (!lastReadyAt||at<lastReadyAt||at-lastReadyAt>=1000u);
+        if(sampleScene){
             lastReadyAt=at;
             OriginalGuestLaunchMatchKey guestKey{};
             const bool guestLaunch=GuestOriginalLaunchMatch().ReadMatchedKey(guestKey);
             if(!guestLaunch||guestKey.originalEpisode==coreEpisode){
                 jmethodID readyMethod=env->GetMethodID(
-                    cls,"coopAttestOriginalRunningScene","(IIIIIIII)V");
+                    cls,"coopAttestOriginalRunningScene","(IIIIIIII[B)V");
                 if(env->ExceptionCheck())env->ExceptionClear();
-                else if(readyMethod)env->CallVoidMethod(activity,readyMethod,
-                    static_cast<jint>(coreEpisode),
-                    static_cast<jint>(coreLevel),static_cast<jint>(coreStage),
-                    static_cast<jint>(guestLaunch?guestKey.sceneEpoch:0),
-                    static_cast<jint>(guestLaunch?guestKey.rosterRevision:0),
-                    static_cast<jint>(guestLaunch?guestKey.tokenHi:0),
-                    static_cast<jint>(guestLaunch?guestKey.tokenLo:0),
-                    static_cast<jint>(guestLaunch?guestKey.selfSlot:0));
+                else if(readyMethod){
+                    // Bind the independently read guest identities under the
+                    // same ticket check that queues the guest's stage READY.
+                    jbyteArray objectives=guestLaunch?
+                        ReadOriginalObjectiveRecords(env,world,coreLevel,coreStage):nullptr;
+                    env->CallVoidMethod(activity,readyMethod,
+                        static_cast<jint>(coreEpisode),
+                        static_cast<jint>(coreLevel),static_cast<jint>(coreStage),
+                        static_cast<jint>(guestLaunch?guestKey.sceneEpoch:0),
+                        static_cast<jint>(guestLaunch?guestKey.rosterRevision:0),
+                        static_cast<jint>(guestLaunch?guestKey.tokenHi:0),
+                        static_cast<jint>(guestLaunch?guestKey.tokenLo:0),
+                        static_cast<jint>(guestLaunch?guestKey.selfSlot:0),objectives);
+                    if(objectives)env->DeleteLocalRef(objectives);
+                }
                 if(env->ExceptionCheck())env->ExceptionClear();
             }
         }
@@ -240,6 +276,19 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
         // guest NPC, objective, weapon, damage or scripted scene.
         PublishOriginalHostNpcValues(env,activity,cls,coreEpisode,
             originalLocalSceneRunning&&lookSourceMatched&&peerMask!=0);
+        if(sampleScene&&signedHostEpoch>0&&at>0&&at<=INT64_MAX){
+            jmethodID publish=env->GetMethodID(cls,"coopPublishOriginalHostObjectives","(IJ[B)V");
+            if(env->ExceptionCheck())env->ExceptionClear();
+            else if(publish){
+                jbyteArray objectives=ReadOriginalObjectiveRecords(env,world,coreLevel,coreStage);
+                if(objectives){
+                    env->CallVoidMethod(activity,publish,static_cast<jint>(coreEpisode),
+                                        static_cast<jlong>(at),objectives);
+                    env->DeleteLocalRef(objectives);
+                    if(env->ExceptionCheck())env->ExceptionClear();
+                }
+            }
+        }
         PollHostNpcValuesOnOriginalGuestThread(env,activity,cls,
             originalLocalSceneRunning&&lookSourceMatched);
         // Immutable host-world change events enter a bounded ORIGINAL

@@ -102,6 +102,14 @@ public final class RoomAppRooms {
   synchronized(RoomAppRooms.class){session=active;}
   return session==null?0:session.hostAppearancePeerMaskFromGameThread();
  }
+ /** Native-authored LevelDat values; no objective state is written by Java. */
+ public static void publishOriginalHostObjectivesFromGameThread(int episode,long sequence,
+                                                                 byte[] records){
+   RoomSession session;
+   synchronized(RoomAppRooms.class){session=active;}
+   if(session!=null)
+     session.publishOriginalHostObjectiveSnapshotFromGameThread(episode,sequence,records);
+ }
  /**
   * Both original frontends: exact host-authenticated FIRST STAGE start,
   * no game engine writes/actor creation on this Java network boundary.
@@ -125,12 +133,12 @@ public final class RoomAppRooms {
   * synchronized SHARED AI world; READY applies to stage loading alone.
   */
  public static void originalRunningSceneFromGameThread(int episode,int level,
-   int stage,int epoch,int revision,int tokenHi,int tokenLo,int slot){
+   int stage,int epoch,int revision,int tokenHi,int tokenLo,int slot,byte[] objectives){
   RoomSession session;
   synchronized(RoomAppRooms.class){session=active;}
   if(session==null)return;
   final int ready=session.attestOriginalRunningSceneFromGameThread(
-      episode,level,stage,epoch,revision,tokenHi,tokenLo,slot);
+       episode,level,stage,epoch,revision,tokenHi,tokenLo,slot,objectives);
   if(ready==1)
    RoomDiagnostics.event("ORIGINAL_HOST_RUNNING_LOCAL_SCENE_TLS_READY_NO_SHARED_AI");
   else if(ready==2)

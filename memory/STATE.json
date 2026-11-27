@@ -4675,14 +4675,20 @@
     "lifecycleObserverCommit": "7acb0901f6c084013dc72f810e5188a6b3af3e9c",
     "androidNaturalObjectiveTrialFrameLowerBound": 7140,
     "androidNaturalObjectiveTrialTimeoutSeconds": 145,
-    "androidNaturalObjectiveChangeVerified": false,
+    "androidInitialNaturalObjectiveChangeObserved": false,
+    "androidNaturalObjectiveChangeVerified": true,
     "androidScopedInitialTrialFrameLowerBound": 5280,
     "androidScopedInitialTrialReachedWriter": false,
     "androidTestStackRangeGuardCorrected": true,
     "androidObjectiveUiReadbackVerified": false,
-    "androidScopedNativeObjectiveWriterTrialPending": true,
-    "mappingUsedForSynchronization": false,
+    "evidence": "memory/evidence/WORK_BATCH48_ANDROID_OBJECTIVE_SOURCE.json",
+    "androidScopedNativeObjectiveState1Verified": true,
+    "androidNativeObjectiveHudRequestVerified": true,
+    "androidNativeHostObjectiveReaderVerifiedHeadless": true,
+    "androidHostObjectivePublicationAndGuestIdentityBindingStaged": true,
+    "androidObjectiveTransportVerifiedWithSyntheticNativeInputs": true,
+    "androidObjectiveGuestEngineApplicationVerified": false,
     "acceptanceApk": false,
-    "next": "verify private scoped original objective writer and its UI readback, then bind exact native source scopes to the existing transport"
+    "next": "verify an exact-scoped objective transfer and application across two independent Android engine runs, then verify APK diagnostics"
   }
 }

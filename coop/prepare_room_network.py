@@ -108,6 +108,10 @@ def prepare(root: pathlib.Path):
     public int[] coopPollHostObjectEventFromGameThread() {
         return com.racas.black.coop.RoomAppRooms.pollHostObjectEventFromGameThread();
     }
+    public void coopPublishOriginalHostObjectives(int episode, long sequence, byte[] records) {
+        com.racas.black.coop.RoomAppRooms.publishOriginalHostObjectivesFromGameThread(
+            episode,sequence,records);
+    }
     // Obtain HOST-owned authenticated room roster ordinal slots only.
     // No guest coordinates, no actor pointers and no game scene READY.
     public int coopHostAppearancePeerMaskFromGameThread() {
@@ -127,9 +131,9 @@ def prepare(root: pathlib.Path):
     // stable for 30 more ticks; the room validates the ticket/roster before
     // stage-only READY. NOT a scene loader or a shared AI/world proof.
     public void coopAttestOriginalRunningScene(int episode,int level,int stage,
-         int sceneEpoch,int rosterRevision,int tokenHi,int tokenLo,int slot) {
+         int sceneEpoch,int rosterRevision,int tokenHi,int tokenLo,int slot,byte[] objectives) {
         com.racas.black.coop.RoomAppRooms.originalRunningSceneFromGameThread(
-            episode,level,stage,sceneEpoch,rosterRevision,tokenHi,tokenLo,slot);
+            episode,level,stage,sceneEpoch,rosterRevision,tokenHi,tokenLo,slot,objectives);
     }
     // Matched original core/stream level and stage as values on the genuine
     // BLACK game thread. NOT a loaded-scene callback, never auto PREPARE.
@@ -341,6 +345,7 @@ def prepare(root: pathlib.Path):
     pending['src/coop/room_original_mission_field_hint.hpp'] = (HERE / 'room_network/room_original_mission_field_hint.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_launch_difficulty_witness.hpp'] = (HERE / 'room_network/room_original_launch_difficulty_witness.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_original_eye_witness.hpp'] = (HERE / 'room_network/room_original_eye_witness.hpp').read_text(encoding='utf-8')
+    pending['src/coop/room_original_objective_source.hpp'] = (HERE / 'room_network/room_original_objective_source.hpp').read_text(encoding='utf-8')
     pending['src/coop/original_other_human_body_source.hpp'] = (HERE / 'room_network/original_other_human_body_source.hpp').read_text(encoding='utf-8')
     pending['src/coop/original_all_other_humans_contract.hpp'] = (HERE / 'room_network/original_all_other_humans_contract.hpp').read_text(encoding='utf-8')
     pending['src/coop/room_other_human_body_source_witness.hpp'] = (HERE / 'room_network/room_other_human_body_source_witness.hpp').read_text(encoding='utf-8')

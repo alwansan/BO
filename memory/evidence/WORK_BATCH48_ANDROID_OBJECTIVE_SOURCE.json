@@ -1,0 +1,59 @@
+{
+  "date": "2026-11-27",
+  "runtime": "private owner-pinned BLACK campaign, headless Android ARM64 API 35, isolated saves",
+  "lifecycleObserverCommit": "7acb0901f6c084013dc72f810e5188a6b3af3e9c",
+  "sourceReaderSha256": "4f55a8fe61f9591311e871ffa2f63f2c3852b9dda1c278cd0e3d3051c37999ae",
+  "trialsAfterStackGuardCorrection": [
+    {
+      "mode": "stock_controller_only",
+      "framesAtLeast": 5340,
+      "timeoutSeconds": 115,
+      "processExit": 124,
+      "engineSignalObserved": false,
+      "authoredWriterState1Readback": true,
+      "scopedWriterInvoked": false,
+      "allowlistedMarkerCount": 7,
+      "allowlistedMarkersSha256": "f480a485751a1b0ff84607604255abcf13166df49a62895c7dec95e223a7ee37"
+    },
+    {
+      "mode": "scoped_writer_armed_but_natural_writer_observed_first",
+      "framesAtLeast": 5280,
+      "timeoutSeconds": 115,
+      "processExit": 124,
+      "engineSignalObserved": false,
+      "authoredWriterState1Readback": true,
+      "scopedWriterInvoked": false,
+      "allowlistedMarkerCount": 7,
+      "allowlistedMarkersSha256": "f480a485751a1b0ff84607604255abcf13166df49a62895c7dec95e223a7ee37"
+    },
+    {
+      "mode": "natural_writer_then_scoped_writer_on_another_live_row",
+      "framesAtLeast": 4320,
+      "timeoutSeconds": 100,
+      "processExit": 124,
+      "engineSignalObserved": false,
+      "authoredWriterState1Readback": true,
+      "authoredHudNotificationCallObserved": true,
+      "newSourceReaderCapturedAuthoredState1": true,
+      "scopedWriterInvoked": true,
+      "scopedWriterState1Readback": true,
+      "scopedHudNotificationCallObserved": true,
+      "allowlistedMarkerCount": 13,
+      "allowlistedMarkersSha256": "d10e6ab29a5bf27ebcbb2983456bd10b7f5d9d7ec663b6957908b0ff7648754f"
+    }
+  ],
+  "markerHashFormat": "UTF-8 allowlisted marker lines in source order, LF-terminated",
+  "originalObjectiveUiTextReadbackVerified": false,
+  "counterAdvanceOrCompletionVerified": false,
+  "apkJniExportVerified": false,
+  "crossEngineGuestApplicationVerified": false,
+  "localChecks": {
+    "androidArm64FrontendUnitsPassed": 7,
+    "localCompilerMinApi": 24,
+    "sourceStagingTestsPassed": 22,
+    "objectiveNativeAddressAndUndefinedSanitizer": "pass",
+    "javaObjectiveLoopbackTlsScenariosPassed": 9,
+    "javaObjectiveLoopbackUsesSyntheticEngineInputs": true,
+    "roomEventTriageTestsPassed": 4
+  }
+}

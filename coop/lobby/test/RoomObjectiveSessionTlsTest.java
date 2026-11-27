@@ -99,10 +99,12 @@ public final class RoomObjectiveSessionTlsTest {
                 ok(!g.bindOriginalObjectiveIdsFromGameThread(episode,expected),"source required");
                 ok(g.observeOriginalStageIdentityFromGameThread(episode,0,1),"local source");
                 ok(!g.bindOriginalObjectiveIdsFromGameThread(episode+1,expected),"episode mismatch");
-                byte[][] own=ids(4096);
-                ok(g.bindOriginalObjectiveIdsFromGameThread(episode,own),"independent bound");
-                own[0][7]^=1;
-                ok(!g.bindOriginalObjectiveIdsFromGameThread(episode,ids(4096)),"no rebinding");
+                 if(i!=0) {
+                     byte[][] own=ids(4096);
+                     ok(g.bindOriginalObjectiveIdsFromGameThread(episode,own),"independent bound");
+                     own[0][7]^=1;
+                     ok(!g.bindOriginalObjectiveIdsFromGameThread(episode,ids(4096)),"no rebinding");
+                 }
             }
             AtomicBoolean crossThreadAccepted=new AtomicBoolean();
             Thread foreign=new Thread(()->{
@@ -118,9 +120,21 @@ public final class RoomObjectiveSessionTlsTest {
             for(int i=0;i<3;i++) {
                 int slot=RoomWire.storySlot(guests[i].snapshot().roster,
                                              guests[i].snapshot().roster.self);
+                byte[] local=null;
+                if(i==0) {
+                    // The wrong signed key must not bind the local table
+                    // ahead of the real native running-scene callback.
+                    byte[] wrong=records(4096,9);
+                    wrong[7]=1;
+                    ok(g2.attestOriginalRunningSceneFromGameThread(61,0,1,
+                        ticket.sceneEpoch,(int)ticket.rosterRevision,
+                        (int)(ticket.token>>>32),(int)ticket.token^1,slot,wrong)==0,
+                        "wrong token cannot bind or send READY");
+                    local=records(4096,9);
+                }
                 ok(guests[i].attestOriginalRunningSceneFromGameThread(61+i,0,1,
                     ticket.sceneEpoch,(int)ticket.rosterRevision,
-                    (int)(ticket.token>>>32),(int)ticket.token,slot)==2,
+                    (int)(ticket.token>>>32),(int)ticket.token,slot,local)==2,
                     "source guest READY");
             }
             until("COMMIT",()->{

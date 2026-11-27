@@ -315,6 +315,14 @@ public final class RoomSession implements AutoCloseable {
     public int attestOriginalRunningSceneFromGameThread(int episode,
          int level,int stage,int sceneEpoch,int rosterRevision,
          int tokenHi,int tokenLo,int guestSlot){
+        return attestOriginalRunningSceneFromGameThread(episode,level,stage,
+            sceneEpoch,rosterRevision,tokenHi,tokenLo,guestSlot,null);
+    }
+
+    /** The optional records come from this guest's original LevelDat, never TLS. */
+    public int attestOriginalRunningSceneFromGameThread(int episode,
+         int level,int stage,int sceneEpoch,int rosterRevision,
+         int tokenHi,int tokenLo,int guestSlot,byte[] localObjectives){
         synchronized(lock){
             if(closed||!validStoryThread()||
                lastSourceStage==null||episode<=0||
@@ -357,7 +365,17 @@ public final class RoomSession implements AutoCloseable {
                        RoomWire.storySlot(state,state.self)!=guestSlot||
                        !ticket.includes(guestSlot)||
                        (originalRunningReadyTicket!=null&&
-                        originalRunningReadyTicket.same(ticket)))return 0;
+                         originalRunningReadyTicket.same(ticket)))return 0;
+                    if(localObjectives!=null&&
+                       localObjectives.length%RoomObjectiveChunks.RECORD_BYTES==0&&
+                       localObjectives.length/RoomObjectiveChunks.RECORD_BYTES<=
+                           RoomObjectiveChunks.MAX_RECORDS){
+                        byte[][] ids=new byte[localObjectives.length/RoomObjectiveChunks.RECORD_BYTES][8];
+                        for(int i=0;i<ids.length;i++)
+                            System.arraycopy(localObjectives,i*RoomObjectiveChunks.RECORD_BYTES,
+                                             ids[i],0,ids[i].length);
+                        bindOriginalObjectiveIds(ticket,episode,ids);
+                    }
                     if(!client.acknowledgeSceneLoaded(level,stage,sceneEpoch))
                         return 0;
                     originalRunningReadyTicket=ticket;
@@ -862,20 +880,26 @@ public final class RoomSession implements AutoCloseable {
                client==null||!client.isRunning()||client.storyCommitted()||
                localEpisode<=0||lastSourceStage==null||
                lastSourceStage.originalEpisode!=localEpisode||
-               System.nanoTime()-lastSourceStageAtNs>3000000000L||
-               originalObjectiveBindingTicket!=null)return false;
+                System.nanoTime()-lastSourceStageAtNs>3000000000L)return false;
             RoomStoryWire.Ticket t=client.storyTicket();
             if(t==null||t.mission!=lastSourceStage.level||
                t.stage!=lastSourceStage.stage||
                (originalRunningReadyTicket!=null&&
                 originalRunningReadyTicket.same(t)))return false;
-            try{
-                if(!client.bindObjectiveIds(t,independentIds))return false;
-                originalObjectiveBindingTicket=t;
-                originalObjectiveBindingEpisode=localEpisode;
-                return true;
-            }catch(IOException rejected){return false;}
-        }
+             return bindOriginalObjectiveIds(t,localEpisode,independentIds);
+         }
+     }
+    // Caller holds lock and has verified the original stage and exact ticket.
+    private boolean bindOriginalObjectiveIds(RoomStoryWire.Ticket ticket,int episode,
+                                               byte[][] ids){
+        if(originalObjectiveBindingTicket!=null&&originalObjectiveBindingTicket.same(ticket))
+            return false;
+        try{
+            if(!client.bindObjectiveIds(ticket,ids))return false;
+            originalObjectiveBindingTicket=ticket;
+            originalObjectiveBindingEpisode=episode;
+            return true;
+        }catch(IOException rejected){return false;}
     }
     /** Only independently source-verified ORIGINAL HOST game-thread data,
      * not objectives recovered from a guest or network message. */
@@ -887,7 +911,8 @@ public final class RoomSession implements AutoCloseable {
                localEpisode<=0||lastSourceStage==null||
                lastSourceStage.originalEpisode!=localEpisode||
                System.nanoTime()-lastSourceStageAtNs>3000000000L||
-               originalRunningReadyTicket==null)return false;
+                originalRunningReadyTicket==null||
+                originalRunningReadyEpisode!=localEpisode)return false;
             RoomStoryWire.Ticket t=host.storyTicket();
             if(t==null||!t.same(originalRunningReadyTicket)||
                t.mission!=lastSourceStage.level||
@@ -904,7 +929,8 @@ public final class RoomSession implements AutoCloseable {
                client==null||!client.isRunning()||!client.storyCommitted()||
                lastSourceStage==null||originalRunningReadyTicket==null||
                originalObjectiveBindingTicket==null||
-               originalObjectiveBindingEpisode!=lastSourceStage.originalEpisode||
+                originalObjectiveBindingEpisode!=lastSourceStage.originalEpisode||
+                originalRunningReadyEpisode!=originalObjectiveBindingEpisode||
                System.nanoTime()-lastSourceStageAtNs>3000000000L)
                 return null;
             RoomStoryWire.Ticket t=client.storyTicket();

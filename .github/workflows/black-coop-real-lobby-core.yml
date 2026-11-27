@@ -53,6 +53,7 @@ jobs:
           timeout 35s java -ea -cp "$out/classes" com.racas.black.coop.SessionTest "$out/test-identity.p12"
           timeout 60s java -ea -cp "$out/classes" com.racas.black.coop.RoomFourHumanOriginalStageTlsTest "$out/test-identity.p12"
           timeout 60s java -ea -cp "$out/classes" com.racas.black.coop.RoomObjectEventTlsTest "$out/test-identity.p12"
+          timeout 90s java -ea -cp "$out/classes" com.racas.black.coop.RoomObjectiveSessionTlsTest "$out/test-identity.p12"
           timeout 60s java -ea -cp "$out/classes" com.racas.black.coop.RoomNpcWorldTlsTest "$out/test-identity.p12"
           timeout 60s java -ea -cp "$out/classes" com.racas.black.coop.RoomFirstStageFourHumanStartTlsTest "$out/test-identity.p12"
           timeout 60s java -ea -cp "$out/classes" com.racas.black.coop.RoomTwoPhoneFirstStageStartTlsTest "$out/test-identity.p12"
