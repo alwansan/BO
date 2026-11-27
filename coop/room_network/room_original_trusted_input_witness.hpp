@@ -42,12 +42,13 @@ inline void PollOriginalHostHumanInputs(JNIEnv* env,jobject activity,jclass cls)
     if(env->ExceptionCheck()){
         env->ExceptionClear();env->DeleteLocalRef(frame);return;
     }
-    if(n<2||n>20){
+    constexpr auto kMaxFrame=OriginalHostHumanInbox::kMaxFrame;
+    if(n<2||n>static_cast<jsize>(kMaxFrame)){
         OriginalHostHumanInputs().Reset();
         env->DeleteLocalRef(frame);
         return;
     }
-    std::array<jint,20> raw{};
+    std::array<jint,kMaxFrame> raw{};
     env->GetIntArrayRegion(frame,0,n,raw.data());
     if(env->ExceptionCheck()){
         env->ExceptionClear();
@@ -56,7 +57,7 @@ inline void PollOriginalHostHumanInputs(JNIEnv* env,jobject activity,jclass cls)
         return;
     }
     env->DeleteLocalRef(frame);
-    std::array<int32_t,20> safe{};
+    std::array<int32_t,kMaxFrame> safe{};
     for(jsize i=0;i<n;++i)safe[static_cast<size_t>(i)]=static_cast<int32_t>(raw[static_cast<size_t>(i)]);
     if(OriginalHostHumanInputs().Ingest(safe.data(),static_cast<size_t>(n))!=0){
         static std::atomic<bool> first{false};

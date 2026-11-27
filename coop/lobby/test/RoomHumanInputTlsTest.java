@@ -46,9 +46,9 @@ public final class RoomHumanInputTlsTest {
             ok(guest4.acknowledgeSceneLoaded(0,0,13));
             until(()->host.storyCommitted()&&guest2.storyCommitted()&&guest3.storyCommitted()&&guest4.storyCommitted());
             ok(story.includes(1)&&story.includes(2)&&story.includes(3)&&story.includes(4));
-            ok(guest2.offerHumanInput(1,-500,150,-12000,true,false));
-            ok(guest3.offerHumanInput(1,1000,-1000,18000,false,true));
-            ok(guest4.offerHumanInput(1,-200,-200,9000,true,true));
+             ok(guest2.offerHumanInput(story,1,-500,150,-12000,18000,-14000,true,false));
+             ok(guest3.offerHumanInput(story,1,1000,-1000,18000,0,-32768,false,true));
+             ok(guest4.offerHumanInput(story,1,-200,-200,9000,32767,0,true,true));
             ok(!guest2.offerHumanInput(1,0,0,0,false,false));
             Map<Integer,RoomHumanInputWire.Input> received=new HashMap<>();
             Map<Integer,Integer> compactSlots=new HashMap<>();
@@ -65,7 +65,10 @@ public final class RoomHumanInputTlsTest {
             ok(received.get(id2).matches(story)&&received.get(id3).matches(story)&&received.get(id4).matches(story));
             ok(received.get(id2).moveX==-500&&received.get(id2).fire);
             ok(received.get(id3).moveX==1000&&received.get(id3).jump);
-            ok(received.get(id4).moveX==-200&&received.get(id4).fire&&received.get(id4).jump);
+             ok(received.get(id4).moveX==-200&&received.get(id4).fire&&received.get(id4).jump);
+             ok(received.get(id2).lookX==18000&&received.get(id2).lookY==-14000);
+             ok(received.get(id3).lookX==0&&received.get(id3).lookY==-32768);
+             ok(received.get(id4).lookX==32767&&received.get(id4).lookY==0);
             ok(host.drainLatestTrustedInputs().isEmpty());
             // Send a high-rate burst through one-slot queue. Only newest
             // samples need survive; no socket writes from the caller thread.
@@ -91,8 +94,9 @@ public final class RoomHumanInputTlsTest {
             ok(guest2.acknowledgeSceneLoaded(1,0,14));
             ok(guest3.acknowledgeSceneLoaded(1,0,14));
             ok(guest4.acknowledgeSceneLoaded(1,0,14));
-            until(()->host.storyCommitted()&&guest2.storyCommitted()&&guest3.storyCommitted()&&guest4.storyCommitted());
-            ok(guest2.offerHumanInput(1,700,0,0,false,false));
+             until(()->host.storyCommitted()&&guest2.storyCommitted()&&guest3.storyCommitted()&&guest4.storyCommitted());
+             ok(!guest2.offerHumanInput(story,16,700,0,0,12,34,false,false));
+             ok(guest2.offerHumanInput(1,700,0,0,false,false));
             until(()->{
                 for(RoomTls.Server.TrustedInput input:host.drainLatestTrustedInputs())
                     if(input.peerId==id2&&input.value.matches(next))return true;

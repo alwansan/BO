@@ -1,0 +1,33 @@
+{
+  "date": "2026-11-27",
+  "repositorySourceBaseline": "769ba742a1e37349a9d70c60f8900a0c8c331389",
+  "roomWireVersionAndProfile": [11, 11],
+  "humanInputBodyBytes": 47,
+  "horizontalRightStickNativeActorMotion": {
+    "nativePadConversionEntry": "000C5A80",
+    "framesAtLeast": 2460,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "nonNeutralUpdates": 96,
+    "turningUpdates": 95,
+    "signedHorizontalTurnMilliradians": [-272, 266],
+    "p1NativeMotionIntegrityCheckedAcrossP2Updates": 104,
+    "verticalLookRuntimeVerified": false,
+    "tlsConnectedToActorsInThisTrial": false,
+    "allowlistedMarkersSha256": "7ed9d37b3c1aa0bc52a617170d98246b7685247a332a91becfb4ead90bb0bb68"
+  },
+  "localSourceVerification": {
+    "strictJava8CoreAndJava17FixturesCompiled": true,
+    "rightStickWireUnitPassed": true,
+    "rightStickValuesPassedRealTlsForThreeDistinctGuests": true,
+    "oldTicketRejectedAfterStoryRestart": true,
+    "originalStageFourHumanTlsPassWithSyntheticEngineCallbacks": true,
+    "objectiveTlsSyntheticCasesPassed": 9,
+    "asanUbsanNativeFixturesPassed": 4,
+    "androidPinnedSourcePreparationTestsPassed": 6,
+    "androidArm64TranslationUnitsPassed": 7
+  },
+  "hostNativePortReadinessEnabled": false,
+  "androidGameRoomToNativeControlsVerified": false,
+  "acceptanceApk": false
+}

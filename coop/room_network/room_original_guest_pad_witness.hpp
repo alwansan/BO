@@ -27,7 +27,7 @@ inline void OfferOriginalGuestController(JNIEnv* env,jobject activity,
     const auto command=QuantizeOriginalGuestPad(report.connected,report.lx,
         report.ly,report.a,report.rightTrigger);
     jmethodID method=env->GetMethodID(cls,
-        "coopOfferOriginalGuestController","(IIIZZ)Z");
+        "coopOfferOriginalGuestController","(IIIIIZZ)Z");
     if(env->ExceptionCheck()){env->ExceptionClear();return;}
     if(!method)return;
     // Source-verified ORIGINAL actor forward (the gun uses player+0xF0).
@@ -47,7 +47,8 @@ inline void OfferOriginalGuestController(JNIEnv* env,jobject activity,
     }
     const jboolean accepted=env->CallBooleanMethod(activity,method,
         static_cast<jint>(command.moveX),static_cast<jint>(command.moveY),
-        static_cast<jint>(yaw),static_cast<jboolean>(command.fire),
+        static_cast<jint>(yaw),static_cast<jint>(report.connected?report.rx:0),
+        static_cast<jint>(report.connected?report.ry:0),static_cast<jboolean>(command.fire),
         static_cast<jboolean>(command.jump));
     if(env->ExceptionCheck()){env->ExceptionClear();return;}
     if(accepted){

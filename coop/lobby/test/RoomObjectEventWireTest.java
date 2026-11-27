@@ -29,6 +29,6 @@ public final class RoomObjectEventWireTest {
   bad(()->RoomWire.decode(Arrays.copyOf(f,f.length+1)));
   yes(!event.matches(new RoomStoryWire.Ticket(sid,78,8,0,1,4,15)));
   yes(!event.matches(new RoomStoryWire.Ticket(sid,77,8,0,1,5,15)));
-  System.out.println("OBJECT_EVENT_WIRE_PASS: version 10, strict 50-byte scope, malformed event rejected; NO BLACK gameplay");
+  System.out.println("OBJECT_EVENT_WIRE_PASS: strict 50-byte scope, malformed event rejected; NO BLACK gameplay");
  }
 }

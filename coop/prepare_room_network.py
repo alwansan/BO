@@ -149,10 +149,10 @@ def prepare(root: pathlib.Path):
     }
     // Only the pinned original Xbox SDL gamepad report from the ORIGINAL
     // player callback is eligible; Java sends only after story COMMIT.
-    public boolean coopOfferOriginalGuestController(int x,int y,int yaw,
+    public boolean coopOfferOriginalGuestController(int x,int y,int yaw,int lookX,int lookY,
                                                       boolean fire,boolean jump) {
         return com.racas.black.coop.RoomAppRooms.offerOriginalGuestControllerFromGameThread(
-            x,y,yaw,fire,jump);
+                x,y,yaw,lookX,lookY,fire,jump);
     }
 ''', java)
     text = once(text, '    @Override\n    protected void onPause() {',
@@ -422,10 +422,11 @@ def prepare(root: pathlib.Path):
         const bool addedTouch=beforeTouch.connected!=p.connected ||
             beforeTouch.buttons!=p.buttons ||
             beforeTouch.lx!=p.lx || beforeTouch.ly!=p.ly ||
+            beforeTouch.rx!=p.rx || beforeTouch.ry!=p.ry ||
             beforeTouch.analog[0]!=p.analog[0] ||
             beforeTouch.analog[7]!=p.analog[7];
         blackcoop::LocalPadTap().Capture({
-            p.connected,addedTouch,p.lx,p.ly,p.analog[0],p.analog[7]},
+            p.connected,addedTouch,p.lx,p.ly,p.analog[0],p.analog[7],p.rx,p.ry},
             static_cast<uint64_t>(SDL_GetTicks()));
     }
     // The native Xbox port1..3 TLS bridge is source-staged HERE, after

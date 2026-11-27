@@ -4670,6 +4670,18 @@
     "acceptanceApk": false,
     "next": "trace the original objective writer and its UI readback in the Android campaign, then verify scoped guest effect and APK diagnostics before activation"
   },
+  "workBatch50": {
+    "date": "2026-11-27",
+    "session": "memory/sessions/2026-11-27_bo-coop-work50-right-stick.md",
+    "evidence": "memory/evidence/WORK_BATCH50_RIGHT_STICK_SOURCE.json",
+    "wireVersion": 11,
+    "privateAndroidP2RightStickHeadingUpdates": 95,
+    "privateAndroidP2RightStickHeadingMilliradiansByDirection": [-272, 266],
+    "rawRightStickAxesVerifiedAcrossRealTlsForThreeGuestInputs": true,
+    "originalHostRemotePadActivation": false,
+    "acceptanceApk": false,
+    "next": "exercise authenticated v11 room input through a native headless P2 adapter, prove independent pitch and visible character output, and keep production actor retirement and world/application readiness gated"
+  },
   "workBatch49": {
     "date": "2026-11-27",
     "session": "memory/sessions/2026-11-27_bo-coop-work49-android-p2-voice-retirement.md",
@@ -4730,12 +4742,18 @@
     "nativeCameraUpdateEntryDispatchToP2Observed": false,
     "p2KernelStorageFreeRestrictedToStorageStateMachine": true,
     "p2KernelStorageFreeRestrictionLocalSdkAndSanitizersPassed": true,
+    "p2StorageReleaseGuardSourceChecksVerifiedRevision": "769ba742a1e37349a9d70c60f8900a0c8c331389",
+    "p2StorageReleaseGuardSuccessfulSourceChecks": [46062606700, 46062606735, 46062606727, 46062606628],
+    "p2RetiredActorInputWeaponTableAndPartsFreedAndReclaimedInPrivateLab": 4,
+    "p2ReplacementAllocationsByteExactThroughStockFrames": 240,
+    "p1MovementFramesAfterP2FourBlockReclaim": 80,
+    "p2AllBlockTrialRejectedBeforeFreeOnNewPhysicalActorMatch": true,
     "p2PostWorldRegisterFramesAfterRelink": 1085,
     "p2PostWorldRegisterMatchesByOwnedTarget": [0, 0, 0, 0, 0],
     "p2AttachmentRowReferencesInP1And32NpcWeaponTables": 0,
     "actorStorageFreed": false,
     "acceptanceApk": false,
-    "next": "verify isolated release and exact-address replacement of four retired blocks after qualified native reuse; retain the camera allocation while its preexisting address matches and lifetime are evaluated."
+    "next": "verify camera release in a private allocation layout with zero baseline and final matches; then implement a production retirement provider with exact allocation generations and independently verified lifetimes before host control integration."
   },
   "workBatch48": {
     "date": "2026-11-27",

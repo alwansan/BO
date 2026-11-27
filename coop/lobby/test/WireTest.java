@@ -12,7 +12,7 @@ public final class WireTest {
   check(RoomWire.parseJoin(RoomWire.decode(frame)).name.equals("علي"));
   byte[] wrong=frame.clone();wrong[4]=99;rejects(()->RoomWire.decode(wrong));
   // Version 9 peers cannot safely consume the new objective chunk stream.
-  check(RoomWire.VERSION==10&&RoomWire.PROFILE==10);
+   check(RoomWire.VERSION==11&&RoomWire.PROFILE==11);
   byte[] oldVersion=frame.clone();oldVersion[4]=9;
   rejects(()->RoomWire.decode(oldVersion));
   byte[] oldProfile=frame.clone();oldProfile[8+20]=0;oldProfile[8+20+1]=9;
@@ -41,6 +41,6 @@ public final class WireTest {
   var stream=new ByteArrayOutputStream();RoomWire.write(new DataOutputStream(stream),frame);
   check(Arrays.equals(frame,RoomWire.read(new DataInputStream(new ByteArrayInputStream(stream.toByteArray())))));
   rejects(()->RoomWire.read(new DataInputStream(new ByteArrayInputStream(new byte[]{127,-1}))));
-  System.out.println("PASS strict room wire, UTF-8, roster, framed I/O and objective profile 10 compatibility");
+  System.out.println("PASS strict room wire, UTF-8, roster, framed I/O and objective chunk framing");
  }
 }

@@ -12,17 +12,20 @@ public final class RoomHumanInputWireTest {
     public static void main(String[]args)throws Exception{
         byte[] session=new byte[16];Arrays.fill(session,(byte)73);
         RoomStoryWire.Ticket ticket=new RoomStoryWire.Ticket(session,99,5,0,0,7,3);
-        byte[] frame=RoomHumanInputWire.encode(ticket,3,-1000,1000,-18000,true,false);
-        ok(frame.length==51&&frame[5]==RoomWire.HUMAN_INPUT);
+         byte[] frame=RoomHumanInputWire.encode(ticket,3,-1000,1000,-18000,32767,-32768,true,false);
+         ok(frame.length==55&&frame[5]==RoomWire.HUMAN_INPUT);
         var command=RoomHumanInputWire.parse(RoomWire.decode(frame));
         ok(command.matches(ticket));
         ok(command.sequence==3&&command.moveX==-1000&&command.moveY==1000);
-        ok(command.yaw==-18000&&command.fire&&!command.jump);
+         ok(command.yaw==-18000&&command.fire&&!command.jump);
+         ok(command.lookX==32767&&command.lookY==-32768);
         session[0]=1;ok(command.matches(ticket));
         bad(()->RoomHumanInputWire.encode(ticket,0,0,0,0,false,false));
         bad(()->RoomHumanInputWire.encode(ticket,1,1001,0,0,false,false));
         bad(()->RoomHumanInputWire.encode(ticket,1,0,-1001,0,false,false));
-        bad(()->RoomHumanInputWire.encode(ticket,1,0,0,18001,false,false));
+         bad(()->RoomHumanInputWire.encode(ticket,1,0,0,18001,false,false));
+         bad(()->RoomHumanInputWire.encode(ticket,1,0,0,0,32768,0,false,false));
+         bad(()->RoomHumanInputWire.encode(ticket,1,0,0,0,0,-32769,false,false));
         bad(()->RoomHumanInputWire.parse(RoomWire.decode(RoomStoryWire.encode(RoomWire.STORY_READY,ticket))));
         byte[] invalidFlags=frame.clone();invalidFlags[invalidFlags.length-1]=4;
         bad(()->RoomHumanInputWire.parse(RoomWire.decode(invalidFlags)));
@@ -36,7 +39,7 @@ public final class RoomHumanInputWireTest {
         ok(!command.matches(new RoomStoryWire.Ticket(ticket.session(),100,5,0,0,7,3)));
         ok(!command.matches(new RoomStoryWire.Ticket(ticket.session(),99,5,0,0,8,3)));
         ok(!command.matches(new RoomStoryWire.Ticket(ticket.session(),99,6,0,0,7,3)));
-        System.out.println("HUMAN_INPUT_WIRE_PASS: version4 strict bounded TLS frame and story-session/epoch pin");
+         System.out.println("HUMAN_INPUT_WIRE_PASS: signed right-stick axes, exact frame length and story binding");
         System.out.println("NO player ID can be spoofed in payload; server TLS must supply it");
     }
 }

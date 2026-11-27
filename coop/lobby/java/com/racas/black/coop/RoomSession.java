@@ -558,12 +558,17 @@ public final class RoomSession implements AutoCloseable {
         }
     }
     /** Real TLS movement command, offered only from the verified BLACK game thread. */
-    public boolean offerHumanInputFromGameThread(int seq,int x,int y,int yaw,
-                                                  boolean fire,boolean jump)
-        throws IOException{
+     public boolean offerHumanInputFromGameThread(int seq,int x,int y,int yaw,
+                                                   boolean fire,boolean jump)
+         throws IOException{
+         return offerHumanInputFromGameThread(null,seq,x,y,yaw,0,0,fire,jump);
+     }
+     public boolean offerHumanInputFromGameThread(RoomStoryWire.Ticket expected,int seq,int x,int y,int yaw,
+                                                  int lookX,int lookY,boolean fire,boolean jump)
+         throws IOException{
         synchronized(lock){
             return validStoryThread()&&phase==Phase.JOINED&&client!=null&&
-                client.offerHumanInput(seq,x,y,yaw,fire,jump);
+                 client.offerHumanInput(expected,seq,x,y,yaw,lookX,lookY,fire,jump);
         }
     }
     /** Trust comes from TLS peer identity; no direct NPC or guest memory writes. */

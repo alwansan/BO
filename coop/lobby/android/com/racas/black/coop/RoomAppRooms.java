@@ -192,7 +192,7 @@ public final class RoomAppRooms {
  /**
   * TRUE TLS peer-identity-validated HUMAN INPUT drained on the actual BLACK
   * original game thread only, after a real story COMMIT.
-  * Shape: [sceneEpoch, count, [trustedPeer,sequence,moveX,moveY,yaw,fire|jump]*].
+  * Shape: [sceneEpoch, count, [trustedPeer,sequence,moveX,moveY,yaw,fire|jump,lookX,lookY]*].
   * The TLS server enforces identity, ticket, revision, sequence and 250ms
   * freshness before creating TrustedInput. The native side ALSO validates.
   * Returns [0,0] to immediately purge native state when story is not live.
@@ -212,7 +212,7 @@ public final class RoomAppRooms {
   java.util.ArrayList<RoomTls.Server.TrustedInput> items=
       new java.util.ArrayList<>(source);
   items.sort((a,b)->Integer.compare(a.playerSlot,b.playerSlot));
-  int[] frame=new int[2+items.size()*6];
+  int[] frame=new int[2+items.size()*8];
   frame[0]=after.ticket.sceneEpoch;
   frame[1]=items.size();
   int last=1;
@@ -221,11 +221,12 @@ public final class RoomAppRooms {
    RoomHumanInputWire.Input input=trusted.value;
    if(trusted.playerSlot<=last||trusted.playerSlot>4||input==null||
       !input.matches(after.ticket)||input.sequence<=0)return new int[]{0,0};
-   int at=2+i*6;
+   int at=2+i*8;
    frame[at]=trusted.playerSlot;frame[at+1]=input.sequence;
    frame[at+2]=input.moveX;frame[at+3]=input.moveY;
    frame[at+4]=input.yaw;
    frame[at+5]=(input.fire?1:0)|(input.jump?2:0);
+   frame[at+6]=input.lookX;frame[at+7]=input.lookY;
    last=trusted.playerSlot;
   }
   return frame;
@@ -344,10 +345,12 @@ public final class RoomAppRooms {
  private static final java.util.concurrent.atomic.AtomicBoolean padErrorLogged=
      new java.util.concurrent.atomic.AtomicBoolean();
  public static boolean offerOriginalGuestControllerFromGameThread(
-    int x,int y,int yaw,boolean fire,boolean jump){
+    int x,int y,int yaw,int lookX,int lookY,boolean fire,boolean jump){
   if(x< -1000||x>1000||y< -1000||y>1000||
-     yaw< -18000||yaw>18000)return false;
+     yaw< -18000||yaw>18000||
+     !RoomHumanInputWire.validStick(lookX)||!RoomHumanInputWire.validStick(lookY))return false;
   final RoomSession session;
+  final RoomStoryWire.Ticket ticket;
   final int sequence;
   synchronized(RoomAppRooms.class){
    session=active;
@@ -356,6 +359,7 @@ public final class RoomAppRooms {
    if(roster.phase!=RoomSession.Phase.JOINED)return false;
    RoomSession.StoryStatus story=session.storyStatus();
    if(!story.committed||story.ticket==null)return false;
+   ticket=story.ticket;
    if(padSession!=session||padTicket==null||!padTicket.same(story.ticket)){
     padSession=session;padTicket=story.ticket;padSequence=0;
     padErrorLogged.set(false);
@@ -364,7 +368,7 @@ public final class RoomAppRooms {
    sequence=++padSequence;
   }
   try {
-   return session.offerHumanInputFromGameThread(sequence,x,y,yaw,fire,jump);
+   return session.offerHumanInputFromGameThread(ticket,sequence,x,y,yaw,lookX,lookY,fire,jump);
   }catch(java.io.IOException rejected){
    if(padErrorLogged.compareAndSet(false,true))
     RoomDiagnostics.event("ORIGINAL_GUEST_GAMEPAD_TLS_SEND_REJECTED");

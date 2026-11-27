@@ -851,16 +851,21 @@ public final class RoomTls {
             }
         }
         /** Only the RoomSession verified game-thread adapter should call. */
-        public boolean offerHumanInput(int seq,int x,int y,int yaw,
-                                       boolean fire,boolean jump)throws IOException {
+         public boolean offerHumanInput(int seq,int x,int y,int yaw,
+                                        boolean fire,boolean jump)throws IOException {
+             return offerHumanInput(null,seq,x,y,yaw,0,0,fire,jump);
+         }
+         public boolean offerHumanInput(RoomStoryWire.Ticket expected,int seq,int x,int y,int yaw,
+                                        int lookX,int lookY,boolean fire,boolean jump)throws IOException {
             synchronized(lifecycle){
                 RoomStoryWire.Ticket ticket=story;
                 RoomWire.State state=view;
-                if(closed.get()||!storyCommitted||ticket==null||state==null||
+                 if(closed.get()||!storyCommitted||ticket==null||state==null||
+                    (expected!=null&&!expected.same(ticket))||
                    state.revision!=ticket.rosterRevision||
                    !MessageDigest.isEqual(state.session,ticket.session())||
                    seq<=lastQueuedInputSequence)return false;
-                byte[] frame=RoomHumanInputWire.encode(ticket,seq,x,y,yaw,fire,jump);
+                 byte[] frame=RoomHumanInputWire.encode(ticket,seq,x,y,yaw,lookX,lookY,fire,jump);
                 lastQueuedInputSequence=seq;
                 inputFrames.clear();
                 return inputFrames.offer(frame);

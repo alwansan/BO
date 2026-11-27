@@ -1,6 +1,6 @@
 // Copyright 2026 BO-COOP contributors. SPDX-License-Identifier: MIT
 // Source: pinned Black-Android native/input.cpp::Pad: A analog[0],
-// right trigger analog[7], signed left-stick lx/ly. Read-only plan only.
+// right trigger analog[7], signed left- and right-stick axes. Read-only plan.
 // Does not override port0, write guest memory or validate game-world loading.
 #pragma once
 #include "room_original_trusted_input_contract.hpp"
@@ -37,7 +37,8 @@ public:
      source.x< -1000||source.x>1000||source.y< -1000||source.y>1000||
      source.yaw< -18000||source.yaw>18000||source.flags>3)return false;
   result.connected=true;result.port=port;
-  result.lx=axis(source.x);result.ly=axis(source.y);
+   result.lx=axis(source.x);result.ly=axis(source.y);
+   result.rx=source.lookX;result.ry=source.lookY;
   result.analog[0]=source.flags&2u?255u:0u; // Xbox A: jump
   result.analog[7]=source.flags&1u?255u:0u; // Xbox RT: fire
   result.yawCentiDegrees=source.yaw; // metadata only; no aim injection

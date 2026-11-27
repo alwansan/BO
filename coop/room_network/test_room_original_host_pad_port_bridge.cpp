@@ -20,10 +20,10 @@ static bool neutral(const TestPad& p){
 }
 int main(){
  OriginalHostHumanInbox& inbox=OriginalHostHumanInputs();
- const int32_t frame[]={52,3,2,11,1000,-1000,1500,3,
-                              3,12,-250,750,-1000,1,
-                              4,13,0,0,0,2};
- assert(inbox.Ingest(frame,20)==3);
+ const int32_t frame[]={52,3,2,11,1000,-1000,1500,3,15000,-14000,
+                               3,12,-250,750,-1000,1,1024,0,
+                               4,13,0,0,0,2,0,-1024};
+ assert(inbox.Ingest(frame,std::size(frame))==3);
  auto pad=physical();
  assert(OriginalHostPadPortBridge::Route(pad,inbox,52,0,true,true)
    ==OriginalHostPadRoute::Unowned&&pad.analog[7]==255);
@@ -34,15 +34,17 @@ int main(){
  assert(OriginalHostPadPortBridge::Route(pad,inbox,52,1,true,true)
    ==OriginalHostPadRoute::Applied);
  assert(pad.connected&&pad.buttons==0&&pad.lx==32767&&pad.ly==-32768);
- assert(pad.analog[0]==255&&pad.analog[7]==255&&pad.rx==0&&pad.ry==0);
+ assert(pad.analog[0]==255&&pad.analog[7]==255&&pad.rx==15000&&pad.ry==-14000);
  pad=physical();
  assert(OriginalHostPadPortBridge::Route(pad,inbox,52,2,true,true)
    ==OriginalHostPadRoute::Applied);
  assert(pad.lx<0&&pad.ly>0&&pad.analog[7]==255&&pad.analog[0]==0);
+ assert(pad.rx==1024&&pad.ry==0);
  pad=physical();
  assert(OriginalHostPadPortBridge::Route(pad,inbox,52,3,true,true)
    ==OriginalHostPadRoute::Applied);
  assert(pad.analog[0]==255&&pad.analog[7]==0);
+ assert(pad.rx==0&&pad.ry==-1024);
  pad=physical();
  assert(OriginalHostPadPortBridge::Route(pad,inbox,53,1,true,true)
    ==OriginalHostPadRoute::NeutralReserved&&neutral(pad));
@@ -59,8 +61,8 @@ int main(){
   assert(neutral(otherPad));
  });other.join();
  assert(!foreignApplied);
- const int32_t newer[]={53,1,2,1,-100,100,0,1};
- assert(inbox.Ingest(newer,8)==1);
+ const int32_t newer[]={53,1,2,1,-100,100,0,1,0,0};
+ assert(inbox.Ingest(newer,std::size(newer))==1);
  pad=physical();
  assert(OriginalHostPadPortBridge::Route(pad,inbox,53,1,true,true)
    ==OriginalHostPadRoute::Applied&&pad.analog[7]==255);

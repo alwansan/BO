@@ -14,6 +14,7 @@ struct TrustedHumanCommand {
     uint32_t sequence=0,sceneEpoch=0;
     int16_t x=0,y=0,yaw=0;
     uint8_t flags=0;
+    int16_t lookX=0,lookY=0;
 };
 class OriginalHostHumanInbox final {
     static constexpr size_t kMaxPeers=3;
@@ -28,36 +29,39 @@ class OriginalHostHumanInbox final {
         return !owned_||owner_==std::this_thread::get_id();
     }
 public:
-    // Java supplies [committed sceneEpoch, count, 6 fields/peer].
+    static constexpr size_t kFieldsPerPeer=8,kMaxFrame=2+kMaxPeers*kFieldsPerPeer;
+    // Java supplies [committed sceneEpoch, count, 8 fields/peer].
     // Each row = [authenticated TLS peer ID, sequence, moveX, moveY, yaw,
-    //            fire|jump bits]. No names, game addresses, or credentials.
+    //            fire|jump bits, right stick X, right stick Y].
     // [0,0] proves "not in committed game" and purges stale commands.
     // [epoch,0] retains prior state only for bounded poll freshness.
     // NEVER assume Java has proved BLACK game scene loaded: the producing
     // network/story bridge is only valid after its own real COMMIT.
     unsigned Ingest(const int32_t* data,size_t length)noexcept{
-        if(!onOwner()||!data||length<2||length>20)return 0;
+        if(!onOwner()||!data||length<2||length>kMaxFrame)return 0;
         const int32_t rawEpoch=data[0],count=data[1];
         if(rawEpoch==0&&count==0&&length==2){
             Reset();
             return 0;
         }
         if(rawEpoch<=0||count<0||count>static_cast<int32_t>(kMaxPeers)||
-           length!=2u+static_cast<size_t>(count)*6u)return 0;
+           length!=2u+static_cast<size_t>(count)*kFieldsPerPeer)return 0;
         std::array<TrustedHumanCommand,kMaxPeers> pending{};
         uint8_t prev=1;
         for(int i=0;i<count;++i){
-            const int32_t* row=data+2+i*6;
+            const int32_t* row=data+2+i*kFieldsPerPeer;
             const int32_t id=row[0],sequence=row[1],x=row[2],y=row[3],yaw=row[4],flags=row[5];
             if(id<=prev||id>4||sequence<=0||
                x< -1000||x>1000||y< -1000||y>1000||
-               yaw< -18000||yaw>18000||flags<0||flags>3)return 0;
+               yaw< -18000||yaw>18000||flags<0||flags>3||
+               row[6]<-32768||row[6]>32767||row[7]<-32768||row[7]>32767)return 0;
             prev=static_cast<uint8_t>(id);
             pending[static_cast<size_t>(i)]={
                 static_cast<uint8_t>(id),static_cast<uint32_t>(sequence),
                 static_cast<uint32_t>(rawEpoch),static_cast<int16_t>(x),
                 static_cast<int16_t>(y),static_cast<int16_t>(yaw),
-                static_cast<uint8_t>(flags)};
+                static_cast<uint8_t>(flags),static_cast<int16_t>(row[6]),
+                static_cast<int16_t>(row[7])};
         }
         if(!owned_){owner_=std::this_thread::get_id();owned_=true;}
         const uint32_t epoch=static_cast<uint32_t>(rawEpoch);

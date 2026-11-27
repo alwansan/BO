@@ -243,6 +243,39 @@
     "engineSignalObserved": false,
     "allowlistedMarkersSha256": "33cce4fddc4ca19aff3fdf973aa517736199167f9655831e7500daf2a847c837"
   },
+  "fourRetiredStorageBlocksReclaimedInPrivateRuntime": {
+    "sourceBaseline": "9e54e844d1e650acc5b30e5e008bbeeddfefe255",
+    "releasedBlockKinds": ["actor", "input", "weaponPointerTable", "partsAndModel"],
+    "oldExactAllocationGenerationsRevoked": 4,
+    "sameAddressBlocksReallocatedWithNewGenerations": 4,
+    "replacementPatternIntactAcrossFrames": 240,
+    "stockP1MovementFramesWhileReplacementsWereLive": 80,
+    "postRelinkFramesBeforeRetiredBlockRelease": 1083,
+    "cameraOwnerRetainedAtOriginalGeneration": true,
+    "productionReleaseEnabled": false,
+    "processExit": 0,
+    "framesAtLeast": 2280,
+    "engineSignalObserved": false,
+    "allowlistedMarkersSha256": "da356c9233f4d4e9b066a63b3da254fe21e58232bad79df113c053ccfc8d4643"
+  },
+  "storageReleaseGuardSuccessfulSourceChecks": {
+    "codeRevision": "769ba742a1e37349a9d70c60f8900a0c8c331389",
+    "androidTranslationUnits": 46062606700,
+    "sourcePreflight": 46062606735,
+    "parallelSourceTracks": 46062606727,
+    "udp": 46062606628
+  },
+  "allStorageBlocksAlternateAddressRetirementRejected": {
+    "layoutGapBytes": 13312,
+    "processExit": 154,
+    "engineSignalObserved": false,
+    "framesAtLeast": 3600,
+    "sameCameraMatchesFromBeforePublication": 2,
+    "newActorMatchesInPhysicalAllocation": 1,
+    "allBlocksRejectedBeforeFree": true,
+    "allocationsFreed": 0,
+    "allowlistedMarkersSha256": "7ce4ab120b55a66ebbe3cdb491559ec6b70632c25538a71bc98d5d2c06a9d3ea"
+  },
   "originalActorCleanupSource": {
     "ownerXbeSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
     "firstPersonVtablePlus0C": "001D5D90",
