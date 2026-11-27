@@ -4756,6 +4756,9 @@
     "androidPrivateColliderReferenceRemainedAfterProxyRelease": true,
     "androidPrivateNativeColliderReferenceIsolatedToReleasedMotionEntry": true,
     "androidPrivateNativeColliderFullTeardownVerified": false,
+    "androidPrivateDetachedColliderFreedAfterOriginalMotionReuseVerified": true,
+    "androidPrivateDetachedColliderMotionReusesUntilOriginalRow": 59,
+    "androidPrivateWeaponHeap16And18ReadOnlyTrialPending": true,
     "androidPrivateNativeEffectsActorCameraRoundTripVerified": true,
     "androidPrivateNativeAnimationCaptureRejectedAtNonzeroTransform": true,
     "androidPrivateNativeAnimationNonzeroTransformsInLiveArenaWithoutExactGeneration": 6,
@@ -4776,6 +4779,6 @@
     "androidLivePropDirectNativeWriterReadbackVerified": true,
     "androidLivePropCollisionEffectVerified": false,
     "acceptanceApk": false,
-    "next": "verify retirement of the old native motion entry that retains owned collider references; isolate the separate +0x14 audio effects object and weapon heap lifetimes; combine the native animation/FX/restoration scopes for 001E0E40 and input-driven movement"
+    "next": "integrate passive motion-row retirement, verify and isolate the separate +0x14 audio effects object and weapon heaps, then combine the native animation/FX scopes for 001E0E40 and input-driven movement"
   }
 }

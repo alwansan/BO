@@ -414,6 +414,20 @@
     "ownedColliderBlocksRetained": true,
     "allowlistedMarkersSha256": "0869d1a7b577d6419d499c9484f1efd3c96fe7b51ac1dedb1504d6884bf9c893"
   },
+  "ownedOriginalP2ColliderMotionReuseTrial": {
+    "framesAtLeast": 2340,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "nativeMotionPoolFreeEntries": 59,
+    "originalRebindsRequiredToReachRetiredMotionRow": 59,
+    "oldMotionEntryReused": true,
+    "oldColliderReferenceAbsentFromScannedPhysicsStorage": true,
+    "arenaAndShapeGenerationsRevokedAfterFree": 2,
+    "p1ActorMotionAndProxyOccupancyRestored": true,
+    "sameFrameDetachedTrialOnly": true,
+    "productionRecyclingPolicyImplemented": false,
+    "allowlistedMarkersSha256": "9e8020c1569b8ab00bc4a29333e4be557c6220066bcace13c0c7af0b7812006f"
+  },
   "ci": {
     "commit": "fe5b3aac7ce355b440891ee4418cb5100f19ace7",
     "androidSourceUnitsRun": 45919841804,
