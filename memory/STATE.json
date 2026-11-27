@@ -1,13 +1,13 @@
 {
   "latestRestoreVerification": {
     "date": "2026-11-27",
-    "verified_commit": "9260620f85f30343695fa8658f9e8882f6a47c8f",
-    "source_preflight_run": 45922634095,
+    "verified_commit": "708d8f2eea37b6d959f630e93514f0805b4efa58",
+    "source_preflight_run": 46065451120,
     "source_preflight": "success",
     "android_synthetic_diagnostic_export_run": 45922634177,
     "android_shared_campaign_verified": false,
     "acceptance_apk_ready": false,
-    "next": "Verify native prop collision and stationary P2 presentation resource lifetime; integrate independent actors and original world authority, then verify real APK diagnostics."
+    "next": "Verify P2 avatar pixel readback using the original live camera, wire production actor and Android JNI scope, and prove shared prop collision, campaign progression and original APK diagnostics."
   },
   "schema": 1,
   "agent": "BO-COOP",
@@ -20,7 +20,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-26_bo-coop-work19-audio-observer.md",
+  "lastSession": "memory/sessions/2026-11-27_bo-coop-work51-native-input-and-prop-scope.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -4673,12 +4673,21 @@
   "workBatch51": {
     "date": "2026-11-27",
     "session": "memory/sessions/2026-11-27_bo-coop-work51-native-input-and-prop-scope.md",
+    "evidence": "memory/evidence/WORK_BATCH51_NATIVE_INPUT_AND_PROP_SCOPE.json",
     "nativeInboxAcceptedCommandLifetimeMilliseconds": 75,
     "nativeBridgeFailureNeutralizesWithoutResettingWatermarks": true,
     "authoredPropResolverSyntheticSanitizerPass": true,
+    "verifiedCodeRevision": "708d8f2eea37b6d959f630e93514f0805b4efa58",
+    "successfulSourceChecks": [46065451258, 46065451120, 46065451107, 46065451194],
+    "nativeP2ControlsFromRealTlsThroughPrivateLocalBridge": 104,
+    "nativeP2HorizontalAndVerticalTurningSamples": [95, 95],
+    "nativeP2ControlRevokedWhenGuestDisconnected": true,
+    "nativeP2SameOriginalGridAndPrimaryCameraFrames": 104,
+    "nativePropAuthoredKeyResolvedByIndependentOriginalProcesses": 2,
+    "originalBlackActivityToHostNativeActorVerified": false,
     "originalHostRemotePadActivation": false,
     "acceptanceApk": false,
-    "next": "verify loopback TLS through the original actor in the private native harness; independently match one authored prop in two original processes, then prove paired part state and relevant collision readback"
+    "next": "verify selected stock camera frames produce avatar pixels; connect activation to an owned production actor and Android JNI; then prove paired prop part state and relevant collision readback"
   },
   "workBatch50": {
     "date": "2026-11-27",

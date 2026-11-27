@@ -1,6 +1,6 @@
 ## آخر تحديث Work51 (2026-11-27)
 
-- إدخال المضيف ينتهي بعد 75 ملّي ثانية إذا توقّف الاستطلاع؛ خطأ JNI يحيّده ويحفظ إبطال التسلسلات. محقّق العنصر `0x200` يطابق رقم الصف المؤلف وجيل النشر وعضوية العالم، واجتاز اختبار ASan/UBSan. تابع تشغيل TLS إلى ممثل P2 ومطابقة عنصر في عمليتين Android أصليتين. لا APK قبول. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-27_bo-coop-work51-native-input-and-prop-scope.md).
+- استهلك P2 في المختبر 104 أوامر TLS عبر جسر محلي، وتغيّر تصويبه أفقيًا ورأسيًا وعاد منفذه إلى الحياد عند الانقطاع. طابقت عمليتان أصليتان هوية عنصر مؤلف. نجح [فحص `708d8f2`](https://github.com/alwansan/BO/actions/runs/46065451120). التالي تحقق البكسلات وربط `BlackActivity`/JNI وتزامن التصادم. لا APK قبول. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-27_bo-coop-work51-native-input-and-prop-scope.md).
 
 ## آخر تحديث Work50 (2026-11-27)
 

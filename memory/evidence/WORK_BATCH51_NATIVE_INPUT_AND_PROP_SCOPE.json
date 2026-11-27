@@ -1,0 +1,50 @@
+{
+  "date": "2026-11-27",
+  "verifiedSourceRevision": "708d8f2eea37b6d959f630e93514f0805b4efa58",
+  "sourceChecks": {
+    "androidSourceUnits": 46065451258,
+    "sourcePreflight": 46065451120,
+    "parallelSourceTracks": 46065451107,
+    "udp": 46065451194
+  },
+  "privateAndroidArm64HeadlessControlTrial": {
+    "roomWireVersion": 11,
+    "realAuthenticatedLoopbackTls": true,
+    "roomAppRoomsInputFacade": true,
+    "syntheticStoryAttestationOnJavaThread": true,
+    "javaToNativeUsedPrivateLocalSocketInsteadOfBlackActivityJni": true,
+    "nativeInboxHeaderSha256": "eab29c0372fb8b50092e1f8a03d031bda7824eddaf2841bf05c8b2cd0e6496bc",
+    "padPlanHeaderSha256": "5bddce3373c3f6c88142e31487d9f4fd6f560ebf2dbe41d19aeb29ab16fd49bb",
+    "padPortBridgeHeaderSha256": "f0ea9c92dd8c6cbe3da6be950c0c52e175fae23f8092aab8e5d5b6fccde0eae0",
+    "authenticatedCommandsConsumedByP2InSequence": 104,
+    "horizontalTurnSamples": 95,
+    "signedHorizontalTurnMilliradians": [-263, 267],
+    "pitchChangeSamples": 95,
+    "signedForwardYDeltaTimes1000": [56, -56],
+    "stockP1ConcurrentMovementFrames": 100,
+    "playerDisplacementMillimeters": [8809, 6615],
+    "nativePoseCorrections": 0,
+    "neutralReservedPortAfterGuestDisconnect": true,
+    "sameWorldGridAndPrimaryCameraFrameSamples": [104, 104],
+    "framesAtLeast": 1680,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "allowlistedMarkersSha256": "1ac9da359ad96ea7098efe4b3bdb7a8f4bf57fd7062cf49357f9760ee7b2971f"
+  },
+  "privateAndroidArm64AuthoredPropIdentityTrial": {
+    "independentOriginalProcesses": 2,
+    "identityTransferredByPrivateLocalFile": true,
+    "localPublicationGenerationFromLabUnitHooks": true,
+    "resolverHeaderSha256": "c0758f3d2222f5204049e09444ff1bc0f922f54679bd5ab7d54d46b7129ef687",
+    "sameAuthoredUnitCountOrdinalAndLiveMembershipVerifiedInEachProcess": true,
+    "wrongDescriptorCountRejectedInEachProcess": true,
+    "sameAddressReuseRejectionVerifiedOnlyBySanitizerFixture": true,
+    "framesAtLeastPerProcess": [720, 720],
+    "processExits": [0, 0],
+    "allowlistedMarkersSha256ForEachProcess": "6713666e3e526479e6cbffdf3e53edc959b71b864f426402a6dfcd8887a311d5",
+    "propHealthAndCollisionReplicated": false
+  },
+  "blackActivityOriginalGameInputVerified": false,
+  "productionHostRemotePadActivation": false,
+  "acceptanceApk": false
+}
