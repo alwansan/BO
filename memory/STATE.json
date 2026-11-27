@@ -4728,7 +4728,18 @@
     "androidPrivateTargetedPropSinglePartControlMatchedParts": 7,
     "androidPrivateTargetedPropSinglePartControlWriterEligibleParts": 0,
     "androidPrivateOneStationaryOwnedAudioBankLifecycleVerified": true,
-    "androidPrivateOneStationaryOwnedSoundObjectLifecycleTrialPending": true,
+    "androidPrivateOneStationaryOwnedSoundObjectLifecycleVerified": true,
+    "androidPrivateStationaryWeaponAudioObjectsPublishedAndReleasedTogether": 8,
+    "androidPrivateP2ActorCameraRoundTripVerified": true,
+    "androidPrivateOriginalP1NativeProxyReleaseVerified": true,
+    "androidCampaignEmbeddedSecondSlotAliasesObjectiveTable": true,
+    "androidPrivateDetachedSecondInputSourcePositiveNegativeReleaseSamples": [96, 96, 8],
+    "androidPrivateStationaryWeaponBankSelectorVerified": true,
+    "stationaryWeaponSoundContextCommit": "7c0b2cca4c570399de839b57da2e7e73adcc648c",
+    "androidPrivateOriginalCacheThreeDisjointRangesVerified": true,
+    "androidPrivateOriginalAnimationCacheMatchingFrames": 1026,
+    "androidPrivateAnimationCacheTeardownVerified": false,
+    "originalExactAnimationCacheRangesCommit": "0d6652eb424da97d5ee65e25561d56b35af3961f",
     "androidPrivateFullP2PresentationResourceLifecycleVerified": false,
     "androidPrivatePropSinglePartTargetedGeometryQueryFrameLowerBound": 5220,
     "androidLivePropInstrumentedTrialFrameLowerBound": 2940,
@@ -4736,6 +4747,6 @@
     "androidLivePropDirectNativeWriterReadbackVerified": true,
     "androidLivePropCollisionEffectVerified": false,
     "acceptanceApk": false,
-    "next": "verify owned sound cleanup then the full P2 camera, animation, weapon and FX scope; compare a bounded set of native line queries on the same multipart prop; verify original-game APK diagnostics after gameplay integration"
+    "next": "bind real per-allocation lifetimes for animation/FX and weapon manager; verify the full P1/P2 context before native 001E0E40, then distinct P2 physics, input-driven movement and teardown; compare native multipart prop queries and verify original-game APK diagnostics after integration"
   }
 }
