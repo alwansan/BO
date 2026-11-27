@@ -1,0 +1,46 @@
+{
+  "windows_prop_observer_commit": "c4e27530a23b455b1dd18dcdcb585e4f0ccab04f",
+  "windows_engine_lab": {
+    "run": 45914754278,
+    "harness_job": 140231185300,
+    "harness_conclusion": "success",
+    "engine_job": 140231225766,
+    "engine_status_at_check": "in_progress",
+    "owner_xbe_pinned_local_generation": {
+      "original_writer_bodies": 1,
+      "wrapped_direct_call_sites": 3,
+      "observed_call_categories": 2
+    },
+    "local_python_tests_passed": 41,
+    "local_native_sanitized_fixtures_passed": 4
+  },
+  "android_private_prop_writer": {
+    "abi": "arm64-v8a",
+    "runtime_api": 35,
+    "observed_calls": 2,
+    "verified_health_decreases": 2,
+    "verified_part_depletions": 1,
+    "neighboring_part_unchanged": true,
+    "sanitizers": ["address", "undefined"],
+    "synthetic_memory_and_direct_writer_invocation": true,
+    "natural_campaign_interaction_verified": false,
+    "collision_outcome_verified": false
+  },
+  "android_private_headless_campaign": {
+    "observer_commit": "7acb0901f6c084013dc72f810e5188a6b3af3e9c",
+    "abi": "arm64-v8a",
+    "runtime_api": 35,
+    "generated_object_files": 65,
+    "host_object_files": 48,
+    "owner_disc_xbe_pin_verified": true,
+    "extracted_directory_abort_in_host_file_close": true,
+    "mounted_disc_threaded_headless_frames": 540,
+    "mounted_disc_threaded_headless_signal": 11,
+    "mounted_disc_threaded_headless_campaign_resource_pair_observed": false,
+    "mounted_disc_threaded_headless_lifecycle_events": [],
+    "android_campaign_lifecycle_verified": false,
+    "android_apk_diagnostics_export_verified": false
+  },
+  "mapping_used_for_synchronization": false,
+  "acceptance_apk": false
+}
