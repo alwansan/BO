@@ -4668,5 +4668,18 @@
     "mappingUsedForSynchronization": false,
     "acceptanceApk": false,
     "next": "trace the original objective writer and its UI readback in the Android campaign, then verify scoped guest effect and APK diagnostics before activation"
+  },
+  "workBatch48": {
+    "date": "2026-11-27",
+    "session": "memory/sessions/2026-11-27_bo-coop-work48-android-objective.md",
+    "lifecycleObserverCommit": "7acb0901f6c084013dc72f810e5188a6b3af3e9c",
+    "androidNaturalObjectiveTrialFrameLowerBound": 7140,
+    "androidNaturalObjectiveTrialTimeoutSeconds": 145,
+    "androidNaturalObjectiveChangeVerified": false,
+    "androidObjectiveUiReadbackVerified": false,
+    "androidScopedNativeObjectiveWriterTrialPending": true,
+    "mappingUsedForSynchronization": false,
+    "acceptanceApk": false,
+    "next": "verify private scoped original objective writer and its UI readback, then bind exact native source scopes to the existing transport"
   }
 }
