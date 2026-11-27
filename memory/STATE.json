@@ -4653,6 +4653,8 @@
     "privateAndroidPropWriterSliceVerified": true,
     "privateHeadlessAndroidCampaignMembershipVerified": true,
     "privateHeadlessAndroidCampaignMembershipEvents": [2130, 2131],
+    "privateHeadlessAndroidDrawDiscardFrameLowerBound": 13440,
+    "privateHeadlessAndroidPauseFocusObserved": false,
     "androidCampaignLifecycleVerified": false,
     "mappingUsedForSynchronization": false,
     "acceptanceApk": false,

@@ -33,6 +33,7 @@
     "generated_object_files": 65,
     "host_object_files": 48,
     "owner_disc_xbe_pin_verified": true,
+    "owner_disc_sha256_matches_manifest_after_trials": true,
     "extracted_directory_abort_in_host_file_close": true,
     "mounted_disc_threaded_headless_frames": 540,
     "mounted_disc_threaded_headless_signal": 11,
@@ -43,6 +44,14 @@
     "mounted_disc_inline_headless_campaign_resource_pair_observed": true,
     "mounted_disc_inline_headless_lifecycle_events": [2130, 2131],
     "mounted_disc_inline_headless_campaign_membership_verified": true,
+    "mounted_disc_draw_discard_trial": {
+      "frame_count_lower_bound": 13440,
+      "engine_signal_observed": false,
+      "timeout_seconds": 250,
+      "campaign_resource_pair_observed": true,
+      "lifecycle_events": [2130, 2131],
+      "pause_focus_observed": false
+    },
     "android_campaign_lifecycle_verified": false,
     "android_apk_diagnostics_export_verified": false
   },
