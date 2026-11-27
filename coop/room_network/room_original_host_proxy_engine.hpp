@@ -207,7 +207,9 @@ public:
   }
   const auto binding=handle_.binding;const uint32_t proxy=handle_.proxy;
   if(!ledger_.BeginRelease(binding,proxy))return OriginalProxyStatus::Rejected;
-  // Even destructor failure/throw can release a proxy before reporting status.
+   // Even destructor failure/throw can release a proxy before reporting status.
+   // Released covers the pool slot and backlinks only. Original solver storage
+   // can retain a reference to the collider until the slot is rebound.
   uncertain_=true;
   if(release(io)&&ledger_.ConfirmRelease(binding,proxy))return OriginalProxyStatus::Released;
   ledger_.Poison();uncertain_=true;return OriginalProxyStatus::RollbackFailed;

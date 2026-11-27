@@ -365,6 +365,17 @@
     "fullP2ResourcesFreed": false,
     "allowlistedMarkersSha256": "ea4cde3d8cc26461f53cd1c4b2cfd2547f1d370cad6c70c123e49da768383d40"
   },
+  "ownedOriginalP2ColliderFirstTrial": {
+    "framesAtLeast": 2280,
+    "intentionalExit": 99,
+    "engineSignalObserved": false,
+    "originalConstructor001E0120UsedTwoOwnedBlocks": true,
+    "originalPhysicsProxyAndMotionDistinctFromP1": true,
+    "proxySlotAndP1StateRestored": true,
+    "colliderReferenceRemainedAfterNativeProxyRelease": true,
+    "ownedColliderBlocksRetained": true,
+    "allowlistedMarkersSha256": "5e852eff9c4830bbe80755eb306dd61a89c982714b680c073bfc14260006fa4c"
+  },
   "ci": {
     "commit": "fe5b3aac7ce355b440891ee4418cb5100f19ace7",
     "androidSourceUnitsRun": 45919841804,
