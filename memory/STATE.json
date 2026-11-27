@@ -4651,6 +4651,8 @@
     "privateHeadlessAndroidGeneratedUnitsCompiled": 65,
     "privateHeadlessAndroidHostUnitsCompiled": 48,
     "privateAndroidPropWriterSliceVerified": true,
+    "privateHeadlessAndroidCampaignMembershipVerified": true,
+    "privateHeadlessAndroidCampaignMembershipEvents": [2130, 2131],
     "androidCampaignLifecycleVerified": false,
     "mappingUsedForSynchronization": false,
     "acceptanceApk": false,

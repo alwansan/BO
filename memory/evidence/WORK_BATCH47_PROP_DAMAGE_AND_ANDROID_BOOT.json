@@ -38,6 +38,11 @@
     "mounted_disc_threaded_headless_signal": 11,
     "mounted_disc_threaded_headless_campaign_resource_pair_observed": false,
     "mounted_disc_threaded_headless_lifecycle_events": [],
+    "mounted_disc_inline_headless_frames": 1380,
+    "mounted_disc_inline_headless_signal": 6,
+    "mounted_disc_inline_headless_campaign_resource_pair_observed": true,
+    "mounted_disc_inline_headless_lifecycle_events": [2130, 2131],
+    "mounted_disc_inline_headless_campaign_membership_verified": true,
     "android_campaign_lifecycle_verified": false,
     "android_apk_diagnostics_export_verified": false
   },
