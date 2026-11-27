@@ -600,6 +600,16 @@
     "nativeUseOfSecondControllerNotReached": true,
     "allowlistedMarkersSha256": "c0576b70c21370f7c9526d5507480b6b7268bcb7a56fe960bcff017157452d0a"
   },
+  "originalP2PostSetupHumanUpdateFirstEntryTrial": {
+    "repositorySourceBaseline": "82f4d1c8c15222862b4b430b1f191437eda93bf1",
+    "framesAtLeast": 1620,
+    "intentionalExit": 138,
+    "engineSignalObserved": false,
+    "humanContextEntered": true,
+    "originalHumanUpdateCompleted": false,
+    "p1ActorAndPresentationRestored": true,
+    "allowlistedMarkersSha256": "5b0e37ff803c710764d6dff88c2458b0709ccfb910d8a8699785963fce5f6fc2"
+  },
   "originalSimpleObjectiveCompletionRoomAndJniVerification": {
     "sourceRevision": "0ea1eeefce95c1214cc924aa027637d4830097b9",
     "authenticatedLoopbackTlsAfterStoryCommit": true,
