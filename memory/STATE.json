@@ -4796,7 +4796,7 @@
     "androidPrivatePostMotionRestartPreservesInactiveTargetActorRef": true,
     "androidPrivatePostMotionColliderStorageReleaseAfterRestartVerified": false,
     "androidPrivatePostRestartRetiredBodyColliderReferenceVerified": true,
-    "androidPrivatePostRestartRetiredBodyColliderFieldTracePending": true,
+    "androidPrivatePostRestartRetiredBodyColliderReferenceOffsets": [0, 84],
     "androidRegistrationLifetimeVerifiedRevision": "d33fd80da3ce7d249c01b2b6e3475c27451e94f2",
     "androidRegistrationLifetimeSourceUnitsCi": 46020681432,
     "androidRegistrationLifetimePreflightCi": 46020681548,
@@ -4891,6 +4891,6 @@
     "androidLivePropDirectNativeWriterReadbackVerified": true,
     "androidLivePropCollisionEffectVerified": false,
     "acceptanceApk": false,
-    "next": "read the old physics body's remaining collider-field witness; campaign restart clears the old motion row, but not the old body or inactive AI target. Prove native row reuse or root destruction before release; continue independent rendering and production allocator integration"
+    "next": "prove native replacement of both collider references on the retired solver body at +0x00/+0x54 and retirement of the inactive AI target backlink before freeing the corresponding storage; continue rendering and production allocator integration"
   }
 }

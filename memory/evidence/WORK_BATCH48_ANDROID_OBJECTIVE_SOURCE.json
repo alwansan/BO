@@ -875,6 +875,15 @@
     "colliderStorageRetained": true,
     "allowlistedMarkersSha256": "d4fd56d5e0deb3b7b0967c895cacecdba508c0b2d299d4860cb176ec83e0794b"
   },
+  "originalAndroidPostRestartRetiredBodyColliderFieldsTrial": {
+    "repositorySourceBaseline": "40fd1465e18161b5290b552a719bf52513d0a25a",
+    "framesAtLeast": 1800,
+    "intentionalExit": 143,
+    "engineSignalObserved": false,
+    "colliderReferenceBodyOffsets": [0, 84],
+    "colliderStorageRetained": true,
+    "allowlistedMarkersSha256": "9af52b536fd8e9f81881e63aca531e5d1ec30211ec9d1bce4f70abce7f7ea011"
+  },
   "originalSimpleObjectiveCompletionRoomAndJniVerification": {
     "sourceRevision": "0ea1eeefce95c1214cc924aa027637d4830097b9",
     "authenticatedLoopbackTlsAfterStoryCommit": true,
