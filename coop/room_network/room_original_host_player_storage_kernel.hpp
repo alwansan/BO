@@ -59,6 +59,7 @@ private:
  // The ShadowPlan is the only guest writer: other callers must enter through
  // OriginalHostPlayerStage::MaterializeOwned, which quarantines first.
  friend class OriginalHostPlayerShadowPlan;
+ friend class OriginalHostPlayerStorage;
  // Only tracked exact allocation bases, never P1/core/world/NPC or any
  // arbitrary committed guest page. Used by opt-in P2 materialization only.
  bool WriteOwned(uint32_t address,const void* source,uint32_t bytes)noexcept{
@@ -66,7 +67,8 @@ private:
   std::memcpy(kernel::HostPtr(address),source,bytes);
   return true;
  }
-public:
+ // The storage state machine is the only caller allowed to roll back these
+ // allocations. Knowing the exact live address does not prove engine teardown.
  bool Free(uint32_t address){
   if(!onOwner())return false;
   for(auto& record:allocations_)if(address&&record.address==address){
@@ -75,6 +77,7 @@ public:
   }
   return false;
  }
+ public:
  bool Camera(uint32_t owner,uint32_t& result){
   if(!Owns(owner,0x16C0)||!Span(owner,0x16C0)||!dispatch::Find(0x14380))return false;
   X86Context call=context_;

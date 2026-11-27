@@ -77,6 +77,9 @@ jobs:
           };
           static_assert(!CanWriteP2GuestDirectly<blackcoop::OriginalPlayerStorageKernelIO>);
           template<class IO>
+          concept CanFreeP2GuestDirectly = requires(IO& io){ io.Free(0x10000u); };
+          static_assert(!CanFreeP2GuestDirectly<blackcoop::OriginalPlayerStorageKernelIO>);
+          template<class IO>
           concept CanMapActorDirectly = requires(IO& io){
             io.MapOriginalActor(0x10000u,0x900u);
           };

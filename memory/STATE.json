@@ -4726,12 +4726,16 @@
     "p2RetiredStoragePostRetirementMatchesAlreadyPresentBeforePublication": [0, 3, 0, 0, 0],
     "p2RetiredStorageNewAlignedMatchesRelativeToPrepublication": [0, 0, 0, 0, 0],
     "p2ExactOwnedCameraBoundarySamples": [528, 108],
+    "nativeCameraUpdateEntryDispatchToStockBeforeAndAfterP2Retirement": [108, 1100],
+    "nativeCameraUpdateEntryDispatchToP2Observed": false,
+    "p2KernelStorageFreeRestrictedToStorageStateMachine": true,
+    "p2KernelStorageFreeRestrictionLocalSdkAndSanitizersPassed": true,
     "p2PostWorldRegisterFramesAfterRelink": 1085,
     "p2PostWorldRegisterMatchesByOwnedTarget": [0, 0, 0, 0, 0],
     "p2AttachmentRowReferencesInP1And32NpcWeaponTables": 0,
     "actorStorageFreed": false,
     "acceptanceApk": false,
-    "next": "qualify remaining camera lifetime from active and restored runtime boundaries and cover native host-held references; then build a guarded retirement proof before attempting any final allocator release."
+    "next": "verify isolated release and exact-address replacement of four retired blocks after qualified native reuse; retain the camera allocation while its preexisting address matches and lifetime are evaluated."
   },
   "workBatch48": {
     "date": "2026-11-27",
