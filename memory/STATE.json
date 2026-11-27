@@ -7,7 +7,7 @@
     "android_synthetic_diagnostic_export_run": 45922634177,
     "android_shared_campaign_verified": false,
     "acceptance_apk_ready": false,
-    "next": "Isolate the private immediate-mode rendering abort, then prove an aimed stock hit reaches the staged host publisher. Establish guest publication lifetime and owned P2 sound table loading."
+    "next": "Prove an aimed stock hit reaches the staged host publisher after isolating private immediate rendering. Establish guest publication lifetime and owned P2 sound table loading."
   },
   "schema": 1,
   "agent": "BO-COOP",
@@ -20,7 +20,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-28_bo-coop-work53-part-event-and-camera-reuse.md",
+  "lastSession": "memory/sessions/2026-11-28_bo-coop-work54-stock-prop-publisher.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -4669,6 +4669,21 @@
     "mappingUsedForSynchronization": false,
     "acceptanceApk": false,
     "next": "trace the original objective writer and its UI readback in the Android campaign, then verify scoped guest effect and APK diagnostics before activation"
+  },
+  "workBatch54": {
+    "date": "2026-11-28",
+    "session": "memory/sessions/2026-11-28_bo-coop-work54-stock-prop-publisher.md",
+    "evidence": "memory/evidence/WORK_BATCH51_NATIVE_INPUT_AND_PROP_SCOPE.json",
+    "stagedPublisherSourceRevision": "f10accf33f5bd33e8c7c96f1aed01374faf2776b",
+    "privateHeadlessImmediateModeIsolated": true,
+    "isolatedRunRendererFramesAtLeast": 3480,
+    "aimedP1StockRoundsConsumed": 5,
+    "aimedP1ExactTargetDamageReadbacks": 3,
+    "differentAuthoredPartDepletionReachedPublisherWithoutVerifiedShooter": true,
+    "samePartReacquisitionsAndOriginalP1Rounds": [4, 13],
+    "stockHitReachedPublisher": false,
+    "acceptanceApk": false,
+    "next": "Finish the lower-health authored-part variant and verify both publisher entry and its current original scene check for the aimed P1 hit."
   },
   "workBatch53": {
     "date": "2026-11-28",

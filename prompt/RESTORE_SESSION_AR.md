@@ -1,3 +1,7 @@
+## آخر تحديث Work54 (2026-11-28)
+
+- عزل العرض الفوري في المختبر أتاح 3480 إطارًا بلا تعطل. أطلق P1 خمس طلقات وقرأ المحرك ضررًا في الجزء المؤلّف المختار. بقي الجزء دون نفاد ولم يبلغ الحدث الناشر. تابع إعادة التقاط هندسة الجزء وتجربة ضرر المنطقة الأصلي. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-28_bo-coop-work54-stock-prop-publisher.md). لا APK قبول.
+
 ## آخر تحديث Work53 (2026-11-28)
 
 - نقل بروتوكول 12 حالة الجزء عبر TLS بين مختبري محرك؛ طبّقها الطابور ورفض صحة قديمة. رُبط مصدر المضيف بـ`BlackActivity` في الكود، وبقي كاتب الضيف مختبريًا. تحررت كتل P2 الخمس؛ زناده يتعطل بجدول صوت فارغ. اعزل `EndImmediate` لفحص ضرر P1 الطبيعي. نجحت [فحوص `f10accf`](https://github.com/alwansan/BO/actions/runs/46082394056). لا APK قبول. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-28_bo-coop-work53-part-event-and-camera-reuse.md).
