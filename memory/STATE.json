@@ -4684,6 +4684,8 @@
     "nativeP2ControlRevokedWhenGuestDisconnected": true,
     "nativeP2SameOriginalGridAndPrimaryCameraFrames": 104,
     "nativePropAuthoredKeyResolvedByIndependentOriginalProcesses": 2,
+    "nativePropTargetPartDepletedAndDescriptorInvalidatedInLab": true,
+    "sameWholePropRayStillHitsAfterPartDepletion": true,
     "isolatedRealTlsToNativeJniPadReadbackPassed": true,
     "originalBlackActivityToHostNativeActorVerified": false,
     "originalHostRemotePadActivation": false,
