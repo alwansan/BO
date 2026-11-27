@@ -260,6 +260,16 @@
     "engineSignalObserved": false,
     "allowlistedMarkersSha256": "ebdc2db89063c567ae3842abbb9796e6b96291d1c59ab17c8ae60e83f5748f6d"
   },
+  "stockPropAimTrial": {
+    "dateVerified": "2026-11-28",
+    "rayFromOriginalLocalEyeHitExactPartInPropQuery": true,
+    "originalStickAimReachedFireCondition": false,
+    "originalDamageWriterObserved": false,
+    "processExit": 124,
+    "framesAtLeast": 4500,
+    "engineSignalObserved": false,
+    "allowlistedMarkersSha256": "a3cd6b4b3ca871f5ab28933e1e8684fcf5cf40e6fac8c4837ae4c882fd971933"
+  },
   "nativeGuardedPartInboxWithRealTlsRelay": {
     "dateVerified": "2026-11-28",
     "realTlsGuestFrameWords": 14,
@@ -275,6 +285,16 @@
       "33605d904cbccaaff169c899383a39eadd525e3c190860b8242d50237053c14d",
       "f80a12fe328f8d7215bba20da645df39ebef3c4b595058de9a8661d1ff5adba3"
     ]
+  },
+  "roomAppRoomsNativePartValuesTlsRelay": {
+    "dateVerified": "2026-11-28",
+    "verifiedCodeRevision": "f10accf33f5bd33e8c7c96f1aed01374faf2776b",
+    "actualRoomAppRoomsOfferAndPollMethods": true,
+    "realHostGuestTls": true,
+    "engineDerivedPartPreStateAndAuthoredKeyMatchedExactly": true,
+    "localFilesAndSyntheticStoryAttestation": true,
+    "blackActivityOrOnDevicePartMutationExercisedInThisTrial": false,
+    "marker": "ROOM_APP_ROOMS_TLS_PART_FRAME_MATCHED_ENGINE_SCOPE"
   },
   "blackActivityOriginalGameInputVerified": false,
   "productionHostRemotePadActivation": false,

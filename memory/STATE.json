@@ -1,13 +1,13 @@
 {
   "latestRestoreVerification": {
     "date": "2026-11-28",
-    "verified_commit": "67219e7c7e37ff1ca7c1aa14976b515a4ddffadb",
-    "source_preflight_run": 46081140841,
+    "verified_commit": "f10accf33f5bd33e8c7c96f1aed01374faf2776b",
+    "source_preflight_run": 46082394056,
     "source_preflight": "success",
     "android_synthetic_diagnostic_export_run": 45922634177,
     "android_shared_campaign_verified": false,
     "acceptance_apk_ready": false,
-    "next": "Observe a natural stock prop-depletion call and connect the exact signed event to the original guest frame. Resolve the trigger-time audio bank failure before integrating native actor lifecycles, BlackActivity and campaign progression."
+    "next": "Verify the staged host publisher with a stock prop-depletion call, prove guest publication lifetime during playback, and load owned sound table entries before testing P2 firing again."
   },
   "schema": 1,
   "agent": "BO-COOP",
@@ -4676,12 +4676,13 @@
     "evidence": "memory/evidence/WORK_BATCH51_NATIVE_INPUT_AND_PROP_SCOPE.json",
     "retirementEvidence": "memory/evidence/WORK_BATCH49_ANDROID_P2_VOICE_RETIREMENT.json",
     "wireVersion": 12,
-    "verifiedCodeRevision": "67219e7c7e37ff1ca7c1aa14976b515a4ddffadb",
-    "successfulSourceAndTransportChecks": [46081140841, 46081140798, 46081140732, 46081140836, 46081140831, 46081140708],
+    "verifiedCodeRevision": "f10accf33f5bd33e8c7c96f1aed01374faf2776b",
+    "successfulSourceAndTransportChecks": [46082394056, 46082394096, 46082394187, 46082394067, 46082394136, 46082394079],
     "realTlsRelayBetweenNativeTrials": true,
     "relayedPartAndCollisionReadbacksPassedInTwoIndependentEngines": true,
     "guardedNativeFifoAppliedMatchedFrameAndRejectedStaleHealthBeforeWriter": true,
     "hostSourcePublisherStagedThroughBlackActivity": true,
+    "actualRoomAppRoomsMethodsRelayedNativePartValuesOverRealTls": true,
     "hostSourcePublisherObservedFromStockDamage": false,
     "allFivePlayerStorageBlocksReclaimedAndIntactFor240FramesInPrivateTrial": true,
     "p2NativeFireTrialSignal": 11,
