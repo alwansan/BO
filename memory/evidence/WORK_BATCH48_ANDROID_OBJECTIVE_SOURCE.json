@@ -320,7 +320,33 @@
     "correctedShapeAllowlistedMarkersSha256": "518d001f4184138f14ed149752906ff7f0afc0129b7d5070ec55819f1dd543c5",
     "originalTableControllerAndMatrixBackingAllocationMatchingFrames": 151,
     "allocationTrialAllowlistedMarkersSha256": "ed0e0f2f5f91fa9fb75b75001c0202cf783edc031b8fa3d233372e164d2b571b",
-    "cacheRestorationSourceCommit": "e3d58b65a328686110309b2043cbe8af1d1e5aaa"
+    "cacheRestorationSourceCommit": "e3d58b65a328686110309b2043cbe8af1d1e5aaa",
+    "firstLiveExchangeAttempt": {
+      "framesAtLeast": 1440,
+      "intentionalExit": 89,
+      "engineSignalObserved": false,
+      "originalCacheRegionsMatchedLiveArena": 3,
+      "originalConstructorCaptureSucceeded": true,
+      "liveWorkspaceCaptureRejectedBeforeExchange": true,
+      "allowlistedMarkersSha256": "15d5bdb5dc57eaab035918ee2a26b20d1eae586e07890060a63f61d7ca171b51"
+    },
+    "liveExchangeDiagnosticRepeat": {
+      "framesAtLeast": 1380,
+      "intentionalExit": 89,
+      "originalCacheConstructorCaptureSucceeded": true,
+      "optionalNonzeroTransformMappingRejectedBeforeMutation": true,
+      "allowlistedMarkersSha256": "1dced76bf192292cfb205f5232dab0fb35d549720bf49a15573fd6167621287a"
+    }
+  },
+  "originalEffectsActorCameraRoundTripTrial": {
+    "sourceRevision": "2bc10cb2f598a994ab56e28c8388b46f844e0321",
+    "framesAtLeast": 2460,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "effectsStorageAndP1ActorCameraReadBackByteIdentical": true,
+    "orderedLifecycleEvents": [2130, 2131, 2132, 2133],
+    "effectsPlaybackOrActorSetupExercised": false,
+    "allowlistedMarkersSha256": "7b89a129b47d684c86fb34378af577a9e5ce6d1391a6a87242f239bd97ce9568"
   },
   "detachedOriginalPlayerProxyTrial": {
     "sourceRevision": "54899ac7222912ac10c392816c2b25ddf01837e0",
