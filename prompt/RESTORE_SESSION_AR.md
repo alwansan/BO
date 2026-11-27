@@ -1,8 +1,8 @@
 ## آخر تحديث Work48 (2026-11-27)
 
-- ثبت تفعيل هدف مؤلف على Android. أثبت الكاتب الأصلي أيضًا انتقال صف بسيط واحد من `1` إلى `3` دون تغيير العداد؛ أُضيف تطبيق الضيف المشروط بجدول LevelDat الكامل، ويجري اختبار JNI. إثبات عرض HUD وانتقال المرحلة ما زالا مفتوحين. [الدليل](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/evidence/WORK_BATCH48_ANDROID_OBJECTIVE_SOURCE.json).
+- ثبت تفعيل هدف مؤلف على Android واكتمال صف بسيط `1 → 3` دون تغيير العداد. تطابقت اللقطة عبر TLS وقرأ JNI الجدول كاملاً ورفض التسلسل المنتهي دون تغيير. يبقى إثبات عرض HUD وتقدم المرحلة وAPK اللعبة. [الدليل](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/evidence/WORK_BATCH48_ANDROID_OBJECTIVE_SOURCE.json).
 - مرت قيم حية عبر TLS محلي وطابقت قراءة المحرك بعد تفعيل الضيف. تحقق مسار التطبيق عبر JNI في مختبر خاص، و[APK اصطناعي منفصل](https://github.com/alwansan/BO/actions/runs/45922634177) أثبت تصدير الرموز الستة. APK اللعبة لم يُختبر.
-- بنى المختبر مورد التسجيل المساعد الثاني وأعاد `001E0E40` نجاحًا عند المرحلة `55`. مرّت استعادة الكاميرا والعرض وصفحة الأهداف، وفشل فحص بايتات ممثل P1. التالي تحديد موضع الفرق وإثبات التقاعد والحركة. لا APK قبول. [التفاصيل](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-27_bo-coop-work48-android-objective.md).
+- بنى المختبر مورد التسجيل الثاني وأتم `001E0E40` عند المرحلة `55`. رفض الاستعادة بسبب تغير ذاكرة نموذج P1 المشار إليها من `actor+0x320`. يجري اختبار توجيه الكتابة إلى نموذج P2 المملوك؛ يبقى التقاعد والحركة. لا APK قبول. [التفاصيل](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-27_bo-coop-work48-android-objective.md).
 
 ## سجل Work47 (2026-11-27)
 

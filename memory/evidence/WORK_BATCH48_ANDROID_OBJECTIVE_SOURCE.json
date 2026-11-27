@@ -563,6 +563,31 @@
     "teardownNotAttempted": true,
     "allowlistedMarkersSha256": "2bb9486ccf102bf1af1c14fa8bb775429e5b6bf36ad451621570096df649f1b9"
   },
+  "originalOwnedP2SetupModelWitnessTrial": {
+    "sourceRevision": "0ea1eeefce95c1214cc924aa027637d4830097b9",
+    "framesAtLeast": 1560,
+    "intentionalExit": 125,
+    "engineSignalObserved": false,
+    "inactiveP1ChangedUnprotectedWords": 0,
+    "externalWitnessesChanged": 1,
+    "changedWitnessPointerField": "actor+0x320",
+    "allowlistedMarkersSha256": "1ab5c9ecff5c3c61250635026c85645732fb1794d59f94827d8467ef23c2d3e6"
+  },
+  "originalSimpleObjectiveCompletionRoomAndJniVerification": {
+    "sourceRevision": "0ea1eeefce95c1214cc924aa027637d4830097b9",
+    "authenticatedLoopbackTlsAfterStoryCommit": true,
+    "receivedSnapshotByteExactToNativeHostAndJniInput": true,
+    "acceptedIndependentNativeGuestFramesAtLeast": 1440,
+    "acceptedExit": 0,
+    "jniFullTableReadbackDiagnostic": 2136,
+    "staleIndependentNativeGuestFramesAtLeast": 2280,
+    "staleExit": 0,
+    "staleSequenceGuestBytesUnchanged": true,
+    "fullOriginalBlackActivityOrStageProgressionVerified": false,
+    "tlsAllowlistedMarkersSha256": "a4b5532b97f464224196a304b56c4eade50285146bf9317b5bde02675de69bf0",
+    "acceptedAllowlistedMarkersSha256": "3a53b642b88a8bebe7044ba5d98f021da9c8080045912b557d07dbf459e61034",
+    "staleAllowlistedMarkersSha256": "f9b40d1ba22a1f044d22204678b12deff312ce902b304b357dc9dd4d7842c117"
+  },
   "originalObjectiveSimpleCompletionTrial": {
     "sourceRevision": "8280734e2f21dd47167bc723b242357a5367668b",
     "framesAtLeast": 2340,
