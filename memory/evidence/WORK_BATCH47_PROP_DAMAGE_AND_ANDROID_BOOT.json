@@ -5,7 +5,27 @@
     "harness_job": 140231185300,
     "harness_conclusion": "success",
     "engine_job": 140231225766,
-    "engine_status_at_check": "in_progress",
+    "engine_conclusion": "success",
+    "artifact": {
+      "id": 15162093317,
+      "bytes": 1637,
+      "sha256": "b06d5cafa6dbbf1cb3e88c19f7b14d1610ed77ad35155c9d5799c92072b83b43",
+      "files": ["summary.json"],
+      "owner_xbe_pin_verified": true,
+      "clean_bounded_exit": true,
+      "runtime_ms": 795594,
+      "mission_ticks": 1221,
+      "shots_by_local_player": [10, 10],
+      "prop_damage_verified_calls": 0,
+      "prop_damage_rejected_calls": 1,
+      "prop_damage_other_thread_calls": 0,
+      "prop_damage_impact_decreases": 0,
+      "prop_damage_area_decreases": 0,
+      "prop_damage_part_depletions": 0,
+      "objective_changed_records": 1,
+      "objective_changed_secondary_writer_calls": 1,
+      "objective_changed_writer_calls": 0
+    },
     "owner_xbe_pinned_local_generation": {
       "original_writer_bodies": 1,
       "wrapped_direct_call_sites": 3,
@@ -52,7 +72,44 @@
       "lifecycle_events": [2130, 2131],
       "pause_focus_observed": false
     },
-    "android_campaign_lifecycle_verified": false,
+    "mounted_disc_stock_controls_trial": {
+      "frame_count_lower_bound": 8820,
+      "engine_signal_observed": false,
+      "timeout_seconds": 175,
+      "campaign_resource_pair_observed": true,
+      "lifecycle_events": [2130, 2131],
+      "stock_controls_released": true,
+      "original_pause_page_observed": true,
+      "pause_focus_observed": false,
+      "restart_confirmation_observed": false
+    },
+    "mounted_disc_menu_gates_trial": {
+      "frame_count_lower_bound": 5340,
+      "engine_signal_observed": false,
+      "timeout_seconds": 115,
+      "lifecycle_events": [2130, 2131],
+      "pause_page_gates_observed": [28, 29, 31],
+      "flash_menu_and_focus_object_observed": true,
+      "focus_object_is_direct_clip": false,
+      "restart_confirmation_observed": false
+    },
+    "mounted_disc_verified_restarts": [
+      {
+        "trigger": "original_controls_pause_and_confirm",
+        "exit": 0,
+        "frame_count_lower_bound": 2640,
+        "lifecycle_events": [2130, 2131, 2132, 2133],
+        "safe_transcript_sha256": "0fac29700396bdbde9a6ea694e58fa9e4809886fd2e2eae94e4e36b4a423978f"
+      },
+      {
+        "trigger": "private_original_menu_restart_request",
+        "exit": 0,
+        "frame_count_lower_bound": 2460,
+        "lifecycle_events": [2130, 2131, 2132, 2133],
+        "safe_transcript_sha256": "300f61a1926419ac3d32e9bd98cc4d3e9b88cf2983d1b187d7585c972597148c"
+      }
+    ],
+    "android_campaign_lifecycle_verified": true,
     "android_apk_diagnostics_export_verified": false
   },
   "mapping_used_for_synchronization": false,

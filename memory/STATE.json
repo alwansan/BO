@@ -4645,7 +4645,9 @@
     "windowsPropDamageObserverCommit": "c4e27530a23b455b1dd18dcdcb585e4f0ccab04f",
     "windowsPropDamageEngineRun": 45914754278,
     "windowsPropDamageHarnessStatus": "success",
-    "windowsPropDamageEngineStatusAtCheck": "in_progress",
+    "windowsPropDamageEngineStatus": "success",
+    "windowsPropDamageEngineArtifactVerified": 15162093317,
+    "windowsNativeObjectiveChangedWriterCalls": 1,
     "windowsPropDamageObserverFixturePassed": true,
     "windowsPropDamageRuntimeVerified": false,
     "privateHeadlessAndroidGeneratedUnitsCompiled": 65,
@@ -4654,10 +4656,17 @@
     "privateHeadlessAndroidCampaignMembershipVerified": true,
     "privateHeadlessAndroidCampaignMembershipEvents": [2130, 2131],
     "privateHeadlessAndroidDrawDiscardFrameLowerBound": 13440,
-    "privateHeadlessAndroidPauseFocusObserved": false,
-    "androidCampaignLifecycleVerified": false,
+    "privateHeadlessAndroidStockControlsAvailable": true,
+    "privateHeadlessAndroidOriginalPausePageSeen": true,
+    "privateHeadlessAndroidOriginalPausePageReady": true,
+    "privateHeadlessAndroidPauseFocusObjectObserved": true,
+    "privateHeadlessAndroidPauseFocusObjectIsDirectClip": false,
+    "androidCampaignLifecycleVerified": true,
+    "privateHeadlessAndroidConfirmedRestartEvents": [2130, 2131, 2132, 2133],
+    "privateHeadlessAndroidVerifiedRestartRuns": 2,
+    "androidApkDiagnosticsExportVerified": false,
     "mappingUsedForSynchronization": false,
     "acceptanceApk": false,
-    "next": "check original Windows prop damage readback and run private headless Android campaign with ordered native lifecycle diagnostics"
+    "next": "trace the original objective writer and its UI readback in the Android campaign, then verify scoped guest effect and APK diagnostics before activation"
   }
 }
