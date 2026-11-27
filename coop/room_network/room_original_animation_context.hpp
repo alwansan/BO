@@ -27,7 +27,10 @@ namespace blackcoop {
 // exist.
 class OriginalAnimationContext {
   static constexpr uint32_t kSet = 0x2D12C8, kCache = 0x2CE6B0,
-                            kWork = 0x2C3260, kWorkBytes = 0x2CE710 - 0x2C3260;
+                             kWork = 0x2C3260, kWorkBytes = 0x2CE710 - 0x2C3260;
+  // The 001808D7 call constructs three independently allocated regions.
+  static constexpr uint32_t kCacheHeaderBytes = 0x1044, kCacheEntries = 16,
+                            kCacheEntryBytes = 0x284, kCacheDataBytes = 0x2004;
   struct Piece {
     uint32_t at = 0;
     uint64_t generation = 0;
@@ -42,8 +45,9 @@ class OriginalAnimationContext {
   uint32_t set_ = 0, table_ = 0, tops_ = 0, count_ = 0, bytes_ = 0, cache_ = 0;
   uint64_t setGeneration_ = 0, tableGeneration_ = 0, topsGeneration_ = 0,
            poolGeneration_ = 0;
-  uint32_t pool_ = 0, cacheData_ = 0, cacheDataBytes_ = 0;
-  Piece emptyCache_, workspace_;
+  uint32_t pool_ = 0;
+  std::array<Piece, 3> emptyCache_;
+  Piece workspace_;
   std::vector<Piece> pieces_, blocks_;
   std::vector<uint32_t> shadowTops_;
   std::vector<Binding> bindings_;
@@ -72,6 +76,12 @@ class OriginalAnimationContext {
   }
   static void put(uint8_t *p, uint32_t v) { std::memcpy(p, &v, 4); }
   bool owner() const { return owner_ == std::this_thread::get_id(); }
+  bool cacheOverlap(uint32_t p, uint32_t n) const {
+    for (const auto &region : emptyCache_)
+      if (overlaps(p, n, region.at, static_cast<uint32_t>(region.kept.size())))
+        return true;
+    return false;
+  }
   template <class IO> static uint8_t *map(IO &io, uint32_t p, uint32_t n) {
     return range(p, n) ? io.Map(p, n) : nullptr;
   }
@@ -99,6 +109,12 @@ class OriginalAnimationContext {
                ? map(io, p.at, static_cast<uint32_t>(p.kept.size()))
                : nullptr;
   }
+  template <class IO> bool cacheLive(IO &io) const {
+    for (const auto &region : emptyCache_)
+      if (region.kept.empty() || !live(io, region))
+        return false;
+    return true;
+  }
   template <class IO> bool add(IO &io, uint32_t p, uint32_t n) {
     if (!(p == set_ + 0x398 && n == 0x970 - 0x398) &&
         overlaps(p, n, set_, 0x970))
@@ -111,7 +127,7 @@ class OriginalAnimationContext {
     }
     if (pieces_.size() >= 32 || rootOverlap(p, n) ||
         overlaps(p, n, kWork, kWorkBytes) || overlaps(p, n, pool_, 0x8540) ||
-        overlaps(p, n, cache_, static_cast<uint32_t>(emptyCache_.kept.size())))
+        cacheOverlap(p, n))
       return false;
     Piece piece;
     if (!take(io, p, n, piece))
@@ -145,8 +161,11 @@ class OriginalAnimationContext {
     for (uint32_t i = 0; i < count_; i++)
       if (!read(io, table_ + i * 4, value) || value != blocks_[i].at)
         return false;
-    return read(io, cache_ + 0x20, value) && value == cacheData_ &&
-           read(io, cache_ + 0x24, value) && value == cacheDataBytes_;
+    return read(io, cache_ + 8, value) && value == kCacheEntries &&
+           read(io, cache_ + 0xC, value) && value == emptyCache_[1].at &&
+           read(io, emptyCache_[1].at, value) && value == kCacheEntries &&
+           read(io, cache_ + 0x20, value) && value == emptyCache_[2].at &&
+           read(io, cache_ + 0x24, value) && value == kCacheDataBytes;
   }
 
 public:
@@ -162,29 +181,38 @@ public:
   bool ObserveOriginalCacheConstructor(IO &io, uint32_t cache) {
     if (!owner() || captured_ || !io.Scene())
       return false;
-    uint32_t global = 0, data = 0, size = 0;
-    if (!read(io, kCache, global) || global != cache || !map(io, cache, 0x30) ||
-        !read(io, cache + 0x20, data) || !read(io, cache + 0x24, size))
+    uint32_t global = 0, entries = 0, start = 0, data = 0, value = 0;
+    if (!read(io, kCache, global) || global != cache ||
+        !map(io, cache, kCacheHeaderBytes) ||
+        !read(io, cache + 8, value) || value != kCacheEntries ||
+        !read(io, cache + 0xC, entries) || !range(entries, kCacheEntryBytes) ||
+        !read(io, entries, value) || value != kCacheEntries ||
+        !read(io, cache + 0x10, start) || start != entries + 4 ||
+        !read(io, cache + 0x20, data) ||
+        !read(io, cache + 0x24, value) || value != kCacheDataBytes)
       return false;
-    const uint64_t end = uint64_t(data) + size;
-    if (data < cache || !size || end <= cache || end - cache > 0x10000 ||
-        end > 0x100000000ull ||
-        rootOverlap(cache, static_cast<uint32_t>(end - cache)) ||
-        overlaps(cache, static_cast<uint32_t>(end - cache), kWork, kWorkBytes))
-      return false;
-    Piece next;
-    if (!take(io, cache, static_cast<uint32_t>(end - cache), next))
-      return false;
+    const std::array<std::pair<uint32_t, uint32_t>, 3> ranges{{
+        {cache, kCacheHeaderBytes}, {entries, kCacheEntryBytes}, {data, kCacheDataBytes}}};
+    std::array<Piece, 3> next;
+    for (size_t i = 0; i < ranges.size(); ++i) {
+      const auto [at, bytes] = ranges[i];
+      if (!range(at, bytes) || (at & 3u) || rootOverlap(at, bytes) ||
+          overlaps(at, bytes, kWork, kWorkBytes))
+        return false;
+      for (size_t j = 0; j < i; ++j)
+        if (overlaps(at, bytes, ranges[j].first, ranges[j].second))
+          return false;
+      if (!take(io, at, bytes, next[i]))
+        return false;
+    }
     scene_ = io.Scene();
     cache_ = cache;
-    cacheData_ = data;
-    cacheDataBytes_ = size;
     emptyCache_ = std::move(next);
     return true;
   }
   template <class IO> bool Capture(IO &io) {
     if (!owner() || captured_ || !scene_ || scene_ != io.Scene() ||
-        emptyCache_.kept.empty() || !live(io, emptyCache_))
+        !cacheLive(io))
       return false;
     uint32_t global = 0;
     if (!read(io, kCache, global) || global != cache_ ||
@@ -192,13 +220,11 @@ public:
         !read(io, 0x2D1980, pool_) || !map(io, pool_, 0x8540))
       return false;
     if (rootOverlap(set_, 0x970) ||
-        overlaps(set_, 0x970, cache_,
-                 static_cast<uint32_t>(emptyCache_.kept.size())) ||
+        cacheOverlap(set_, 0x970) ||
         overlaps(set_, 0x970, pool_, 0x8540) ||
         overlaps(set_, 0x970, kWork, kWorkBytes) ||
         overlaps(pool_, 0x8540, kWork, kWorkBytes) ||
-        overlaps(pool_, 0x8540, cache_,
-                 static_cast<uint32_t>(emptyCache_.kept.size())))
+        cacheOverlap(pool_, 0x8540))
       return false;
     setGeneration_ = io.Generation(set_, 0x970);
     poolGeneration_ = io.Generation(pool_, 0x8540);
@@ -240,10 +266,8 @@ public:
         overlaps(tops_, count_ * 4, kWork, kWorkBytes) ||
         overlaps(table_, count_ * 4, pool_, 0x8540) ||
         overlaps(tops_, count_ * 4, pool_, 0x8540) ||
-        overlaps(table_, count_ * 4, cache_,
-                 static_cast<uint32_t>(emptyCache_.kept.size())) ||
-        overlaps(tops_, count_ * 4, cache_,
-                 static_cast<uint32_t>(emptyCache_.kept.size())))
+        cacheOverlap(table_, count_ * 4) ||
+        cacheOverlap(tops_, count_ * 4))
       return false;
     for (const auto &p : pieces_)
       if (overlaps(p.at, static_cast<uint32_t>(p.kept.size()), tops_,
@@ -258,8 +282,7 @@ public:
         return false;
       if (rootOverlap(at, bytes_) || overlaps(at, bytes_, set_, 0x970) ||
           overlaps(at, bytes_, kWork, kWorkBytes) ||
-          overlaps(at, bytes_, cache_,
-                   static_cast<uint32_t>(emptyCache_.kept.size())) ||
+           cacheOverlap(at, bytes_) ||
           overlaps(at, bytes_, table_, count_ * 4) ||
           overlaps(at, bytes_, tops_, count_ * 4) ||
           overlaps(at, bytes_, pool_, 0x8540))
@@ -298,7 +321,7 @@ public:
     return true;
   }
   template <class IO> bool CanExchange(IO &io) {
-    if (!owner() || !captured_ || !shape(io) || !live(io, emptyCache_) ||
+    if (!owner() || !captured_ || !shape(io) || !cacheLive(io) ||
         !live(io, workspace_) || !map(io, tops_, count_ * 4))
       return false;
     for (const auto &p : pieces_)
@@ -346,9 +369,14 @@ public:
     for (const auto &p : pieces_)
       mapped.push_back(live(io, p));
     auto *work = live(io, workspace_);
-    auto *cache = live(io, emptyCache_);
+    std::array<uint8_t *, 3> cacheMappings;
+    for (size_t i = 0; i < cacheMappings.size(); ++i) {
+      cacheMappings[i] = live(io, emptyCache_[i]);
+      if (!cacheMappings[i])
+        return false;
+    }
     auto *tops = map(io, tops_, count_ * 4);
-    if (!work || !cache || !tops ||
+    if (!work || !tops ||
         std::any_of(mapped.begin(), mapped.end(), [](auto *p) { return !p; }))
       return false;
     std::vector<uint8_t *> blockMappings(count_);
@@ -370,7 +398,8 @@ public:
       if (lengths[i] && !blockMappings[i])
         return false;
     exchange(work, workspace_.kept, kWorkBytes);
-    std::memcpy(cache, emptyCache_.kept.data(), emptyCache_.kept.size());
+    for (size_t i = 0; i < cacheMappings.size(); ++i)
+      std::memcpy(cacheMappings[i], emptyCache_[i].kept.data(), emptyCache_[i].kept.size());
     for (uint32_t i = 0; i < count_; i++)
       if (blockMappings[i]) {
         exchange(blockMappings[i], blocks_[i].kept, lengths[i]);

@@ -38,11 +38,18 @@ struct IO {
     std::memcpy(&v, m.data() + p, 4);
     return v;
   }
+  void initCache(uint32_t address) {
+    w(0x2CE6B0, address);
+    w(address + 8, 16);
+    w(address + 0xC, 0x604000);
+    w(address + 0x10, 0x604004);
+    w(address + 0x20, 0x606000);
+    w(address + 0x24, 0x2004);
+    w(0x604000, 16);
+  }
   IO() {
     w(0x2D12C8, 0x300000);
-    w(0x2CE6B0, 0x600000);
-    w(0x600020, 0x600040);
-    w(0x600024, 0x80);
+    initCache(0x600000);
     w(0x2D1980, 0x400000);
     const uint32_t s = 0x300000;
     w(s + 0x8FC, 0x330000);
@@ -78,11 +85,16 @@ int main() {
   assert(c.Capture(io));
   assert(io.m == before);
   io.w(0x600080, 123);
+  io.w(0x604004, 124);
+  io.w(0x606000, 125);
+  io.w(0x602000, 126); // unrelated bytes between cache allocations
   assert(c.Exchange(io));
   assert(c.Entered());
   assert(io.r(0x300000 + 0x470 + 0x58) == 0);
   assert(io.r(0x320004) == 0);
   assert(io.r(0x600080) == 0);
+  assert(io.r(0x604004) == 0 && io.r(0x606000) == 0);
+  assert(io.r(0x602000) == 126);
   assert(io.r(0x300398 + 0xC) == 0);
   io.w(0x500000, 0xabcdef);
   io.w(0x502000, 0x123456);
@@ -153,7 +165,12 @@ int main() {
   OriginalAnimationContext cacheCtx;
   assert(cacheCtx.ObserveOriginalCacheConstructor(cache, 0x600000));
   assert(cacheCtx.Capture(cache));
-  cache.w(0x600024, 0x84);
+  cache.w(0x600024, 0x2008);
+  before = cache.m;
+  assert(!cacheCtx.Exchange(cache));
+  assert(cache.m == before);
+  cache.w(0x600024, 0x2004);
+  cache.blocked = 0x606010;
   before = cache.m;
   assert(!cacheCtx.Exchange(cache));
   assert(cache.m == before);
@@ -164,9 +181,7 @@ int main() {
     uint32_t cacheAddress = 0x600000;
     if (kind == 0) {
       cacheAddress = 0x300040;
-      alias.w(0x2CE6B0, cacheAddress);
-      alias.w(cacheAddress + 0x20, cacheAddress + 0x40);
-      alias.w(cacheAddress + 0x24, 0x80);
+      alias.initCache(cacheAddress);
     }
     if (kind == 1) {
       for (unsigned i = 0; i < 4; i++)
@@ -207,9 +222,7 @@ int main() {
     OriginalAnimationContext rejected;
     if (kind == 0) {
       const uint32_t address = 0x2D45D4u - 0x80u;
-      alias.w(0x2CE6B0, address);
-      alias.w(address + 0x20, address + 0x40);
-      alias.w(address + 0x24, 0x80);
+      alias.initCache(address);
       before = alias.m;
       assert(!rejected.ObserveOriginalCacheConstructor(alias, address));
       assert(alias.m == before);
