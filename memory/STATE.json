@@ -4678,11 +4678,22 @@
     "p2NativeWeaponVoiceReservationsRetired": 2,
     "p1WeaponSoundManagerPoolAndSelectorsRestoredExactly": true,
     "nativeVoiceRetirementPostRelinkRunningFrames": 1086,
+    "stationaryAudioObjectsUnregisteredAfterP2NativeMotion": 10,
+    "stationaryAudioUnpublicationPostRelinkRunningFrames": 1180,
+    "stationaryAudioBackingFreed": false,
+    "sourceChecksVerifiedRevision": "e9762344190dbdf422200379b2436ac1b8217154",
+    "sourceChecks": [46051621595, 46051621633, 46051621589, 46051621619],
     "p2ActorCleanupRecordsSharedWithP1": 3,
     "p2FirstPersonWorkspaceAddressSharedWithP1": true,
+    "p2ActiveFirstPersonWorkspaceIsSwappedAndTracked": true,
+    "p2ActiveActorRecordsWithNonNullWeaponField08": 3,
+    "p2ActiveAttachmentCount": 2,
+    "p2ActiveWeaponPointerTableOwned": true,
+    "p2NativeUpdatesWithAllThreeSampledSharedWeaponRecordsByteExact": 104,
+    "p2ActiveViewmodelControllerHasNonNull04": true,
     "actorStorageFreed": false,
     "acceptanceApk": false,
-    "next": "verify unpublication of the stationary audio objects after sustained P2 movement, and establish which remaining actor and viewmodel resources may be destroyed without touching P1's shared records"
+    "next": "trace the two attachment slots behind P2's owned pointer table and the 00095610 viewmodel release branch, then isolate the three borrowed records before a guarded actor cleanup"
   },
   "workBatch48": {
     "date": "2026-11-27",

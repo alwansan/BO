@@ -1,7 +1,7 @@
 ## آخر تحديث Work49 (2026-11-27)
 
-- في مختبر Android، فُصل سجلّا صوت سلاح P2 بعد 104 تحديثات، وتطابقت بيانات P1 ومحددات الصوت. الكود يعزل أي فشل جزئي بعد محاولة إرجاع P1. [الدليل](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/evidence/WORK_BATCH49_ANDROID_P2_VOICE_RETIREMENT.json).
-- بقي الممثل حيًا: مدخل التفكيك الأصلي `001D5D90` يصل إلى ثلاثة سجلات ومساحة عرض مشتركة مع P1. تحقق من إزالة كائنات الصوت المنشورة ومن ملكية كل مورد قبل نداء التفكيك. لا APK قبول؛ العرض والتحكم الشبكي والعالم المشترك قيد العمل. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-27_bo-coop-work49-android-p2-voice-retirement.md).
+- في مختبر Android، فُصل سجلّا صوت سلاح P2 وأُزيلت عضوية كائناته الصوتية العشرة بعد 104 تحديثات. تطابقت بيانات P1 ومحددات الصوت، ومر 1180 إطارًا بعد الإعادة وإعادة الربط. الكود `e976234` اجتاز [تجهيز المصدر](https://github.com/alwansan/BO/actions/runs/46051621633) و[وحدات Android](https://github.com/alwansan/BO/actions/runs/46051621595). [الدليل](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/evidence/WORK_BATCH49_ANDROID_P2_VOICE_RETIREMENT.json).
+- بقيت تخصيصات P2: السجلات الثلاثة المشتركة بقيت مطابقة خلال 104 تحديثات، لكن `001D5D90` يمسح قيمها. تتبّع مرفقي السلاح وفرع العرض `00095610` قبل عزل السجلات وتجربة التنظيف. لا APK قبول؛ العرض والتحكم الشبكي والعالم المشترك قيد العمل. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-27_bo-coop-work49-android-p2-voice-retirement.md).
 
 ## آخر تحديث Work48 (2026-11-27)
 

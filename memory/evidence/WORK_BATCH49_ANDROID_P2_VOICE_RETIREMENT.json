@@ -19,6 +19,28 @@
     "sampledActorReferencesRemaining": 0,
     "allowlistedMarkersSha256": "9f3e609de7f1eff4ebbe4197337d4d3aa64eb8c39724794b5c40425272920267"
   },
+  "stationaryAudioUnpublicationAfterNativeMotion": {
+    "nativeReleaseEntry": "0008CE60",
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "framesAtLeast": 2160,
+    "nativeMotionUpdates": 104,
+    "p2AudioObjectsUnregistered": 10,
+    "stockDonorObjectsStillRegistered": 10,
+    "stockManagerPoolAndSelectorsByteExact": true,
+    "postRelinkRunningFrames": 1180,
+    "lostRootScopeFrames": 0,
+    "naturalTargetProxyBodyAndMotionReuses": [1, 1, 1, 1],
+    "audioBackingFreed": false,
+    "allowlistedMarkersSha256": "8b1217c73a87cd504d574468147e18169618d41b694a9c66ca73754bf0f0dc26"
+  },
+  "successfulSourceChecks": {
+    "codeRevision": "e9762344190dbdf422200379b2436ac1b8217154",
+    "androidTranslationUnits": 46051621595,
+    "sourcePreflight": 46051621633,
+    "parallelSourceTracks": 46051621589,
+    "udp": 46051621619
+  },
   "originalActorCleanupSource": {
     "ownerXbeSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
     "firstPersonVtablePlus0C": "001D5D90",
@@ -35,6 +57,38 @@
     "firstPersonWorkspaceAliasesP1": true,
     "workspaceHas54Link": true,
     "workspaceHas58Link": false
+  },
+  "activeP2CleanupInputCensus": {
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "framesAtLeast": 1740,
+    "selectedFirstPersonWorkspace": true,
+    "workspaceControllerAllocationProvenance": true,
+    "workspaceHas58Link": false,
+    "workspaceB9FlagSet": true,
+    "actorRecordsWithNonNull08": 3,
+    "nonzeroWordsInInlineAttachmentHeader": 4,
+    "allowlistedMarkersSha256": "f567cf944b60edd80bdabe3ab3f1193cf5882d573618fef888b880e85434004a"
+  },
+  "activeP2AttachmentHeaderCensus": {
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "framesAtLeast": 1680,
+    "attachmentCount": 2,
+    "weaponPointerTableIsP2Owned": true,
+    "nativeSlotReleaseCalled": false,
+    "allowlistedMarkersSha256": "6a07fd4c44cfbc61293eaae88cced46ab816ad755b8217b0e0b6065c89cc7a4d"
+  },
+  "sharedWeaponRecordStabilityDuringNativeMotion": {
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "framesAtLeast": 1680,
+    "sharedRecords": 3,
+    "sampledBytesPerRecord": 27,
+    "nativeUpdatesWithExactReadback": 104,
+    "activeViewmodelControllerHasNonNull04": true,
+    "nativeActorCleanupCalled": false,
+    "allowlistedMarkersSha256": "d28b89c8f7ab242ee046f8900a2d5865e38b67c80e1a227387fafc43fffc65ab"
   },
   "physicalAudioOutputVerified": false,
   "audioCallbackConcurrencyVerified": false,
