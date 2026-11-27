@@ -237,9 +237,11 @@ template<class Presentation>class OriginalSetupKernelIO final {
  OriginalHumanControllerSource controllerSource_;
  OriginalHumanPadBinding padBinding_;
  uint64_t(*lifetime_)(uint32_t,uint32_t)noexcept;
- X86Context& ctx_;
- const std::thread::id thread_=std::this_thread::get_id();
- bool attempted_=false,entered_=false,presentationAttempted_=false,
+  X86Context& ctx_;
+  const std::thread::id thread_=std::this_thread::get_id();
+  uint32_t donorController_=0,donorInput_=0;
+  uint64_t donorInputGeneration_=0;
+  bool attempted_=false,entered_=false,presentationAttempted_=false,
       restored_=false,poisoned_=false;
  bool owner()const noexcept{return thread_==std::this_thread::get_id();}
  bool match(const OriginalSetupScene& s)const noexcept{
@@ -271,6 +273,17 @@ template<class Presentation>class OriginalSetupKernelIO final {
  }
   uint32_t* MapControllerSource(uint32_t ctl)const noexcept{
    return ControllerGeneration(ctl)?static_cast<uint32_t*>(kernel::HostPtr(ctl+0xA8u)):nullptr;
+  }
+  bool EnterControllerSource(const OriginalSetupScene& s,uint32_t ctl){
+   uint32_t source=0;
+   if(!Read32(ctl+0xA8u,source))return false;
+   if(source!=view_.input)return controllerSource_.Enter(*this,ctl,view_.input);
+   // The normal pad controller is embedded in the actor. Its +A8 word
+   // may already select the owned input after alias repair; restoring
+   // the actor also restores this word from the untouched P1 copy.
+   return ctl==donorController_&&ctl==s.p1Actor+0x4F0u&&donorInputGeneration_&&
+    InputGeneration(donorInput_)==donorInputGeneration_&&ControllerGeneration(ctl)&&
+    actor_.ExchangedWord(ctl+0xA8u);
   }
   bool HasOriginalHumanRegistrationCapacity()const noexcept{
    // 001E0E40 completes with two registrations. 001899F0 requires
@@ -320,8 +333,11 @@ private:
   if(human){
    if(!Read32(binding_.core+0x354u,ctl)||!storage_.Span(ctl,0xB0u)||
       !Read32(ctl+0xA8u,source)||!padBinding_.Bind(*this,view_.input,s.peer)||
-      !padBinding_.Resolve(*this,view_.input,s.peer,firstPad,extraPad)||
-      (source&&(!InputGeneration(source)||source==view_.input)))return false;
+       !padBinding_.Resolve(*this,view_.input,s.peer,firstPad,extraPad))return false;
+    donorController_=ctl;
+    donorInput_=source;
+    donorInputGeneration_=source?InputGeneration(source):0;
+    if(source&&(!donorInputGeneration_||source==view_.input))return false;
   }
   if(!actor_.Prepare(actorIo_,binding_,view_.actor))return false;
   if(source){
@@ -377,8 +393,8 @@ public:
      !Read32(cv,cf)||!Read32(av,af)||!Read32(av+0x10u,post)||
      post!=0x1E5FA0u||!dispatch::Find(cf)||!dispatch::Find(af)||
      !dispatch::Find(post))return false;
-  if(!padBinding_.Active(*this,view_.input,s.peer)||
-     !controllerSource_.Enter(*this,ctl,view_.input)||
+   if(!padBinding_.Active(*this,view_.input,s.peer)||
+      !EnterControllerSource(s,ctl)||
      !Read32(ctl+0xA8u,source)||
      !presentation_.OriginalHumanInputActive(s,frame,ctl,source))return false;
   // Exact thiscall ABI: controller receives ESI=actor; actor methods

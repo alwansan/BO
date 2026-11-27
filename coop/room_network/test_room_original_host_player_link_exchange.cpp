@@ -133,9 +133,12 @@ int main(){
   assert(!camera.Restore(io)&&camera.Quarantined()&&io.bytes==before);
  }
  {
-  LinkIO io;OriginalPlayerLinkExchangePlan plan;
-  const uint32_t firstInput=0x400000u,extraInput=0x410000u,
-    firstPad=0x420000u,extraPad=0x420120u;
+   LinkIO io;OriginalPlayerLinkExchangePlan plan;
+   const uint32_t firstInput=0x400000u,extraInput=0x410000u,
+     firstPad=0x420000u,extraPad=0x420120u;
+   constexpr uint32_t controllerSource=0x4F0u+0xA8u;
+   io.set(actor+controllerSource,firstInput);
+   io.set(p2+controllerSource,firstInput);
   io.set(actor+0x600u,firstInput);io.set(actor+0x604u,firstPad);
   io.set(p2+0x600u,firstInput);io.set(p2+0x604u,firstPad);
   io.set(p2+0x608u,0x12345678u);
@@ -144,13 +147,20 @@ int main(){
   assert(!plan.EnterActorOnly(io,firstInput,extraInput,firstPad,extraPad));
   assert(io.bytes==before);
   io.set(actor+0x34u,0);
-  assert(plan.Prepare(io,b,p2));
-  assert(plan.EnterActorOnly(io,firstInput,extraInput,firstPad,extraPad));
-  uint32_t v=0;
+   assert(plan.Prepare(io,b,p2));
+   assert(!plan.ExchangedWord(actor+controllerSource));
+   assert(plan.EnterActorOnly(io,firstInput,extraInput,firstPad,extraPad));
+   uint32_t v=0;
+   assert(plan.ExchangedWord(actor+controllerSource));
+   assert(!plan.ExchangedWord(actor+0x34u)&&!plan.ExchangedWord(p2+controllerSource));
+   assert(io.Read32(actor+controllerSource,v)&&v==extraInput);
   assert(io.Read32(actor+0x600u,v)&&v==extraInput);
   assert(io.Read32(actor+0x604u,v)&&v==extraPad);
   assert(io.Read32(actor+0x608u,v)&&v==0x12345678u);
-  assert(plan.RestoreActorOnly(io));
+   assert(plan.RestoreActorOnly(io));
+   assert(!plan.ExchangedWord(actor+controllerSource));
+   assert(io.Read32(actor+controllerSource,v)&&v==firstInput);
+   assert(io.Read32(p2+controllerSource,v)&&v==extraInput);
   assert(io.Read32(actor+0x600u,v)&&v==firstInput);
   assert(io.Read32(actor+0x604u,v)&&v==firstPad);
   assert(io.Read32(p2+0x600u,v)&&v==extraInput);

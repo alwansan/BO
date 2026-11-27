@@ -72,7 +72,11 @@ public:
  unsigned WorldNodeWords()const noexcept{return Ready()?14u:0u;}
  unsigned DynamicLinkWords()const noexcept{return Ready()?dynamic_:0u;}
  bool ProtectedWord(uint32_t offset)const noexcept{
-  return Ready()&&!(offset&3u)&&offset<kBytes&&protected_[offset/4u];
+   return Ready()&&!(offset&3u)&&offset<kBytes&&protected_[offset/4u];
+ }
+ bool ExchangedWord(uint32_t address)const noexcept{
+   const uint32_t offset=address-source_;
+   return Entered()&&!poisoned_&&offset<kBytes&&!(offset&3u)&&!protected_[offset/4u];
  }
  template<class IO>bool Prepare(IO& io,const OriginalPlayerStorageScene& b,
                                  uint32_t independentlyOwnedP2Actor)noexcept{

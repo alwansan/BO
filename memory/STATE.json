@@ -4782,7 +4782,15 @@
     "androidPrivateP2PostSetupMotionTrialPending": true,
     "androidPrivateP2NativeHumanUpdateContextEnteredAndRestored": true,
     "androidPrivateP2NativeHumanUpdateCallRejected": true,
+    "androidPrivateP2EmbeddedControllerInputAlreadyOwnedAtRejection": true,
+    "androidEmbeddedControllerUsesActorExchangeForSourceRestore": true,
+    "androidPrivateP2OriginalHumanFramesCompleted": 104,
+    "androidPrivateP2NonNeutralSecondPortConvertedSamples": 96,
+    "androidPrivateP2HorizontalFootTravelMillimetres": 0,
+    "androidPrivateP2PostUpdateProxyBacklinksCleared": true,
     "androidOwnedModelHookSourceUnitsCi": 46013418538,
+    "androidOwnedModelHookPreflightCi": 46013418553,
+    "androidOwnedModelHookParallelSourceCi": 46013418509,
     "androidPrivateP2SetupThenDistinctOwnedProxyAndMotionVerified": true,
     "androidPrivateNativeDonorInputAllocationReturnSite": "0020BD5E",
     "androidPrivateNativeDonorInputAllocationBytes": 2820,
@@ -4829,6 +4837,6 @@
     "androidLivePropDirectNativeWriterReadbackVerified": true,
     "androidLivePropCollisionEffectVerified": false,
     "acceptanceApk": false,
-    "next": "check the post-setup independent collider and control trial; verify sustained second-port input changes the P2 actor and motion while P1 is restored; prove resource teardown and integrate the original Android APK"
+    "next": "check the private trial mirroring the live camera-owner scripted hold; the first post-fix 104 human ticks restored P1 and retired proxy backlinks, but measured zero horizontal movement. Continue input-to-motion and complete teardown before activating remote control"
   }
 }

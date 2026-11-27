@@ -610,6 +610,33 @@
     "p1ActorAndPresentationRestored": true,
     "allowlistedMarkersSha256": "5b0e37ff803c710764d6dff88c2458b0709ccfb910d8a8699785963fce5f6fc2"
   },
+  "originalP2EmbeddedControllerSourceRejection": {
+    "repositorySourceBaseline": "6e6e240087d93b1662471aa62e44155ab2b8af37",
+    "framesAtLeast": 720,
+    "intentionalExit": 138,
+    "engineSignalObserved": false,
+    "secondPortConvertedSamples": 1,
+    "originalHumanFramesCompleted": 0,
+    "allEightSampledPreflightChecksPassed": true,
+    "controllerSourceAlreadyOwnedBeforeInputCallback": true,
+    "p1ActorAndPresentationRestored": true,
+    "allowlistedMarkersSha256": "4c1ba89fc163c01980b7436198d8bfad4e9863d26cfe802c1a1316c16798b869"
+  },
+  "originalP2PostSetupHumanUpdateWithEmbeddedSource": {
+    "repositorySourceBaseline": "6e6e240087d93b1662471aa62e44155ab2b8af37",
+    "usedEmbeddedControllerSourceFix": true,
+    "framesAtLeast": 900,
+    "intentionalExit": 139,
+    "engineSignalObserved": false,
+    "originalHumanFramesCompleted": 104,
+    "secondPortNonNeutralConvertedSamples": 96,
+    "p1ActorRestoredOutsideKnownGridHeadOnEveryFrame": true,
+    "p2AccumulatedFootTravelMillimetres": 367,
+    "p2HorizontalFootTravelMillimetres": 0,
+    "proxyAndActorBacklinksCleared": true,
+    "completeStorageTeardownVerified": false,
+    "allowlistedMarkersSha256": "6bd2756d610376acc377ad33f4bc1191bf181ee99f37ffc65d57dac87a50073e"
+  },
   "originalSimpleObjectiveCompletionRoomAndJniVerification": {
     "sourceRevision": "0ea1eeefce95c1214cc924aa027637d4830097b9",
     "authenticatedLoopbackTlsAfterStoryCommit": true,
