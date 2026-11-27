@@ -66,6 +66,74 @@ static void TestUnitMembership(){
  std::cout<<"ORIGINAL_UNIT_WORLD_LIST_MEMBERSHIP_FIXTURE_PASS\n";
 }
 
+static void TestAuthoredPropResolution(){
+ UnitFixture memory;
+ constexpr uint32_t world=0x100000, unit=world+0x5250, otherUnit=world+0x49D0;
+ constexpr uint32_t objects=0x110000, header=0x120000, table=header+0x100;
+ const auto publish=[&](uint32_t base){
+   memory.Write32(unit+0x1C,base);
+   memory.Write32(world+0x5CB4,base);
+   for(uint32_t i=0;i<2;++i){
+     const uint32_t object=base+i*0x200u;
+     const uint32_t record=table+(i?4u:1u)*0x50u;
+     memory.Write32(object,0x28ED98u);
+     memory.Write32(object+0xC4u,4);
+     memory.Write32(object+0x114u,record);
+     memory.Write32(object+0xB0u,i?0:base+0x200u);
+     // Identical selector pairs in the authored rows do not alias identity.
+     memory.Write32(record+0x48u,9);
+     memory.Write32(object+8u,9);
+   }
+ };
+ memory.Write32(0x2D45D4,world);
+ memory.Write32(world+0x5AE0,0x1C);
+ memory.Write32(world+0x5AE4,0x1D);
+ memory.Write32(world+0x5AEC,0x100);
+ memory.Write32(unit,0x1C);
+ memory.Write32(unit+4,7);
+ memory.Write32(unit+8,7);
+ memory.Write32(unit+0x38,1);
+ memory.Write32(unit+0xC,header);
+ memory.Write32(unit+0x34,2);
+ memory.Write32(header,24);
+ memory.Write32(header+0x90,5u<<16);
+ memory.Write32(header+0x2C,table);
+ publish(objects);
+ uint64_t serial=10;
+ const auto generation=[&](uint32_t currentWorld,uint32_t currentUnit) noexcept {
+   return currentWorld==world&&currentUnit==unit?serial:0u;
+ };
+ constexpr OriginalUnitPropKey key{0,1,7,5,4};
+ OriginalUnitPropHandle first;
+ assert(ResolveOriginalUnitProp(memory,generation,world,key,first));
+ assert(first.object==objects+0x200&&first.record==table+4*0x50&&first.generation==10);
+ OriginalUnitPropHandle other;
+ assert(ResolveOriginalUnitProp(memory,generation,world,{0,1,7,5,1},other));
+ assert(other.object==objects);
+ assert(!ResolveOriginalUnitProp(memory,generation,world,{0,1,7,5,0},other));
+ assert(!ResolveOriginalUnitProp(memory,generation,world,{0,1,7,2,1},other));
+ assert(!ResolveOriginalUnitProp(memory,generation,world,{1,1,7,5,4},other));
+ memory.Write32(otherUnit,0x1C);
+ memory.Write32(otherUnit+8u,7);
+ memory.Write32(otherUnit+0x38u,1);
+ assert(!ResolveOriginalUnitProp(memory,generation,world,key,other));
+ memory.Write32(otherUnit+0x38u,0);
+ memory.Write32(first.object+0xB0u,first.object);
+ assert(!ResolveOriginalUnitProp(memory,generation,world,key,other));
+ memory.Write32(first.object+0xB0u,0);
+ auto changingGeneration=[&](uint32_t,uint32_t) noexcept {return serial++;};
+ assert(!ResolveOriginalUnitProp(memory,changingGeneration,world,key,other));
+ assert(ResolveOriginalUnitProp(memory,generation,world,key,other)&&other!=first);
+ assert(other.object==first.object); // same-address republication invalidates the old handle
+ serial=0;
+ assert(!ResolveOriginalUnitProp(memory,generation,world,key,other));
+ serial=20;
+ publish(objects+0x2000);
+ assert(ResolveOriginalUnitProp(memory,generation,world,key,other)&&other!=first);
+ assert(other.object==objects+0x2200&&other.record==first.record);
+ std::cout<<"ORIGINAL_AUTHORED_PROP_RESOLUTION_PASS: packed ordinal, live membership, scene and publication scope\n";
+}
+
 static void TestUnitLifecycle(){
  constexpr uint32_t oldWorld=0x100000,newWorld=0x180000,slotOffset=0x49D0;
  constexpr uint32_t stack=0x130000;
@@ -157,6 +225,7 @@ static void TestUnitLifecycle(){
 
 int main(){
  TestUnitMembership();
+ TestAuthoredPropResolution();
  TestUnitLifecycle();
  OriginalPostFrameGate gate;
  const OriginalPostFrameSample valid{0x100000,0x120000,0x140000,0x150000,0x1C,0x1D,2,0x28CFE0};

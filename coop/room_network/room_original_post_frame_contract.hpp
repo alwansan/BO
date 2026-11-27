@@ -57,12 +57,13 @@ Range ReadRange(const Memory& memory,uint32_t unit,bool linked=true) noexcept {
 }
 
 template<class Memory>
-int CountMembers(const Memory& memory,uint32_t world,const Range& range) noexcept {
+int CountMembers(const Memory& memory,uint32_t world,const Range& range,
+                 uint32_t stride=kObjectStride) noexcept {
    uint32_t node=memory.Read32(world+0x5CB4u), visited=0, matches=0;
    while(node){
      if(++visited>4096u||(node&3u)||!memory.Contains(node,0xB4u))return -1;
-     if(node>=range.objects&&node-range.objects<range.count*kObjectStride){
-       if((node-range.objects)%kObjectStride)return -1;
+      if(node>=range.objects&&node-range.objects<range.count*stride){
+        if((node-range.objects)%stride)return -1;
        ++matches;
      }
      node=memory.Read32(node+0xB0u);
@@ -89,6 +90,78 @@ bool HasOriginalWorldUnitMembership(const Memory& memory,uint32_t world) noexcep
      return Running(memory,world);
  }
  return false;
+}
+
+// Authored v24 kind-4 prop identity, scoped independently to the loaded
+// level/stage. Live addresses and the local publication generation stay local.
+struct OriginalUnitPropKey {
+ uint8_t level=0,stage=0;
+ uint32_t unitIndex=0,recordCount=0,ordinal=0;
+};
+
+struct OriginalUnitPropHandle {
+ uint32_t unit=0,object=0,record=0;
+ uint64_t generation=0;
+ bool operator==(const OriginalUnitPropHandle&) const noexcept=default;
+};
+
+// The caller's game-thread generation source must revoke a publication on
+// unlink/reload, including same-address reuse. Readable spans cannot do that.
+template<class Memory,class Generation>
+bool ResolveOriginalUnitProp(const Memory& memory,Generation generation,
+      uint32_t world,const OriginalUnitPropKey& key,OriginalUnitPropHandle& out) noexcept {
+ using namespace unit_observation;
+ constexpr uint32_t kStride=0x200u,kRecordStride=0x50u;
+ const uint32_t scene=uint32_t(key.level)*256u+key.stage;
+ if(key.unitIndex==UINT32_MAX||!key.recordCount||key.ordinal>=key.recordCount||
+    key.recordCount>UINT16_MAX||!Running(memory,world)||Scene(memory,world)!=scene)
+  return false;
+
+ uint32_t unit=0;
+ for(const uint32_t offset:kUnitOffsets){
+  const uint32_t candidate=world+offset;
+  if(memory.Read32(candidate)!=0x1Cu||memory.Read8(candidate+0x38u)!=1u||
+     memory.Read32(candidate+8u)!=key.unitIndex)
+   continue;
+  if(unit||memory.Read32(candidate+4u)!=key.unitIndex)return false;
+  unit=candidate;
+ }
+ if(!unit)return false;
+ const uint64_t serial=generation(world,unit);
+ if(!serial)return false;
+
+ // 001D3610 packs a subset of the authored rows in increasing order;
+ // the packed slot cannot be used as an identity across runtimes.
+ const uint32_t header=memory.Read32(unit+0xCu),objects=memory.Read32(unit+0x1Cu);
+ const uint32_t count=memory.Read32(unit+0x34u);
+ if(!count||count>4096u||count>key.recordCount||(header&3u)||(objects&3u)||
+    !memory.Contains(header,0x94u)||memory.Read32(header)!=24u||
+    memory.Read16(header+0x92u)!=key.recordCount||!memory.Contains(objects,count*kStride))
+  return false;
+ const uint32_t table=memory.Read32(header+0x2Cu);
+ if((table&3u)||uint64_t(table)<uint64_t(header)+0x94u||
+    !memory.Contains(table,key.recordCount*kRecordStride))
+  return false;
+
+ const uint32_t record=table+key.ordinal*kRecordStride;
+ uint32_t object=0,previous=0;
+ for(uint32_t i=0;i<count;++i){
+  const uint32_t candidate=objects+i*kStride,row=memory.Read32(candidate+0x114u);
+  if(memory.Read32(candidate)!=0x28ED98u||memory.Read32(candidate+0xC4u)!=4u||
+     row<table||row<=previous||(row-table)%kRecordStride||
+     (row-table)/kRecordStride>=key.recordCount||
+     memory.Read32(candidate+8u)!=memory.Read32(row+0x48u)||
+     memory.Read32(candidate+0xCu)!=memory.Read32(row+0x4Cu))
+   return false;
+  if(row==record)object=candidate;
+  previous=row;
+ }
+ if(!object||CountMembers(memory,world,{object,1,0},kStride)!=1||
+    !Running(memory,world)||Scene(memory,world)!=scene||
+    generation(world,unit)!=serial)
+  return false;
+ out={unit,object,record,serial};
+ return true;
 }
 
 // Local diagnostic ledger only. The removals never export their ranges.

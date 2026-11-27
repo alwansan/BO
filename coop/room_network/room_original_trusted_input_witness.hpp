@@ -25,26 +25,27 @@ inline bool PreviewOriginalAuthenticatedRemotePort(uint32_t epoch,uint8_t port,
         port,originalSceneVerified,originalNativeActorReady,candidate);
 }
 inline void PollOriginalHostHumanInputs(JNIEnv* env,jobject activity,jclass cls)noexcept{
-    if(!env||!activity||!cls)return;
+    auto& inbox=OriginalHostHumanInputs();
+    if(!env||!activity||!cls){inbox.ClearCommands();return;}
     jmethodID method=env->GetMethodID(cls,
         "coopPollTrustedHumanInputsFromGameThread","()[I");
-    if(env->ExceptionCheck()){env->ExceptionClear();return;}
-    if(!method)return;
+    if(env->ExceptionCheck()){env->ExceptionClear();inbox.ClearCommands();return;}
+    if(!method){inbox.ClearCommands();return;}
     jobject reply=env->CallObjectMethod(activity,method);
     if(env->ExceptionCheck()){
         env->ExceptionClear();
-        OriginalHostHumanInputs().Reset();
+        inbox.ClearCommands();
         return;
     }
-    if(!reply){OriginalHostHumanInputs().Reset();return;}
+    if(!reply){inbox.ClearCommands();return;}
     jintArray frame=static_cast<jintArray>(reply);
     const jsize n=env->GetArrayLength(frame);
     if(env->ExceptionCheck()){
-        env->ExceptionClear();env->DeleteLocalRef(frame);return;
+        env->ExceptionClear();env->DeleteLocalRef(frame);inbox.ClearCommands();return;
     }
     constexpr auto kMaxFrame=OriginalHostHumanInbox::kMaxFrame;
     if(n<2||n>static_cast<jsize>(kMaxFrame)){
-        OriginalHostHumanInputs().Reset();
+        inbox.ClearCommands();
         env->DeleteLocalRef(frame);
         return;
     }
@@ -52,14 +53,14 @@ inline void PollOriginalHostHumanInputs(JNIEnv* env,jobject activity,jclass cls)
     env->GetIntArrayRegion(frame,0,n,raw.data());
     if(env->ExceptionCheck()){
         env->ExceptionClear();
-        OriginalHostHumanInputs().Reset();
+        inbox.ClearCommands();
         env->DeleteLocalRef(frame);
         return;
     }
     env->DeleteLocalRef(frame);
     std::array<int32_t,kMaxFrame> safe{};
     for(jsize i=0;i<n;++i)safe[static_cast<size_t>(i)]=static_cast<int32_t>(raw[static_cast<size_t>(i)]);
-    if(OriginalHostHumanInputs().Ingest(safe.data(),static_cast<size_t>(n))!=0){
+    if(inbox.Ingest(safe.data(),static_cast<size_t>(n))!=0){
         static std::atomic<bool> first{false};
         bool expected=false;
         if(first.compare_exchange_strong(expected,true,std::memory_order_acq_rel))
@@ -78,14 +79,17 @@ inline void ObserveOriginalHostInputTick(uint32_t originalPlayer)noexcept{
         return;
     JNIEnv* env=static_cast<JNIEnv*>(SDL_GetAndroidJNIEnv());
     jobject activity=static_cast<jobject>(SDL_GetAndroidActivity());
-    if(!env||!activity)return;
+    if(!env||!activity){OriginalHostHumanInputs().ClearCommands();return;}
     jclass cls=env->GetObjectClass(activity);
     if(cls){
         PollOriginalHostHumanInputs(env,activity,cls);
         PollOriginalGuestHostWorld(env,activity,cls);
         OfferOriginalGuestController(env,activity,cls,originalPlayer);
         env->DeleteLocalRef(cls);
-    }else if(env->ExceptionCheck())env->ExceptionClear();
+    }else{
+        if(env->ExceptionCheck())env->ExceptionClear();
+        OriginalHostHumanInputs().ClearCommands();
+    }
     env->DeleteLocalRef(activity);
 }
 } // namespace blackcoop

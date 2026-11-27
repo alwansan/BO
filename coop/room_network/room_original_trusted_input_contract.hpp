@@ -4,6 +4,7 @@
 // Never turn a network command into a bot AI command or original guest write.
 #pragma once
 #include <array>
+#include <chrono>
 #include <cstddef>
 #include <cstdint>
 #include <thread>
@@ -17,11 +18,14 @@ struct TrustedHumanCommand {
     int16_t lookX=0,lookY=0;
 };
 class OriginalHostHumanInbox final {
+    using Clock=std::chrono::steady_clock;
     static constexpr size_t kMaxPeers=3;
     static constexpr uint32_t kExpiryPolls=3;
+    static constexpr auto kExpiryTime=std::chrono::milliseconds(75);
     std::array<TrustedHumanCommand,5> commands_{};
     std::array<uint32_t,5> lastSequence_{};
     std::array<uint32_t,5> lastPoll_{};
+    std::array<Clock::time_point,5> acceptedAt_{};
     uint32_t epoch_=0,polls_=0;
     std::thread::id owner_{};
     bool owned_=false;
@@ -31,13 +35,14 @@ class OriginalHostHumanInbox final {
 public:
     static constexpr size_t kFieldsPerPeer=8,kMaxFrame=2+kMaxPeers*kFieldsPerPeer;
     // Java supplies [committed sceneEpoch, count, 8 fields/peer].
-    // Each row = [authenticated TLS peer ID, sequence, moveX, moveY, yaw,
+    // Each row = [authenticated story player slot, sequence, moveX, moveY, yaw,
     //            fire|jump bits, right stick X, right stick Y].
     // [0,0] proves "not in committed game" and purges stale commands.
-    // [epoch,0] retains prior state only for bounded poll freshness.
+    // [epoch,0] retains prior state only for bounded poll and clock freshness.
     // NEVER assume Java has proved BLACK game scene loaded: the producing
     // network/story bridge is only valid after its own real COMMIT.
-    unsigned Ingest(const int32_t* data,size_t length)noexcept{
+    unsigned Ingest(const int32_t* data,size_t length,
+                    Clock::time_point now=Clock::now())noexcept{
         if(!onOwner()||!data||length<2||length>kMaxFrame)return 0;
         const int32_t rawEpoch=data[0],count=data[1];
         if(rawEpoch==0&&count==0&&length==2){
@@ -71,11 +76,12 @@ public:
         // epoch in a fresh authenticated session.
         if(epoch_&&epoch<epoch_)return 0;
         if(epoch_!=epoch){
-            epoch_=epoch;lastSequence_={};lastPoll_={};commands_={};polls_=0;
+            ClearCommands();
+            epoch_=epoch;lastSequence_={};polls_=0;
         }
         // Integer overflow cannot revalidate expired inputs.
         if(++polls_==0){
-            polls_=1;lastPoll_={};commands_={};
+            polls_=1;ClearCommands();
         }
         unsigned accepted=0;
         for(int i=0;i<count;++i){
@@ -84,21 +90,30 @@ public:
             lastSequence_[cmd.peer]=cmd.sequence;
             commands_[cmd.peer]=cmd;
             lastPoll_[cmd.peer]=polls_;
+            acceptedAt_[cmd.peer]=now;
             ++accepted;
         }
         return accepted;
     }
-    bool Fresh(uint8_t peer,TrustedHumanCommand& out)const noexcept{
+    bool Fresh(uint8_t peer,TrustedHumanCommand& out,
+               Clock::time_point now=Clock::now())const noexcept{
         if(!owned_||!onOwner()||peer<2||peer>4||!epoch_||
            !commands_[peer].sequence||!lastPoll_[peer]||
-           polls_<lastPoll_[peer]||polls_-lastPoll_[peer]>kExpiryPolls)return false;
+           polls_<lastPoll_[peer]||polls_-lastPoll_[peer]>kExpiryPolls||
+           now<acceptedAt_[peer]||now-acceptedAt_[peer]>kExpiryTime)return false;
         out=commands_[peer];
         return true;
     }
     bool Reset()noexcept{
         if(!onOwner())return false;
-        epoch_=polls_=0;commands_={};lastSequence_={};lastPoll_={};
+        ClearCommands();
+        epoch_=polls_=0;lastSequence_={};
         return true;
+    }
+    // Neutralize on a bridge failure without authorizing replay or epoch rollback.
+    void ClearCommands()noexcept{
+        if(!onOwner())return;
+        commands_={};lastPoll_={};acceptedAt_={};
     }
     uint32_t Epoch()const noexcept{return onOwner()?epoch_:0;}
 };

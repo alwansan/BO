@@ -27,6 +27,15 @@
     "androidPinnedSourcePreparationTestsPassed": 6,
     "androidArm64TranslationUnitsPassed": 7
   },
+  "successfulGitHubSourceChecks": {
+    "codeRevision": "32105aedac1129843606859a5624235d8894eb7d",
+    "realTlsRoomCore": 46064020824,
+    "androidKeystoreRealTls": 46064020813,
+    "androidSourceUnits": 46064020886,
+    "sourcePreflight": 46064020864,
+    "parallelEngineSourceTracks": 46064020831,
+    "udp": 46064020816
+  },
   "hostNativePortReadinessEnabled": false,
   "androidGameRoomToNativeControlsVerified": false,
   "acceptanceApk": false

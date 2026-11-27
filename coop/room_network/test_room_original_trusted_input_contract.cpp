@@ -5,7 +5,28 @@
 #include <thread>
 using blackcoop::OriginalHostHumanInbox;
 using blackcoop::TrustedHumanCommand;
+static void TestElapsedTimeAndBridgeFailure(){
+    using namespace std::chrono;
+    OriginalHostHumanInbox inbox;
+    TrustedHumanCommand out{};
+    const auto received=steady_clock::time_point{}+seconds(1);
+    const int32_t first[]={42,1,2,10,0,0,0,1,18000,0};
+    const int32_t next[]={42,1,2,11,0,0,0,0,0,0};
+    const int32_t olderEpoch[]={41,1,2,100,0,0,0,1,18000,0};
+    assert(inbox.Ingest(first,std::size(first),received)==1);
+    assert(inbox.Fresh(2,out,received+milliseconds(75))&&out.lookX==18000);
+    assert(!inbox.Fresh(2,out,received+milliseconds(76)));
+    assert(!inbox.Fresh(2,out,received-milliseconds(1)));
+    inbox.ClearCommands();
+    assert(!inbox.Fresh(2,out,received)&&inbox.Epoch()==42);
+    assert(inbox.Ingest(first,std::size(first),received)==0);
+    assert(inbox.Ingest(olderEpoch,std::size(olderEpoch),received)==0);
+    assert(inbox.Ingest(next,std::size(next),received)==1);
+    assert(inbox.Fresh(2,out,received)&&out.flags==0&&out.lookX==0);
+}
+
 int main(){
+    TestElapsedTimeAndBridgeFailure();
     OriginalHostHumanInbox inbox;
     const int32_t one[]={42,1,2,10,500,-500,1200,3,-32768,32767};
     const int32_t second[]={42,2,2,11,501,-499,1201,1,0,0,3,7,-900,800,-9000,2,123,-456};

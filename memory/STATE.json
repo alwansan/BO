@@ -4670,11 +4670,23 @@
     "acceptanceApk": false,
     "next": "trace the original objective writer and its UI readback in the Android campaign, then verify scoped guest effect and APK diagnostics before activation"
   },
+  "workBatch51": {
+    "date": "2026-11-27",
+    "session": "memory/sessions/2026-11-27_bo-coop-work51-native-input-and-prop-scope.md",
+    "nativeInboxAcceptedCommandLifetimeMilliseconds": 75,
+    "nativeBridgeFailureNeutralizesWithoutResettingWatermarks": true,
+    "authoredPropResolverSyntheticSanitizerPass": true,
+    "originalHostRemotePadActivation": false,
+    "acceptanceApk": false,
+    "next": "verify loopback TLS through the original actor in the private native harness; independently match one authored prop in two original processes, then prove paired part state and relevant collision readback"
+  },
   "workBatch50": {
     "date": "2026-11-27",
     "session": "memory/sessions/2026-11-27_bo-coop-work50-right-stick.md",
     "evidence": "memory/evidence/WORK_BATCH50_RIGHT_STICK_SOURCE.json",
     "wireVersion": 11,
+    "verifiedCodeRevision": "32105aedac1129843606859a5624235d8894eb7d",
+    "successfulSourceChecks": [46064020824, 46064020813, 46064020886, 46064020864, 46064020831, 46064020816],
     "privateAndroidP2RightStickHeadingUpdates": 95,
     "privateAndroidP2RightStickHeadingMilliradiansByDirection": [-272, 266],
     "rawRightStickAxesVerifiedAcrossRealTlsForThreeGuestInputs": true,
@@ -4748,6 +4760,7 @@
     "p2ReplacementAllocationsByteExactThroughStockFrames": 240,
     "p1MovementFramesAfterP2FourBlockReclaim": 80,
     "p2AllBlockTrialRejectedBeforeFreeOnNewPhysicalActorMatch": true,
+    "p2AllBlockLargerGapTrialAlignedMatchesBeforeAndAfter": [3, 0],
     "p2PostWorldRegisterFramesAfterRelink": 1085,
     "p2PostWorldRegisterMatchesByOwnedTarget": [0, 0, 0, 0, 0],
     "p2AttachmentRowReferencesInP1And32NpcWeaponTables": 0,

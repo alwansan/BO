@@ -276,6 +276,18 @@
     "allocationsFreed": 0,
     "allowlistedMarkersSha256": "7ce4ab120b55a66ebbe3cdb491559ec6b70632c25538a71bc98d5d2c06a9d3ea"
   },
+  "allStorageBlocksLargerGapRetirementRejected": {
+    "layoutGapBytes": 16777216,
+    "processExit": 154,
+    "engineSignalObserved": false,
+    "framesAtLeast": 2940,
+    "postRelinkRunningFrames": 1084,
+    "alignedMatchesBeforePublication": 3,
+    "alignedMatchesAfterRetirement": 0,
+    "allBlocksRejectedBeforeFree": true,
+    "allocationsFreed": 0,
+    "allowlistedMarkersSha256": "07e1192305e7590fddc85352572e8ad6c6b5140788a6a483a3e713e966425a72"
+  },
   "originalActorCleanupSource": {
     "ownerXbeSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
     "firstPersonVtablePlus0C": "001D5D90",
