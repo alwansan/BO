@@ -1,12 +1,13 @@
 {
   "latestRestoreVerification": {
-    "date": "2026-11-26",
-    "verified_commit": "af204ca8db20102efed175b6822db5e2b669c2a8",
-    "source_preflight_run": 45832304468,
+    "date": "2026-11-27",
+    "verified_commit": "9260620f85f30343695fa8658f9e8882f6a47c8f",
+    "source_preflight_run": 45922634095,
     "source_preflight": "success",
+    "android_synthetic_diagnostic_export_run": 45922634177,
     "android_shared_campaign_verified": false,
     "acceptance_apk_ready": false,
-    "next": "Recover or implement the live actor lifecycle and host-objective/world application bindings, then validate independent input and shared progression in Android."
+    "next": "Verify native prop collision and the owned P2 constructor lifecycle; integrate independent actors and original world authority, then verify real APK diagnostics."
   },
   "schema": 1,
   "agent": "BO-COOP",
@@ -4707,6 +4708,12 @@
     "androidPrivateEmbeddedAudioRegistryMembershipsObservedDuringRestart": 16,
     "androidPrivateAudioUnpublicationObservedDuringRestart": false,
     "androidPostFrameJavaExportInstrumentationAdded": true,
+    "androidPostFrameJavaExportSyntheticApkCi": 45922634177,
+    "androidPostFrameJavaMediaStoreExportVerifiedSyntheticApk": true,
+    "androidPrivateActualJniOriginalActivationAndStaleRejectionVerified": true,
+    "androidHeadlessRealJniStaleRepeatPending": true,
+    "androidPrivateLivePropCollisionTrialPending": true,
+    "androidPrivateP2ConstructorAndDetachedStorageTrialPending": true,
     "androidLivePropInstrumentedTrialFrameLowerBound": 2940,
     "androidLivePropImpactOrAreaWriterObserved": false,
     "androidLivePropDirectNativeWriterReadbackVerified": true,

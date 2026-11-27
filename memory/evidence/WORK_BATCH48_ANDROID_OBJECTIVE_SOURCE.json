@@ -137,6 +137,37 @@
     "androidSourceArtifactMinApi": 29,
     "originalGameApkStarted": false
   },
+  "javaPostFrameDiagnosticExportCi": {
+    "commit": "9260620f85f30343695fa8658f9e8882f6a47c8f",
+    "androidPlatformRun": 45922634177,
+    "androidSourceUnitsRun": 45922634116,
+    "sourcePreflightRun": 45922634095,
+    "jvmTlsRun": 45922634099,
+    "allFourPassed": true,
+    "androidApi": 29,
+    "syntheticSignedApk": true,
+    "eventNamesInExportOrder": 6,
+    "publishedMediaStoreBytesMatched": true,
+    "originalGameApkStarted": false
+  },
+  "privateActualJniTrial": {
+    "activationAdapterCommit": "4f5c919366a591d63f6d2aaf68a9c438ea4815d6",
+    "headlessEngine": "Android ARM64 API 35",
+    "jniImplementation": "embedded OpenJDK 21 with -Xcheck:jni",
+    "javaFixtureSuppliedScopedFrame": true,
+    "privateCallerInvokedAdapterAfterOriginalFrame": true,
+    "activationFramesAtLeast": 2280,
+    "activationExit": 0,
+    "activationReadbackEventReachedJava": true,
+    "activationMarkersSha256": "36ba2a6593b9a2045116163bf0e2de7373c1b6de5d4089a18dd19d288e37ba22",
+    "staleFramesAtLeast": 2280,
+    "staleExit": 0,
+    "staleRejectedWithUnchangedNativeTable": true,
+    "staleMarkersSha256": "20076e6250e5f5a7114acbebe70b00c16ff29f838a154fe5c1329f37885d063e",
+    "someSeparateTrialsStoppedDuringVmStartupOrBeforeCampaign": true,
+    "realBlackActivityOrAndroidArtUsed": false,
+    "coOpRoomAndJniTogetherVerified": false
+  },
   "localChecks": {
     "androidArm64FrontendUnitsPassed": 7,
     "localCompilerMinApi": 24,
