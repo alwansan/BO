@@ -1,8 +1,8 @@
 {
   "latestRestoreVerification": {
     "date": "2026-11-28",
-    "verified_commit": "708d8f2eea37b6d959f630e93514f0805b4efa58",
-    "source_preflight_run": 46065451120,
+    "verified_commit": "448acb82c729d993c766f5174971a15b3ccb5e79",
+    "source_preflight_run": 46078514769,
     "source_preflight": "success",
     "android_synthetic_diagnostic_export_run": 45922634177,
     "android_shared_campaign_verified": false,
@@ -4675,12 +4675,20 @@
     "session": "memory/sessions/2026-11-28_bo-coop-work52-unit-publication-and-extra-pads.md",
     "evidence": "memory/evidence/WORK_BATCH51_NATIVE_INPUT_AND_PROP_SCOPE.json",
     "originalNativeExtraPadPortsAndDecoderCalls": {"2": 239, "3": 239},
+    "originalExtraPadIndependentOwnedBindingFrames": [240, 240],
+    "nativeSameAddressPropRelinkRevokedOldHandle": true,
+    "nativeExactTargetRayHitBeforeAndMissAfterPartDepletion": true,
+    "nativeExactPartTransitionAndRayReadbackAcrossIndependentProcesses": 2,
+    "nativePartTransitionChangedOrdinalRejectedBeforeWriter": true,
+    "sourceGuardedPartSampleAndDepletionPredicateSanitizerPassed": true,
     "privateSoftwareAvatarFramesWithReadback": 6,
     "unitPublicationFenceLocalSourceAndSanitizerPassed": true,
+    "verifiedCodeRevision": "448acb82c729d993c766f5174971a15b3ccb5e79",
+    "successfulSourceChecks": [46078514788, 46078514769, 46078514827, 46078514802],
     "originalP3P4CampaignActorsVerified": false,
     "originalFullSceneAndPhysicalAndroidDisplayVerified": false,
     "acceptanceApk": false,
-    "next": "verify two independently owned sources against live P3/P4 pad components and same-address revocation through native unit rebind; wire actor, shared campaign and diagnostics into BlackActivity"
+    "next": "verify source part readback helper in the private paired trial, then carry the exact authored part transition in authenticated host scope; finish independent actors, shared campaign and BlackActivity diagnostics"
   },
   "workBatch51": {
     "date": "2026-11-27",

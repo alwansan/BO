@@ -193,6 +193,45 @@ bool ResolveOriginalUnitProp(const Memory& memory,Generation generation,
  return true;
 }
 
+struct OriginalUnitPropPartSample {
+ OriginalUnitPropHandle prop{};
+ uint32_t part=0,definition=0,healthBits=0;
+ uint8_t partIndex=0,partCount=0;
+};
+
+// 001E5070 writes health at the head of each 0x0C part row. 001D4A50
+// reads the definition at +4; UINT32_MAX is the invalidated descriptor.
+// Neither field alone proves collision or removal of the entire prop.
+template<class Memory,class Generation>
+bool SampleOriginalUnitPropPart(const Memory& memory,Generation generation,
+      uint32_t world,const OriginalUnitPropKey& key,uint8_t partIndex,
+      OriginalUnitPropPartSample& out) noexcept {
+ OriginalUnitPropHandle prop;
+ if(!ResolveOriginalUnitProp(memory,generation,world,key,prop))return false;
+ const uint32_t parts=memory.Read32(prop.object+0x1A0u);
+ const uint8_t count=memory.Read8(prop.object+0x1F5u);
+ if(partIndex>=count||(parts&3u)||!memory.Contains(parts,uint32_t(count)*0xCu))return false;
+ const uint32_t part=parts+uint32_t(partIndex)*0xCu;
+ const uint32_t health=memory.Read32(part),definition=memory.Read32(part+4u);
+ if(health>=0x7F800000u||memory.Read32(prop.object+0x1A0u)!=parts||
+    memory.Read8(prop.object+0x1F5u)!=count||
+    !unit_observation::Running(memory,world)||
+    unit_observation::Scene(memory,world)!=uint32_t(key.level)*256u+key.stage||
+    generation(world,prop.unit)!=prop.generation)
+  return false;
+ out={prop,part,definition,health,partIndex,count};
+ return true;
+}
+
+inline bool IsOriginalPartDepletion(const OriginalUnitPropPartSample& before,
+                                    const OriginalUnitPropPartSample& after) noexcept {
+ return before.prop.generation&&before.prop==after.prop&&before.part&&before.part==after.part&&
+   before.partCount==after.partCount&&before.partIndex==after.partIndex&&
+   before.partIndex<before.partCount&&before.definition!=UINT32_MAX&&
+   before.healthBits&&before.healthBits<0x7F800000u&&
+   after.healthBits==0&&after.definition==UINT32_MAX;
+}
+
 // Local diagnostic ledger only. The removals never export their ranges.
 class OriginalUnitLifecycle final {
  using Range=unit_observation::Range;

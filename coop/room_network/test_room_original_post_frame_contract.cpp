@@ -149,6 +149,27 @@ static void TestAuthoredPropResolution(){
  streamWorker.join();
  assert(ResolveOriginalUnitProp(memory,live,world,key,other)&&other!=first);
  assert(other.object==first.object&&other.generation>first.generation);
+ constexpr uint32_t parts=0x140000;
+ memory.Write32(other.object+0x1A0u,parts);
+ memory.Write32(other.object+0x1F4u,2u<<8);
+ memory.Write32(parts+0xCu,0x3F800000u);
+ memory.Write32(parts+0x10u,3);
+ OriginalUnitPropPartSample beforePart,afterPart;
+ assert(SampleOriginalUnitPropPart(memory,live,world,key,1,beforePart));
+ assert(beforePart.prop==other&&beforePart.part==parts+0xCu&&beforePart.definition==3);
+ assert(!SampleOriginalUnitPropPart(memory,live,world,key,2,afterPart));
+ memory.Write32(parts+0xCu,0);
+ assert(SampleOriginalUnitPropPart(memory,live,world,key,1,afterPart));
+ assert(!IsOriginalPartDepletion(beforePart,afterPart)); // health alone
+ memory.Write32(parts+0x10u,UINT32_MAX);
+ assert(SampleOriginalUnitPropPart(memory,live,world,key,1,afterPart));
+ assert(IsOriginalPartDepletion(beforePart,afterPart));
+ {
+   const OriginalUnitPublicationActivity::Mutation republish(activity);
+   assert(!SampleOriginalUnitPropPart(memory,live,world,key,1,afterPart));
+ }
+ assert(SampleOriginalUnitPropPart(memory,live,world,key,1,afterPart));
+ assert(!IsOriginalPartDepletion(beforePart,afterPart)); // recycled identity
  std::cout<<"ORIGINAL_AUTHORED_PROP_RESOLUTION_PASS: packed ordinal, live membership, scene and publication scope\n";
 }
 

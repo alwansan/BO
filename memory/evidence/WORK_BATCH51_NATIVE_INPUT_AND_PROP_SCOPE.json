@@ -138,6 +138,59 @@
     "processExit": 22,
     "allowlistedMarkersSha256": "9881d99a3b84a6d43c8614ead449c267425cc4c6147df83956081a38b28e460d"
   },
+  "nativeTargetSpecificCollisionTrial": {
+    "dateVerified": "2026-11-28",
+    "targetSiblingInvalidVisitsBeforeAfter": [[1, 1, 0], [0, 1, 0]],
+    "targetSiblingInvalidHitsBeforeAfter": [[1, 0, 0], [0, 0, 0]],
+    "targetPartHealthReachedZero": true,
+    "targetPartDescriptorReplacedWithUint32Max": true,
+    "sameWholePropRayMissesAfterWriter": true,
+    "directWriterInvocationOnly": true,
+    "playerTraversalOrNetworkReplicationVerified": false,
+    "framesAtLeast": 2280,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "allowlistedMarkersSha256": "b96ef8817ac3633f058a5a746e108cea296a7ab510a7c0deeba9a6f899613646"
+  },
+  "nativeExtraControllerOwnedSources": {
+    "dateVerified": "2026-11-28",
+    "matchingIndependentBindingFramesPerPort": [240, 240],
+    "decodedPositiveNegativeAndReleasedNeutralPerPort": [[52, 52, 125], [52, 52, 125]],
+    "stockDonorBytesAndControllerSourceRestoredEachCheck": true,
+    "ownedNeverPublishedSourcesFreed": 2,
+    "originalCampaignActorsCreated": 0,
+    "framesAtLeast": 2520,
+    "processExit": 0,
+    "allowlistedMarkersSha256": "95da7867c5e32621863f9f183fbae0e8e756c6e7deebdbc552a62d68876e6e07"
+  },
+  "nativeAuthoredPropPublicationRevocation": {
+    "dateVerified": "2026-11-28",
+    "verifiedCodeRevision": "448acb82c729d993c766f5174971a15b3ccb5e79",
+    "sameLocalObjectAndRecordAddressAfterNativeRestart": true,
+    "sameAuthoredKeyResolved": true,
+    "newPublicationGenerationObserved": true,
+    "originalLifecycleCodes": [2130, 2131, 2132, 2133],
+    "framesAtLeast": 2520,
+    "processExit": 0,
+    "allowlistedMarkersSha256": "69ec3899dcfeeb6fcba1b74398b4ed6da75a0c4b787ca19b4ad910180324265f"
+  },
+  "nativeAuthoredPropPartTransitionAcrossProcesses": {
+    "dateVerified": "2026-11-28",
+    "privateLocalFileHandoff": true,
+    "independentlyMatchedScopeAndRay": true,
+    "matchingWriterInvocations": 2,
+    "partDepletedAndRayMissedInBothProcesses": true,
+    "mismatchedAuthoredOrdinalRejectedBeforeWriter": true,
+    "framesAtLeast": [2280, 2340, 2340],
+    "processExitsSourceMatchingAndStale": [0, 0, 159],
+    "engineSignalsObserved": false,
+    "networkOrStockPlayerInteractionVerified": false,
+    "allowlistedMarkersSha256": [
+      "68bea1a8dca87a15f0cdabce3b3c3add7fdeccb1f4bded81d7c4d362a2dacff8",
+      "ec4c224b2f740265eb32b5460409521f436cbe455eca729309e05b4fd3035f91",
+      "f80a12fe328f8d7215bba20da645df39ebef3c4b595058de9a8661d1ff5adba3"
+    ]
+  },
   "blackActivityOriginalGameInputVerified": false,
   "productionHostRemotePadActivation": false,
   "acceptanceApk": false

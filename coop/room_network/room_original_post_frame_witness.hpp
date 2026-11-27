@@ -52,6 +52,14 @@ inline bool ResolveOriginalPropOnFrameThread(uint32_t world,const OriginalUnitPr
       world,key,out);
 }
 
+inline bool SampleOriginalPropPartOnFrameThread(uint32_t world,const OriginalUnitPropKey& key,
+      uint8_t partIndex,OriginalUnitPropPartSample& out) noexcept {
+  if(!OriginalUnitLifecycleOnFrameThread())return false;
+  return SampleOriginalUnitPropPart(OriginalUnitMembershipMemory{},
+      [](uint32_t,uint32_t) noexcept {return OriginalUnitPublications().Generation();},
+      world,key,partIndex,out);
+}
+
 inline void ApplyOriginalGuestObjectiveTransition(
     X86Context& ctx, uint32_t world, const OriginalGuestLaunchMatchKey& key) noexcept {
   static bool quarantined=false;
