@@ -1,7 +1,7 @@
 ## آخر تحديث Work49 (2026-11-27)
 
 - في مختبر Android، فُصل سجلّا صوت سلاح P2 وأُزيلت عضوية كائناته الصوتية العشرة بعد 104 تحديثات. تطابقت بيانات P1 ومحددات الصوت، ومر 1180 إطارًا بعد الإعادة وإعادة الربط. الكود `e976234` اجتاز [تجهيز المصدر](https://github.com/alwansan/BO/actions/runs/46051621633) و[وحدات Android](https://github.com/alwansan/BO/actions/runs/46051621595). [الدليل](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/evidence/WORK_BATCH49_ANDROID_P2_VOICE_RETIREMENT.json).
-- بقيت تخصيصات P2: السجلات الثلاثة المشتركة بقيت مطابقة خلال 104 تحديثات، لكن `001D5D90` يمسح قيمها. تتبّع مرفقي السلاح وفرع العرض `00095610` قبل عزل السجلات وتجربة التنظيف. لا APK قبول؛ العرض والتحكم الشبكي والعالم المشترك قيد العمل. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-27_bo-coop-work49-android-p2-voice-retirement.md).
+- أُلغي تسجيل عرض سلاح P2 الوحيد وبقي عرض P1 مطابقًا في قراءة الذاكرة. طابق رصد المخصص صف سلاح مشغولًا وصفًا فرعيًا؛ صفر مراجع له في جداول سلاح P1 و32 NPC. الخطوة التالية إثبات حاملي الصفين وعزلهما قبل التحرير، ثم عزل ثلاثة سجلات مستعارة من P1. لا APK قبول. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-27_bo-coop-work49-android-p2-voice-retirement.md).
 
 ## آخر تحديث Work48 (2026-11-27)
 

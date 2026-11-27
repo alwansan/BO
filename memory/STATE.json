@@ -4691,9 +4691,20 @@
     "p2ActiveWeaponPointerTableOwned": true,
     "p2NativeUpdatesWithAllThreeSampledSharedWeaponRecordsByteExact": 104,
     "p2ActiveViewmodelControllerHasNonNull04": true,
+    "p2ActiveWeaponAttachmentTableNonNullEntries": 1,
+    "p2WeaponAttachmentRowsAndFlagsExternalToManager": true,
+    "p2ViewmodelRegistrationExactKeyMatches": 1,
+    "p2ViewmodelRegistrationRowsExternalToTrackedController": true,
+    "p2SingleViewmodelRegistrationNativePilotVerified": true,
+    "p2SingleViewmodelRegistrationIntegratedSourceVerified": true,
+    "p2ViewmodelAndAudioRetirementPostRelinkRunningFrames": 1204,
+    "p1ViewmodelAndControllerByteExactAfterNativePilot": true,
+    "p2ActiveAttachmentSlotMappedToFrameVerifiedArena": true,
+    "p2OneOccupiedAttachmentAndOneNestedPoolRowVerified": true,
+    "p2AttachmentRowReferencesInP1And32NpcWeaponTables": 0,
     "actorStorageFreed": false,
     "acceptanceApk": false,
-    "next": "trace the two attachment slots behind P2's owned pointer table and the 00095610 viewmodel release branch, then isolate the three borrowed records before a guarded actor cleanup"
+    "next": "prove the weapon attachment row and its nested pool rows are exclusively owned and retire them with the original calls, then isolate the three borrowed records before a guarded actor cleanup"
   },
   "workBatch48": {
     "date": "2026-11-27",

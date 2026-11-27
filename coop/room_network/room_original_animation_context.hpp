@@ -42,6 +42,7 @@ class OriginalAnimationContext {
   std::thread::id owner_ = std::this_thread::get_id();
   uint64_t scene_ = 0;
   bool captured_ = false, entered_ = false;
+  std::array<bool, 2> registrationRetirementAttempted_{};
   uint32_t set_ = 0, table_ = 0, tops_ = 0, count_ = 0, bytes_ = 0, cache_ = 0;
   uint64_t setGeneration_ = 0, tableGeneration_ = 0, topsGeneration_ = 0,
            poolGeneration_ = 0;
@@ -365,6 +366,56 @@ public:
     }
     return true;
   }
+  // Terminal operation for a selected P2 viewmodel. Original 00095610
+  // takes (controller, model + 0x10); with exactly one matching entry it
+  // only decrements the signed count and leaves the external row untouched.
+  // The caller still owns restoring the stock animation context.
+  template <class IO, class Release>
+  bool RetireSingleViewmodelRegistration(IO &io, uint32_t model, Release invokeRelease) {
+    if (!Entered() || !CanExchange(io) ||
+        (model != set_ + 0x470u && model != set_ + 0x6B0u))
+      return false;
+    const size_t slot = model == set_ + 0x470u ? 0u : 1u;
+    auto *modelBytes = map(io, model, 0xBCu);
+    if (registrationRetirementAttempted_[slot] || !modelBytes ||
+        !modelBytes[0xB9u] || word(modelBytes + 0x58u))
+      return false;
+
+    const uint32_t controller = word(modelBytes + 0x54u);
+    const auto *controllerBytes = map(io, controller, 0x9D0u);
+    if (!controllerBytes || !word(controllerBytes + 4u) ||
+        controllerBytes[0x5Cu] != 1u || controllerBytes[0x5Du])
+      return false;
+    const uint32_t rows = word(controllerBytes + 0x58u);
+    const auto *row = map(io, rows, 12u);
+    const auto generation = io.Generation(rows, 12u);
+    if (!row || !generation || word(row) != model + 0x10u)
+      return false;
+
+    std::array<uint8_t, 0x9D0u> expectedController{};
+    std::array<uint8_t, 12u> expectedRow{};
+    std::memcpy(expectedController.data(), controllerBytes, expectedController.size());
+    std::memcpy(expectedRow.data(), row, expectedRow.size());
+    expectedController[0x5Cu] = 0;
+
+    registrationRetirementAttempted_[slot] = true;
+    try {
+      if (!invokeRelease(controller, model + 0x10u) || !CanExchange(io))
+        return false;
+      modelBytes = map(io, model, 0xBCu);
+      controllerBytes = map(io, controller, 0x9D0u);
+      row = map(io, rows, 12u);
+      if (!modelBytes || !controllerBytes || !row || io.Generation(rows, 12u) != generation ||
+          std::memcmp(expectedController.data(), controllerBytes, expectedController.size()) ||
+          std::memcmp(expectedRow.data(), row, expectedRow.size()))
+        return false;
+      modelBytes[0xB9u] = 0;
+      return true;
+    } catch (...) {
+      return false;
+    }
+  }
+
   template <class IO> bool Exchange(IO &io) {
     if (!CanExchange(io))
       return false;

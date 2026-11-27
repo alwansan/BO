@@ -329,6 +329,36 @@ int main() {
     snd.audioEffectsOwned=false;before=snd.m;
     assert(!sound.Exchange(snd)&&sound.Quarantined()&&snd.m==before);
   }
+  {
+    IO io;
+    OriginalAnimationContext animation;
+    constexpr uint32_t model=0x300470u,controller=0x320000u,rows=0x608000u;
+    assert(animation.ObserveOriginalCacheConstructor(io,0x600000u)&&animation.Capture(io));
+    const auto stock=io.m;
+    assert(animation.Exchange(io));
+    io.m[model+0xB9u]=1;
+    io.w(controller+4u,77u);
+    io.w(controller+0x58u,rows);
+    io.w(controller+0x5Cu,1u);
+    io.w(rows,model+0x14u);
+    unsigned calls=0;
+    const auto release=[&](uint32_t target,uint32_t key){
+      assert(target==controller&&key==model+0x10u);
+      ++calls;
+      io.m[controller+0x5Cu]=0;
+      return true;
+    };
+    assert(!animation.RetireSingleViewmodelRegistration(io,model,release)&&calls==0u);
+    io.w(rows,model+0x10u);
+    assert(animation.RetireSingleViewmodelRegistration(io,model,release)&&calls==1u);
+    assert(!io.m[model+0xB9u]&&!io.r(controller+0x5Cu)&&io.r(rows)==model+0x10u);
+    io.m[model+0xB9u]=1;
+    io.w(controller+0x5Cu,1u);
+    assert(!animation.RetireSingleViewmodelRegistration(io,model,release)&&calls==1u);
+    assert(animation.Exchange(io)&&!animation.Entered());
+    assert(std::memcmp(stock.data()+model,io.m.data()+model,0x240u)==0);
+    assert(std::memcmp(stock.data()+controller,io.m.data()+controller,0x9D0u)==0);
+  }
   for(const bool failSecond:{false,true}){
     IO io;OriginalWeaponSoundContext sound;
     constexpr uint32_t manager=0x181000u,pool=0x194000u;
