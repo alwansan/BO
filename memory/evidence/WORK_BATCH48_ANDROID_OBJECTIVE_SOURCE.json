@@ -188,6 +188,17 @@
     "rootArenaTeardownVerified": false,
     "allowlistedMarkersSha256": "f2f632bc663e6da2e85124b965b56e8f51d02a187bad2768323ff0ef000b2468"
   },
+  "originalPresentationRootArenaTrial": {
+    "sourceRevision": "54899ac7222912ac10c392816c2b25ddf01837e0",
+    "framesAtLeast": 2460,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "orderedLifecycleEvents": [2130, 2131, 2132, 2133],
+    "originalGameHeapAllocationsIndependentlyMatched": ["viewmodelRoot", "effectsRoot", "npcPool", "physicsRoot", "weaponManager"],
+    "runningFrameSamplesWhereAllSevenOriginalRootsMatched": 1026,
+    "nestedViewmodelAndWeaponAllocationsOrTeardownVerified": false,
+    "allowlistedMarkersSha256": "9206b0159966741cdacb7402938a0e213e68bcca74b9e225a4d56acee6c2939f"
+  },
   "ownedAudioBankLifecycleTrial": {
     "framesAtLeast": 2400,
     "processExit": 0,
@@ -239,6 +250,21 @@
     "fullWeaponLoadOrPlaybackExercised": false,
     "allowlistedMarkersSha256": "093614a08a76e4669e2091f0a7b3facbfac413be0328384148337f836e079468"
   },
+  "stationaryTenAudioObjectsTrial": {
+    "backingLayoutCommit": "91124f465a59c6ae938b6d2b3cc34468c32c1ac4",
+    "framesAtLeast": 2280,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "ownedSoundsPublishedTogether": 6,
+    "ownedLargeBanksPublishedTogether": 2,
+    "ownedSmallBanksPublishedTogether": 2,
+    "nativeRemovalsVerifiedBeforeFree": 10,
+    "originalReservationAndReturnVerified": true,
+    "separateSelectorPlus14ObjectUnchangedByReservationAndReturn": true,
+    "originalPoolAndBanksByteIdenticalAfterCleanup": true,
+    "fullPlaybackOrP2SetupExercised": false,
+    "allowlistedMarkersSha256": "3e212cb68043f9d761dbc230b556c4e8ed258d8a9fd2dbc473a536a007a6655e"
+  },
   "actorCameraExchangeAndStockRestartTrial": {
     "framesAtLeast": 1620,
     "processExit": 0,
@@ -277,6 +303,32 @@
     "cacheDestructionObserved": 0,
     "nativeAnimationExchangeInvoked": false,
     "allowlistedMarkersSha256": "d6a2a28867c6be011a2c6d99e6bd27938ee35e6d04ed1041a10b350127b3d3f5"
+  },
+  "originalViewmodelWorkspaceShapeTrial": {
+    "framesAtLeast": 2460,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "liveCacheFrames": 1025,
+    "completeWorkspaceShapeFrames": 0,
+    "firstPersonNpcBlockSeparationVerified": false,
+    "allowlistedMarkersSha256": "0018c53cca8efc6356853a7588ed58d78a972bbcf1b2d9a404a751875ddf6aff"
+  },
+  "detachedOriginalPlayerProxyTrial": {
+    "sourceRevision": "54899ac7222912ac10c392816c2b25ddf01837e0",
+    "framesAtLeast": 1440,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "nativeAcquire000DF400ReturnedSuccess": true,
+    "acquiredExpectedSeparateOccupiedSlotWithOwnedActorBacklink": true,
+    "p1AndP2MotionPointersDistinct": true,
+    "nativeRelease000DBBE0ClearedActorAndProxyBacklinks": true,
+    "allTwentyOccupancyBytesRestored": true,
+    "p1ActorAndMotionByteIdentical": true,
+    "setup001E0E40InvokedForP2": false,
+    "authoredP1ColliderSharedByFixture": true,
+    "frameSpanningMovementOrWorldRegistrationExercised": false,
+    "fullP2ResourcesFreed": false,
+    "allowlistedMarkersSha256": "ea4cde3d8cc26461f53cd1c4b2cfd2547f1d370cad6c70c123e49da768383d40"
   },
   "ci": {
     "commit": "fe5b3aac7ce355b440891ee4418cb5100f19ace7",
