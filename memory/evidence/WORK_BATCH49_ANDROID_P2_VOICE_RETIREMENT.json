@@ -288,6 +288,17 @@
     "allocationsFreed": 0,
     "allowlistedMarkersSha256": "07e1192305e7590fddc85352572e8ad6c6b5140788a6a483a3e713e966425a72"
   },
+  "constructorOnlyZeroMatchLayoutSearch": {
+    "dateVerified": "2026-11-28",
+    "candidateLayoutsRejectedBeforeMaterialization": 24,
+    "zeroMatchLayoutFound": false,
+    "nativeP2Published": false,
+    "engineTouchedStorageFreed": false,
+    "framesAtLeast": 1620,
+    "processExit": 154,
+    "engineSignalObserved": false,
+    "allowlistedMarkersSha256": "2ecd386d5d08003856c2c9b9ed6952259c57d8abdd58332afc3c248c004fc8a7"
+  },
   "originalActorCleanupSource": {
     "ownerXbeSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
     "firstPersonVtablePlus0C": "001D5D90",

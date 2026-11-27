@@ -76,6 +76,36 @@
     "faultDescription": "reference CPU renderer indexed a stock draw's shaded vertex array; the frame did not reach avatar pixel readback",
     "allowlistedMarkersSha256": "abe8f1ede6919076873719e0c1efb9f13a76e68fb1862da4ac7791838693b204"
   },
+  "nativeAvatarMarkerSoftwareReadback": {
+    "dateVerified": "2026-11-28",
+    "originalGridCameraSamples": [104, 104],
+    "stockCameraAndLiveP2BodyFeetUsed": true,
+    "temporaryModOwnedBox": true,
+    "sampledMarkerDraws": 6,
+    "sampledDrawsWithNewMarkerColorPixels": 6,
+    "peakNewMarkerColorPixels": 37413,
+    "nativeP2CommandsConsumed": 104,
+    "playerDisplacementMillimeters": [4324, 8487],
+    "fullStockSceneRasterizedInThisTrial": false,
+    "realAndroidGpuOrOnScreenOutputVerified": false,
+    "framesAtLeast": 1500,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "allowlistedMarkersSha256": "af0707c97d64d9e242db6670bbc4244d4ea2254ddbbaed81dbb4e8a63dd6921c"
+  },
+  "nativeExtraControllerTopology": {
+    "dateVerified": "2026-11-28",
+    "hardwarePorts": [2, 3],
+    "matchingComponentAndRecordFramesPerPort": [240, 240],
+    "positiveNegativeAndReleasedNeutralSamplesPerPort": [[52, 52, 125], [52, 52, 125]],
+    "naturalDecoderCallsPerPort": [239, 239],
+    "manualDecoderInvocation": false,
+    "extraCampaignActorsProven": false,
+    "framesAtLeast": 1860,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "allowlistedMarkersSha256": "9f5ff3e17258f48fbd89cf867cb7f71be3b05e1dbcd1d8a9e46ab844b15c678b"
+  },
   "propCollisionReadPathStaticNotes": {
     "dateVerified": "2026-11-28",
     "rayQueryEntry": "001D4A50",
@@ -97,6 +127,16 @@
     "processExit": 22,
     "engineSignalObserved": false,
     "allowlistedMarkersSha256": "ede50dcd42ca605f9d9282579c78249a57f462194208a7525e4a70d9a077558c"
+  },
+  "nativePartRayVisitTrial": {
+    "dateVerified": "2026-11-28",
+    "partRayCallReturnSite": "001D4BA3",
+    "targetSiblingInvalidVisitsBeforeAfter": [[0, 1, 0], [0, 1, 0]],
+    "wholePropRayHitBeforeAndAfter": true,
+    "rayNeverTestedTheDepletedPart": true,
+    "framesAtLeast": 1620,
+    "processExit": 22,
+    "allowlistedMarkersSha256": "9881d99a3b84a6d43c8614ead449c267425cc4c6147df83956081a38b28e460d"
   },
   "blackActivityOriginalGameInputVerified": false,
   "productionHostRemotePadActivation": false,

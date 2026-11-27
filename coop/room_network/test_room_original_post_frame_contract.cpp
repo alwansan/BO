@@ -131,6 +131,24 @@ static void TestAuthoredPropResolution(){
  publish(objects+0x2000);
  assert(ResolveOriginalUnitProp(memory,generation,world,key,other)&&other!=first);
  assert(other.object==objects+0x2200&&other.record==first.record);
+ OriginalUnitPublicationActivity activity;
+ const auto live=[&](uint32_t,uint32_t) noexcept {return activity.Generation();};
+ assert(ResolveOriginalUnitProp(memory,live,world,key,first));
+ {
+   const OriginalUnitPublicationActivity::Mutation unlink(activity);
+   {
+     const OriginalUnitPublicationActivity::Mutation nestedStream(activity);
+     assert(!ResolveOriginalUnitProp(memory,live,world,key,other));
+   }
+   assert(!ResolveOriginalUnitProp(memory,live,world,key,other));
+ }
+ std::thread streamWorker([&]{
+   const OriginalUnitPublicationActivity::Mutation link(activity);
+   assert(!activity.Generation());
+ });
+ streamWorker.join();
+ assert(ResolveOriginalUnitProp(memory,live,world,key,other)&&other!=first);
+ assert(other.object==first.object&&other.generation>first.generation);
  std::cout<<"ORIGINAL_AUTHORED_PROP_RESOLUTION_PASS: packed ordinal, live membership, scene and publication scope\n";
 }
 

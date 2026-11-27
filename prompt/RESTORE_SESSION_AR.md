@@ -1,3 +1,7 @@
+## آخر تحديث Work52 (2026-11-28)
+
+- ظهر مجسم P2 المؤقت في ست عينات رسم برمجية بكاميرا BLACK الأصلية. فكّ المحرك إدخال المنفذين 2 و3 طبيعيًا؛ ممثلا P3/P4 غير مثبتين. حارس نشر الوحدات يبطل المقابض عند التحميل والربط والفصل. تابع ربط الممثلين و`BlackActivity` وتصادم الجزء وتقدّم الحملة. لا APK قبول. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-28_bo-coop-work52-unit-publication-and-extra-pads.md).
+
 ## آخر تحديث Work51 (2026-11-27)
 
 - استهلك P2 في المختبر 104 أوامر TLS عبر جسر محلي، وتغيّر تصويبه أفقيًا ورأسيًا وعاد منفذه إلى الحياد عند الانقطاع. نجح تحقق JNI المعزول. طابقت عمليتان هوية عنصر مؤلف؛ نقصت صحة جزئه إلى صفر وبقي الشعاع يصيب المجسّم. نجح [فحص `708d8f2`](https://github.com/alwansan/BO/actions/runs/46065451120). تابع بكسلات المجسم وربط `BlackActivity` وتزامن التصادم. لا APK قبول. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-27_bo-coop-work51-native-input-and-prop-scope.md).

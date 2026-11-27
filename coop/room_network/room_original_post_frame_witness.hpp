@@ -29,6 +29,11 @@ struct OriginalUnitMembershipMemory {
  }
 };
 
+inline OriginalUnitPublicationActivity& OriginalUnitPublications() noexcept {
+  static OriginalUnitPublicationActivity activity;
+  return activity;
+}
+
 inline OriginalUnitLifecycle* OriginalUnitLifecycleOnFrameThread(bool bind=false)noexcept{
  static std::atomic<OriginalUnitLifecycle*> state{nullptr};
  if(bind){
@@ -36,7 +41,15 @@ inline OriginalUnitLifecycle* OriginalUnitLifecycleOnFrameThread(bool bind=false
    state.store(&observer,std::memory_order_release);
  }
  auto* observer=state.load(std::memory_order_acquire);
- return observer&&observer->OnFrameThread()?observer:nullptr;
+  return observer&&observer->OnFrameThread()?observer:nullptr;
+}
+
+inline bool ResolveOriginalPropOnFrameThread(uint32_t world,const OriginalUnitPropKey& key,
+                                             OriginalUnitPropHandle& out) noexcept {
+  if(!OriginalUnitLifecycleOnFrameThread())return false;
+  return ResolveOriginalUnitProp(OriginalUnitMembershipMemory{},
+      [](uint32_t,uint32_t) noexcept {return OriginalUnitPublications().Generation();},
+      world,key,out);
 }
 
 inline void ApplyOriginalGuestObjectiveTransition(

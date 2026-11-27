@@ -71,6 +71,8 @@ class RoomNetPrepareTests(unittest.TestCase):
                 body=cheats.split(f'X86_FUNC(sub_{address}) {{',1)[1].split('\n}',1)[0]
                 original=f'__imp__sub_{address}(ctx,base);'
                 self.assertEqual(body.count(original),1)
+                self.assertLess(body.index('OriginalUnitPublicationActivity::Mutation'),
+                                body.index(original))
                 self.assertLess(body.index(f'Before{name}(memory,{argument})'),body.index(original))
                 self.assertLess(body.index(original),body.index(f'After{name}(memory,{after})'))
             self.assertIn('coopRecordOriginalPlayerEye(int xCm,int yCm,int zCm,',java)

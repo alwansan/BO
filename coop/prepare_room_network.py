@@ -538,6 +538,7 @@ X86_FUNC(sub_001F1080) {
 // Only the pinned early teardown return sites can start a relink observation.
 X86_EXTERN_FUNC(__imp__sub_001EB1F0);
 X86_FUNC(sub_001EB1F0) {
+    const blackcoop::OriginalUnitPublicationActivity::Mutation publication(blackcoop::OriginalUnitPublications());
     auto* lifecycle=blackcoop::OriginalUnitLifecycleOnFrameThread();
     const blackcoop::OriginalUnitMembershipMemory memory;
     const auto before=lifecycle?lifecycle->BeforeUnlink(memory,ctx.esp):
@@ -550,6 +551,7 @@ X86_FUNC(sub_001EB1F0) {
 // Stream publication passes the unit in ECX and returns readiness in AL.
 X86_EXTERN_FUNC(__imp__sub_001EB7F0);
 X86_FUNC(sub_001EB7F0) {
+    const blackcoop::OriginalUnitPublicationActivity::Mutation publication(blackcoop::OriginalUnitPublications());
     auto* lifecycle=blackcoop::OriginalUnitLifecycleOnFrameThread();
     const blackcoop::OriginalUnitMembershipMemory memory;
     const uint32_t unit=lifecycle?lifecycle->BeforePoll(memory,ctx.ecx):0;
@@ -559,6 +561,7 @@ X86_FUNC(sub_001EB7F0) {
 
 X86_EXTERN_FUNC(__imp__sub_001EB440);
 X86_FUNC(sub_001EB440) {
+    const blackcoop::OriginalUnitPublicationActivity::Mutation publication(blackcoop::OriginalUnitPublications());
     auto* lifecycle=blackcoop::OriginalUnitLifecycleOnFrameThread();
     const blackcoop::OriginalUnitMembershipMemory memory;
     const uint32_t unit=lifecycle?lifecycle->BeforeLink(memory,ctx.esp):0;

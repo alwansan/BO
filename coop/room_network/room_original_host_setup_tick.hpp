@@ -167,10 +167,10 @@ public:
   entered_=false;return true;
  }
 };
-// Original source +C points at its own input component. Pinned PC
-// black_p2_update proves manager+98, P2 stride 120. For every candidate,
-// including P3/P4, require the actual vtable, port index and shared input
-// records from original sub_000C5A80 before any owned-source write.
+// Original source +C points to its input component. The pinned BLACK
+// startup provisions four components at manager+98 with stride 120;
+// 000C5A80 consumes the selected shared hardware record. Check the live
+// vtable, port and record before every owned-source write or reuse.
 class OriginalHumanPadBinding final {
  const std::thread::id thread_=std::this_thread::get_id();
  uint64_t generation_=0;

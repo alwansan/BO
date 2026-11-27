@@ -7,7 +7,7 @@
     "android_synthetic_diagnostic_export_run": 45922634177,
     "android_shared_campaign_verified": false,
     "acceptance_apk_ready": false,
-    "next": "Verify P2 avatar pixel readback using the original live camera, wire production actor and Android JNI scope, and prove shared prop collision, campaign progression and original APK diagnostics."
+    "next": "Connect native P3/P4 pad bindings and original prop lifetime to live guarded scopes; integrate production actor and Android JNI, complete shared part collision and campaign progression, and verify original APK diagnostics."
   },
   "schema": 1,
   "agent": "BO-COOP",
@@ -20,7 +20,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-27_bo-coop-work51-native-input-and-prop-scope.md",
+  "lastSession": "memory/sessions/2026-11-28_bo-coop-work52-unit-publication-and-extra-pads.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -4670,6 +4670,18 @@
     "acceptanceApk": false,
     "next": "trace the original objective writer and its UI readback in the Android campaign, then verify scoped guest effect and APK diagnostics before activation"
   },
+  "workBatch52": {
+    "date": "2026-11-28",
+    "session": "memory/sessions/2026-11-28_bo-coop-work52-unit-publication-and-extra-pads.md",
+    "evidence": "memory/evidence/WORK_BATCH51_NATIVE_INPUT_AND_PROP_SCOPE.json",
+    "originalNativeExtraPadPortsAndDecoderCalls": {"2": 239, "3": 239},
+    "privateSoftwareAvatarFramesWithReadback": 6,
+    "unitPublicationFenceLocalSourceAndSanitizerPassed": true,
+    "originalP3P4CampaignActorsVerified": false,
+    "originalFullSceneAndPhysicalAndroidDisplayVerified": false,
+    "acceptanceApk": false,
+    "next": "verify two independently owned sources against live P3/P4 pad components and same-address revocation through native unit rebind; wire actor, shared campaign and diagnostics into BlackActivity"
+  },
   "workBatch51": {
     "date": "2026-11-27",
     "session": "memory/sessions/2026-11-27_bo-coop-work51-native-input-and-prop-scope.md",
@@ -4683,6 +4695,7 @@
     "nativeP2HorizontalAndVerticalTurningSamples": [95, 95],
     "nativeP2ControlRevokedWhenGuestDisconnected": true,
     "nativeP2SameOriginalGridAndPrimaryCameraFrames": 104,
+    "nativeP2SoftwareAvatarPixelsVerifiedInSampledFrames": 6,
     "nativePropAuthoredKeyResolvedByIndependentOriginalProcesses": 2,
     "nativePropTargetPartDepletedAndDescriptorInvalidatedInLab": true,
     "sameWholePropRayStillHitsAfterPartDepletion": true,
@@ -4773,6 +4786,7 @@
     "p1MovementFramesAfterP2FourBlockReclaim": 80,
     "p2AllBlockTrialRejectedBeforeFreeOnNewPhysicalActorMatch": true,
     "p2AllBlockLargerGapTrialAlignedMatchesBeforeAndAfter": [3, 0],
+    "p2ZeroBaselineMatchConstructorLayoutsRejected": 24,
     "p2PostWorldRegisterFramesAfterRelink": 1085,
     "p2PostWorldRegisterMatchesByOwnedTarget": [0, 0, 0, 0, 0],
     "p2AttachmentRowReferencesInP1And32NpcWeaponTables": 0,

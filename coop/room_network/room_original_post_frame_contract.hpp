@@ -6,6 +6,7 @@
 #pragma once
 #include "room_original_running_scene_source_gate.hpp"
 #include <array>
+#include <atomic>
 #include <cstdint>
 #include <thread>
 namespace blackcoop {
@@ -103,6 +104,34 @@ struct OriginalUnitPropHandle {
  uint32_t unit=0,object=0,record=0;
  uint64_t generation=0;
  bool operator==(const OriginalUnitPropHandle&) const noexcept=default;
+};
+
+// Invalidate local handles around original stream, link and unlink calls,
+// even when a call comes from outside the game thread. This is a publication
+// fence, not a lock on original memory: resolve at the original frame boundary.
+class OriginalUnitPublicationActivity final {
+ std::atomic<uint64_t> generation_{1};
+ std::atomic<unsigned> active_{0};
+public:
+ class Mutation final {
+  OriginalUnitPublicationActivity& owner_;
+ public:
+  explicit Mutation(OriginalUnitPublicationActivity& owner) noexcept:owner_(owner){
+   owner_.active_.fetch_add(1);
+   auto generation=owner_.generation_.load();
+   while(generation!=UINT64_MAX&&
+         !owner_.generation_.compare_exchange_weak(generation,generation+1)) {}
+  }
+  ~Mutation(){owner_.active_.fetch_sub(1);}
+  Mutation(const Mutation&)=delete;
+  Mutation& operator=(const Mutation&)=delete;
+ };
+
+ uint64_t Generation() const noexcept {
+  const auto value=generation_.load();
+  if(value==UINT64_MAX||active_.load()!=0||generation_.load()!=value)return 0;
+  return value;
+ }
 };
 
 // The caller's game-thread generation source must revoke a publication on
