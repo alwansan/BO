@@ -66,6 +66,15 @@
     "presentationPixelsVerified": false,
     "allowlistedMarkersSha256": "e3acb036149289b67a478d32aa2d6576a59f505f18f61875d05b21b63c3a9408"
   },
+  "propCollisionReadPathStaticNotes": {
+    "dateVerified": "2026-11-28",
+    "rayQueryEntry": "001D4A50",
+    "directPartDescriptorSentinelCheckObserved": true,
+    "directPartHealthLoadInDescriptorCheck": false,
+    "damageWriterEntry": "001E5070",
+    "writerDirectCalleeForFurtherObservation": "001E4B80",
+    "newCollisionEffectVerified": false
+  },
   "blackActivityOriginalGameInputVerified": false,
   "productionHostRemotePadActivation": false,
   "acceptanceApk": false
