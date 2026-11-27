@@ -302,18 +302,22 @@ template<class Presentation>class OriginalSetupKernelIO final {
    // a non-null preconstructed kind-2 resource in its own free slot.
    constexpr uint32_t root=0x2D1988u;
    uint32_t ai=0,targets=0,resources=0,occupancy=0,count=0;
-   if(!Read32(root,ai)||!storage_.Span(ai,0x22CDCu)||
+   if(!lifetime_||!Read32(root,ai)||!storage_.Span(ai,0x22CDCu)||
       !Read32(ai+0xFA8u,targets)||targets==UINT32_MAX||
       !Read32(ai+0x22CD0u,resources)||!Read32(ai+0x22CD4u,occupancy)||
       !Read32(ai+0x22CD8u,count)||!count||count>32u||
       !storage_.Span(resources,count*4u)||!storage_.Span(occupancy,count))return false;
+   const auto aiGeneration=lifetime_(ai,0x22D10u);
+   if(!aiGeneration)return false;
    for(uint32_t slot=0;slot<count;++slot){
-    uint32_t resource=0,actor=0,current=0;uint8_t taken=1;
+    uint32_t resource=0,table=0,actor=0,current=0;uint8_t taken=1;
     if(!storage_.Read8(occupancy+slot,taken))return false;
     if(taken)continue;
     // Native registration picks the first free flag and dereferences its row.
-    return Read32(resources+slot*4u,resource)&&storage_.Span(resource,0x24u)&&
-     Read32(resource+0x20u,actor)&&!actor&&Read32(root,current)&&current==ai;
+    return Read32(resources+slot*4u,resource)&&storage_.Span(resource,0x70u)&&
+     lifetime_(resource,0x70u)&&Read32(resource,table)&&table==0x28F61Cu&&
+     Read32(resource+0x20u,actor)&&!actor&&Read32(root,current)&&current==ai&&
+     lifetime_(ai,0x22D10u)==aiGeneration;
    }
    return false;
   }
