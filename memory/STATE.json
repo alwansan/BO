@@ -7,7 +7,7 @@
     "android_synthetic_diagnostic_export_run": 45922634177,
     "android_shared_campaign_verified": false,
     "acceptance_apk_ready": false,
-    "next": "Verify the staged host publisher with a stock prop-depletion call, prove guest publication lifetime during playback, and load owned sound table entries before testing P2 firing again."
+    "next": "Isolate the private immediate-mode rendering abort, then prove an aimed stock hit reaches the staged host publisher. Establish guest publication lifetime and owned P2 sound table loading."
   },
   "schema": 1,
   "agent": "BO-COOP",
@@ -4690,10 +4690,11 @@
     "p2FireEmptyAudioBankIsSoundRowBase": true,
     "p2FireSoundTableOwnershipAndShotReadbackVerified": false,
     "stockPropObserverStockInputTrialTimedOutWithoutGuardedCall": true,
+    "stockPropAimErrorTrialAbortedInPrivateImmediateModeRenderer": true,
     "liveBlackActivityHostPublishToGuestWriteVerified": false,
     "productionActorRetirementVerified": false,
     "acceptanceApk": false,
-    "next": "aim stock P1 at a source-matched breakable prop and verify the native publisher; prove guest publication lifetime during application and trace the stock sound table's external entry allocations before equivalent P2 loading"
+    "next": "isolate the private immediate-mode rendering abort and tune stock aim with independent axis readback, then verify the native publisher; prove guest publication lifetime and own P2 sound table entries"
   },
   "workBatch52": {
     "date": "2026-11-28",

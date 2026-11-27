@@ -270,6 +270,19 @@
     "engineSignalObserved": false,
     "allowlistedMarkersSha256": "a3cd6b4b3ca871f5ab28933e1e8684fcf5cf40e6fac8c4837ae4c882fd971933"
   },
+  "stockPropAimWithErrorReadback": {
+    "dateVerified": "2026-11-28",
+    "aimErrorSamples": 240,
+    "firstAndLowestYawErrorMilliradians": [1221, 797],
+    "firstAndLowestPitchErrorMilliradians": [166, 134],
+    "reachedFireCondition": false,
+    "originalDamageWriterObserved": false,
+    "privateRendererTrace": ["d3d::Walk", "EndImmediate"],
+    "framesAtLeast": 1800,
+    "processExit": 134,
+    "signal": 6,
+    "allowlistedMarkersSha256": "85a2af84450d818efb4dcbc3a5b1df31413452d7de22d21a9f8d66ff7ff25be5"
+  },
   "nativeGuardedPartInboxWithRealTlsRelay": {
     "dateVerified": "2026-11-28",
     "realTlsGuestFrameWords": 14,
