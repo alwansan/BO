@@ -884,6 +884,20 @@
     "colliderStorageRetained": true,
     "allowlistedMarkersSha256": "9af52b536fd8e9f81881e63aca531e5d1ec30211ec9d1bce4f70abce7f7ea011"
   },
+  "originalAndroidRetiredBodyAndMotionNativeReuseTrial": {
+    "repositorySourceBaseline": "c854e1746775bdb6730b878dcee45e1ffab9fbbc",
+    "framesAtLeast": 2760,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "nativeProxyReacquireReleaseCycles": 59,
+    "replacementColliderIndependentlyConstructed": true,
+    "oldBodyReused": true,
+    "oldMotionRowReused": true,
+    "oldBodyAndMotionReferencesCleared": true,
+    "p1ActorAndMotionRowBytesExactAcrossReuse": true,
+    "colliderStorageFreeAttempted": false,
+    "allowlistedMarkersSha256": "f29de87bcd0003b341ae296cac759f4bf379f500f67bb2e74660d37e5609bfaf"
+  },
   "originalSimpleObjectiveCompletionRoomAndJniVerification": {
     "sourceRevision": "0ea1eeefce95c1214cc924aa027637d4830097b9",
     "authenticatedLoopbackTlsAfterStoryCommit": true,
