@@ -12,7 +12,7 @@ public final class WireTest {
   check(RoomWire.parseJoin(RoomWire.decode(frame)).name.equals("علي"));
   byte[] wrong=frame.clone();wrong[4]=99;rejects(()->RoomWire.decode(wrong));
   // Version 9 peers cannot safely consume the new objective chunk stream.
-   check(RoomWire.VERSION==11&&RoomWire.PROFILE==11);
+   check(RoomWire.VERSION==12&&RoomWire.PROFILE==12);
   byte[] oldVersion=frame.clone();oldVersion[4]=9;
   rejects(()->RoomWire.decode(oldVersion));
   byte[] oldProfile=frame.clone();oldProfile[8+20]=0;oldProfile[8+20+1]=9;

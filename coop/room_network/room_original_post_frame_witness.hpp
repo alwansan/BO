@@ -60,6 +60,43 @@ inline bool SampleOriginalPropPartOnFrameThread(uint32_t world,const OriginalUni
       world,key,partIndex,out);
 }
 
+struct OriginalPropDamageObservation {
+ uint32_t world=0;
+ OriginalUnitPropKey key{};
+ OriginalUnitPropPartSample before{};
+};
+
+inline OriginalPropDamageObservation ObserveOriginalPropDamageBefore(
+    uint32_t object,uint32_t stack) noexcept {
+ const OriginalUnitMembershipMemory memory;
+ if(!OriginalUnitLifecycleOnFrameThread()||(stack&3u)||!memory.Contains(stack,8u))return {};
+ const auto caller=memory.Read32(stack);
+ if(caller!=0x001E58E8u&&caller!=0x001E55C5u)return {};
+ const auto part=memory.Read32(stack+4u);
+ if(part>UINT8_MAX)return {};
+ const auto world=unit_observation::World(memory);
+ OriginalUnitPropKey key;
+ if(!IdentifyOriginalUnitProp(memory,[](uint32_t,uint32_t) noexcept {
+      return OriginalUnitPublications().Generation();
+    },world,object,key))return {};
+ OriginalUnitPropPartSample before;
+ if(!SampleOriginalPropPartOnFrameThread(world,key,static_cast<uint8_t>(part),before)||
+    before.prop.object!=object||!before.healthBits||before.definition==UINT32_MAX)return {};
+ return {world,key,before};
+}
+
+inline void ObserveOriginalPropDamageAfter(const OriginalPropDamageObservation& observed) noexcept {
+ if(!observed.world)return;
+ OriginalUnitPropPartSample after;
+ if(!SampleOriginalPropPartOnFrameThread(observed.world,observed.key,
+      observed.before.partIndex,after)||!IsOriginalPartDepletion(observed.before,after))return;
+ static bool firstDepletion=false;
+ if(!firstDepletion){
+   firstDepletion=true;
+   SendSafeWorldCodeToAndroid(2138);
+ }
+}
+
 inline void ApplyOriginalGuestObjectiveTransition(
     X86Context& ctx, uint32_t world, const OriginalGuestLaunchMatchKey& key) noexcept {
   static bool quarantined=false;

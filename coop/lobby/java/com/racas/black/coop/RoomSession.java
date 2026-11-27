@@ -822,6 +822,17 @@ public final class RoomSession implements AutoCloseable {
      */
     public boolean offerOriginalHostObjectEventFromGameThread(
            int episode,int sequence,int tick,long stableKey,int kind,int state){
+        return offerOriginalHostObjectEventFromGameThread(episode,sequence,tick,stableKey,
+            kind,state,0,0,0,0);
+    }
+    public boolean offerOriginalHostPropDepletionFromGameThread(
+           int episode,int sequence,int tick,long stableKey,int part,int count,int definition,int healthBits){
+        return offerOriginalHostObjectEventFromGameThread(episode,sequence,tick,stableKey,
+            RoomObjectEventWire.PART_DEPLETED,1,part,count,definition,healthBits);
+    }
+    private boolean offerOriginalHostObjectEventFromGameThread(
+           int episode,int sequence,int tick,long stableKey,int kind,int state,
+           int part,int count,int definition,int healthBits){
         synchronized(lock){
             if(closed||!validStoryThread()||phase!=Phase.HOSTING||
                host==null||!host.isRunning()||!host.storyCommitted()||
@@ -834,8 +845,10 @@ public final class RoomSession implements AutoCloseable {
                t.mission!=lastSourceStage.level||t.stage!=lastSourceStage.stage)
                 return false;
             try{
-                return host.offerObjectEvent(new RoomObjectEventWire.Event(
-                    t,sequence,tick,stableKey,kind,state));
+                RoomObjectEventWire.Event event=kind==RoomObjectEventWire.PART_DEPLETED?
+                    RoomObjectEventWire.depletedPart(t,sequence,tick,stableKey,part,count,definition,healthBits):
+                    new RoomObjectEventWire.Event(t,sequence,tick,stableKey,kind,state);
+                return host.offerObjectEvent(event);
             }catch(IOException unavailable){return false;}
         }
     }
@@ -852,7 +865,7 @@ public final class RoomSession implements AutoCloseable {
      * JNI-friendly source-scoped object-event transfer onto ORIGINAL GUEST
      * BLACK game thread. [-1] means ABORT/uncommitted/wrong source thread;
      * [0] means committed but no event currently queued.
-     * A ten-int frame contains only host-owned immutable value fields.
+     * A part event appends [index,count,definition,healthBits] to the ten-int base.
      */
     public int[] pollOriginalHostObjectEventFrameFromGameThread(){
         synchronized(lock){
@@ -869,10 +882,17 @@ public final class RoomSession implements AutoCloseable {
             RoomObjectEventWire.Event evt=client.pollHostObjectEvent();
             if(evt==null)return new int[]{0};
             if(!evt.matches(ticket))return new int[]{-1};
-            return new int[]{evt.sceneEpoch,(int)evt.rosterRevision,
+            int[] frame={evt.sceneEpoch,(int)evt.rosterRevision,
                 (int)(evt.token>>>32),(int)evt.token,
                 evt.sequence,evt.tick,(int)(evt.objectKey>>>32),
                 (int)evt.objectKey,evt.kind,evt.state};
+            if(evt.part==null)return frame;
+            int[] withPart=java.util.Arrays.copyOf(frame,14);
+            withPart[10]=evt.part.index;
+            withPart[11]=evt.part.count;
+            withPart[12]=evt.part.definition;
+            withPart[13]=evt.part.healthBits;
+            return withPart;
         }
     }
     /** Only a verified ORIGINAL GUEST game thread can supply its own

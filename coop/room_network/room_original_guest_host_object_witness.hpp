@@ -36,11 +36,13 @@ inline void PollHostObjectEventsOnOriginalGuestThread(
  if(!response){GuestOriginalHostObjects().Reset();return;}
  jintArray arr=static_cast<jintArray>(response);
  const jsize n=env->GetArrayLength(arr);
- if(env->ExceptionCheck()||(n!=1&&n!=10)){
+  constexpr auto kObjectWords=static_cast<jsize>(OriginalGuestHostObjectInbox::kFrameWords);
+  constexpr auto kPartWords=static_cast<jsize>(OriginalGuestHostObjectInbox::kPartFrameWords);
+  if(env->ExceptionCheck()||(n!=1&&n!=kObjectWords&&n!=kPartWords)){
   if(env->ExceptionCheck())env->ExceptionClear();
   GuestOriginalHostObjects().Reset();env->DeleteLocalRef(arr);return;
  }
- std::array<jint,10> raw{};
+  std::array<jint,kPartWords> raw{};
  env->GetIntArrayRegion(arr,0,n,raw.data());
  if(env->ExceptionCheck()){
   env->ExceptionClear();GuestOriginalHostObjects().Reset();
@@ -52,10 +54,10 @@ inline void PollHostObjectEventsOnOriginalGuestThread(
   else if(raw[0]!=0)GuestOriginalHostObjects().Reset();
   return; // zero means "no new event", NOT a disconnect
  }
- std::array<int32_t,10> safe{};
- for(jsize i=0;i<10;i++)safe[static_cast<size_t>(i)]=
+  std::array<int32_t,kPartWords> safe{};
+  for(jsize i=0;i<n;i++)safe[static_cast<size_t>(i)]=
   static_cast<int32_t>(raw[static_cast<size_t>(i)]);
- if(GuestOriginalHostObjects().Ingest(safe.data(),safe.size(),key)){
+  if(GuestOriginalHostObjects().Ingest(safe.data(),static_cast<size_t>(n),key)){
   static bool first=false;
   if(!first){first=true;SendSafeWorldCodeToAndroid(103);}
  }

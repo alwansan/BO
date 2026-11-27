@@ -28,7 +28,21 @@ public final class RoomObjectEventWireTest {
   bad(()->RoomObjectEventWire.parse(RoomWire.decode(invalid)));
   bad(()->RoomWire.decode(Arrays.copyOf(f,f.length+1)));
   yes(!event.matches(new RoomStoryWire.Ticket(sid,78,8,0,1,4,15)));
-  yes(!event.matches(new RoomStoryWire.Ticket(sid,77,8,0,1,5,15)));
-  System.out.println("OBJECT_EVENT_WIRE_PASS: strict 50-byte scope, malformed event rejected; NO BLACK gameplay");
+   yes(!event.matches(new RoomStoryWire.Ticket(sid,77,8,0,1,5,15)));
+   long key=RoomObjectEventWire.propKey(123,600,5);
+   int health=Float.floatToRawIntBits(5.25f);
+   byte[] depleted=RoomObjectEventWire.encode(
+       RoomObjectEventWire.depletedPart(t,2,11,key,2,4,17,health));
+   RoomObjectEventWire.Event part=RoomObjectEventWire.parse(RoomWire.decode(depleted));
+   yes(depleted.length==68&&part.matches(t)&&part.kind==RoomObjectEventWire.PART_DEPLETED&&
+       part.objectKey==key&&part.part.index==2&&part.part.count==4&&
+       part.part.definition==17&&part.part.healthBits==health);
+   bad(()->RoomObjectEventWire.depletedPart(t,2,11,1,2,4,17,health));
+   bad(()->RoomObjectEventWire.depletedPart(t,2,11,key,4,4,17,health));
+   bad(()->RoomObjectEventWire.depletedPart(t,2,11,key,2,4,-1,health));
+   bad(()->RoomObjectEventWire.depletedPart(t,2,11,key,2,4,17,0x7f800000));
+   byte[] missing=f.clone();missing[8+48]=RoomObjectEventWire.PART_DEPLETED;
+   bad(()->RoomObjectEventWire.parse(RoomWire.decode(missing)));
+   System.out.println("OBJECT_EVENT_WIRE_PASS: ordered original object and scoped part-depletion frames");
  }
 }

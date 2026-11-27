@@ -11,6 +11,7 @@
 #include <thread>
 namespace blackcoop {
 namespace unit_observation {
+constexpr uint32_t kPropStride=0x200u,kPropRecordStride=0x50u;
 constexpr uint32_t kWorldRoot=0x002D45D4u, kObjectStride=0xF0u;
 constexpr std::array<uint32_t,2> kUnitOffsets{0x49D0u,0x5250u};
 
@@ -98,6 +99,7 @@ bool HasOriginalWorldUnitMembership(const Memory& memory,uint32_t world) noexcep
 struct OriginalUnitPropKey {
  uint8_t level=0,stage=0;
  uint32_t unitIndex=0,recordCount=0,ordinal=0;
+ bool operator==(const OriginalUnitPropKey&) const noexcept=default;
 };
 
 struct OriginalUnitPropHandle {
@@ -140,7 +142,6 @@ template<class Memory,class Generation>
 bool ResolveOriginalUnitProp(const Memory& memory,Generation generation,
       uint32_t world,const OriginalUnitPropKey& key,OriginalUnitPropHandle& out) noexcept {
  using namespace unit_observation;
- constexpr uint32_t kStride=0x200u,kRecordStride=0x50u;
  const uint32_t scene=uint32_t(key.level)*256u+key.stage;
  if(key.unitIndex==UINT32_MAX||!key.recordCount||key.ordinal>=key.recordCount||
     key.recordCount>UINT16_MAX||!Running(memory,world)||Scene(memory,world)!=scene)
@@ -165,27 +166,27 @@ bool ResolveOriginalUnitProp(const Memory& memory,Generation generation,
  const uint32_t count=memory.Read32(unit+0x34u);
  if(!count||count>4096u||count>key.recordCount||(header&3u)||(objects&3u)||
     !memory.Contains(header,0x94u)||memory.Read32(header)!=24u||
-    memory.Read16(header+0x92u)!=key.recordCount||!memory.Contains(objects,count*kStride))
+     memory.Read16(header+0x92u)!=key.recordCount||!memory.Contains(objects,count*kPropStride))
   return false;
  const uint32_t table=memory.Read32(header+0x2Cu);
  if((table&3u)||uint64_t(table)<uint64_t(header)+0x94u||
-    !memory.Contains(table,key.recordCount*kRecordStride))
+     !memory.Contains(table,key.recordCount*kPropRecordStride))
   return false;
 
- const uint32_t record=table+key.ordinal*kRecordStride;
+ const uint32_t record=table+key.ordinal*kPropRecordStride;
  uint32_t object=0,previous=0;
  for(uint32_t i=0;i<count;++i){
-  const uint32_t candidate=objects+i*kStride,row=memory.Read32(candidate+0x114u);
+   const uint32_t candidate=objects+i*kPropStride,row=memory.Read32(candidate+0x114u);
   if(memory.Read32(candidate)!=0x28ED98u||memory.Read32(candidate+0xC4u)!=4u||
-     row<table||row<=previous||(row-table)%kRecordStride||
-     (row-table)/kRecordStride>=key.recordCount||
+      row<table||row<=previous||(row-table)%kPropRecordStride||
+      (row-table)/kPropRecordStride>=key.recordCount||
      memory.Read32(candidate+8u)!=memory.Read32(row+0x48u)||
      memory.Read32(candidate+0xCu)!=memory.Read32(row+0x4Cu))
    return false;
   if(row==record)object=candidate;
   previous=row;
  }
- if(!object||CountMembers(memory,world,{object,1,0},kStride)!=1||
+ if(!object||CountMembers(memory,world,{object,1,0},kPropStride)!=1||
     !Running(memory,world)||Scene(memory,world)!=scene||
     generation(world,unit)!=serial)
   return false;
@@ -193,10 +194,45 @@ bool ResolveOriginalUnitProp(const Memory& memory,Generation generation,
  return true;
 }
 
+// Host damage callbacks supply a local object address. Recover its authored
+// key and round-trip it through the same resolver used on the guest.
+template<class Memory,class Generation>
+bool IdentifyOriginalUnitProp(const Memory& memory,Generation generation,
+      uint32_t world,uint32_t object,OriginalUnitPropKey& out) noexcept {
+ using namespace unit_observation;
+ if(!Running(memory,world)||(object&3u)||!memory.Contains(object,kPropStride))return false;
+ const auto scene=Scene(memory,world);
+ uint32_t unit=0;
+ for(const auto offset:kUnitOffsets){
+  const auto candidate=world+offset;
+  if(memory.Read32(candidate)!=0x1Cu||memory.Read8(candidate+0x38u)!=1u)continue;
+  const auto base=memory.Read32(candidate+0x1Cu),count=memory.Read32(candidate+0x34u);
+  if(!count||count>4096u||object<base||object-base>=count*kPropStride)continue;
+  if(unit||(object-base)%kPropStride)return false;
+  unit=candidate;
+ }
+ if(!unit)return false;
+ const auto serial=generation(world,unit);
+ if(!serial)return false;
+ const auto header=memory.Read32(unit+0xCu);
+ if((header&3u)||!memory.Contains(header,0x94u))return false;
+ const auto table=memory.Read32(header+0x2Cu),record=memory.Read32(object+0x114u);
+ if(record<table||(record-table)%kPropRecordStride)return false;
+ const OriginalUnitPropKey key{static_cast<uint8_t>(scene>>8u),static_cast<uint8_t>(scene),
+     memory.Read32(unit+8u),memory.Read16(header+0x92u),(record-table)/kPropRecordStride};
+ OriginalUnitPropHandle resolved;
+ if(!ResolveOriginalUnitProp(memory,generation,world,key,resolved)||
+    resolved.unit!=unit||resolved.object!=object||resolved.record!=record||
+    resolved.generation!=serial)return false;
+ out=key;
+ return true;
+}
+
 struct OriginalUnitPropPartSample {
  OriginalUnitPropHandle prop{};
  uint32_t part=0,definition=0,healthBits=0;
  uint8_t partIndex=0,partCount=0;
+ bool operator==(const OriginalUnitPropPartSample&) const noexcept=default;
 };
 
 // 001E5070 writes health at the head of each 0x0C part row. 001D4A50

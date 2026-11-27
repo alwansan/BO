@@ -1,13 +1,13 @@
 {
   "latestRestoreVerification": {
     "date": "2026-11-28",
-    "verified_commit": "448acb82c729d993c766f5174971a15b3ccb5e79",
-    "source_preflight_run": 46078514769,
+    "verified_commit": "cda3fa1776fcb12ddc45bfa244dc7ca9bc2075a2",
+    "source_preflight_run": 46079525974,
     "source_preflight": "success",
     "android_synthetic_diagnostic_export_run": 45922634177,
     "android_shared_campaign_verified": false,
     "acceptance_apk_ready": false,
-    "next": "Connect native P3/P4 pad bindings and original prop lifetime to live guarded scopes; integrate production actor and Android JNI, complete shared part collision and campaign progression, and verify original APK diagnostics."
+    "next": "Observe a natural stock prop-depletion call and connect the exact signed event to the original guest frame. Resolve the trigger-time audio bank failure before integrating native actor lifecycles, BlackActivity and campaign progression."
   },
   "schema": 1,
   "agent": "BO-COOP",
@@ -20,7 +20,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-28_bo-coop-work52-unit-publication-and-extra-pads.md",
+  "lastSession": "memory/sessions/2026-11-28_bo-coop-work53-part-event-and-camera-reuse.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -4669,6 +4669,22 @@
     "mappingUsedForSynchronization": false,
     "acceptanceApk": false,
     "next": "trace the original objective writer and its UI readback in the Android campaign, then verify scoped guest effect and APK diagnostics before activation"
+  },
+  "workBatch53": {
+    "date": "2026-11-28",
+    "session": "memory/sessions/2026-11-28_bo-coop-work53-part-event-and-camera-reuse.md",
+    "evidence": "memory/evidence/WORK_BATCH51_NATIVE_INPUT_AND_PROP_SCOPE.json",
+    "retirementEvidence": "memory/evidence/WORK_BATCH49_ANDROID_P2_VOICE_RETIREMENT.json",
+    "wireVersion": 12,
+    "realTlsRelayBetweenNativeTrials": true,
+    "relayedPartAndCollisionReadbacksPassedInTwoIndependentEngines": true,
+    "guardedNativeFifoAppliedMatchedFrameAndRejectedStaleHealthBeforeWriter": true,
+    "allFivePlayerStorageBlocksReclaimedAndIntactFor240FramesInPrivateTrial": true,
+    "p2NativeFireTrialSignal": 11,
+    "liveBlackActivityHostPublishToGuestWriteVerified": false,
+    "productionActorRetirementVerified": false,
+    "acceptanceApk": false,
+    "next": "capture a stock damage callback, then wire source and guest engines into the actual Android room and fix the fire-time audio bank"
   },
   "workBatch52": {
     "date": "2026-11-28",

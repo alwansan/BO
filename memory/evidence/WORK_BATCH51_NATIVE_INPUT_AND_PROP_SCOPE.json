@@ -191,6 +191,49 @@
       "f80a12fe328f8d7215bba20da645df39ebef3c4b595058de9a8661d1ff5adba3"
     ]
   },
+  "nativeAuthoredPropPartTransitionWithRealTlsRelay": {
+    "dateVerified": "2026-11-28",
+    "wireVersion": 12,
+    "realRoomSessionTlsHostAndGuest": true,
+    "roomStageCallbacksInRelaySynthetic": true,
+    "localFileBetweenEachEngineAndRelay": true,
+    "rayReconstructedIndependentlyAtConsumer": true,
+    "bothNativeProcessesResolvedAndConfirmedExactPartAndRayMiss": true,
+    "productionBlackActivityOrLiveEnginePublishVerified": false,
+    "framesAtLeast": [1620, 1620],
+    "nativeProcessExits": [0, 0],
+    "engineSignalsObserved": false,
+    "allowlistedEngineMarkersSha256": [
+      "68bea1a8dca87a15f0cdabce3b3c3add7fdeccb1f4bded81d7c4d362a2dacff8",
+      "ec4c224b2f740265eb32b5460409521f436cbe455eca729309e05b4fd3035f91"
+    ]
+  },
+  "nativeP2TriggerAttempt": {
+    "dateVerified": "2026-11-28",
+    "nativeSetupCompleted": true,
+    "framesAtLeast": 2340,
+    "processExit": 139,
+    "signal": 11,
+    "firstOriginalFrameInTrace": "001416D0",
+    "roundConsumptionVerified": false,
+    "allowlistedMarkersSha256": "e3acb036149289b67a478d32aa2d6576a59f505f18f61875d05b21b63c3a9408"
+  },
+  "nativeGuardedPartInboxWithRealTlsRelay": {
+    "dateVerified": "2026-11-28",
+    "realTlsGuestFrameWords": 14,
+    "privateLocalFileBridge": true,
+    "sourceGuestAndStaleProcessExits": [0, 0, 159],
+    "framesAtLeast": [2280, 2280, 2280],
+    "engineSignalsObserved": false,
+    "matchedGuestFifoAppliedAndConfirmedTargetRayMiss": true,
+    "mismatchedPartHealthRejectedBeforeOriginalWriter": true,
+    "productionJniAndNaturalPlayerDamageProven": false,
+    "allowlistedEngineMarkersSha256": [
+      "68bea1a8dca87a15f0cdabce3b3c3add7fdeccb1f4bded81d7c4d362a2dacff8",
+      "33605d904cbccaaff169c899383a39eadd525e3c190860b8242d50237053c14d",
+      "f80a12fe328f8d7215bba20da645df39ebef3c4b595058de9a8661d1ff5adba3"
+    ]
+  },
   "blackActivityOriginalGameInputVerified": false,
   "productionHostRemotePadActivation": false,
   "acceptanceApk": false

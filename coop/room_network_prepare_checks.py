@@ -43,7 +43,7 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('public void openCoopRoom(int row)',java)
             self.assertIn('RoomAppRooms.statusLine(row)',java)
             self.assertIn('public void coopRecordWorldTick(int code)',java)
-            self.assertIn('code >= 2130 && code <= 2137',java)
+            self.assertIn('code >= 2130 && code <= 2138',java)
             self.assertIn('RoomDiagnostics.originalPostFrameEvent(code)',java)
             post_frame=(root/'src/coop/room_original_post_frame_witness.hpp').read_text(encoding='utf-8')
             self.assertIn('HasOriginalWorldUnitMembership(OriginalUnitMembershipMemory{},s.world)',post_frame)
@@ -75,6 +75,11 @@ class RoomNetPrepareTests(unittest.TestCase):
                                 body.index(original))
                 self.assertLess(body.index(f'Before{name}(memory,{argument})'),body.index(original))
                 self.assertLess(body.index(original),body.index(f'After{name}(memory,{after})'))
+            damage=cheats.split('X86_FUNC(sub_001E5070) {',1)[1].split('\n}',1)[0]
+            writer='__imp__sub_001E5070(ctx,base);'
+            self.assertEqual(damage.count(writer),1)
+            self.assertLess(damage.index('ObserveOriginalPropDamageBefore(ctx.eax,ctx.esp)'),damage.index(writer))
+            self.assertLess(damage.index(writer),damage.index('ObserveOriginalPropDamageAfter(before)'))
             self.assertIn('coopRecordOriginalPlayerEye(int xCm,int yCm,int zCm,',java)
             self.assertIn('coopPollTrustedHumanInputsFromGameThread()',java)
             self.assertIn('coopPollHostWorldSnapshotFromGameThread()',java)

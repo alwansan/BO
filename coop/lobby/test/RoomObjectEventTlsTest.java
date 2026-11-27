@@ -16,7 +16,7 @@ public final class RoomObjectEventTlsTest {
  }
   /** Full RoomSession -> real TLS -> guest ORIGINAL GAME-THREAD JNI
    * frame; native scene signals are synthetic here, never a BLACK engine.
-   * Ensures -1 abort, 0 no-event and exact 10-int host frame. */
+   * Ensures -1 abort, 0 no-event and exact object/part host frames. */
   static void sessionBridge(String identityPath)throws Exception {
    SSLContext context=TlsRoomTest.host(Paths.get(identityPath));
    byte[] fingerprint=TlsRoomTest.fingerprint(Paths.get(identityPath));
@@ -56,10 +56,25 @@ public final class RoomObjectEventTlsTest {
      return received[0]!=null;
     });
     int[] frame=received[0];
-    yes(frame[0]==ticket.sceneEpoch&&frame[1]==ticket.rosterRevision&&
+     yes(frame[0]==ticket.sceneEpoch&&frame[1]==ticket.rosterRevision&&
         frame[2]==(int)(ticket.token>>>32)&&frame[3]==(int)ticket.token&&
         frame[4]==1&&frame[5]==1&&frame[6]==0&&frame[7]==77&&
-        frame[8]==RoomObjectEventWire.DESTROYED&&frame[9]==1);
+         frame[8]==RoomObjectEventWire.DESTROYED&&frame[9]==1);
+     final long key=RoomObjectEventWire.propKey(7,20,14);
+     final int health=Float.floatToRawIntBits(35f);
+     yes(!guest.offerOriginalHostPropDepletionFromGameThread(61,2,2,key,1,2,3,health));
+     yes(!host.offerOriginalHostPropDepletionFromGameThread(54,2,2,key,1,2,3,health));
+     yes(host.offerOriginalHostPropDepletionFromGameThread(55,2,2,key,1,2,3,health));
+     received[0]=null;
+     until(()->{
+      int[] reply=guest.pollOriginalHostObjectEventFrameFromGameThread();
+      if(reply.length==14)received[0]=reply;
+      return received[0]!=null;
+     });
+     int[] part=received[0];
+     yes(part[0]==ticket.sceneEpoch&&part[1]==ticket.rosterRevision&&part[4]==2&&part[5]==2&&
+         part[6]==7&&part[7]==((20<<16)|14)&&part[8]==RoomObjectEventWire.PART_DEPLETED&&
+         part[9]==1&&part[10]==1&&part[11]==2&&part[12]==3&&part[13]==health);
     yes(guest.pollOriginalHostObjectEventFrameFromGameThread()[0]==0);
     final boolean[] foreign={true};
     Thread worker=new Thread(()->{
@@ -119,8 +134,8 @@ public final class RoomObjectEventTlsTest {
    // tick must be rejected BEFORE any encrypted packet is sent.
    yes(!host.offerObjectEvent(new RoomObjectEventWire.Event(
        t,3,1,103L,RoomObjectEventWire.ACTIVATED,1)));
-   yes(host.offerObjectEvent(new RoomObjectEventWire.Event(
-       t,3,3,103L,RoomObjectEventWire.ACTIVATED,1)));
+    final long depletedKey=RoomObjectEventWire.propKey(7,6,2);
+    yes(host.offerObjectEvent(RoomObjectEventWire.depletedPart(t,3,3,depletedKey,2,4,17,0x3F800000)));
    final RoomObjectEventWire.Event[] third=new RoomObjectEventWire.Event[3];
    until(()->{
     if(third[0]==null)third[0]=g2.pollHostObjectEvent();
@@ -129,13 +144,14 @@ public final class RoomObjectEventTlsTest {
     return third[0]!=null&&third[1]!=null&&third[2]!=null;
    });
    for(RoomObjectEventWire.Event e:third)
-    yes(e.sequence==3&&e.tick==3&&e.objectKey==103L);
+     yes(e.sequence==3&&e.tick==3&&e.objectKey==depletedKey&&
+         e.part.index==2&&e.part.count==4&&e.part.definition==17&&e.part.healthBits==0x3F800000);
    yes(host.cancelStory());
    until(()->g2.storyTicket()==null&&g3.storyTicket()==null&&g4.storyTicket()==null);
    yes(g2.pollHostObjectEvent()==null);
    yes(!host.offerObjectEvent(new RoomObjectEventWire.Event(t,3,3,103L,1,1)));
   }
   sessionBridge(args[0]);
-  System.out.println("OBJECT_EVENT_REAL_TLS_PASS: 4 players exact host-only FIFO, replay+scene abort; no engine door/physics changes");
+   System.out.println("OBJECT_EVENT_REAL_TLS_PASS: 4 players ordered host-only part events, replay and scene abort");
  }
 }

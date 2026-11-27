@@ -4,6 +4,7 @@
 // physics, collision, AI/quests or claim that a door was actually destroyed.
 #pragma once
 #include "room_original_guest_launch_match_contract.hpp"
+#include "room_original_post_frame_contract.hpp"
 #include <array>
 #include <cstddef>
 #include <cstdint>
@@ -13,7 +14,33 @@ struct OriginalHostObjectEvent {
  uint32_t sceneEpoch=0,revision=0,sequence=0,tick=0;
  uint64_t token=0,objectKey=0;
  uint8_t kind=0,state=0;
+ uint8_t partIndex=0,partCount=0;
+ uint32_t partDefinition=0,previousHealthBits=0;
+ static constexpr uint8_t PartDepleted=4;
 };
+inline bool MatchOriginalHostPartDepletion(const OriginalHostObjectEvent& event,
+    const OriginalGuestLaunchMatchKey& scene,OriginalUnitPropKey& key) noexcept {
+ const auto records=uint32_t(event.objectKey>>16)&0xFFFFu;
+ const auto ordinal=uint32_t(event.objectKey)&0xFFFFu;
+ const uint64_t token=(uint64_t(scene.tokenHi)<<32)|scene.tokenLo;
+ if(event.kind!=OriginalHostObjectEvent::PartDepleted||event.state!=1||
+    !scene.originalEpisode||!scene.sceneEpoch||!scene.rosterRevision||!token||
+    event.sceneEpoch!=scene.sceneEpoch||event.revision!=scene.rosterRevision||event.token!=token||
+    !event.objectKey||(event.objectKey>>63)||ordinal>=records||
+    event.partIndex>=event.partCount||event.partDefinition==UINT32_MAX||
+    !event.previousHealthBits||event.previousHealthBits>=0x7F800000u)
+  return false;
+ key={scene.level,scene.stage,uint32_t(event.objectKey>>32),records,ordinal};
+ return true;
+}
+
+inline bool OriginalPartDepletionPreStateMatches(const OriginalHostObjectEvent& event,
+    const OriginalUnitPropPartSample& sample) noexcept {
+ return sample.prop.generation&&sample.part&&sample.partIndex==event.partIndex&&
+     sample.partCount==event.partCount&&sample.definition==event.partDefinition&&
+     sample.healthBits==event.previousHealthBits;
+}
+
 enum class OriginalObjectApplyResult:uint8_t { Empty, WaitingForIdentity, Applied, Quarantined, Rejected };
 class OriginalGuestHostObjectInbox final {
  static constexpr size_t kCapacity=64u;
@@ -34,9 +61,47 @@ class OriginalGuestHostObjectInbox final {
   return epoch>oldEpoch||(epoch==oldEpoch&&revision>oldRevision);
  }
  bool owner()const noexcept{
-  return !bound_||gameThread_==std::this_thread::get_id();
+   return !bound_||gameThread_==std::this_thread::get_id();
  }
-public:
+ void PopHead()noexcept{
+   queue_[head_]={};head_=(head_+1u)%kCapacity;--count_;
+ }
+ template<class IO> OriginalObjectApplyResult ApplyPart(IO& io,
+     const OriginalHostObjectEvent& event,const OriginalGuestLaunchMatchKey& matched,
+     uint64_t nativeScene){
+   if constexpr(requires(OriginalUnitPropKey key,OriginalUnitPropPartSample sample) {
+     io.SampleOriginalPart(key,event.partIndex,sample);
+     io.CurrentOriginalPartEvent(matched,event);
+     io.DepleteOriginalPart(key,sample);
+   }){
+    OriginalUnitPropKey key;
+    if(!MatchOriginalHostPartDepletion(event,matched,key)||
+       io.OriginalScene()!=nativeScene||!io.CurrentOriginalPartEvent(matched,event))
+     return OriginalObjectApplyResult::Rejected;
+    OriginalUnitPropPartSample before,rechecked,after;
+    if(!io.SampleOriginalPart(key,event.partIndex,before))
+     return OriginalObjectApplyResult::WaitingForIdentity;
+    if(!OriginalPartDepletionPreStateMatches(event,before)){
+     poisoned_=true;return OriginalObjectApplyResult::Quarantined;
+    }
+    if(io.OriginalScene()!=nativeScene||!io.CurrentOriginalPartEvent(matched,event))
+     return OriginalObjectApplyResult::Rejected;
+    if(!io.SampleOriginalPart(key,event.partIndex,rechecked)||rechecked!=before){
+     poisoned_=true;return OriginalObjectApplyResult::Quarantined;
+    }
+    // IO owns native scene and writer-specific checks. It must hold that
+    // scope through the call and must not reenter the object inbox.
+    if(!io.DepleteOriginalPart(key,before)||io.OriginalScene()!=nativeScene||
+       !io.SampleOriginalPart(key,event.partIndex,after)||
+       !IsOriginalPartDepletion(before,after)){
+     poisoned_=true;return OriginalObjectApplyResult::Quarantined;
+    }
+    return OriginalObjectApplyResult::Applied;
+   }
+   return OriginalObjectApplyResult::WaitingForIdentity;
+ }
+ public:
+ static constexpr size_t kFrameWords=10,kPartFrameWords=14;
  void Reset()noexcept{
   if(!owner())return;
   queue_={};scoped_=poisoned_=revoked_=false;next_={};
@@ -71,12 +136,13 @@ public:
   return true;
  }
  // [epoch, revision, tokenHi, tokenLo, sequence, sourceTick,
- //  objectKeyHi, objectKeyLo, kind, state], exactly TEN signed JNI integers.
+  //  objectKeyHi, objectKeyLo, kind, state], with four extra part fields
+  // only for PartDepleted.
  // Expected key comes only from an independently matched ORIGINAL guest stage
  // and its signed HOST PREPARE. Java TLS has already checked the room session.
  bool Ingest(const int32_t* data,size_t n,
              const OriginalGuestLaunchMatchKey& matched)noexcept{
-  if(!owner()||!data||n!=10||poisoned_)return false;
+   if(!owner()||!data||(n!=kFrameWords&&n!=kPartFrameWords)||poisoned_)return false;
   if(!matched.originalEpisode||matched.sceneEpoch==0||
      matched.rosterRevision==0||matched.selfSlot<2||matched.selfSlot>4||
      (matched.participants!=3&&matched.participants!=7&&matched.participants!=15)||
@@ -95,10 +161,23 @@ public:
      data[0]!=static_cast<int32_t>(matched.sceneEpoch)||
      static_cast<uint32_t>(data[1])!=matched.rosterRevision||
      fromWire!=token||!key||key>0x7fffffffffffffffull||
-     data[8]<1||data[8]>3||data[9]<0||data[9]>3||
-     (data[8]==1&&data[9]!=1))return false;
-  const uint32_t seq=static_cast<uint32_t>(data[4]);
-  const uint32_t tick=static_cast<uint32_t>(data[5]);
+      data[8]<1||data[8]>OriginalHostObjectEvent::PartDepleted||data[9]<0||data[9]>3||
+      (data[8]==1&&data[9]!=1))return false;
+   const bool isPart=data[8]==OriginalHostObjectEvent::PartDepleted;
+   if(isPart!=(n==kPartFrameWords))return false;
+   const uint32_t seq=static_cast<uint32_t>(data[4]);
+   const uint32_t tick=static_cast<uint32_t>(data[5]);
+   OriginalHostObjectEvent event{matched.sceneEpoch,matched.rosterRevision,seq,tick,token,key,
+      static_cast<uint8_t>(data[8]),static_cast<uint8_t>(data[9])};
+   if(isPart){
+    if(data[10]<0||data[10]>=data[11]||data[11]>255)return false;
+    event.partIndex=static_cast<uint8_t>(data[10]);
+    event.partCount=static_cast<uint8_t>(data[11]);
+    event.partDefinition=static_cast<uint32_t>(data[12]);
+    event.previousHealthBits=static_cast<uint32_t>(data[13]);
+    OriginalUnitPropKey scopedKey;
+    if(!MatchOriginalHostPartDepletion(event,matched,scopedKey))return false;
+   }
   // Older authenticated stories/revisions must never displace a newer
   // canonical guest object queue; token switches require an explicit reset.
   if(scoped_&&(matched.sceneEpoch<epoch_||
@@ -127,19 +206,16 @@ public:
   token_=token;seq_=seq;tick_=tick;episode_=matched.originalEpisode;
   level_=matched.level;stage_=matched.stage;self_=matched.selfSlot;
   participants_=matched.participants;
-  queue_[(head_+count_)%kCapacity]={
-    matched.sceneEpoch,matched.rosterRevision,seq,tick,
-    token,key,static_cast<uint8_t>(data[8]),static_cast<uint8_t>(data[9])};
+   queue_[(head_+count_)%kCapacity]=event;
   ++count_;
   return true;
  }
  // Future engine object-identity matcher must call Take() on the SAME
  // original guest thread, and then map the stable key to a proven actor.
  bool Take(OriginalHostObjectEvent& output)noexcept{
-  if(!owner()||!scoped_||poisoned_||!count_)return false;
-  output=queue_[head_];
-  queue_[head_]={};
-  head_=(head_+1u)%kCapacity;--count_;return true;
+   if(!owner()||!scoped_||poisoned_||!count_)return false;
+   output=queue_[head_];
+   PopHead();return true;
  }
  // Transactional engine-side consumer. Do not pop until the exact live
  // original object is resolved and its authoritative state is read back.
@@ -151,10 +227,15 @@ public:
      const OriginalGuestLaunchMatchKey& matched,uint64_t nativeScene){
   if(!owner()||!nativeScene)return OriginalObjectApplyResult::Rejected;
   if(poisoned_||!CheckLocalLaunch(matched))return OriginalObjectApplyResult::Quarantined;
-  if(!count_)return OriginalObjectApplyResult::Empty;
-  const auto event=queue_[head_];
-  uint32_t actor=0;uint64_t generation=0;
-  try{
+   if(!count_)return OriginalObjectApplyResult::Empty;
+   const auto event=queue_[head_];
+   uint32_t actor=0;uint64_t generation=0;
+   try{
+    if(event.kind==OriginalHostObjectEvent::PartDepleted){
+     const auto result=ApplyPart(io,event,matched,nativeScene);
+     if(result==OriginalObjectApplyResult::Applied)PopHead();
+     return result;
+    }
    if(io.OriginalScene()!=nativeScene)return OriginalObjectApplyResult::Rejected;
    if(!io.ResolveOriginalObject(event.objectKey,event.kind,actor,generation))
     return OriginalObjectApplyResult::WaitingForIdentity;
@@ -177,7 +258,7 @@ public:
   }catch(...){
    poisoned_=true;return OriginalObjectApplyResult::Quarantined;
   }
-  queue_[head_]={};head_=(head_+1u)%kCapacity;--count_;
+   PopHead();
   return OriginalObjectApplyResult::Applied;
  }
  size_t Pending()const noexcept{return owner()&&!poisoned_?count_:0u;}

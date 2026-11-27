@@ -14,7 +14,7 @@ public final class RoomWire {
     public static final int JOIN=1, ACCEPT=2, ROSTER=3, PING=4, PONG=5, LEAVE=6, REJECT=7,
         STORY_PREPARE=8, STORY_READY=9, STORY_COMMIT=10, STORY_ABORT=11, HUMAN_INPUT=12, WORLD_SNAPSHOT=13, HUMAN_CAMERA_EYE=14, NPC_WORLD=15, OBJECT_EVENT=16, OBJECTIVE_CHUNK=17;
     // Objective chunks require matching peers; reject older room/story profiles.
-    public static final int MAX_FRAME=512, MAX_PLAYERS=4, VERSION=11, PROFILE=11;
+    public static final int MAX_FRAME=512, MAX_PLAYERS=4, VERSION=12, PROFILE=12;
     private static final byte[] IMAGE=hex("c5bfed25449c8212d7a976f15246e87ead57713f");
     public static final class Incompatible extends IOException {
         private static final long serialVersionUID=1L;

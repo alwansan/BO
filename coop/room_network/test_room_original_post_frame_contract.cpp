@@ -106,7 +106,10 @@ static void TestAuthoredPropResolution(){
  constexpr OriginalUnitPropKey key{0,1,7,5,4};
  OriginalUnitPropHandle first;
  assert(ResolveOriginalUnitProp(memory,generation,world,key,first));
- assert(first.object==objects+0x200&&first.record==table+4*0x50&&first.generation==10);
+  assert(first.object==objects+0x200&&first.record==table+4*0x50&&first.generation==10);
+  OriginalUnitPropKey reverse;
+  assert(IdentifyOriginalUnitProp(memory,generation,world,first.object,reverse)&&reverse==key);
+  assert(!IdentifyOriginalUnitProp(memory,generation,world,first.object+4,reverse));
  OriginalUnitPropHandle other;
  assert(ResolveOriginalUnitProp(memory,generation,world,{0,1,7,5,1},other));
  assert(other.object==objects);
@@ -116,8 +119,9 @@ static void TestAuthoredPropResolution(){
  memory.Write32(otherUnit,0x1C);
  memory.Write32(otherUnit+8u,7);
  memory.Write32(otherUnit+0x38u,1);
- assert(!ResolveOriginalUnitProp(memory,generation,world,key,other));
- memory.Write32(otherUnit+0x38u,0);
+  assert(!ResolveOriginalUnitProp(memory,generation,world,key,other));
+  assert(!IdentifyOriginalUnitProp(memory,generation,world,first.object,reverse));
+  memory.Write32(otherUnit+0x38u,0);
  memory.Write32(first.object+0xB0u,first.object);
  assert(!ResolveOriginalUnitProp(memory,generation,world,key,other));
  memory.Write32(first.object+0xB0u,0);

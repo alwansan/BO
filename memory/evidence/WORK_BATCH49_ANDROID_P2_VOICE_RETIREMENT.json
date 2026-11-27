@@ -299,6 +299,26 @@
     "engineSignalObserved": false,
     "allowlistedMarkersSha256": "2ecd386d5d08003856c2c9b9ed6952259c57d8abdd58332afc3c248c004fc8a7"
   },
+  "allFiveBlocksReclaimedAfterNativeRestart": {
+    "dateVerified": "2026-11-28",
+    "privateHeadlessTrial": true,
+    "cameraAddressGapBytes": 16777216,
+    "alignedMatchesBeforePublicationAndAtRelease": [3, 0],
+    "zeroBaselineRequired": false,
+    "postRelinkOriginalGameThreadFrames": 1206,
+    "postRelinkRegisterMatches": 0,
+    "cameraDispatchBeforeAndAfterRetirementToStockOwnerOnly": [107, 1219],
+    "oldStorageBlocksFreedAndReallocatedAtSameAddresses": 5,
+    "newAllocationGenerationsObserved": 5,
+    "replacementPatternIntactAcrossFrames": 240,
+    "stockP1MovementFramesWhileReplacementsWereLive": 21,
+    "productionReleaseProviderVerified": false,
+    "realAudioCallbackConcurrencyVerified": false,
+    "framesAtLeast": 3960,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "allowlistedMarkersSha256": "0720371598a2da722e9d163abc2fcec8bec8964ddc3b5369829fd7a838761cb3"
+  },
   "originalActorCleanupSource": {
     "ownerXbeSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
     "firstPersonVtablePlus0C": "001D5D90",

@@ -17,6 +17,32 @@ struct ObjectIO {
  bool VerifyOriginalHostState(uint32_t,uint8_t,uint8_t value){return verify&&value==state;}
 };
 
+struct PartIO:ObjectIO {
+ using Sample=blackcoop::OriginalUnitPropPartSample;
+ using Key=blackcoop::OriginalUnitPropKey;
+ Sample sample{{0x200000u,0x210000u,0x220000u,9},0x230000u,3,0x3F800000u,1,2};
+ unsigned samples=0,scopeChecks=0;
+ bool available=true,recycleOnRecheck=false,expireOnRecheck=false,invalidateDefinition=true;
+
+ bool CurrentOriginalPartEvent(const blackcoop::OriginalGuestLaunchMatchKey&,
+                              const blackcoop::OriginalHostObjectEvent&){
+  return ++scopeChecks!=2||!expireOnRecheck;
+ }
+ bool SampleOriginalPart(const Key& key,uint8_t part,Sample& out){
+  assert(key.unitIndex==7&&key.recordCount==20&&key.ordinal==14&&part==1);
+  if(++samples==2&&recycleOnRecheck)++sample.prop.generation;
+  out=sample;
+  return available;
+ }
+ bool DepleteOriginalPart(const Key&,const Sample& before){
+  assert(before==sample);
+  ++calls;
+  sample.healthBits=0;
+  if(invalidateDefinition)sample.definition=UINT32_MAX;
+  return true;
+ }
+};
+
 // Synthetic lifecycle transitions only; no native game object or asset is used.
 enum class LifecycleChange { None, ResolveScene, OwnershipScene, ResolveGeneration };
 struct LifecycleIO:ObjectIO {
@@ -90,6 +116,45 @@ int main(){
  OriginalGuestLaunchMatchKey key{};
  key.originalEpisode=77;key.sceneEpoch=7;key.rosterRevision=5;
  key.tokenHi=3;key.tokenLo=9;key.selfSlot=2;key.participants=3;
+ {
+  OriginalGuestHostObjectInbox parts;
+  int32_t part[]={7,5,3,9,1,6,7,(20<<16)|14,4,1,1,2,3,0x3F800000};
+  assert(!parts.Ingest(part,10,key));
+  part[10]=2;assert(!parts.Ingest(part,std::size(part),key));part[10]=1;
+  part[12]=-1;assert(!parts.Ingest(part,std::size(part),key));part[12]=3;
+  part[13]=0;assert(!parts.Ingest(part,std::size(part),key));part[13]=0x3F800000;
+  assert(parts.Ingest(part,std::size(part),key));
+  ObjectIO io;
+  assert(parts.ApplyNext(io,key,99)==OriginalObjectApplyResult::WaitingForIdentity&&io.calls==0);
+  OriginalHostObjectEvent value{};
+   assert(parts.Take(value)&&value.kind==OriginalHostObjectEvent::PartDepleted&&
+         value.partIndex==1&&value.partCount==2&&value.partDefinition==3&&
+          value.previousHealthBits==0x3F800000u);
+   for(unsigned mode=0;mode<6;++mode){
+    OriginalGuestHostObjectInbox transaction;
+    PartIO writer;
+    if(mode==1)writer.available=false;
+    if(mode==2)writer.expireOnRecheck=true;
+    if(mode==3)writer.recycleOnRecheck=true;
+    if(mode==4)writer.invalidateDefinition=false;
+    if(mode==5)writer.sample.healthBits=0x40000000u;
+    assert(transaction.Ingest(part,std::size(part),key));
+    const auto result=transaction.ApplyNext(writer,key,99);
+    if(mode==0){
+     assert(result==OriginalObjectApplyResult::Applied&&transaction.Pending()==0&&writer.calls==1);
+     assert(transaction.ApplyNext(writer,key,99)==OriginalObjectApplyResult::Empty&&writer.calls==1);
+    }else if(mode<=2){
+     assert(result==(mode==1?OriginalObjectApplyResult::WaitingForIdentity:
+                             OriginalObjectApplyResult::Rejected));
+     assert(transaction.Pending()==1&&writer.calls==0);
+    }else{
+     assert(result==OriginalObjectApplyResult::Quarantined&&transaction.Poisoned());
+     assert(writer.calls==(mode==4?1u:0u));
+     assert(transaction.ApplyNext(writer,key,99)==OriginalObjectApplyResult::Quarantined);
+     assert(writer.calls==(mode==4?1u:0u));
+    }
+   }
+ }
  // Exact host-signed change of a stable, non-pointer object identity.
  int32_t msg[]={7,5,3,9,1,6,0,123456,1,1};
  assert(inbox.Ingest(msg,10,key));

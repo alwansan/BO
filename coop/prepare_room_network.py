@@ -246,7 +246,7 @@ def prepare(root: pathlib.Path):
         else if (code == 2125) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_EXTRA_ACTOR_GATE_NO_SAFE_AI_TARGET_CAPACITY");
         else if (code == 2126) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_EXTRA_ACTOR_GATE_NO_SOLDIER_BODY_CAPACITY");
         else if (code == 2127) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_HOST_EXTRA_ACTOR_GATE_SOURCE_ELIGIBLE_NO_GAMEPLAY_ACTOR");
-        else if (code >= 2130 && code <= 2137) com.racas.black.coop.RoomDiagnostics.originalPostFrameEvent(code);
+        else if (code >= 2130 && code <= 2138) com.racas.black.coop.RoomDiagnostics.originalPostFrameEvent(code);
         else if (code == 20) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_EASY_NOT_MISSION");
         else if (code == 21) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_NORMAL_NOT_MISSION");
         else if (code == 22) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_HARD_NOT_MISSION");
@@ -567,6 +567,14 @@ X86_FUNC(sub_001EB440) {
     const uint32_t unit=lifecycle?lifecycle->BeforeLink(memory,ctx.esp):0;
     __imp__sub_001EB440(ctx,base);
     if(lifecycle)lifecycle->AfterLink(memory,unit);
+}
+
+// Observe only the two original impact/damage return sites.
+X86_EXTERN_FUNC(__imp__sub_001E5070);
+X86_FUNC(sub_001E5070) {
+    const auto before=blackcoop::ObserveOriginalPropDamageBefore(ctx.eax,ctx.esp);
+    __imp__sub_001E5070(ctx,base);
+    blackcoop::ObserveOriginalPropDamageAfter(before);
 }
 '''
     pending[cheat]=game

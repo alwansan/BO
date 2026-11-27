@@ -391,8 +391,11 @@ public:
    OriginalSetupModelRoute route(finalPhase?actor:0u,primaryModel,ownedModel);
    if(!route.Armed())return false;
    result=kernel::CallGuest(call,0x1E0E40u,{});
-   const bool completed=(result&255u)==1u;
-   return camera_.Active(cameraIo_)&&(!completed||finalPhase)&&route.UseCount()==unsigned(completed)&&
+    const auto completion=result&255u;
+    const bool completed=completion==1u;
+    return completion<=1u&&camera_.Active(cameraIo_)&&
+     (!completed||(finalPhase&&Read32(actor+0x8E4u,phase)&&phase==0x37u))&&
+     route.UseCount()==unsigned(completed)&&
     Read32(actor+0x320u,model)&&model==ownedModel&&
     storage_.CopyGuest(primaryModel,after.data(),after.size())&&before==after;
  }

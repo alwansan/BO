@@ -80,12 +80,13 @@ public:
     try{(void)io.RestoreOriginalP1(scope_);}catch(...){}
    // Never blindly repeat a throwing restore; quarantine uncertain state.
    poisoned_=true;return OriginalSetupState::Quarantined;
-  }
-  ++attempts_;
-  if(!entered||!called||!left||!live(io)||!io.FullP1Restored(scope_)){
-   poisoned_=true;return OriginalSetupState::Quarantined;
-  }
-  if(result&0xFFu){finished_=true;return OriginalSetupState::SetupFinished;}
+   }
+   ++attempts_;
+   const auto completion=result&0xFFu;
+   if(!entered||!called||!left||!live(io)||!io.FullP1Restored(scope_)||completion>1u){
+    poisoned_=true;return OriginalSetupState::Quarantined;
+   }
+   if(completion==1u){finished_=true;return OriginalSetupState::SetupFinished;}
   return attempts_==600u?OriginalSetupState::TimedOut:OriginalSetupState::Waiting;
  }
  bool ReadyForPhysics()const noexcept{return onOwner()&&bound_&&finished_&&!poisoned_;}
