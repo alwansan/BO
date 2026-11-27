@@ -41,6 +41,55 @@
     "parallelSourceTracks": 46051621589,
     "udp": 46051621619
   },
+  "successfulIntegratedViewmodelSourceChecks": {
+    "codeRevision": "a7f202c59a623f54e264a8ec73b7f7c1844af728",
+    "androidTranslationUnits": 46054488213,
+    "sourcePreflight": 46054488216,
+    "parallelSourceTracks": 46054488288,
+    "udp": 46054488231
+  },
+  "nativeWeaponAttachmentClaim": {
+    "allocatorEntry": "001CEE10",
+    "enteredWithActiveP2CameraAndWeaponPointerTable": true,
+    "nativeCallsObserved": 1,
+    "exactParentFlagTransitionsFromFreeToOccupied": 1,
+    "exactNestedFlagTransitionsFromFreeToOccupied": 1,
+    "finalP2ParentAndNestedRowsMatchNativeClaims": true,
+    "p1And32NpcWeaponTableReferencesToClaimedRow": 0,
+    "nativeWeaponAttachmentReleaseCalled": false,
+    "processExit": 0,
+    "framesAtLeast": 900,
+    "engineSignalObserved": false,
+    "allowlistedMarkersSha256": "f5d531ce531c41de9aec6a88b389faa8f343f584e2961b91255c13946994b324"
+  },
+  "nativeWeaponAttachmentReleaseDependencies": {
+    "nestedRowLinkedResourceAt10IsNull": true,
+    "matchingOriginalHudEntries": 1,
+    "nativeWeaponAttachmentReleaseCalled": false,
+    "processExit": 0,
+    "framesAtLeast": 1740,
+    "engineSignalObserved": false,
+    "allowlistedMarkersSha256": "5f84d3a65cece599f4c56d880cd17496b4e0ddde7ea50e6cd504146bc78841c2"
+  },
+  "nativeWeaponAttachmentRetirementPilot": {
+    "sourceRevision": "a7f202c59a623f54e264a8ec73b7f7c1844af728",
+    "nativeRetirementEntry": "001C9F00",
+    "nativeMotionUpdates": 104,
+    "originalParentAndNestedSlotsReleased": [1, 1],
+    "onlyExpectedPoolOccupancyFlagsChanged": true,
+    "onlyMatchedHudEntryChangedBeforeRestore": true,
+    "stockHudRegionAndP1ActorByteExactAfterRestore": true,
+    "p2ViewmodelRegistrationRetired": true,
+    "p2WeaponVoiceReservationsReturned": 2,
+    "p2AudioObjectsUnregistered": 10,
+    "stockAudioDonorObjectsStillRegistered": 10,
+    "processExit": 0,
+    "framesAtLeast": 2880,
+    "postRelinkRunningFrames": 1084,
+    "engineSignalObserved": false,
+    "actorStorageFreed": false,
+    "allowlistedMarkersSha256": "078ce394d0b50c79291bf4fd4a8280a65c443fe9b906e92e4c4ab8c676632bf7"
+  },
   "originalActorCleanupSource": {
     "ownerXbeSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
     "firstPersonVtablePlus0C": "001D5D90",

@@ -4697,14 +4697,22 @@
     "p2ViewmodelRegistrationRowsExternalToTrackedController": true,
     "p2SingleViewmodelRegistrationNativePilotVerified": true,
     "p2SingleViewmodelRegistrationIntegratedSourceVerified": true,
+    "p2ViewmodelSourceChecksVerifiedRevision": "a7f202c59a623f54e264a8ec73b7f7c1844af728",
+    "p2ViewmodelSourceChecks": [46054488213, 46054488216, 46054488288, 46054488231],
     "p2ViewmodelAndAudioRetirementPostRelinkRunningFrames": 1204,
     "p1ViewmodelAndControllerByteExactAfterNativePilot": true,
     "p2ActiveAttachmentSlotMappedToFrameVerifiedArena": true,
     "p2OneOccupiedAttachmentAndOneNestedPoolRowVerified": true,
+    "p2AttachmentAndNestedRowsMatchNativeClaims": true,
+    "p2NestedWeaponRowLinkedResourceAt10Absent": true,
+    "p2WeaponReleaseWouldMatchOneOriginalHudEntry": true,
+    "p2ClaimedWeaponAttachmentAndNestedSlotRetiredInPrivateLab": true,
+    "p1ActorAndHudBytesExactAfterAttachmentRetirement": true,
+    "p2AttachmentViewmodelAndAudioRetirementPostRelinkFrames": 1084,
     "p2AttachmentRowReferencesInP1And32NpcWeaponTables": 0,
     "actorStorageFreed": false,
     "acceptanceApk": false,
-    "next": "prove the weapon attachment row and its nested pool rows are exclusively owned and retire them with the original calls, then isolate the three borrowed records before a guarded actor cleanup"
+    "next": "isolate the three borrowed weapon records and exercise the detached actor cleanup with the guarded animation context after weapon, audio and proxy retirement; verify camera and allocation release separately"
   },
   "workBatch48": {
     "date": "2026-11-27",
