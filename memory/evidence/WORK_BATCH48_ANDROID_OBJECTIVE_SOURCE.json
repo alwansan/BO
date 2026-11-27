@@ -820,6 +820,36 @@
     "fullActorAndPhysicsStorageTeardownVerified": false,
     "allowlistedMarkersSha256": "7eb3f585e1c97e6fc3f6c6966c90edd26fa2aa1ee4455d641feb28a77d103f93"
   },
+  "originalAndroidPostMovementStorageReferenceTrial": {
+    "repositorySourceBaseline": "d33fd80da3ce7d249c01b2b6e3475c27451e94f2",
+    "framesAtLeast": 1740,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "verifiedConcurrentNativeMovementUpdates": 104,
+    "p1AccumulatedHorizontalFeetTravelMillimetres": 8986,
+    "p2AccumulatedHorizontalFeetAndBodyTravelMillimetresEach": 7177,
+    "proxyAndAuxiliaryRetiredAfterMotion": true,
+    "colliderStorageReferenceInRetiredMotionRow": true,
+    "actorBacklinkInInactiveTargetRow": true,
+    "actorAndColliderStorageRetained": true,
+    "allowlistedMarkersSha256": "b26210fd4df1e56fd557d6f3bbf40869a5e93f5dc7243d41b2d26167638d08b4"
+  },
+  "originalAndroidRestartAfterTwoPlayerMovementTrial": {
+    "repositorySourceBaseline": "d33fd80da3ce7d249c01b2b6e3475c27451e94f2",
+    "framesAtLeast": 1680,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "verifiedConcurrentNativeMovementUpdates": 104,
+    "p1AccumulatedHorizontalFeetTravelMillimetres": 8986,
+    "p2AccumulatedHorizontalFeetAndBodyTravelMillimetresEach": 7176,
+    "nativeLifecycleEventsInOrder": [2130, 2131, 2132, 2133],
+    "sameAiRootGenerationAfterRestart": true,
+    "samePhysicsRootAddressAfterRestart": true,
+    "oldMotionRowStillReferencesColliderAfterRestart": false,
+    "inactiveTargetRowStillReferencesRetiredActorAfterRestart": true,
+    "freedActorOrColliderOnRestart": false,
+    "allowlistedMarkersSha256": "5c9a5f6698696306442adcf1b9b58b16e3b3ad3c418ba7e137a469b0fcaad4f1"
+  },
   "originalSimpleObjectiveCompletionRoomAndJniVerification": {
     "sourceRevision": "0ea1eeefce95c1214cc924aa027637d4830097b9",
     "authenticatedLoopbackTlsAfterStoryCommit": true,
