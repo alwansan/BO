@@ -60,6 +60,25 @@ int main() {
         0x14,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,
     };
     assert(records == expected);
+    auto local = records;
+    local[12] = 0;
+    blackcoop::OriginalObjectiveActivation plan{};
+    using blackcoop::SelectOriginalObjectiveActivation;
+    assert(SelectOriginalObjectiveActivation(local, records, plan));
+    assert(plan.ordinal == 0 && plan.selectorLow == 0x04030201 &&
+           plan.selectorHigh == 0x88070605);
+    assert(!SelectOriginalObjectiveActivation(records, records, plan));
+    assert(!SelectOriginalObjectiveActivation(records, local, plan));
+    local[16] ^= 1;
+    assert(!SelectOriginalObjectiveActivation(local, records, plan));
+    local[16] ^= 1;
+    local[8] ^= 1;
+    assert(!SelectOriginalObjectiveActivation(local, records, plan));
+    local[8] ^= 1;
+    auto unsupported = records;
+    unsupported[28] = 1;
+    local[28] = 0;
+    assert(!SelectOriginalObjectiveActivation(local, unsupported, plan));
     assert(!CaptureOriginalObjectiveRecords(memory, world, 1, 0, records));
     memory.Write32(rows + 12, descriptors);
     assert(!CaptureOriginalObjectiveRecords(memory, world, 1, 1, records));

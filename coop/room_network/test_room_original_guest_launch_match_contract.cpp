@@ -24,6 +24,8 @@ int main(){
         assert(g.ObserveOriginalRunningWorld(1,0x2d0000,3,0,true)==0);
     assert(g.ObserveOriginalRunningWorld(1,0x2d0000,3,0,true)==81);
     assert(g.ReadMatchedKey(result));
+    assert(g.ReadMatchedKey(result,0x2d0000));
+    assert(!g.ReadMatchedKey(result,0x2e0000));
     assert(result.originalEpisode==1&&result.sceneEpoch==100&&
            result.level==3&&result.stage==0&&result.tokenLo==123);
     assert(g.ObserveOriginalRunningWorld(1,0x2d0000,3,0,true)==0);

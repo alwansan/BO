@@ -4,6 +4,7 @@
 #include "room_original_running_scene_source_gate.hpp"
 #include <algorithm>
 #include <cstdint>
+#include <span>
 #include <vector>
 
 namespace blackcoop {
@@ -94,6 +95,42 @@ bool CaptureOriginalObjectiveRecords(const Memory& memory, uint32_t world,
     Table current{};
     if (!ReadTable(memory, world, level, stage, current) || current != table) return false;
     records.swap(snapshot);
+    return true;
+}
+
+struct OriginalObjectiveActivation {
+    uint32_t ordinal = 0;
+    uint32_t selectorLow = 0;
+    uint32_t selectorHigh = 0;
+};
+
+// Only the native 0 -> 1 writer's observed effect is supported. The receiver
+// obtains local from CaptureOriginalObjectiveRecords on its original thread;
+// remote is a complete current host snapshot, never an identity source.
+inline bool SelectOriginalObjectiveActivation(std::span<const uint8_t> local,
+                                              std::span<const uint8_t> remote,
+                                              OriginalObjectiveActivation& out) noexcept {
+    constexpr auto stride = objective_source::kWireRecordSize;
+    if (local.size() != remote.size() || local.size() % stride ||
+        local.size() / stride > objective_source::kMaxRecords) return false;
+    OriginalObjectiveActivation selected{};
+    bool found = false;
+    for (size_t offset = 0; offset < local.size(); offset += stride) {
+        const auto current = local.subspan(offset, stride);
+        const auto host = remote.subspan(offset, stride);
+        if (std::equal(current.begin(), current.end(), host.begin())) continue;
+        if (found || current[12] != 0 || host[12] != 1 ||
+            !std::equal(current.begin(), current.begin() + 12, host.begin()) ||
+            !std::equal(current.begin() + 13, current.end(), host.begin() + 13)) return false;
+        selected.ordinal = static_cast<uint32_t>(offset / stride);
+        for (unsigned i = 0; i < 4; ++i) {
+            selected.selectorLow |= uint32_t(current[i]) << (8 * i);
+            selected.selectorHigh |= uint32_t(current[4 + i]) << (8 * i);
+        }
+        found = true;
+    }
+    if (!found) return false;
+    out = selected;
     return true;
 }
 

@@ -157,6 +157,18 @@ public final class RoomObjectiveSessionTlsTest {
             passed("four_session_tls_4096_exact_complete_values");
 
             RoomObjectiveChunks.Snapshot retained=g2.readHostObjectivesFromGameThread();
+            RoomWire.State guestState=g2.snapshot().roster;
+            int guestSlot=RoomWire.storySlot(guestState,guestState.self);
+            int differentSlot=guestSlot==2?3:2;
+            ok(g2.scopedHostObjectivesFromGameThread(61,0,1,ticket.sceneEpoch,
+                (int)ticket.rosterRevision,ticket.token,guestSlot,ticket.participants)==retained,
+                "current exact native scope");
+            ok(g2.scopedHostObjectivesFromGameThread(61,0,1,ticket.sceneEpoch,
+                (int)ticket.rosterRevision,ticket.token^1,guestSlot,ticket.participants)==null,
+                "wrong native token");
+            ok(g2.scopedHostObjectivesFromGameThread(61,0,1,ticket.sceneEpoch,
+                (int)ticket.rosterRevision,ticket.token,differentSlot,ticket.participants)==null,
+                "wrong native slot");
             ok(g2.isHostObjectiveSnapshotCurrentFromGameThread(61,retained),"fresh consume");
             ok(!g2.isHostObjectiveSnapshotCurrentFromGameThread(62,retained),"wrong local episode");
             ok(!g2.isHostObjectiveSnapshotCurrentFromGameThread(61,null),"null consume");

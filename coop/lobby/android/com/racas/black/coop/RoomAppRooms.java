@@ -110,6 +110,26 @@ public final class RoomAppRooms {
    if(session!=null)
      session.publishOriginalHostObjectiveSnapshotFromGameThread(episode,sequence,records);
  }
+ /** Sequence followed by the existing immutable LevelDat record encoding. */
+ public static byte[] originalHostObjectiveFrame(int[] scope){
+   RoomObjectiveChunks.Snapshot snapshot=scopedObjectives(scope);
+   if(snapshot==null)return null;
+   byte[] records=snapshot.records();
+   return java.nio.ByteBuffer.allocate(8+records.length)
+       .order(java.nio.ByteOrder.LITTLE_ENDIAN).putLong(snapshot.sequence).put(records).array();
+ }
+ public static boolean originalHostObjectiveCurrent(int[] scope,long sequence){
+   RoomObjectiveChunks.Snapshot snapshot=scopedObjectives(scope);
+   return snapshot!=null&&snapshot.sequence==sequence;
+ }
+ private static RoomObjectiveChunks.Snapshot scopedObjectives(int[] scope){
+   RoomSession session;
+   synchronized(RoomAppRooms.class){session=active;}
+   if(session==null||scope==null||scope.length!=9)return null;
+   long token=((long)scope[5]<<32)|(scope[6]&0xffffffffL);
+   return session.scopedHostObjectivesFromGameThread(scope[0],scope[1],scope[2],
+       scope[3],scope[4],token,scope[7],scope[8]);
+ }
  /**
   * Both original frontends: exact host-authenticated FIRST STAGE start,
   * no game engine writes/actor creation on this Java network boundary.

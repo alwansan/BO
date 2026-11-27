@@ -112,6 +112,12 @@ def prepare(root: pathlib.Path):
         com.racas.black.coop.RoomAppRooms.publishOriginalHostObjectivesFromGameThread(
             episode,sequence,records);
     }
+    public byte[] coopOriginalHostObjectiveFrame(int[] scope) {
+        return com.racas.black.coop.RoomAppRooms.originalHostObjectiveFrame(scope);
+    }
+    public boolean coopOriginalHostObjectiveCurrent(int[] scope,long sequence) {
+        return com.racas.black.coop.RoomAppRooms.originalHostObjectiveCurrent(scope,sequence);
+    }
     // Obtain HOST-owned authenticated room roster ordinal slots only.
     // No guest coordinates, no actor pointers and no game scene READY.
     public int coopHostAppearancePeerMaskFromGameThread() {
@@ -244,6 +250,8 @@ def prepare(root: pathlib.Path):
         else if (code == 2131) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_UNIT_ORDINALS_WORLD_LIST_MEMBERSHIP_OBSERVED");
         else if (code == 2132) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_UNIT_EARLY_TEARDOWN_WORLD_LIST_REMOVAL_OBSERVED");
         else if (code == 2133) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_SAME_UNIT_WORLD_LIST_RELINK_OBSERVED");
+        else if (code == 2134) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_GUEST_OBJECTIVE_ACTIVATION_READBACK_VERIFIED");
+        else if (code == 2135) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_GUEST_OBJECTIVE_ACTIVATION_READBACK_FAILED");
         else if (code == 20) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_EASY_NOT_MISSION");
         else if (code == 21) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_NORMAL_NOT_MISSION");
         else if (code == 22) com.racas.black.coop.RoomDiagnostics.event("ORIGINAL_LAUNCH_DIFFICULTY_HARD_NOT_MISSION");
@@ -499,14 +507,14 @@ X86_FUNC(sub_0002B830) {
     }
     __imp__sub_001E5FA0(ctx, base);''',cheat)
     # Verified same original post-frame boundary as native PC dual-control
-    # source. Read-only on Android: no P2 actor setup/tick call yet.
+    # source. No extra actor setup or second world tick.
     game += '''
 // ORIGINAL full world-frame update; the PC 2-player engine schedules
 // its player2 after vanilla 1F1080, not inside a frontend/menu callback.
 X86_EXTERN_FUNC(__imp__sub_001F1080);
 X86_FUNC(sub_001F1080) {
     __imp__sub_001F1080(ctx,base); // original gameplay MUST execute once
-    blackcoop::ObserveOriginalPostWorldFrame(); // no guest writes
+    blackcoop::ObserveOriginalPostWorldFrame(ctx);
 }
 
 // Original unit unlink and link both take the unit at entry ESP+4.

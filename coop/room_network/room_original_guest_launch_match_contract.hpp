@@ -90,9 +90,9 @@ public:
         if(samples_>=30&&!signaled_){signaled_=true;return 81;}
         return 0;
     }
-    bool ReadMatchedKey(OriginalGuestLaunchMatchKey& out)const noexcept{
+    bool ReadMatchedKey(OriginalGuestLaunchMatchKey& out,uint32_t expectedWorld=0)const noexcept{
         std::lock_guard<std::mutex> guard(mutex_);
-        if(!matched_||!hasSample_||!signaled_)return false;
+        if(!matched_||!hasSample_||!signaled_||(expectedWorld&&world_!=expectedWorld))return false;
         out=evidence_;return true;
     }
 };

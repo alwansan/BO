@@ -64,6 +64,31 @@
     "snapshotTransferredByLocalFile": true,
     "productionTlsToNativeApplyVerified": false
   },
+  "engineTlsEngineTrial": {
+    "roomSourceCommit": "fe5b3aac7ce355b440891ee4418cb5100f19ace7",
+    "authenticatedLoopbackTlsCarriedActualCampaignRecords": true,
+    "independentGuestTableReadFromOriginalEngine": true,
+    "nativeHostAndGuestProcessesUsedPrivateFileHandoffs": true,
+    "stageAttestationGeneratedByPrivateJVMHarness": true,
+    "guestOriginalWriterExactFullSnapshotReadback": true,
+    "sourceFramesAtLeast": 1620,
+    "independentGuestSourceFramesAtLeast": 1680,
+    "guestApplyFramesAtLeast": 1680,
+    "sourceMarkersSha256": "74e614a1e1327aedd982f5c96e7b640c602fed6f869bcc2d9e2c9feddbe796fe",
+    "independentGuestSourceMarkersSha256": "073b9cac4b841ad701f0b035a6bdf5ba47efa25688f8b0cfc1410c5777ce3b6a",
+    "guestApplyMarkersSha256": "340cf78278bc8014ff24bb1f27800c4257e642fabc5177d25ad761de11719fee",
+    "authoredAndScopedHudQueuePayloadReadback": true,
+    "displayedHudTextVerified": false,
+    "jniAndApkExercised": false
+  },
+  "livePropTrial": {
+    "framesAtLeast": 2940,
+    "stockControlsAvailable": true,
+    "outerCommandTimedOut": true,
+    "impactOrAreaWriterReached": false,
+    "authoredPropPartHealthChangeVerified": false,
+    "collisionEffectVerified": false
+  },
   "ci": {
     "commit": "fe5b3aac7ce355b440891ee4418cb5100f19ace7",
     "androidSourceUnitsRun": 45919841804,

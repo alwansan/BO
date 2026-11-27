@@ -4695,8 +4695,14 @@
     "androidObjectiveSourcePreflightCi": 45919841793,
     "androidObjectiveJvmTlsCi": 45919842037,
     "androidObjectivePlatformTlsCi": 45919842052,
-    "androidLivePropInstrumentedTrialPending": true,
+    "androidObjectiveEngineTlsEngineLabVerifiedWithPrivateLocalHandoffs": true,
+    "androidObjectiveNativeHudQueueTextReadbackVerifiedHeadless": true,
+    "androidScopedState1GuestPostFrameAdapterStaged": true,
+    "androidPrivateCameraAndAudioLifetimeRestartTrialPending": true,
+    "androidLivePropInstrumentedTrialFrameLowerBound": 2940,
+    "androidLivePropImpactOrAreaWriterObserved": false,
+    "androidLivePropCollisionEffectVerified": false,
     "acceptanceApk": false,
-    "next": "verify live Android prop effect; connect authenticated current objective snapshot to scoped state-1 application and post-frame readback, then verify APK diagnostics"
+    "next": "verify exact Android APK JNI objective and lifecycle diagnostics; target a live authored prop with separate impact reachability and collision readback; trace native P2 resource teardown"
   }
 }

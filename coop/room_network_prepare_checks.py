@@ -50,6 +50,11 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('HasOriginalWorldUnitMembership(OriginalUnitMembershipMemory{},s.world)',post_frame)
             self.assertIn('if(hasUnitMembership)\n     SendSafeWorldCodeToAndroid(2131)',post_frame)
             self.assertIn('lifecycle->ObserveRunningFrame(OriginalUnitMembershipMemory{},s.world)',post_frame)
+            self.assertIn('ObserveOriginalPostWorldFrame(ctx)',
+                          (root/'src/game/cheats.cpp').read_text(encoding='utf-8'))
+            self.assertIn('guestBarrier.MatchesForApplication(',post_frame)
+            self.assertIn('"coopOriginalHostObjectiveFrame","([I)[B"',post_frame)
+            self.assertIn('"coopOriginalHostObjectiveCurrent","([IJ)Z"',post_frame)
             cheats=(root/'src/game/cheats.cpp').read_text(encoding='utf-8')
             for address, name, argument, after in (
                 ('001EB1F0','Unlink','ctx.esp','before'),

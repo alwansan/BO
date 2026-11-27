@@ -955,6 +955,23 @@ public final class RoomSession implements AutoCloseable {
         }
     }
 
+    /** Exact signed launch scope for the original game-thread JNI bridge. */
+    public RoomObjectiveChunks.Snapshot scopedHostObjectivesFromGameThread(
+            int episode,int level,int stage,int epoch,int revision,
+            long token,int slot,int participants){
+        synchronized(lock){
+            RoomObjectiveChunks.Snapshot value=readHostObjectivesFromGameThread();
+            if(value==null||episode!=originalObjectiveBindingEpisode)return null;
+            RoomStoryWire.Ticket ticket=value.ticket;
+            RoomWire.State state=client.snapshot();
+            return ticket.mission==level&&ticket.stage==stage&&ticket.sceneEpoch==epoch&&
+                ticket.rosterRevision==(revision&0xffffffffL)&&ticket.token==token&&
+                ticket.participants==participants&&slot>=2&&slot<=4&&ticket.includes(slot)&&
+                state!=null&&RoomWire.storySlot(state,state.self)==slot&&
+                isHostObjectiveSnapshotCurrentFromGameThread(episode,value)?value:null;
+        }
+    }
+
     /** Host scene unload/cancel invalidates its prepared ticket. */
     public boolean cancelStoryFromGameThread(){
         synchronized(lock){
