@@ -114,7 +114,7 @@ jobs:
           changed = prepare(pathlib.Path('reference'))
           # Keep the staged changes within the reviewed title and room bridge.
           actual=set(subprocess.check_output(['git','-C','reference','diff','--name-only','--','src','native','config','CMakeLists.txt'],text=True).splitlines())
-          if actual != {'src/game/cheats.cpp','src/game/hooks.cpp','src/game/options_menu.cpp','src/game/exit_menu.cpp','src/game/difficulty.cpp','src/d3d/d3d8.cpp','native/input.cpp'}:
+          if actual != {'src/game/cheats.cpp','src/game/hooks.cpp','src/game/options_menu.cpp','src/game/exit_menu.cpp','src/game/difficulty.cpp','src/d3d/d3d8.cpp','native/input.cpp','config/game.toml'}:
               raise SystemExit('Native/gameplay change outside the observer and title/room UI allowlist: '+str(actual))
           additions={p.name for p in pathlib.Path('reference/src/coop').iterdir()}
           if 'room_original_objective_source.hpp' not in additions:

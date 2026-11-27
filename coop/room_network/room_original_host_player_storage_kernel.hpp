@@ -150,6 +150,33 @@ private:
   if(!ActorGeneration(p,n)||!storage_.Span(p,n))return nullptr;
   return static_cast<uint8_t*>(kernel::HostPtr(p));
  }
+ };
+// 001DEC70 selects NPC pool + 0x7A20 even for a detached player, then
+// writes the selected model holder. The generated instruction hook runs
+// before this register is saved and used by the remainder of setup.
+class OriginalSetupModelRoute final {
+ struct Route {
+  uint32_t actor=0,baseline=0,owned=0;
+  unsigned uses=0;
+ };
+ inline static thread_local Route* active_=nullptr;
+ Route route_;
+ bool armed_;
+ public:
+ OriginalSetupModelRoute(uint32_t actor,uint32_t baseline,uint32_t owned) noexcept
+  :route_{actor,baseline,owned,0},armed_(!active_){
+  if(armed_)active_=&route_;
+ }
+ OriginalSetupModelRoute(const OriginalSetupModelRoute&)=delete;
+ OriginalSetupModelRoute& operator=(const OriginalSetupModelRoute&)=delete;
+ ~OriginalSetupModelRoute(){if(armed_)active_=nullptr;}
+ bool Armed()const noexcept{return armed_;}
+ bool UsedOnce()const noexcept{return route_.uses==1;}
+ static void AtModelSelection(X86Context& ctx)noexcept{
+  if(!active_||ctx.ebx!=active_->actor||ctx.ecx!=active_->baseline)return;
+  ctx.ecx=active_->owned;
+  ++active_->uses;
+ }
 };
 // Original camera singleton mapping, separate from actor IO (which requires
 // P1 owner restored). All writable access restricted to camera scope.
@@ -308,16 +335,29 @@ private:
 public:
  bool EnterOwnedOriginalContext(const OriginalSetupScene& s){return EnterContext(s,false);}
  bool EnterOwnedOriginalHumanContext(const OriginalSetupScene& s){return EnterContext(s,true);}
- bool GuestSetup1E0E40(uint32_t world,uint32_t eax,uint32_t& result){
+  bool GuestSetup1E0E40(uint32_t world,uint32_t eax,uint32_t& result){
   uint32_t current=0;
   if(!owner()||poisoned_||!entered_||!actor_.Entered()||!camera_.Entered()||
       world!=binding_.core||eax||!dispatch::Find(0x1E0E40u)||
       !Read32(0x2D12B8u,current)||current!=view_.owner||
       !HasOriginalHumanRegistrationCapacity())return false;
-  X86Context call=ctx_;
-  call.eax=0;call.edx=world;call.ecx=call.ebx=call.esi=call.edi=0;
-  result=kernel::CallGuest(call,0x1E0E40u,{});
-  return true;
+   X86Context call=ctx_;
+   call.eax=0;call.edx=world;call.ecx=call.ebx=call.esi=call.edi=0;
+   constexpr uint32_t modelBytes=0x200u;
+   const auto primaryModel=binding_.npcs+0x7A20u;
+   const auto ownedModel=view_.parts+0x430u;
+   const auto actor=binding_.core+0x30u;
+   uint32_t model=0, phase=0;
+   std::array<uint8_t,modelBytes> before{},after{};
+   if(!Read32(actor+0x320u,model)||model!=ownedModel||!Read32(actor+0x8E4u,phase)||
+      !storage_.Owns(view_.parts,0x630u)||!lifetime_||!lifetime_(binding_.npcs,0x8540u)||
+      !storage_.CopyGuest(primaryModel,before.data(),before.size()))return false;
+   OriginalSetupModelRoute route(phase==0x1Cu?actor:0u,primaryModel,ownedModel);
+   if(!route.Armed())return false;
+   result=kernel::CallGuest(call,0x1E0E40u,{});
+   return ((result&255u)!=1u||route.UsedOnce())&&
+    Read32(actor+0x320u,model)&&model==ownedModel&&
+    storage_.CopyGuest(primaryModel,after.data(),after.size())&&before==after;
  }
  // Original human-only update ABI from pinned PC black_p2_update.
  // No world/AI step. A real provider must prove input and interaction

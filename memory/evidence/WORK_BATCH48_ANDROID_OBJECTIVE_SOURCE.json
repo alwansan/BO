@@ -588,6 +588,18 @@
     "postSetupMovementOrLinkedPhysicsExercised": false,
     "allowlistedMarkersSha256": "51164dd6363117e47ac8ff837dbe8648eff76974214d85ae11993a242f4e9f92"
   },
+  "originalP2PostSetupNativeProxyTrial": {
+    "repositorySourceBaseline": "52517c354c6ce803a9eccbac0c80ffb153ecb297",
+    "framesAtLeast": 1680,
+    "intentionalExit": 137,
+    "engineSignalObserved": false,
+    "originalSetupCalls": 4,
+    "nativeP2ColliderProxyAndMotionDistinctAfterSetup": true,
+    "donorInputAllocationReturnSite": "0020BD5E",
+    "donorInputOriginalAllocationBytes": 2820,
+    "nativeUseOfSecondControllerNotReached": true,
+    "allowlistedMarkersSha256": "c0576b70c21370f7c9526d5507480b6b7268bcb7a56fe960bcff017157452d0a"
+  },
   "originalSimpleObjectiveCompletionRoomAndJniVerification": {
     "sourceRevision": "0ea1eeefce95c1214cc924aa027637d4830097b9",
     "authenticatedLoopbackTlsAfterStoryCommit": true,

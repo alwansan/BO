@@ -503,7 +503,21 @@ X86_FUNC(sub_0002B830) {
     __imp__sub_001E5FA0(ctx, base);''',cheat)
     # Verified same original post-frame boundary as native PC dual-control
     # source. No extra actor setup or second world tick.
+    config = originals['config/game.toml'].decode('utf-8').replace('\r\n', '\n')
+    if re.search(r'(?im)^\s*at\s*=\s*0x0*1DEDC9\b', config) or 'CoopRouteOriginalSetupModel' in config:
+        raise ValueError('Original player model selection hook already present')
+    pending['config/game.toml'] = config.rstrip() + '''
+
+# Before 001DEC70 saves the selected model holder in its local stack slot.
+[[hook]]
+at = 0x001DEDC9
+call = "CoopRouteOriginalSetupModel"
+'''
     game += '''
+void CoopRouteOriginalSetupModel(X86Context& ctx, uint8_t*) {
+    blackcoop::OriginalSetupModelRoute::AtModelSelection(ctx);
+}
+
 // ORIGINAL full world-frame update; the PC 2-player engine schedules
 // its player2 after vanilla 1F1080, not inside a frontend/menu callback.
 X86_EXTERN_FUNC(__imp__sub_001F1080);

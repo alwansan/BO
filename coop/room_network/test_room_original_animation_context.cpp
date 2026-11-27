@@ -332,7 +332,13 @@ int main() {
   {
     IO io;OriginalAnimationContext anim;OriginalWeaponSoundContext sound;
     OriginalEffectsContext effects;OriginalPresentationArbiter arbiter;
-    assert(anim.ObserveOriginalCacheConstructor(io,0x600000)&&anim.Capture(io));
+    struct AnimationIO {
+      IO& memory;
+      uint64_t Scene() const { return memory.scene + 10; }
+      uint8_t* Map(uint32_t p,uint32_t n) { return memory.Map(p,n); }
+      uint64_t Generation(uint32_t p,uint32_t n) const { return memory.Generation(p,n); }
+    } animationIo{io};
+    assert(anim.ObserveOriginalCacheConstructor(animationIo,0x600000)&&anim.Capture(animationIo));
     io.w(0x2D12D8u,0x180000u);io.w(0x2D0D60u,0x100000u);
     io.w(0x100000u+0xD3C8u,0x170000u);io.w(0x17000Cu,0x190000u);
     io.w(0x170014u,0x198000u);
@@ -342,7 +348,7 @@ int main() {
     io.w(at+0x3440u,0x192000u);io.w(at+0x3444u,0x193000u);
     assert(effects.Bind(io,0x100030u,0x180000u));
     OriginalSetupScene scope{7,1,0x100000u,0x100030u,0x120000u,0x180000u,0x181000u,2};
-    OriginalPresentationTransaction tx(io,arbiter,anim,sound,effects,scope);
+    OriginalPresentationTransaction tx(io,animationIo,arbiter,anim,sound,effects,scope);
     assert(tx.CanEnterOriginal(scope)&&tx.EnterOriginal(scope)&&tx.OriginalContextActive(scope));
     assert(!arbiter.Acquire(7,3)&&!arbiter.Acquire(7,4));
     assert(tx.RestoreOriginal(scope)&&tx.OriginalP1Restored(scope));

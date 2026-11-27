@@ -649,8 +649,9 @@ public:
 // IO still needs real allocator and constructor provenance. No production
 // caller or permissive default. Restore every entered component in reverse
 // order; uncertain side effects permanently bar the other human lanes.
-template<class IO>class OriginalPresentationTransaction final {
+template<class IO,class AnimationIO=IO>class OriginalPresentationTransaction final {
  IO& io_;
+ AnimationIO& animationIo_;
  OriginalPresentationArbiter& arbiter_;
  OriginalAnimationContext& animation_;
  OriginalWeaponSoundContext& sound_;
@@ -665,17 +666,21 @@ template<class IO>class OriginalPresentationTransaction final {
     s.ownedActor==scope_.ownedActor&&s.ownedOwner==scope_.ownedOwner;
  }
 public:
- OriginalPresentationTransaction(IO& io,OriginalPresentationArbiter& arbiter,
-    OriginalAnimationContext& animation,OriginalWeaponSoundContext& sound,
-    OriginalEffectsContext& effects,const OriginalSetupScene& scope)
-  :io_(io),arbiter_(arbiter),animation_(animation),sound_(sound),effects_(effects),scope_(scope){}
+  OriginalPresentationTransaction(IO& io,OriginalPresentationArbiter& arbiter,
+     OriginalAnimationContext& animation,OriginalWeaponSoundContext& sound,
+     OriginalEffectsContext& effects,const OriginalSetupScene& scope)
+   :OriginalPresentationTransaction(io,io,arbiter,animation,sound,effects,scope){}
+  OriginalPresentationTransaction(IO& io,AnimationIO& animationIo,OriginalPresentationArbiter& arbiter,
+     OriginalAnimationContext& animation,OriginalWeaponSoundContext& sound,
+     OriginalEffectsContext& effects,const OriginalSetupScene& scope)
+   :io_(io),animationIo_(animationIo),arbiter_(arbiter),animation_(animation),sound_(sound),effects_(effects),scope_(scope){}
  OriginalPresentationTransaction(const OriginalPresentationTransaction&)=delete;
  OriginalPresentationTransaction& operator=(const OriginalPresentationTransaction&)=delete;
  bool CanEnterOriginal(const OriginalSetupScene& s){
   return matches(s)&&!attempted_&&!poisoned_&&io_.Scene()==s.nativeScene&&
     arbiter_.Available(s.nativeScene,s.peer)&&!animation_.Entered()&&
     !sound_.Entered()&&!effects_.Entered()&&!sound_.Quarantined()&&
-     !effects_.Quarantined()&&animation_.CanExchange(io_)&&sound_.CanExchange(io_)&&
+      !effects_.Quarantined()&&animation_.CanExchange(animationIo_)&&sound_.CanExchange(io_)&&
     io_.OwnsCompletePresentation(s);
  }
  bool EnterOriginal(const OriginalSetupScene& s){
@@ -685,7 +690,7 @@ public:
   // Exchange implementations do not call guest code. An exception is
   // treated as uncertain even if all observable flags remain unchanged.
   try{
-   return animation_.Exchange(io_)&&sound_.Exchange(io_)&&effects_.Exchange(io_);
+    return animation_.Exchange(animationIo_)&&sound_.Exchange(io_)&&effects_.Exchange(io_);
   }catch(...){poisoned_=true;return false;}
  }
  bool OriginalContextActive(const OriginalSetupScene& s){
@@ -700,7 +705,7 @@ public:
   bool ok=!poisoned_;
   try{if(effects_.Entered()&&!effects_.Exchange(io_))ok=false;}catch(...){ok=false;}
   try{if(sound_.Entered()&&!sound_.Exchange(io_))ok=false;}catch(...){ok=false;}
-  try{if(animation_.Entered()&&!animation_.Exchange(io_))ok=false;}catch(...){ok=false;}
+   try{if(animation_.Entered()&&!animation_.Exchange(animationIo_))ok=false;}catch(...){ok=false;}
   ok=ok&&!animation_.Entered()&&!sound_.Entered()&&!effects_.Entered()&&
     !sound_.Quarantined()&&!effects_.Quarantined();
   if(!arbiter_.Release(s.nativeScene,s.peer,ok))ok=false;

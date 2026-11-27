@@ -55,6 +55,9 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('"coopOriginalHostObjectiveFrame","([I)[B"',post_frame)
             self.assertIn('"coopOriginalHostObjectiveCurrent","([IJ)Z"',post_frame)
             cheats=(root/'src/game/cheats.cpp').read_text(encoding='utf-8')
+            config=(root/'config/game.toml').read_text(encoding='utf-8')
+            self.assertIn('at = 0x001DEDC9\ncall = "CoopRouteOriginalSetupModel"',config)
+            self.assertIn('OriginalSetupModelRoute::AtModelSelection(ctx)',cheats)
             for address, name, argument, after in (
                 ('001EB1F0','Unlink','ctx.esp','before'),
                 ('001EB7F0','Poll','ctx.ecx','unit,ctx.eax'),
