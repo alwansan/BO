@@ -21,12 +21,9 @@ struct IO {
   bool OwnsEffectsActorPair(uint32_t first,uint32_t extra) const {
     return first==0x100030u&&extra==0x180000u;
   }
-  bool OwnsConstructedWeaponSoundContext(uint32_t first,uint32_t extra,
-      uint32_t pool,const std::array<uint8_t,0x1330>& bytes) const {
-    return OwnsLiveWeaponSoundContext(first,extra,pool)&&bytes[0]==44u;
-  }
-  bool OwnsLiveWeaponSoundContext(uint32_t first,uint32_t extra,uint32_t pool) const {
-    return first==0x180000u&&extra==0x181000u&&pool==0x190000u;
+  bool OwnsLiveWeaponSoundContext(uint32_t first,uint32_t extra,
+      uint32_t firstPool,uint32_t extraPool) const {
+    return first==0x180000u&&extra==0x181000u&&firstPool==0x190000u&&extraPool==0x194000u;
   }
   uint64_t Generation(uint32_t, uint32_t) const { return generation; }
   uint8_t *Map(uint32_t p, uint32_t n) {
@@ -268,16 +265,22 @@ int main() {
     snd.w(0x2D12D8u,0x180000u);snd.w(0x2D0D60u,0x100000u);
     snd.w(0x100000u+0xD3C8u,0x170000u);snd.w(0x17000Cu,0x190000u);
     snd.w(0x190000u,11u);
-    std::array<uint8_t,0x1330> prepared{};
-    assert(!sound.Bind(snd,0x181000u,prepared));
-    prepared[0]=44u;
-    assert(sound.Bind(snd,0x181000u,prepared));
+    snd.w(0x194000u,44u);
+    assert(!sound.Bind(snd,0x181000u,0x190000u));
+    assert(!sound.Bind(snd,0x181000u,0x195000u)); // unproven pool
+    assert(sound.Bind(snd,0x181000u,0x194000u));
+    before=snd.m;
+    snd.blocked=0x17000Cu;
+    assert(!sound.CanExchange(snd)&&!sound.Exchange(snd)&&snd.m==before);
+    snd.blocked=0;
     assert(sound.Exchange(snd)&&sound.Entered());
-    assert(snd.r(0x2D12D8u)==0x181000u&&snd.r(0x190000u)==44u);
-    snd.w(0x190000u,55u);
+    assert(snd.r(0x2D12D8u)==0x181000u&&snd.r(0x17000Cu)==0x194000u);
+    assert(snd.r(0x190000u)==11u&&snd.r(0x194000u)==44u);
+    snd.w(0x194000u,55u);
     assert(sound.Exchange(snd)&&!sound.Entered());
-    assert(snd.r(0x2D12D8u)==0x180000u&&snd.r(0x190000u)==11u);
-    assert(sound.Exchange(snd)&&snd.r(0x190000u)==55u);
+    assert(snd.r(0x2D12D8u)==0x180000u&&snd.r(0x17000Cu)==0x190000u);
+    assert(snd.r(0x190000u)==11u&&snd.r(0x194000u)==55u);
+    assert(sound.Exchange(snd)&&snd.r(0x17000Cu)==0x194000u);
     ++snd.generation;before=snd.m;
     assert(!sound.Exchange(snd)&&sound.Quarantined()&&snd.m==before);
   }
@@ -287,8 +290,7 @@ int main() {
     assert(anim.ObserveOriginalCacheConstructor(io,0x600000)&&anim.Capture(io));
     io.w(0x2D12D8u,0x180000u);io.w(0x2D0D60u,0x100000u);
     io.w(0x100000u+0xD3C8u,0x170000u);io.w(0x17000Cu,0x190000u);
-    std::array<uint8_t,0x1330> prepared{};prepared[0]=44;
-    assert(sound.Bind(io,0x181000u,prepared));
+    assert(sound.Bind(io,0x181000u,0x194000u));
     constexpr uint32_t at=0x100000u+0x65690u;
     io.w(0x2D1990u,0x100000u);
     io.w(at+0x3440u,0x192000u);io.w(at+0x3444u,0x193000u);

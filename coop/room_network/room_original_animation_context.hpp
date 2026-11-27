@@ -465,30 +465,52 @@ public:
   entered_=!entered_;return true;
  }
 };
-// Pinned original black_p2_banks_swap: manager pointer at 2D12D8 and
-// first-person sound pool at [[2D0D60]+D3C8]+C. Initialization must be
-// performed separately via the original sound/bank constructors, never
-// by copying live P1 sound ownership into a new player.
+// The original bank selection at 001BC5D0 reads [[2D0D60]+D3C8]+C.
+// Exchange that selector and the manager root (2D12D8). The audio registry
+// retains addresses of embedded objects, so both constructed pools stay put.
 class OriginalWeaponSoundContext final {
  const std::thread::id thread_=std::this_thread::get_id();
  static constexpr uint32_t managerRoot_=0x2D12D8u, soundRoot_=0x2D0D60u;
  static constexpr uint32_t bytes_=0x1330u;
- uint64_t scene_=0,p1Gen_=0,extraGen_=0,poolGen_=0;
- uint32_t first_=0,extra_=0,pool_=0;
- std::array<uint8_t,bytes_> held_{};
+ // The provider must prove that both stationary pools retain their original
+ // registry memberships and exclude concurrent consumers of the selectors.
+ struct Region {uint32_t address=0,bytes=0;uint64_t generation=0;};
+ Region firstManager_,extraManager_,firstPool_,extraPool_,selector_;
+ uint64_t scene_=0;
+ uint32_t selectorParent_=0;
  bool bound_=false,entered_=false,poisoned_=false;
  bool owner()const noexcept{return thread_==std::this_thread::get_id();}
  static uint32_t word(const uint8_t* p){uint32_t v=0;std::memcpy(&v,p,4);return v;}
- static bool span(uint32_t p,uint32_t n){return p>=0x10000u&&uint64_t(p)+n<=0x100000000ull;}
- static bool overlap(uint32_t a,uint32_t n,uint32_t b,uint32_t m){
-  return uint64_t(a)<uint64_t(b)+m&&uint64_t(b)<uint64_t(a)+n;
+ static bool span(uint32_t p,uint32_t n){
+  return p>=0x10000u&&!(p&3u)&&uint64_t(p)+n<=0x100000000ull;
  }
- template<class IO>static uint32_t resolve(IO& io){
+ static bool overlap(const Region& a,const Region& b){
+  return uint64_t(a.address)<uint64_t(b.address)+b.bytes&&
+         uint64_t(b.address)<uint64_t(a.address)+a.bytes;
+ }
+ template<class IO>static uint32_t resolveSelector(IO& io,uint32_t& parent){
   auto* root=io.Map(soundRoot_,4u);if(!root)return 0;
   uint32_t a=word(root);if(!span(a,0xD3CCu))return 0;
-  auto* second=io.Map(a+0xD3C8u,4u);if(!second)return 0;
+  parent=a+0xD3C8u;
+  auto* second=io.Map(parent,4u);if(!second)return 0;
   uint32_t b=word(second);if(!span(b,16u))return 0;
-  auto* third=io.Map(b+0xCu,4u);return third?word(third):0;
+  return b+0xCu;
+ }
+ template<class IO>bool resolveExchange(IO& io,uint8_t*& manager,uint8_t*& pool)const{
+  uint32_t parent=0;
+  if(!owner()||!bound_||poisoned_||io.Scene()!=scene_||
+     resolveSelector(io,parent)!=selector_.address||parent!=selectorParent_)return false;
+  for(const auto& region:{firstManager_,extraManager_,firstPool_,extraPool_,selector_}){
+   if(!io.Map(region.address,region.bytes)||
+      io.Generation(region.address,region.bytes)!=region.generation)return false;
+  }
+  manager=io.Map(managerRoot_,4u);
+  pool=io.Map(selector_.address,4u);
+  return manager&&pool&&manager!=pool&&
+    word(manager)==(entered_?extraManager_:firstManager_).address&&
+    word(pool)==(entered_?extraPool_:firstPool_).address&&
+    io.OwnsLiveWeaponSoundContext(firstManager_.address,extraManager_.address,
+                                  firstPool_.address,extraPool_.address);
  }
 public:
  OriginalWeaponSoundContext()=default;
@@ -496,38 +518,47 @@ public:
  OriginalWeaponSoundContext& operator=(const OriginalWeaponSoundContext&)=delete;
  bool Entered()const noexcept{return owner()&&entered_;}
  bool Quarantined()const noexcept{return owner()&&poisoned_;}
- template<class IO>bool Bind(IO& io,uint32_t extra,
-     const std::array<uint8_t,bytes_>& constructedPool){
-  if(!owner()||bound_||poisoned_||!io.Scene()||!span(extra,0xD0u))return false;
-  auto* root=io.Map(managerRoot_,4u);if(!root)return false;
-  auto first=word(root),pool=resolve(io);
-  if(!span(first,0xD0u)||!span(pool,bytes_)||
-     overlap(first,0xD0u,extra,0xD0u)||overlap(pool,bytes_,first,0xD0u)||
-     overlap(pool,bytes_,extra,0xD0u)||overlap(pool,bytes_,managerRoot_,4u)||
-     overlap(pool,bytes_,soundRoot_,4u)||!io.Map(pool,bytes_)||
-     !io.OwnsConstructedWeaponSoundContext(first,extra,pool,constructedPool))return false;
-  const auto a=io.Generation(first,0xD0u),b=io.Generation(extra,0xD0u),
-             c=io.Generation(pool,bytes_);
-  if(!a||!b||!c)return false;
-  scene_=io.Scene();first_=first;extra_=extra;pool_=pool;
-  p1Gen_=a;extraGen_=b;poolGen_=c;held_=constructedPool;bound_=true;return true;
+ template<class IO>bool Bind(IO& io,uint32_t extraManager,uint32_t extraPool){
+  if(!owner()||bound_||poisoned_||!io.Scene())return false;
+  uint32_t parent=0;
+  const auto selector=resolveSelector(io,parent);
+  if(!selector||parent==managerRoot_||parent==soundRoot_)return false;
+  auto* managerRoot=io.Map(managerRoot_,4u);
+  auto* poolRoot=io.Map(selector,4u);
+  if(!managerRoot||!poolRoot||managerRoot==poolRoot)return false;
+  std::array<Region,5> regions{{{word(managerRoot),0xD0u},{extraManager,0xD0u},
+     {word(poolRoot),bytes_},{extraPool,bytes_},{selector,4u}}};
+  for(unsigned i=0;i<regions.size();++i){
+   auto& item=regions[i];
+   if(!span(item.address,item.bytes)||overlap(item,{managerRoot_,4u})||
+      overlap(item,{soundRoot_,4u})||overlap(item,{parent,4u})||
+      !io.Map(item.address,item.bytes))return false;
+   for(unsigned j=0;j<i;++j)if(overlap(item,regions[j]))return false;
+   item.generation=io.Generation(item.address,item.bytes);
+   if(!item.generation)return false;
+  }
+  if(!io.OwnsLiveWeaponSoundContext(regions[0].address,extraManager,regions[2].address,extraPool))
+   return false;
+  firstManager_=regions[0];extraManager_=regions[1];
+  firstPool_=regions[2];extraPool_=regions[3];selector_=regions[4];
+  selectorParent_=parent;
+  scene_=io.Scene();bound_=true;return true;
+ }
+ template<class IO>bool CanExchange(IO& io)const{
+  uint8_t *manager=nullptr,*pool=nullptr;
+  return resolveExchange(io,manager,pool);
  }
  template<class IO>bool Exchange(IO& io){
   if(!owner()||!bound_||poisoned_)return false;
-  auto* root=io.Map(managerRoot_,4u);
-  auto* pool=io.Map(pool_,bytes_);
-  if(!root||!pool||io.Scene()!=scene_||resolve(io)!=pool_||
-     word(root)!=(entered_?extra_:first_)||
-     io.Generation(first_,0xD0u)!=p1Gen_||
-     io.Generation(extra_,0xD0u)!=extraGen_||
-     io.Generation(pool_,bytes_)!=poolGen_||
-     !io.OwnsLiveWeaponSoundContext(first_,extra_,pool_)){
+  uint8_t *manager=nullptr,*pool=nullptr;
+  if(!resolveExchange(io,manager,pool)){
    if(entered_)poisoned_=true;
    return false;
   }
-  uint32_t next=entered_?first_:extra_;
-  std::memcpy(root,&next,4u);
-  for(unsigned i=0;i<held_.size();++i)std::swap(pool[i],held_[i]);
+  const auto nextManager=(entered_?firstManager_:extraManager_).address;
+  const auto nextPool=(entered_?firstPool_:extraPool_).address;
+  std::memcpy(manager,&nextManager,4u);
+  std::memcpy(pool,&nextPool,4u);
   entered_=!entered_;return true;
  }
 };
@@ -592,7 +623,7 @@ public:
   return matches(s)&&!attempted_&&!poisoned_&&io_.Scene()==s.nativeScene&&
     arbiter_.Available(s.nativeScene,s.peer)&&!animation_.Entered()&&
     !sound_.Entered()&&!effects_.Entered()&&!sound_.Quarantined()&&
-    !effects_.Quarantined()&&animation_.CanExchange(io_)&&
+     !effects_.Quarantined()&&animation_.CanExchange(io_)&&sound_.CanExchange(io_)&&
     io_.OwnsCompletePresentation(s);
  }
  bool EnterOriginal(const OriginalSetupScene& s){
@@ -607,7 +638,8 @@ public:
  }
  bool OriginalContextActive(const OriginalSetupScene& s){
   return matches(s)&&!poisoned_&&acquired_&&arbiter_.Held(s.nativeScene,s.peer)&&
-    io_.Scene()==s.nativeScene&&animation_.Entered()&&sound_.Entered()&&effects_.Entered();
+     io_.Scene()==s.nativeScene&&animation_.Entered()&&sound_.Entered()&&
+     sound_.CanExchange(io_)&&effects_.Entered();
  }
  bool RestoreOriginal(const OriginalSetupScene& s){
   if(!matches(s))return false;
@@ -622,9 +654,9 @@ public:
   if(!arbiter_.Release(s.nativeScene,s.peer,ok))ok=false;
   attempted_=acquired_=false;poisoned_=!ok;return ok;
  }
- bool OriginalP1Restored(const OriginalSetupScene& s){
-  return matches(s)&&!poisoned_&&!attempted_&&!acquired_&&
-    io_.Scene()==s.nativeScene&&!animation_.Entered()&&!sound_.Entered()&&
+  bool OriginalP1Restored(const OriginalSetupScene& s){
+   return matches(s)&&!poisoned_&&!attempted_&&!acquired_&&
+     io_.Scene()==s.nativeScene&&!animation_.Entered()&&!sound_.Entered()&&sound_.CanExchange(io_)&&
     !effects_.Entered()&&arbiter_.Available(s.nativeScene,s.peer)&&
     io_.VerifyRestoredPresentation(s);
  }
