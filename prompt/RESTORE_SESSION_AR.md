@@ -2,7 +2,7 @@
 
 - ثبت تفعيل هدف مؤلف على Android واكتمال صف بسيط `1 → 3` دون تغيير العداد. تطابقت اللقطة عبر TLS وقرأ JNI الجدول كاملاً ورفض التسلسل المنتهي دون تغيير. يبقى إثبات عرض HUD وتقدم المرحلة وAPK اللعبة. [الدليل](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/evidence/WORK_BATCH48_ANDROID_OBJECTIVE_SOURCE.json).
 - مرت قيم حية عبر TLS محلي وطابقت قراءة المحرك بعد تفعيل الضيف. تحقق مسار التطبيق عبر JNI في مختبر خاص، و[APK اصطناعي منفصل](https://github.com/alwansan/BO/actions/runs/45922634177) أثبت تصدير الرموز الستة. APK اللعبة لم يُختبر.
-- أكمل محرك Android ARM64 الخاص 104 تحديثات لـP2، واستعاد P1 وأزال خانة الوكيل وروابطها. الحركة الأفقية للممثل وصف الحركة صفر؛ قفل الكاميرا غير نشط. التالي ربط إدخال المنفذ الثاني بدالة المتحكم ومواصلة إثبات التحرير. [فحص المصدر](https://github.com/alwansan/BO/actions/runs/46015193915) ناجح على `ed93528`؛ لا APK قبول. [التفاصيل](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-27_bo-coop-work48-android-objective.md).
+- أكمل محول الإعداد أربع دورات على Android ARM64 الخاص واستعاد P1؛ تحررت تخصيصات المورد المساعد الثلاثة. بلغ المحوران خرج المشي بلا حركة أفقية مثبتة. التالي فحص سرعة صف الحركة بين خطوات العالم الأصلية. لا APK قبول. [التفاصيل](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-27_bo-coop-work48-android-objective.md).
 
 ## سجل Work47 (2026-11-27)
 

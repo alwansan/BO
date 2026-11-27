@@ -173,7 +173,7 @@ class OriginalSetupModelRoute final {
  bool Armed()const noexcept{return armed_;}
  bool UsedOnce()const noexcept{return route_.uses==1;}
  static void AtModelSelection(X86Context& ctx)noexcept{
-  if(!active_||ctx.ebx!=active_->actor||ctx.ecx!=active_->baseline)return;
+  if(!active_||!active_->actor||ctx.ebx!=active_->actor||ctx.ecx!=active_->baseline)return;
   ctx.ecx=active_->owned;
   ++active_->uses;
  }
@@ -365,10 +365,9 @@ public:
  bool EnterOwnedOriginalHumanContext(const OriginalSetupScene& s){return EnterContext(s,true);}
   bool GuestSetup1E0E40(uint32_t world,uint32_t eax,uint32_t& result){
   uint32_t current=0;
-  if(!owner()||poisoned_||!entered_||!actor_.Entered()||!camera_.Entered()||
+   if(!owner()||poisoned_||!entered_||!actor_.Entered()||!camera_.Entered()||
       world!=binding_.core||eax||!dispatch::Find(0x1E0E40u)||
-      !Read32(0x2D12B8u,current)||current!=view_.owner||
-      !HasOriginalHumanRegistrationCapacity())return false;
+      !Read32(0x2D12B8u,current)||current!=view_.owner)return false;
    X86Context call=ctx_;
    call.eax=0;call.edx=world;call.ecx=call.ebx=call.esi=call.edi=0;
    constexpr uint32_t modelBytes=0x200u;
@@ -377,13 +376,20 @@ public:
    const auto actor=binding_.core+0x30u;
    uint32_t model=0, phase=0;
    std::array<uint8_t,modelBytes> before{},after{};
-   if(!Read32(actor+0x320u,model)||model!=ownedModel||!Read32(actor+0x8E4u,phase)||
+   if(!Read32(actor+0x8E4u,phase))return false;
+   // 001DEC70 returns before the registration calls in phases 1, 2 and 3.
+   // The known final phase 0x1C can register once; reject completed phase 0x37.
+   const bool finalPhase=phase==0x1Cu;
+   if(phase!=1u&&phase!=2u&&phase!=3u&&!finalPhase)return false;
+   if(finalPhase&&!HasOriginalHumanRegistrationCapacity())return false;
+   if(!Read32(actor+0x320u,model)||model!=ownedModel||
       !storage_.Owns(view_.parts,0x630u)||!lifetime_||!lifetime_(binding_.npcs,0x8540u)||
       !storage_.CopyGuest(primaryModel,before.data(),before.size()))return false;
-   OriginalSetupModelRoute route(phase==0x1Cu?actor:0u,primaryModel,ownedModel);
+   OriginalSetupModelRoute route(finalPhase?actor:0u,primaryModel,ownedModel);
    if(!route.Armed())return false;
    result=kernel::CallGuest(call,0x1E0E40u,{});
-   return ((result&255u)!=1u||route.UsedOnce())&&
+   const bool completed=(result&255u)==1u;
+   return (completed?finalPhase&&route.UsedOnce():!route.UsedOnce())&&
     Read32(actor+0x320u,model)&&model==ownedModel&&
     storage_.CopyGuest(primaryModel,after.data(),after.size())&&before==after;
  }

@@ -4791,7 +4791,20 @@
     "androidPrivateP2PostUpdateProxyOccupancyCleared": true,
     "androidPrivateP2CameraHoldAbsentOnBothOwnersAcross104Frames": true,
     "androidPrivateP2HorizontalMotionRowTravelMillimetres": 0,
+    "androidPrivateP2SameNativePadControllerAsP1": "001EC450",
+    "androidPrivateP2NativeControllerNonNeutralIntentFrames": 96,
+    "androidPrivateP2NativeControllerCorrectActiveActorFrames": 104,
+    "androidPrivateP2BothAxesReachedNativeMoveIntent": true,
+    "androidPrivateP2NativeHorizontalDisplacementCommandFramesPerAxis": 101,
+    "androidSetupRegistrationCapacityCheckedOnlyAtFinalNativePhase": true,
+    "androidPrivateP2StagedSetupKernelAdapterCompletedAndRestored": true,
+    "androidPrivateP2AuxiliaryNativeDestructorVerified": "00016C90",
+    "androidPrivateP2AuxiliarySdkAllocationsReleased": 3,
+    "androidPrivateP2InactiveTargetActorStorageRetained": true,
     "androidExtraHumanUpdateExcludedFromP1Witnesses": true,
+    "androidExtraHumanUpdateWitnessIsolationSourceUnitsCi": 46016254870,
+    "androidExtraHumanUpdateWitnessIsolationParallelSourceCi": 46016254800,
+    "androidExtraHumanUpdateWitnessIsolationPreflightCi": 46016254924,
     "androidEmbeddedControllerSourceUnitsCi": 46015194003,
     "androidEmbeddedControllerSourcePreflightCi": 46015193915,
     "androidEmbeddedControllerParallelSourceCi": 46015193980,
@@ -4844,6 +4857,6 @@
     "androidLivePropDirectNativeWriterReadbackVerified": true,
     "androidLivePropCollisionEffectVerified": false,
     "acceptanceApk": false,
-    "next": "check the private runtime trace of the original live controller and keep raw P2 input held until all original update calls finish; camera hold was zero for both players and both feet and motion row had zero horizontal movement. Verify auxiliary resource teardown separately"
+    "next": "measure motion-row velocity before and after the original actor and stock physics steps and all cross-frame displacement. The exact original setup adapter completed four calls with P1 restoration and returned auxiliary storage in the private Android lab"
   }
 }
