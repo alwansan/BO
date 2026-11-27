@@ -4747,8 +4747,13 @@
     "androidPrivateOriginalStationaryWeaponBankReturnVerified": true,
     "androidPrivateFirstPersonAudioTenStationaryObjectsLifecycleVerified": true,
     "originalFullFirstPersonAudioBackingLayoutCommit": "91124f465a59c6ae938b6d2b3cc34468c32c1ac4",
-    "androidPrivateFirstPersonAnimationWorkspaceTopologyVerified": false,
-    "androidPrivateViewmodelGateSplitPending": true,
+    "androidPrivateFirstPersonAnimationWorkspaceTopologyVerified": true,
+    "androidPrivateAnimationWorkspaceNpcsDisjointFrames": 1026,
+    "androidPrivateViewmodelAllocationsMatchingFrames": 151,
+    "androidPrivateNativeAnimationRoundTripPending": true,
+    "androidStationaryCompleteAudioLayoutSourceUnitsCi": 45938754562,
+    "androidStationaryCompleteAudioLayoutSourcePreflightCi": 45938754570,
+    "androidStationaryCompleteAudioLayoutParallelSourceCi": 45938754575,
     "androidP2StationaryResourceSourceUnitsCi": 45927928758,
     "androidP2StationaryResourcePreflightCi": 45927928957,
     "androidP2StationaryResourceParallelCi": 45927928775,
@@ -4759,6 +4764,6 @@
     "androidLivePropDirectNativeWriterReadbackVerified": true,
     "androidLivePropCollisionEffectVerified": false,
     "acceptanceApk": false,
-    "next": "bind real per-allocation lifetimes for animation/FX and weapon manager; verify the full P1/P2 context before native 001E0E40, then distinct P2 physics, input-driven movement and teardown; compare native multipart prop queries and verify original-game APK diagnostics after integration"
+    "next": "verify the live animation and FX restoration in original game scopes, isolate the separate +0x14 audio effects object and weapon heap lifetimes, then run native 001E0E40 and measure simultaneous input-driven movement and complete teardown"
   }
 }

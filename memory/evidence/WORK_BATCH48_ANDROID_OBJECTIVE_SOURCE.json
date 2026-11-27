@@ -311,7 +311,16 @@
     "liveCacheFrames": 1025,
     "completeWorkspaceShapeFrames": 0,
     "firstPersonNpcBlockSeparationVerified": false,
-    "allowlistedMarkersSha256": "0018c53cca8efc6356853a7588ed58d78a972bbcf1b2d9a404a751875ddf6aff"
+    "allowlistedMarkersSha256": "0018c53cca8efc6356853a7588ed58d78a972bbcf1b2d9a404a751875ddf6aff",
+    "splitGateReadValidBlockTablesButRejectedOriginalZeroTops": true,
+    "nullTopControlAllowlistedMarkersSha256": "602aa1fb5f40fef1cfc2de28081906151befe591c58adfbda91ca1c3d7492725",
+    "sourceShapeCorrectionCommit": "5868e3d4ef27ad5c281535806f1259c500866144",
+    "correctedShapeFramesMatchingTwoFirstPersonControllersAndNpcSeparation": 1026,
+    "originalMatrixBlockCount": 44,
+    "correctedShapeAllowlistedMarkersSha256": "518d001f4184138f14ed149752906ff7f0afc0129b7d5070ec55819f1dd543c5",
+    "originalTableControllerAndMatrixBackingAllocationMatchingFrames": 151,
+    "allocationTrialAllowlistedMarkersSha256": "ed0e0f2f5f91fa9fb75b75001c0202cf783edc031b8fa3d233372e164d2b571b",
+    "cacheRestorationSourceCommit": "e3d58b65a328686110309b2043cbe8af1d1e5aaa"
   },
   "detachedOriginalPlayerProxyTrial": {
     "sourceRevision": "54899ac7222912ac10c392816c2b25ddf01837e0",
