@@ -4721,10 +4721,17 @@
     "p2RetiredOwnedStorageInternalAlignedReferences": [0, 0, 0, 1, 3],
     "p2RetiredStorageAlignedMatchesOutsideOwnedAllocationsInCommittedGuestPages": [1, 3, 0, 0, 0],
     "p2RetiredStorageMatchesProvenLiveReferences": false,
+    "p2CameraGuardFinalSourceRevisionNativeVerified": "530a8384ac9d59d839ab133ec2056b3edacbdd6f",
+    "p2CameraGuardSuccessfulSourceChecks": [46058246853, 46058246963, 46058246898, 46058246988],
+    "p2RetiredStoragePostRetirementMatchesAlreadyPresentBeforePublication": [0, 3, 0, 0, 0],
+    "p2RetiredStorageNewAlignedMatchesRelativeToPrepublication": [0, 0, 0, 0, 0],
+    "p2ExactOwnedCameraBoundarySamples": [528, 108],
+    "p2PostWorldRegisterFramesAfterRelink": 1085,
+    "p2PostWorldRegisterMatchesByOwnedTarget": [0, 0, 0, 0, 0],
     "p2AttachmentRowReferencesInP1And32NpcWeaponTables": 0,
     "actorStorageFreed": false,
     "acceptanceApk": false,
-    "next": "classify one actor address match in user memory and three camera address matches in physical memory against the pre-publication baseline and tracked allocation owners. Verify ownership and complete lifetime proof before freeing any detached block."
+    "next": "qualify remaining camera lifetime from active and restored runtime boundaries and cover native host-held references; then build a guarded retirement proof before attempting any final allocator release."
   },
   "workBatch48": {
     "date": "2026-11-27",

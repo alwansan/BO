@@ -179,6 +179,58 @@
     "allocationsFreed": 0,
     "allowlistedMarkersSha256": "79b533849fec23dd81d061074331df227d73d451a3d1df726b83fc2886e8169f"
   },
+  "cameraOwnerGuardAndPrepublicationComparison": {
+    "codeRevision": "530a8384ac9d59d839ab133ec2056b3edacbdd6f",
+    "playerLinkExchangeHeaderSha256": "24953f91888017ef5dfbbe55f1d07342641fa05ca3100e1f0848a34b28825a20",
+    "playerStorageKernelHeaderSha256": "f2e25728f1cb8e8639862c0808e84fe79cf221925daded123aaf7dd0c2ff08dd",
+    "baselineMatchesBeforeNativePublication": 6,
+    "postRetirementMatches": 3,
+    "postRetirementActorMatches": 0,
+    "postRetirementCameraMatchesInTrackedPhysicalHolders": 3,
+    "sameLocationAndValueBeforePublicationByTarget": [0, 3, 0, 0, 0],
+    "newAlignedMatchesByTarget": [0, 0, 0, 0, 0],
+    "nativeMotionUpdates": 104,
+    "postRelinkRunningFrames": 1086,
+    "framesAtLeast": 2880,
+    "processExit": 0,
+    "engineSignalObserved": false,
+    "allocationsFreed": 0,
+    "allowlistedMarkersSha256": "3d1890abf8d9099a1ae137082516c09a38c2ca2f346f4b6fdf14d9acc66e653a"
+  },
+  "cameraOwnerGuardSuccessfulSourceChecks": {
+    "codeRevision": "530a8384ac9d59d839ab133ec2056b3edacbdd6f",
+    "androidTranslationUnits": 46058246853,
+    "sourcePreflight": 46058246963,
+    "parallelSourceTracks": 46058246898,
+    "udp": 46058246988
+  },
+  "cameraOwnerNativeBoundarySamples": {
+    "codeRevision": "530a8384ac9d59d839ab133ec2056b3edacbdd6f",
+    "activeSamples": 528,
+    "activeSamplesWithCorrectRootGenerationAndExactBytes": 528,
+    "restoredSamples": 108,
+    "restoredSamplesWithCorrectRootGenerationAndExactBytes": 108,
+    "postRelinkRunningFrames": 1204,
+    "newAlignedMatchesByTarget": [0, 0, 0, 0, 0],
+    "processExit": 0,
+    "framesAtLeast": 3000,
+    "engineSignalObserved": false,
+    "cameraOwnerFreed": false,
+    "allowlistedMarkersSha256": "f4f47e20ac673f9525bdc924dda36a281544698e2dd3e5585214283e272726eb"
+  },
+  "retiredStoragePostWorldIntegerRegisters": {
+    "codeRevision": "530a8384ac9d59d839ab133ec2056b3edacbdd6f",
+    "postRelinkFrameSamples": 1085,
+    "integerRegistersPerSample": 8,
+    "matchesByOwnedTarget": [0, 0, 0, 0, 0],
+    "newAlignedGuestMemoryMatchesByOwnedTarget": [0, 0, 0, 0, 0],
+    "otherThreadsAndNativeHostReferencesCovered": false,
+    "allocationsFreed": 0,
+    "processExit": 0,
+    "framesAtLeast": 2880,
+    "engineSignalObserved": false,
+    "allowlistedMarkersSha256": "0e3e0384ccedebab34dbe6e32ae21ef04018f9264a0fc5d8596499a375ff3fd2"
+  },
   "originalActorCleanupSource": {
     "ownerXbeSha1": "c5bfed25449c8212d7a976f15246e87ead57713f",
     "firstPersonVtablePlus0C": "001D5D90",
