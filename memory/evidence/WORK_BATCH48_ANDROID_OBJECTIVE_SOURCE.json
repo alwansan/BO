@@ -345,6 +345,16 @@
       "regionsWithExactAllocationWitness": 0,
       "regionsInsideP1ActorOrViewmodelRoot": 0,
       "allowlistedMarkersSha256": "ec24d95252bb26cde352c4d0a0609fe4aebb1ccbb5b9584e229112954dca51f5"
+    },
+    "liveAnimationRoundTrip": {
+      "framesAtLeast": 1440,
+      "processExit": 0,
+      "engineSignalObserved": false,
+      "originalTransformAllocatorReturnSiteObserved": "0017EC6D",
+      "threeOriginalCacheAllocationsBound": true,
+      "originalViewmodelCacheAndPoolContentsByteIdenticalAfterExchange": true,
+      "originalPlayerSetupOrAnimationPlaybackExercisedDuringScope": false,
+      "allowlistedMarkersSha256": "17322d06febc0043b52ae1767649c87b50748caabd5ec0af91c9d9304b68a750"
     }
   },
   "originalEffectsActorCameraRoundTripTrial": {
@@ -392,6 +402,17 @@
     "rebindTeardownChecksPassed": false,
     "ownedColliderBlocksRetained": true,
     "allowlistedMarkersSha256": "5e852eff9c4830bbe80755eb306dd61a89c982714b680c073bfc14260006fa4c"
+  },
+  "ownedOriginalP2ColliderRebindReadbackTrial": {
+    "framesAtLeast": 2280,
+    "intentionalExit": 100,
+    "engineSignalObserved": false,
+    "sameProxySlotReboundAndReleased": true,
+    "oldMotionEntryReused": false,
+    "stillReferencedByOldMotionStorage": true,
+    "noOwnedReferenceFoundInScannedPhysicsRootWrapperOrBody": true,
+    "ownedColliderBlocksRetained": true,
+    "allowlistedMarkersSha256": "0869d1a7b577d6419d499c9484f1efd3c96fe7b51ac1dedb1504d6884bf9c893"
   },
   "ci": {
     "commit": "fe5b3aac7ce355b440891ee4418cb5100f19ace7",
