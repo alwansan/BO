@@ -414,6 +414,18 @@
     "engineSignalObserved": false,
     "allowlistedMarkersSha256": "e7626f9250d1db025bc6acb9432678a7a46a4cb72159199cde82ac07e06a8985"
   },
+  "establishedStockSceneLostAtFileOpenExpiry": {
+    "dateVerified": "2026-11-28",
+    "beforeQualification": [1, 1, 1, 1, 1, 0],
+    "afterQualification": [1, 1, 1, 1, 1, 1],
+    "lateReadbackWithFilePairMissing": [1, 0, 1, 1, 0, 0],
+    "p1RoundsAndMatchingDamageReadbacksAfterQualification": [3, 3],
+    "selectedPartDepletedAndPublisherReached": false,
+    "framesAtLeast": 5280,
+    "processExit": 124,
+    "engineSignalObserved": false,
+    "allowlistedMarkersSha256": "b347601bd4ec36d2dd7e4134da8d345c1ebfbe3049480259fe380745529a3f58"
+  },
   "nativeGuardedPartInboxWithRealTlsRelay": {
     "dateVerified": "2026-11-28",
     "realTlsGuestFrameWords": 14,

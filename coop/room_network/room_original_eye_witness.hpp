@@ -104,7 +104,7 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
     // These facts do NOT yet verify game load completion or remote READY.
     const uint32_t coreEpisode=g_originalStageFileOpen.ActiveEpisode();
     const auto coreStream=g_originalStreamingStageHints.ForCorrelatedEpisode(coreEpisode);
-    const bool paired=g_originalStageFileOpen.BothEssentialFilesOpenedForCandidate();
+    const auto resourcePair=g_originalStageFileOpen.ResourcePairForEpisode(coreEpisode);
     static OriginalCoreRunningPhaseWitness corePhase;
     // A genuine original core pointer is still a HINT; guard all subsequent
     // source reads with pinned native Xbox guest-page commitment.
@@ -113,6 +113,21 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
         OriginalGuestSpanCommitted(world+0x5AE0u,8u);
     const bool running=phaseReadable&&IsOriginalWorldRunning(
         kernel::R32(world+0x5AE0u),kernel::R32(world+0x5AE4u));
+    // Retain the same file evidence only while a qualified original scene
+    // remains current. The launch-time window must not end a running story.
+    const uint64_t identityEnd=static_cast<uint64_t>(world)+0x5AEDu+1u;
+    const bool identityReadable=world&&identityEnd<=0x100000000ull&&
+        OriginalGuestSpanCommitted(world+0x5AECu,2u);
+    const int coreLevel=identityReadable?
+        static_cast<int>(kernel::G<uint8_t>(world+0x5AECu)):-1;
+    const int coreStage=identityReadable?
+        static_cast<int>(kernel::G<uint8_t>(world+0x5AEDu)):-1;
+    const ModHumanOriginalScene scene{coreEpisode,world,static_cast<uint32_t>(coreLevel),
+                                      static_cast<uint32_t>(coreStage),at};
+    static uint64_t qualifiedPairGeneration=0;
+    const bool sameQualifiedScene=qualifiedPairGeneration&&running&&identityReadable&&
+        OriginalModHumanSceneCurrent(scene,at);
+    const bool paired=resourcePair.UsableForScene(qualifiedPairGeneration,sameQualifiedScene);
     const bool candidateReady=coreEpisode&&world&&running&&
         stable.IsStable()&&paired&&coreStream.episode==coreEpisode;
     static uint32_t phaseQualifiedEpisode=0,phaseQualifiedWorld=0;
@@ -129,13 +144,6 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
     // these may give a second independent stage-identity witness.
     // Guard the whole span on the genuine original game thread; this is
     // not proof of a loaded scene, safe loader ABI or host mission choice.
-    const uint64_t identityEnd=static_cast<uint64_t>(world)+0x5AEDu+1u;
-    const bool identityReadable=world&&identityEnd<=0x100000000ull&&
-        OriginalGuestSpanCommitted(world+0x5AECu,2u);
-    const int coreLevel=identityReadable?
-        static_cast<int>(kernel::G<uint8_t>(world+0x5AECu)):-1;
-    const int coreStage=identityReadable?
-        static_cast<int>(kernel::G<uint8_t>(world+0x5AEDu)):-1;
     static OriginalCoreStageIdentityWitness coreStageIdentity;
     const int identityCode=coreStageIdentity.Observe(
         coreEpisode,world,candidateReady&&
@@ -161,6 +169,7 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
     OriginalModHumanScenes().Observe(coreEpisode,world,
         static_cast<uint32_t>(coreLevel),static_cast<uint32_t>(coreStage),
         originalLocalSceneRunning&&lookSourceMatched,at);
+    qualifiedPairGeneration=originalLocalSceneRunning?resourcePair.generation:0;
     // Same genuine original game thread and independently stable loaded level.
     // The actual other-human BODY source is checked again at DRAW time.
     // P0: Are real ORIGINAL AI-target slots available for later REAL

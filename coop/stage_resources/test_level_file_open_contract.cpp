@@ -44,6 +44,13 @@ int main(){
     assert(!detector.BothEssentialFilesOpenedForCandidate(125));
     assert(detector.ObserveSuccessfulOpen("D:\\levels\\level_00\\Unit_01.bin",row,130));
     assert(detector.BothEssentialFilesOpenedForCandidate(135));
+    const auto firstPair=detector.ResourcePairForEpisode(1,135);
+    assert(firstPair.generation&&firstPair.UsableForScene(0,false));
+    const auto expiredPair=detector.ResourcePairForEpisode(1,15131);
+    assert(expiredPair.generation==firstPair.generation&&!expiredPair.fresh);
+    assert(!expiredPair.UsableForScene(0,true));
+    assert(expiredPair.UsableForScene(firstPair.generation,true));
+    assert(!expiredPair.UsableForScene(firstPair.generation,false));
     assert(detector.TakeCandidateFromOriginalPlayer(folder,episode,136));
     assert(folder==0&&episode==1);
     assert(!detector.TakeCandidateFromOriginalPlayer(folder,episode,136));
@@ -51,12 +58,21 @@ int main(){
     // Same mission restarted: OLD files from epoch 1 must not count.
     assert(detector.BeginOriginalLaunchAttempt(200)==2);
     assert(detector.ActiveEpisode()==2);
+    assert(!detector.ResourcePairForEpisode(1,201).generation);
     assert(!detector.BothEssentialFilesOpenedForCandidate(201));
     assert(detector.ObserveSuccessfulOpen("D:\\levels\\level_00\\Unit_01.bin",row,205));
     assert(!detector.TakeCandidateFromOriginalPlayer(folder,episode,206));
     assert(detector.ObserveSuccessfulOpen("D:\\levels\\level_00\\LevelDat.bin",row,210));
+    const auto restartedPair=detector.ResourcePairForEpisode(2,211);
+    assert(restartedPair.UsableForScene(0,false));
+    assert(!restartedPair.UsableForScene(firstPair.generation,true));
     assert(detector.TakeCandidateFromOriginalPlayer(folder,episode,215));
     assert(folder==0&&episode==2);
+    assert(detector.ObserveSuccessfulOpen("D:\\levels\\level_01\\LevelDat.bin",row,216));
+    assert(!detector.ResourcePairForEpisode(2,217).generation);
+    assert(detector.ObserveSuccessfulOpen("D:\\levels\\level_00\\LevelDat.bin",row,218));
+    assert(detector.ObserveSuccessfulOpen("D:\\levels\\level_00\\Unit_01.bin",row,219));
+    assert(!detector.ResourcePairForEpisode(2,220).UsableForScene(restartedPair.generation,true));
 
     // No combination of different folders can fake a single loaded level.
     assert(detector.BeginOriginalLaunchAttempt(300)==3);
@@ -105,5 +121,5 @@ int main(){
     for(auto& th:workers)th.join();
     assert(reported==1);
     assert(concurrent.SeenMask()==(3u<<(7*2)));
-    std::cout<<"ORIGINAL_LEVEL_RESOURCE_EPISODE_PASS: exact pinned Xbox folders, isolated launch epochs, no cross-level mix, 15s stale expiry, one report per 2-file candidate; NEVER scene READY\n";
+    std::cout<<"ORIGINAL_LEVEL_RESOURCE_EPISODE_PASS: fresh launch proof, continuing scene retains its exact pair, folder and episode changes revoke it\n";
 }

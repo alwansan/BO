@@ -7,7 +7,7 @@
     "android_synthetic_diagnostic_export_run": 45922634177,
     "android_shared_campaign_verified": false,
     "acceptance_apk_ready": false,
-    "next": "Explain why the private trial's natural depletion reaches the publisher but fails the independent original scene check. Match a depletion on the aimed P1 part before testing live Android publication."
+    "next": "Verify that the running-scene source retains its own correlated file pair beyond initial qualification and still revokes on original scene change. Match aimed P1 depletion before live Android publication."
   },
   "schema": 1,
   "agent": "BO-COOP",
@@ -20,7 +20,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-28_bo-coop-work54-stock-prop-publisher.md",
+  "lastSession": "memory/sessions/2026-11-28_bo-coop-work55-retain-qualified-scene.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -4669,6 +4669,18 @@
     "mappingUsedForSynchronization": false,
     "acceptanceApk": false,
     "next": "trace the original objective writer and its UI readback in the Android campaign, then verify scoped guest effect and APK diagnostics before activation"
+  },
+  "workBatch55": {
+    "date": "2026-11-28",
+    "session": "memory/sessions/2026-11-28_bo-coop-work55-retain-qualified-scene.md",
+    "evidence": "memory/evidence/WORK_BATCH51_NATIVE_INPUT_AND_PROP_SCOPE.json",
+    "nativeEstablishedSceneWasRevokedWhenFileWindowExpired": true,
+    "freshPairStillRequiredToQualifyANewOriginalScene": true,
+    "originalFilePairRetentionFixtureAndAndroidSourceChecksPassedLocally": true,
+    "fixedRuntimeRetentionVerified": false,
+    "aimedP1DepletionReachedScopedPublisher": false,
+    "acceptanceApk": false,
+    "next": "Verify the private runtime retention marker after the 15-second file-open window, then drive one exact authored-part depletion through P1 and the staged publisher."
   },
   "workBatch54": {
     "date": "2026-11-28",

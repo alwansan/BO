@@ -13,6 +13,14 @@ struct OriginalStageResource {
     int folder=-1;
     int resource=-1; // 0 = LevelDat.bin, 1 = Unit_01.bin
 };
+struct OriginalStageResourcePair {
+    uint64_t generation=0;
+    bool fresh=false;
+    bool UsableForScene(uint64_t qualifiedGeneration,bool sameQualifiedScene)const noexcept{
+        return generation&&(qualifiedGeneration?
+            generation==qualifiedGeneration&&sameQualifiedScene:fresh);
+    }
+};
 inline OriginalStageResource ClassifyOriginalStageResource(std::string_view raw) {
     if(raw.empty()||raw.size()>180)return {};
     std::string path;
@@ -65,6 +73,7 @@ class OriginalStageFileOpenOnce final {
     uint32_t episode_=0,reportedEpisode_=0;
     int folder_=-1;
     uint8_t resources_=0;
+    uint64_t folderGeneration_=0;
     uint64_t startedAtMs_=0,lastFileAtMs_=0;
     static constexpr uint64_t kEpisodeLimitMs=45000;
     static constexpr uint64_t kOpenGapLimitMs=15000;
@@ -100,6 +109,7 @@ public:
         if(!fresh(atMs))return false;
         if(folder_!=sample.folder){
             folder_=sample.folder;resources_=0; // no mixed-folder pair
+            if(folderGeneration_!=UINT64_MAX)++folderGeneration_;
         }
         const uint8_t bit=static_cast<uint8_t>(1u<<sample.resource);
         if(resources_&bit)return false;
@@ -119,6 +129,14 @@ public:
     bool BothEssentialFilesOpenedForCandidate(uint64_t atMs=NowMs())const noexcept{
         std::lock_guard<std::mutex> guard(lock_);
         return fresh(atMs)&&resources_==3&&folder_>=0;
+    }
+    // A fully qualified running scene may retain its own pair. A new scene
+    // still needs a fresh pair; callers must prove continuing live identity.
+    OriginalStageResourcePair ResourcePairForEpisode(uint32_t episode,
+                                                     uint64_t atMs=NowMs())const noexcept{
+        std::lock_guard<std::mutex> guard(lock_);
+        if(!episode||episode!=episode_||resources_!=3||folderGeneration_==UINT64_MAX)return {};
+        return {folderGeneration_,fresh(atMs)};
     }
     bool TakeCandidateFromOriginalPlayer(int& outFolder,uint32_t& outEpisode,
                                          uint64_t atMs=NowMs())noexcept{

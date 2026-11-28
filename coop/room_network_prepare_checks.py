@@ -232,10 +232,10 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('g_originalStageFileOpen',eye)
             self.assertIn('TakeCandidateFromOriginalPlayer(folder,episode)',eye)
             self.assertIn('stable.IsStable()',eye)
-            # Only the original CORE-PHASE candidate needs to recheck the
-            # fresh two-file pair; the original one-shot stage report still
-            # relies exclusively on TakeCandidateFromOriginalPlayer below.
-            self.assertEqual(eye.count('BothEssentialFilesOpenedForCandidate()'),1)
+            self.assertEqual(eye.count('ResourcePairForEpisode(coreEpisode)'),1)
+            self.assertIn('OriginalModHumanSceneCurrent(scene,at)',eye)
+            self.assertIn('resourcePair.UsableForScene(qualifiedPairGeneration,sameQualifiedScene)',eye)
+            self.assertIn('qualifiedPairGeneration=originalLocalSceneRunning?resourcePair.generation:0',eye)
             self.assertIn('SendSafeWorldCodeToAndroid(30+folder)',eye)
             self.assertIn('g_originalMissionFieldHints.ForCorrelatedEpisode(episode)',eye)
             self.assertIn('EncodeOriginalMissionFieldEvent(',eye)
@@ -312,7 +312,7 @@ class RoomNetPrepareTests(unittest.TestCase):
             self.assertIn('kernel::G<uint8_t>(game+0x2020E)',stream)
             self.assertIn('EncodeOriginalStreamingStageHint(',eye)
             self.assertIn('corePhase.Observe(coreEpisode,world',eye)
-            self.assertIn('g_originalStageFileOpen.BothEssentialFilesOpenedForCandidate()',eye)
+            self.assertIn('g_originalStageFileOpen.ResourcePairForEpisode(coreEpisode)',eye)
             self.assertIn('kernel::R32(world+0x5AE0u)',eye)
             self.assertIn('SendSafeWorldCodeToAndroid(14)',eye)
             self.assertIn('OriginalCoreStageIdentityWitness coreStageIdentity',eye)
