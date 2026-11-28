@@ -4677,10 +4677,13 @@
     "nativeEstablishedSceneWasRevokedWhenFileWindowExpired": true,
     "freshPairStillRequiredToQualifyANewOriginalScene": true,
     "originalFilePairRetentionFixtureAndAndroidSourceChecksPassedLocally": true,
-    "fixedRuntimeRetentionVerified": false,
+    "verifiedSourceRevision": "cdbb043661c92286156cbccdbbd24ceabc37cbf0",
+    "successfulSourceCheckRunIds": [46086347849, 46086347863, 46086347888, 46086347895, 46086347924],
+    "fixedRuntimeRetentionVerified": true,
+    "p1RoundsAndMatchingReadbacksAfterFileOpenExpiry": [6, 6],
     "aimedP1DepletionReachedScopedPublisher": false,
     "acceptanceApk": false,
-    "next": "Verify the private runtime retention marker after the 15-second file-open window, then drive one exact authored-part depletion through P1 and the staged publisher."
+    "next": "Read the private removable-descriptor trial and require exact selected-part depletion, original P1 attacker identity, and scoped publisher entry. Then prove the guest Unit lifetime and actual Activity handoff."
   },
   "workBatch54": {
     "date": "2026-11-28",
