@@ -4685,6 +4685,8 @@
     "nativeScopedPartLatestAndStaleTrials": "running",
     "postWriteAuthenticatedScopeRecheckImplemented": true,
     "postWriteRevocationFixturePassed": true,
+    "postWriteAuthorityAndroidSourceUnitsPassedLocally": true,
+    "postWriteAuthoritySourcePreparationTestsPassedLocally": 6,
     "successfulRecursiveGuardSourceChecks": [46114767569, 46114767605, 46114767588, 46114767579],
     "guestRoomReopenAndroid29Verified": true,
     "androidRoomReopenRunId": 46102965675,
