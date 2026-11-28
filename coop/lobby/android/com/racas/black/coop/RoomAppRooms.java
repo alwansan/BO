@@ -40,8 +40,42 @@ public final class RoomAppRooms {
    finally{if(candidate!=null)candidate.close();synchronized(RoomAppRooms.class){if(token==epoch)starting=false;}}
   },"bo-presence-init");worker.setDaemon(true);worker.start();
  }
- private static final java.util.concurrent.atomic.AtomicBoolean localEyeLogged=
-     new java.util.concurrent.atomic.AtomicBoolean();
+  private static final java.util.concurrent.atomic.AtomicBoolean localEyeLogged=
+      new java.util.concurrent.atomic.AtomicBoolean();
+  private static final class MotionWindow {
+   private static final long PERIOD_NS=5_000_000_000L;
+   private final String eventPrefix;
+   private long started,last;
+   private int mask;
+   MotionWindow(String eventPrefix){this.eventPrefix=eventPrefix;}
+   synchronized void sample(int flags){
+    final long now=System.nanoTime();
+    if(started==0||now-last>2*PERIOD_NS){started=now;mask=0;}
+    last=now;
+    mask|=flags;
+    if(now-started>=PERIOD_NS){
+     RoomDiagnostics.event(eventPrefix+mask);
+     started=now;mask=0;
+    }
+   }
+  }
+  private static final MotionWindow localMotion=new MotionWindow("ORIGINAL_LOCAL_POSE_WINDOW_");
+  private static final MotionWindow hostInput=new MotionWindow("ORIGINAL_HOST_TRUSTED_INPUT_WINDOW_");
+  private static final MotionWindow guestInput=new MotionWindow("ORIGINAL_GUEST_TLS_INPUT_WINDOW_");
+  private static int previousX,previousY,previousZ,previousYaw;
+  private static boolean poseSeen;
+  private static synchronized void sampleLocalMotion(int x,int y,int z,int yaw){
+   int flags=1;
+   if(poseSeen){
+    if(Math.abs(x-previousX)+Math.abs(y-previousY)+Math.abs(z-previousZ)>=3)flags|=2;
+    if(Math.abs(yaw-previousYaw)>=100)flags|=4;
+   }
+   previousX=x;previousY=y;previousZ=z;previousYaw=yaw;poseSeen=true;
+   localMotion.sample(flags);
+  }
+  private static int inputFlags(int x,int y,int lookX,int lookY,boolean fire,boolean jump){
+   return 1|((x!=0||y!=0)?2:0)|((lookX!=0||lookY!=0)?4:0)|(fire?8:0)|(jump?16:0);
+  }
  /**
   * Native simulation-thread hook only. Do not log coordinates or create
   * remote players. This is original local CAMERA eye, not actor body root.
@@ -50,9 +84,11 @@ public final class RoomAppRooms {
                                                      int bx,int by,int bz,int sourceYaw){
   RoomSession session;
   synchronized(RoomAppRooms.class){session=active;}
-  if(session!=null&&session.observeOriginalEyeFromGameThread(x,y,z,bx,by,bz,sourceYaw)&&
-     localEyeLogged.compareAndSet(false,true))
-   RoomDiagnostics.event("ORIGINAL_LOCAL_CAMERA_EYE_AND_BODY_FEET_VALIDATED");
+   if(session!=null&&session.observeOriginalEyeFromGameThread(x,y,z,bx,by,bz,sourceYaw)){
+    if(localEyeLogged.compareAndSet(false,true))
+     RoomDiagnostics.event("ORIGINAL_LOCAL_CAMERA_EYE_AND_BODY_FEET_VALIDATED");
+    sampleLocalMotion(bx,by,bz,sourceYaw);
+   }
  }
  /** Only called from real original player hook after two known file opens. */
  public static void originalLevelResourceHintFromGameThread(int folder){
@@ -214,8 +250,9 @@ public final class RoomAppRooms {
   items.sort((a,b)->Integer.compare(a.playerSlot,b.playerSlot));
   int[] frame=new int[2+items.size()*8];
   frame[0]=after.ticket.sceneEpoch;
-  frame[1]=items.size();
-  int last=1;
+   frame[1]=items.size();
+   int last=1;
+   int activity=0;
   for(int i=0;i<items.size();i++){
    RoomTls.Server.TrustedInput trusted=items.get(i);
    RoomHumanInputWire.Input input=trusted.value;
@@ -226,9 +263,11 @@ public final class RoomAppRooms {
    frame[at+2]=input.moveX;frame[at+3]=input.moveY;
    frame[at+4]=input.yaw;
    frame[at+5]=(input.fire?1:0)|(input.jump?2:0);
-   frame[at+6]=input.lookX;frame[at+7]=input.lookY;
-   last=trusted.playerSlot;
-  }
+    frame[at+6]=input.lookX;frame[at+7]=input.lookY;
+    activity|=inputFlags(input.moveX,input.moveY,input.lookX,input.lookY,input.fire,input.jump);
+    last=trusted.playerSlot;
+   }
+   hostInput.sample(activity);
   return frame;
  }
  /**
@@ -333,8 +372,10 @@ public final class RoomAppRooms {
  public static int[] pollHostObjectEventFromGameThread(){
    RoomSession s;
    synchronized(RoomAppRooms.class){s=active;}
-  return s==null?new int[]{-1}:
-      s.pollOriginalHostObjectEventFrameFromGameThread();
+   int[] frame=s==null?new int[]{-1}:s.pollOriginalHostObjectEventFrameFromGameThread();
+   if(frame.length==14)
+    RoomDiagnostics.event("ORIGINAL_GUEST_HOST_PART_EVENT_DELIVERED_TO_NATIVE");
+   return frame;
  }
  public static boolean offerOriginalHostPropDepletionFromGameThread(int episode,int level,int stage,
      long key,int part,int count,int definition,int healthBits){
@@ -375,7 +416,9 @@ public final class RoomAppRooms {
    sequence=++padSequence;
   }
   try {
-   return session.offerHumanInputFromGameThread(ticket,sequence,x,y,yaw,lookX,lookY,fire,jump);
+    final boolean queued=session.offerHumanInputFromGameThread(ticket,sequence,x,y,yaw,lookX,lookY,fire,jump);
+    guestInput.sample(queued?inputFlags(x,y,lookX,lookY,fire,jump):0);
+    return queued;
   }catch(java.io.IOException rejected){
    if(padErrorLogged.compareAndSet(false,true))
     RoomDiagnostics.event("ORIGINAL_GUEST_GAMEPAD_TLS_SEND_REJECTED");
@@ -384,7 +427,7 @@ public final class RoomAppRooms {
  }
  public static void shutdown(){
   RoomSession old;RoomPresence.Service beacon;
-  synchronized(RoomAppRooms.class){epoch++;starting=false;old=active;beacon=presence;active=null;presence=null;padSession=null;padTicket=null;padSequence=0;}
+   synchronized(RoomAppRooms.class){epoch++;starting=false;old=active;beacon=presence;active=null;presence=null;padSession=null;padTicket=null;padSequence=0;poseSeen=false;}
   if(beacon!=null)beacon.close();if(old!=null)old.close();
  }
  public static String statusLine(int row){

@@ -30,7 +30,8 @@ class OriginalFirstStageAutoMenuGate final {
 public:
  void Reset()noexcept{
   if(owned_&&owner_!=std::this_thread::get_id())return;
-  intent_={};pageRequested_=confirmSent_=false;
+   // Transient frontend/JNI loss cannot make the same signed START fire again.
+   if(!confirmSent_){intent_={};pageRequested_=false;}
  }
  OriginalFirstStageMenuAction Observe(
   const OriginalFirstStageMenuIntent& in,

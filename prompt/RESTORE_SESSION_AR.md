@@ -1,3 +1,7 @@
+## آخر تحديث Work57 (2026-11-28)
+
+- تجربة المالك أثبتت Start على الهاتفين، ولم يظهر الآخر أو تتشارك تغيّرات العالم. سجل المضيف أثبت COMMIT ودخول حدث جزء طابور الغرفة؛ سجل الضيف ناقص. أُصلح إغلاق لوحة الضيف عند إعادة فتحها، ومُنع تكرار تأكيد Start، وأضيف حفظ تشخيص تلقائي في Downloads. تابع فحوص Android، وعمر عنصر الضيف ثم تطبيقه والممثل الفعلي قبل تجربة القبول. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-28_bo-coop-work57-two-phone-trial.md).
+
 ## آخر تحديث Work56 (2026-11-28)
 
 - نجح [APK التجريبي 46093543219](https://github.com/alwansan/BO/actions/runs/46093543219) على `690a591`، وتحقق توقيعه وبصمته بعد الفك المحلي. الملف `BLACK-Coop-Experimental-46093543219/BLACK-Android-Coop-Experimental.apk` في مجلد العمل الأب. استعمل النسخة نفسها على الهاتفين وصدّر سجل الغرفة منهما؛ لم تُقبل الحملة المشتركة بعد. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-28_bo-coop-work56-experimental-apk.md).

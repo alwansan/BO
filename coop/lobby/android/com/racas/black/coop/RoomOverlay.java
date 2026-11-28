@@ -36,6 +36,7 @@ public final class RoomOverlay {
     private static final int FG=Color.rgb(226,223,213), MUTED=Color.rgb(170,167,162);
     private final Activity activity;
     private final RoomSession session;
+    private final RoomStoryWire.Ticket storyAtOpen;
     private final Dialog dialog;
     private final Handler handler=new Handler(Looper.getMainLooper());
     private final ExecutorService worker=Executors.newSingleThreadExecutor(r->{
@@ -63,8 +64,7 @@ public final class RoomOverlay {
             // A signed HOST first-stage PREPARE already reached this guest.
             // Dismiss only the overlay, NEVER stop the shared TLS room.
             // The ORIGINAL BLACK frontend remains responsible for stage load.
-            if(shouldDismissGuestOnAuthenticatedFirstStage(
-                    state.phase,story.ticket,state.roster)){
+            if(shouldDismissGuestOnNewFirstStage(state.phase,story,state.roster,storyAtOpen)){
                 RoomDiagnostics.event("MENU_GUEST_FIRST_STAGE_AUTO_DISMISSED");
                 dialog.dismiss();
                 return;
@@ -101,6 +101,12 @@ public final class RoomOverlay {
         int slot=RoomWire.storySlot(roster,roster.self);
         return slot>=2&&slot<=4&&ticket.includes(slot);
     }
+    static boolean shouldDismissGuestOnNewFirstStage(RoomSession.Phase phase,
+            RoomSession.StoryStatus story,RoomWire.State roster,RoomStoryWire.Ticket atOpen){
+        return !story.committed&&story.ticket!=null&&
+            (atOpen==null||!story.ticket.same(atOpen))&&
+            shouldDismissGuestOnAuthenticatedFirstStage(phase,story.ticket,roster);
+    }
     public static void show(Activity activity,int action){
         if(action!=-102&&action!=-103)return;
         if(active!=null&&!active.closed&&active.activity==activity){
@@ -130,6 +136,7 @@ public final class RoomOverlay {
     }
     private RoomOverlay(Activity context){
         activity=context;RoomAppRooms.attach(context);session=RoomAppRooms.obtain();
+        storyAtOpen=session.storyStatus().ticket;
         dialog=new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         ScrollView scroll=new ScrollView(context);
@@ -197,11 +204,10 @@ public final class RoomOverlay {
         button(statusPanel,"الرجوع للعبة مع إبقاء الاتصال",()->dialog.dismiss());
         button(statusPanel,"SAVE ROOM LOG TO DOWNLOADS",()->{
             RoomDiagnostics.event("EXPORT_REQUESTED");
-            worker.execute(()->{
-                boolean result=RoomDiagnostics.exportToDownloads(activity.getApplicationContext());
+            RoomDiagnostics.exportToDownloadsAsync(activity,result->{
+                RoomDiagnostics.event(result?"EXPORT_OK":"EXPORT_FAILED");
                 handler.post(()->{
                     if(closed)return;
-                    RoomDiagnostics.event(result?"EXPORT_OK":"EXPORT_FAILED");
                     if(result)notice.setText("Saved safe room events to Downloads/Games/cl/black log/logs. Share from BOTH phones.");
                     else notice.setText("Could not export room events; use COPY SAFE CONNECTION LOG.");
                 });

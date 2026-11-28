@@ -212,11 +212,17 @@ class OriginalGuestHostObjectInbox final {
  }
  // Future engine object-identity matcher must call Take() on the SAME
  // original guest thread, and then map the stable key to a proven actor.
- bool Take(OriginalHostObjectEvent& output)noexcept{
+  bool Take(OriginalHostObjectEvent& output)noexcept{
    if(!owner()||!scoped_||poisoned_||!count_)return false;
    output=queue_[head_];
-   PopHead();return true;
- }
+    PopHead();return true;
+  }
+  bool PeekPart(const OriginalGuestLaunchMatchKey& matched,
+                OriginalHostObjectEvent& output,OriginalUnitPropKey& key)noexcept{
+   if(!CheckLocalLaunch(matched)||!count_||
+      !MatchOriginalHostPartDepletion(queue_[head_],matched,key))return false;
+   output=queue_[head_];return true;
+  }
  // Transactional engine-side consumer. Do not pop until the exact live
  // original object is resolved and its authoritative state is read back.
  // IO must prove scene, stable identity, generation and real original

@@ -8,6 +8,7 @@
 #include "coop/room_original_guest_canonical_source_barrier.hpp"
 #include "coop/room_original_guest_host_world_witness.hpp"
 #include "coop/room_original_guest_host_npc_witness.hpp"
+#include "coop/room_original_guest_host_object_witness.hpp"
 #include "coop/room_original_guest_launch_match_witness.hpp"
 #include "coop/room_original_bot_pool_witness.hpp"
 #include "coop/room_original_objective_source.hpp"
@@ -265,6 +266,30 @@ inline void ApplyOriginalGuestObjectiveTransition(
   if(diagnostic)SendSafeWorldCodeToAndroid(diagnostic);
 }
 
+inline void ObserveOriginalGuestPendingPart(uint32_t world,const OriginalGuestLaunchMatchKey& match,
+                                             uint64_t now)noexcept{
+ OriginalHostObjectEvent event;
+ OriginalUnitPropKey key;
+ if(!GuestOriginalHostObjects().PeekPart(match,event,key))return;
+ ModHumanOriginalScene scene{};
+ if(!OriginalModHumanScenes().Read(now,scene)||
+    scene.episode!=match.originalEpisode||scene.world!=world||
+    scene.level!=match.level||scene.stage!=match.stage||
+    !OriginalModHumanSceneCurrent(scene,now))return;
+ static uint64_t lastProbe=0;
+ if(lastProbe&&now>=lastProbe&&now-lastProbe<250u)return;
+ lastProbe=now;
+ OriginalUnitPropPartSample sample;
+ const int code=!SampleOriginalPropPartOnFrameThread(world,key,event.partIndex,sample)?2146:
+       OriginalPartDepletionPreStateMatches(event,sample)?2148:2147;
+ static uint32_t reportedEpisode=0;
+ static int reported=0;
+ if(reportedEpisode!=scene.episode||reported!=code){
+    reportedEpisode=scene.episode;reported=code;
+    SendSafeWorldCodeToAndroid(code);
+ }
+}
+
 inline void ObserveOriginalPostWorldFrame(X86Context& ctx)noexcept{
  static OriginalPostFrameGate gate;
  // Three native host-player lanes and guest canonical source are kept
@@ -310,8 +335,9 @@ inline void ObserveOriginalPostWorldFrame(X86Context& ctx)noexcept{
  OriginalGuestLaunchMatchKey signedMatch{};
  if(gate.StableOriginalFrames()>=30u&&
      GuestOriginalLaunchMatch().ReadMatchedKey(signedMatch,s.world)){
-  const uint64_t nativeScene=(uint64_t(signedMatch.originalEpisode)<<32)|s.world;
-   const auto now=static_cast<uint64_t>(SDL_GetTicks());
+   const uint64_t nativeScene=(uint64_t(signedMatch.originalEpisode)<<32)|s.world;
+    const auto now=static_cast<uint64_t>(SDL_GetTicks());
+    ObserveOriginalGuestPendingPart(s.world,signedMatch,now);
    const auto& players=OriginalGuestHostWorld();
    const auto& npcs=GuestOriginalHostNpcs();
    guestBarrier.Observe(signedMatch,nativeScene,players,npcs,now);

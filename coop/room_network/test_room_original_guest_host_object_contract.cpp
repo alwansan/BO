@@ -123,13 +123,23 @@ int main(){
   part[10]=2;assert(!parts.Ingest(part,std::size(part),key));part[10]=1;
   part[12]=-1;assert(!parts.Ingest(part,std::size(part),key));part[12]=3;
   part[13]=0;assert(!parts.Ingest(part,std::size(part),key));part[13]=0x3F800000;
-  assert(parts.Ingest(part,std::size(part),key));
-  ObjectIO io;
-  assert(parts.ApplyNext(io,key,99)==OriginalObjectApplyResult::WaitingForIdentity&&io.calls==0);
-  OriginalHostObjectEvent value{};
+   assert(parts.Ingest(part,std::size(part),key));
+   ObjectIO io;
+   assert(parts.ApplyNext(io,key,99)==OriginalObjectApplyResult::WaitingForIdentity&&io.calls==0);
+   OriginalHostObjectEvent value{};
+   OriginalUnitPropKey authored{};
+   assert(parts.PeekPart(key,value,authored)&&parts.Pending()==1&&value.sequence==1&&
+          authored.unitIndex==7&&authored.recordCount==20&&authored.ordinal==14);
+   std::thread foreign([&]{
+    OriginalHostObjectEvent offThread{};
+    OriginalUnitPropKey ignored{};
+    assert(!parts.PeekPart(key,offThread,ignored));
+   });
+   foreign.join();
    assert(parts.Take(value)&&value.kind==OriginalHostObjectEvent::PartDepleted&&
-         value.partIndex==1&&value.partCount==2&&value.partDefinition==3&&
-          value.previousHealthBits==0x3F800000u);
+          value.partIndex==1&&value.partCount==2&&value.partDefinition==3&&
+           value.previousHealthBits==0x3F800000u);
+   assert(!parts.PeekPart(key,value,authored));
    for(unsigned mode=0;mode<6;++mode){
     OriginalGuestHostObjectInbox transaction;
     PartIO writer;

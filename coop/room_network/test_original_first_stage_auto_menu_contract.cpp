@@ -20,7 +20,11 @@ int main(){
  assert(gate.Observe(host,OriginalFirstStageMenuPage::Difficulty,true,false,true)==none);
  assert(gate.Observe(host,OriginalFirstStageMenuPage::Difficulty,true,true,false)==none);
  assert(gate.Observe(host,OriginalFirstStageMenuPage::Difficulty,true,true,true)==go);
- assert(gate.Observe(host,OriginalFirstStageMenuPage::Difficulty,true,true,true)==none);
+  assert(gate.Observe(host,OriginalFirstStageMenuPage::Difficulty,true,true,true)==none);
+  gate.Reset();
+  assert(gate.Observe({},OriginalFirstStageMenuPage::Untrusted,false,false,false)==none);
+  assert(gate.Observe(host,OriginalFirstStageMenuPage::TitleInitial,true,true,true)==none);
+  assert(gate.Observe(host,OriginalFirstStageMenuPage::Difficulty,true,true,true)==none);
  bool cross=false;
  std::thread t([&]{
   cross=gate.Observe(host,OriginalFirstStageMenuPage::Difficulty,

@@ -16,9 +16,10 @@ public final class PlatformInstrumentation extends Instrumentation {
         android.net.Uri downloads=android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI;
         String id=android.provider.MediaStore.MediaColumns._ID;
         try(android.database.Cursor rows=resolver.query(downloads,new String[]{id},
-                android.provider.MediaStore.MediaColumns.DISPLAY_NAME+" LIKE ? AND "+
-                android.provider.MediaStore.MediaColumns.IS_PENDING+"=0",
-                new String[]{"BLACK-Room-%-events.txt"},id+" DESC")){
+                 android.provider.MediaStore.MediaColumns.DISPLAY_NAME+" LIKE ? AND "+
+                 android.provider.MediaStore.MediaColumns.DISPLAY_NAME+" NOT LIKE ? AND "+
+                 android.provider.MediaStore.MediaColumns.IS_PENDING+"=0",
+                 new String[]{"BLACK-Room-%-events.txt","BLACK-Room-Auto-%"},id+" DESC")){
             check(rows!=null&&rows.moveToFirst());
             android.net.Uri file=android.content.ContentUris.withAppendedId(downloads,rows.getLong(0));
             try(java.io.InputStream input=resolver.openInputStream(file)){
@@ -29,6 +30,49 @@ public final class PlatformInstrumentation extends Instrumentation {
                 check(buffered.read()==-1);
             }
         }
+    }
+    private String automaticRoomLog(android.content.Context context)throws Exception{
+        android.content.ContentResolver resolver=context.getContentResolver();
+        android.net.Uri downloads=android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI;
+        String id=android.provider.MediaStore.MediaColumns._ID;
+        try(android.database.Cursor rows=resolver.query(downloads,new String[]{id},
+                android.provider.MediaStore.MediaColumns.DISPLAY_NAME+" LIKE ? AND "+
+                android.provider.MediaStore.MediaColumns.IS_PENDING+"=0",
+                new String[]{"BLACK-Room-Auto-%-events.txt"},id+" DESC")){
+            if(rows==null||!rows.moveToFirst())return "";
+            android.net.Uri file=android.content.ContentUris.withAppendedId(downloads,rows.getLong(0));
+            try(java.io.InputStream input=resolver.openInputStream(file)){
+                check(input!=null);
+                java.io.ByteArrayOutputStream out=new java.io.ByteArrayOutputStream();
+                byte[] bytes=new byte[4096];int count;
+                while((count=input.read(bytes))!=-1){
+                    check(out.size()+count<=262144);
+                    out.write(bytes,0,count);
+                }
+                return new String(out.toByteArray(),java.nio.charset.StandardCharsets.UTF_8);
+            }
+        }
+    }
+    private String awaitAutomaticRoomLog(android.content.Context context,String marker)throws Exception{
+        final long deadline=System.nanoTime()+8_000_000_000L;
+        for(;;){
+            final String rows=automaticRoomLog(context);
+            if(rows.contains(" "+marker+"\n"))return rows;
+            check(System.nanoTime()<deadline);
+            Thread.sleep(50);
+        }
+    }
+    private void verifyAutomaticRoomLog()throws Exception{
+        android.content.Context context=getTargetContext().getApplicationContext();
+        RoomDiagnostics.activityStarted(context);
+        String initial=awaitAutomaticRoomLog(context,"APP_ACTIVITY_STARTED");
+        check(initial.startsWith("BO_ROOM_DIAGNOSTICS_SCHEMA=1\n"));
+        check(initial.matches("(?s).*\\nBASE_APK_SHA256=[0-9a-f]{64}\\n\\n.*"));
+        RoomDiagnostics.event("ROOM_AUTOMATIC_LATER_SAMPLE");
+        String next=awaitAutomaticRoomLog(context,"ROOM_AUTOMATIC_LATER_SAMPLE");
+        check(next.startsWith(initial));
+        check(!next.contains("EXPORT_REQUESTED"));
+        android.util.Log.i("BlackTlsPlatform","AUTOMATIC_ROOM_DOWNLOADS_LOG_PASS");
     }
     private void verifySafeRotatedRoomLogs()throws Exception{
         android.content.Context context=getTargetContext().getApplicationContext();
@@ -46,7 +90,7 @@ public final class PlatformInstrumentation extends Instrumentation {
             RoomDiagnostics.event("STORY_SAFE_ROTATION_SAMPLE_ABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789");
         // Exercise the production Java mapping and export with native event
         // values supplied by this fixture; the BLACK game does not execute.
-        for(int code=2129;code<=2146;code++)RoomDiagnostics.originalPostFrameEvent(code);
+        for(int code=2129;code<=2149;code++)RoomDiagnostics.originalPostFrameEvent(code);
         RoomDiagnostics.event("STORY_DIAGNOSTICS_END");
         // Event producer is nonblocking by design; read() is the explicit
         // export barrier that flushes the dedicated bounded IO worker.
@@ -83,7 +127,10 @@ public final class PlatformInstrumentation extends Instrumentation {
             "ORIGINAL_HOST_PROP_OFFER_ROOM_QUEUED",
             "ORIGINAL_LOCAL_RUNNING_SCENE_QUALIFIED",
             "ORIGINAL_LOCAL_RUNNING_SCENE_REVOKED",
-            "ORIGINAL_REMOTE_HUMAN_MARKER_RENDER_SUBMITTED"
+            "ORIGINAL_REMOTE_HUMAN_MARKER_RENDER_SUBMITTED",
+            "ORIGINAL_GUEST_HOST_PART_IDENTITY_WAITING",
+            "ORIGINAL_GUEST_HOST_PART_PRESTATE_DIFFERS",
+            "ORIGINAL_GUEST_HOST_PART_PRESTATE_MATCHED_NO_WRITE"
         };
         int prior=exported.indexOf("STORY_DIAGNOSTICS_BEGIN");
         for(String code:nativeEvents){
@@ -107,6 +154,7 @@ public final class PlatformInstrumentation extends Instrumentation {
     @Override public void onStart(){
         Bundle result=new Bundle();
         try{
+            verifyAutomaticRoomLog();
             verifySafeRotatedRoomLogs();
             RoomIdentity first=RoomIdentity.load(),second=RoomIdentity.load();
             check(first.fingerprint().length==32&&first.fingerprintHex().length()==64);
@@ -202,8 +250,12 @@ public final class PlatformInstrumentation extends Instrumentation {
                 }
                 RoomStoryWire.Ticket prepared=joining.storyStatus().ticket;
                 RoomWire.State joined=joining.snapshot().roster;
-                check(RoomOverlay.shouldDismissGuestOnAuthenticatedFirstStage(
-                    RoomSession.Phase.JOINED,prepared,joined));
+                 check(RoomOverlay.shouldDismissGuestOnAuthenticatedFirstStage(
+                     RoomSession.Phase.JOINED,prepared,joined));
+                 check(RoomOverlay.shouldDismissGuestOnNewFirstStage(
+                     RoomSession.Phase.JOINED,joining.storyStatus(),joined,null));
+                 check(!RoomOverlay.shouldDismissGuestOnNewFirstStage(
+                     RoomSession.Phase.JOINED,joining.storyStatus(),joined,prepared));
                 check(!RoomOverlay.shouldDismissGuestOnAuthenticatedFirstStage(
                     RoomSession.Phase.HOSTING,prepared,joined));
                 check(!RoomOverlay.shouldDismissGuestOnAuthenticatedFirstStage(
