@@ -1,6 +1,6 @@
 ## آخر تحديث Work56 (2026-11-28)
 
-- طلب المالك APK **تجريبيًا** للهاتفين قبل قبول الحملة. أضيفت رموز تأهيل المشهد وإبطاله ورسم المجسم وعرض حدث الجزء على الغرفة. نجحت وحدات Android وTLS؛ [بناء النسخة 46093543219](https://github.com/alwansan/BO/actions/runs/46093543219) جارٍ على `690a591`. فُكّ الناتج المشفّر محليًا وتحقّق من التوقيع والبصمة قبل التسليم. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-28_bo-coop-work56-experimental-apk.md).
+- نجح [APK التجريبي 46093543219](https://github.com/alwansan/BO/actions/runs/46093543219) على `690a591`، وتحقق توقيعه وبصمته بعد الفك المحلي. الملف `BLACK-Coop-Experimental-46093543219/BLACK-Android-Coop-Experimental.apk` في مجلد العمل الأب. استعمل النسخة نفسها على الهاتفين وصدّر سجل الغرفة منهما؛ لم تُقبل الحملة المشتركة بعد. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-28_bo-coop-work56-experimental-apk.md).
 
 ## آخر تحديث Work55 (2026-11-28)
 

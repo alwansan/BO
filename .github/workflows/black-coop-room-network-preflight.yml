@@ -325,9 +325,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p "$RUNNER_TEMP/mod-human-headers/kernel"
+          mkdir -p "$RUNNER_TEMP/mod-human-headers/"{kernel,SDL3}
           ln -s "$GITHUB_WORKSPACE/bo/coop/room_network" "$RUNNER_TEMP/mod-human-headers/coop"
           cp bo/coop/stage_resources/level_file_open_contract.hpp "$RUNNER_TEMP/mod-human-headers/kernel/coop_stage_resource_contract.hpp"
+          touch "$RUNNER_TEMP/mod-human-headers/SDL3/SDL.h"
+          cat > "$RUNNER_TEMP/mod-human-headers/SDL3/SDL_system.h" <<'EOF'
+          #pragma once
+          void* SDL_GetAndroidJNIEnv();
+          void* SDL_GetAndroidActivity();
+          EOF
           for source in test_room_mod_human_presentation test_room_mod_human_render_bridge; do
             g++ -std=c++20 -Wall -Wextra -Werror -pthread -fsanitize=address,undefined -fno-omit-frame-pointer \
               -I android-sdk/runtime -I bo/coop/room_network -I "$RUNNER_TEMP/mod-human-headers" \

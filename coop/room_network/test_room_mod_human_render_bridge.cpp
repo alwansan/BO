@@ -14,6 +14,11 @@ static unsigned allocations = 0, frees = 0, draws = 0;
 static bool pending = false;
 static void (*afterAllocation)() = nullptr;
 static unsigned clockCalls = 0, expireAfter = 0;
+static JNIEnv *diagnosticEnv = nullptr;
+static jobject diagnosticActivity = nullptr;
+static unsigned renderDiagnostics = 0;
+void *SDL_GetAndroidJNIEnv() { return diagnosticEnv; }
+void *SDL_GetAndroidActivity() { return diagnosticActivity; }
 static uint64_t TestClock() noexcept {
   ++clockCalls;
   return expireAfter && clockCalls >= expireAfter ? 451 : 101;
@@ -105,6 +110,10 @@ int main() {
   };
   table.GetMethodID = [](JNIEnv *, jclass, const char *name,
                          const char *signature) -> jmethodID {
+    if (std::strcmp(name, "coopRecordWorldTick") == 0) {
+      assert(std::strcmp(signature, "(I)V") == 0);
+      return reinterpret_cast<jmethodID>(5);
+    }
     assert(std::strcmp(name, "coopPollOtherHumanPresentationFromGameThread") ==
                0 &&
            std::strcmp(signature, "()[I") == 0);
@@ -113,6 +122,10 @@ int main() {
   table.CallObjectMethodV = [](JNIEnv *, jobject, jmethodID,
                                va_list) -> jobject {
     return reinterpret_cast<jobject>(3);
+  };
+  table.CallVoidMethodV = [](JNIEnv *, jobject, jmethodID method, va_list args) {
+    assert(method == reinterpret_cast<jmethodID>(5) && va_arg(args, int) == 2145);
+    ++renderDiagnostics;
   };
   table.ExceptionCheck = [](JNIEnv *) -> jboolean { return exception; };
   table.ExceptionClear = [](JNIEnv *) { exception = false; };
@@ -127,6 +140,8 @@ int main() {
   JNIEnv env{};
   env.functions = &table;
   auto activity = reinterpret_cast<jobject>(4);
+  diagnosticEnv = &env;
+  diagnosticActivity = activity;
   ModHumanOriginalScene scene;
   ModHumanPresentation packet;
   assert(ReadOriginalModHumanPresentation(&env, activity, world + 0x4960, 101,
@@ -168,7 +183,8 @@ int main() {
   const auto original = memory;
   ObserveOriginalWorldCameraAfterBegin(rw, 1);
   DrawOriginalModHumans(scene, packet, world + 0x4960, TestClock, &env, activity);
-  assert(draws == 3 && allocations == 3 && frees == 3 && !pending);
+  assert(draws == 3 && allocations == 3 && frees == 3 && !pending &&
+         renderDiagnostics == 1);
   assert(s.transforms == before.transforms &&
          s.streams[0].vb == before.streams[0].vb);
   DrawOriginalModHumans(scene, packet, world + 0x4960, TestClock, &env, activity);
@@ -211,6 +227,7 @@ int main() {
     assert(!source.Read(101, reject));
   });
   foreign.join();
+  assert(renderDiagnostics == 1);
   // All guest game bytes outside the two mod-owned allocations remain exact.
   for (size_t i = 0; i < memory.size(); i++) {
     if ((i >= 0x100000 && i < 0x100240) || (i >= 0x110000 && i < 0x110014))
