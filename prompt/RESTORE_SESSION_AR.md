@@ -1,6 +1,6 @@
 ## آخر تحديث Work58 (2026-11-28)
 
-- نجح [Android 10](https://github.com/alwansan/BO/actions/runs/46102965675) بحفظ السجل تلقائيًا وإعادة فتح لوحة الضيف. نجح مختبر المحرك بتطبيق حدث جزء محفوظ من TLS داخل حارس الجيل، مع نفاد الصحة وإبطال التعريف وتحول الشعاع إلى لا إصابة؛ خروج 0. الإعادة الأحدث ورفض الصحة القديمة قيد الاختبار. لا كاتب ضيف مفعل في المنتج أو حملة مشتركة مقبولة. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-28_bo-coop-work58-publication-scope.md).
+- نجح [Android 10](https://github.com/alwansan/BO/actions/runs/46102965675) بحفظ السجل تلقائيًا وإعادة فتح لوحة الضيف. كرر مختبر المحرك تطبيق الجزء داخل حارس الجيل: خروج 0 وتحوّل الشعاع إلى لا إصابة؛ الصحة القديمة رُفضت قبل الكاتب بخروج 159 متوقع. الحدث من ملف TLS سابق لا من Activity حية. تابع ربط المشهد الموثق ومنافسة callbacks وموارد P2؛ لا حملة مشتركة مقبولة. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-28_bo-coop-work58-publication-scope.md).
 
 ## آخر تحديث Work57 (2026-11-28)
 

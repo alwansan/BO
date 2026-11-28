@@ -16,6 +16,22 @@
     "productionGuestPartWriterActivated": false,
     "sameThreadRecursiveApplicationGuardTestedInThisRun": false
   },
+  "privateAndroidPartPublicationScopeRepeatAndStale": {
+    "dateVerified": "2026-11-28",
+    "scopeSourceRevision": "b61cd80dd9981e9cf33c5672f38cd1ac11c977cc",
+    "matchingEventExit": 0,
+    "matchingFramesAtLeast": 2280,
+    "generationScopeAndPartReadbackVerified": true,
+    "samePartRayHitBeforeAndMissAfter": true,
+    "matchingMarkersSha256": "d17f0ab46c85653978a63acf68624f3cf4e7adc094bf594838716a89672d6f8e",
+    "staleHealthEventExit": 159,
+    "staleFramesAtLeast": 2340,
+    "staleHealthRejectedBeforeWriter": true,
+    "staleMarkersSha256": "f80a12fe328f8d7215bba20da645df39ebef3c4b595058de9a8661d1ff5adba3",
+    "engineSignalObserved": false,
+    "eventLoadedFromEarlierTlsFixtureNotLiveActivity": true,
+    "productionGuestPartWriterActivated": false
+  },
   "verifiedSourceRevision": "708d8f2eea37b6d959f630e93514f0805b4efa58",
   "sourceChecks": {
     "androidSourceUnits": 46065451258,

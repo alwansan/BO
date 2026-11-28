@@ -4678,11 +4678,14 @@
     "publicationScopeSanitizersPassed": true,
     "publicationSameGenerationContenderRejected": true,
     "successfulSourceChecks": [46113830147, 46113830175, 46113830156, 46113830194],
-    "nativeScopedPartTrialStatus": "matching_event_passed_on_330b7a3",
+    "nativeScopedPartTrialStatus": "matching_and_stale_health_passed_on_b61cd80",
     "nativeScopedPartMatchingExit": 0,
     "nativeScopedPartMatchingFramesAtLeast": 1440,
     "nativeScopedPartLiveActivityDelivery": false,
-    "nativeScopedPartLatestAndStaleTrials": "running",
+    "nativeScopedPartLatestAndStaleTrials": "completed",
+    "nativeScopedPartRepeatFramesAtLeast": 2280,
+    "nativeScopedPartStaleFramesAtLeast": 2340,
+    "nativeScopedPartStaleHealthRejectedBeforeWriter": true,
     "postWriteAuthenticatedScopeRecheckImplemented": true,
     "postWriteRevocationFixturePassed": true,
     "postWriteAuthorityAndroidSourceUnitsPassedLocally": true,
@@ -4690,7 +4693,7 @@
     "successfulRecursiveGuardSourceChecks": [46114767569, 46114767605, 46114767588, 46114767579],
     "guestRoomReopenAndroid29Verified": true,
     "androidRoomReopenRunId": 46102965675,
-    "next": "Validate the opt-in publication scope against native part application and readback before enabling any production writer. Complete owned P2 sound resources and visible actors separately."
+    "next": "Integrate independently authenticated current-scene checks with the native scoped part adapter, preserving post-write quarantine and proving callback concurrency before production activation. Complete owned P2 sound resources and visible actors separately."
   },
   "workBatch57": {
     "date": "2026-11-28",
