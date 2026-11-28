@@ -68,32 +68,57 @@ struct OriginalPropDamageObservation {
 };
 
 inline void OfferOriginalPropDepletionToHostRoom(const OriginalPropDamageObservation& observed) noexcept {
- const auto now=static_cast<uint64_t>(SDL_GetTicks());
- ModHumanOriginalScene scene{};
- const auto& key=observed.key;
- if(!OriginalModHumanScenes().Read(now,scene)||scene.world!=observed.world||
-    scene.level!=key.level||scene.stage!=key.stage||scene.episode>INT32_MAX||
-    !OriginalModHumanSceneCurrent(scene,now)||key.unitIndex>INT32_MAX)return;
+  const auto now=static_cast<uint64_t>(SDL_GetTicks());
+  static uint32_t diagnosticEpisode=0;
+  static uint8_t reported=0;
+  const auto episode=g_originalStageFileOpen.ActiveEpisode();
+  if(diagnosticEpisode!=episode){
+    diagnosticEpisode=episode;
+    reported=0;
+  }
+  const auto report=[&](jint code) noexcept {
+    const auto mask=static_cast<uint8_t>(1u<<(code-2139));
+    if(!(reported&mask)){
+      reported|=mask;
+      SendSafeWorldCodeToAndroid(code);
+    }
+  };
+  ModHumanOriginalScene scene{};
+  const auto& key=observed.key;
+  if(!OriginalModHumanScenes().Read(now,scene)||scene.world!=observed.world||
+     scene.level!=key.level||scene.stage!=key.stage||scene.episode>INT32_MAX||
+     !OriginalModHumanSceneCurrent(scene,now)||key.unitIndex>INT32_MAX){
+    report(2139);return;
+  }
  const auto& part=observed.before;
  const uint64_t packed=(uint64_t(key.unitIndex)<<32)|(uint64_t(key.recordCount)<<16)|key.ordinal;
  auto* env=static_cast<JNIEnv*>(SDL_GetAndroidJNIEnv());
  if(!env)return;
- if(env->PushLocalFrame(4)<0){
-   if(env->ExceptionCheck())env->ExceptionClear();
-   return;
+  if(env->PushLocalFrame(4)<0){
+    if(env->ExceptionCheck())env->ExceptionClear();
+    report(2140);
+    return;
  }
  const auto activity=static_cast<jobject>(SDL_GetAndroidActivity());
  const auto cls=activity&&!env->ExceptionCheck()?env->GetObjectClass(activity):nullptr;
  const auto method=cls&&!env->ExceptionCheck()?
    env->GetMethodID(cls,"coopOfferOriginalHostPropDepletion","(IIIJIIII)Z"):nullptr;
- if(method&&!env->ExceptionCheck()&&OriginalModHumanSceneCurrent(scene,SDL_GetTicks())&&
-    OriginalUnitPublications().Generation()==part.prop.generation)
-   env->CallBooleanMethod(activity,method,static_cast<jint>(scene.episode),
-      static_cast<jint>(key.level),static_cast<jint>(key.stage),static_cast<jlong>(packed),
-      static_cast<jint>(part.partIndex),static_cast<jint>(part.partCount),
-      static_cast<jint>(part.definition),static_cast<jint>(part.healthBits));
+  jint outcome=2140;
+  if(method&&!env->ExceptionCheck()){
+    if(!OriginalModHumanSceneCurrent(scene,SDL_GetTicks())||
+       OriginalUnitPublications().Generation()!=part.prop.generation){
+      outcome=2139;
+    }else{
+      const auto accepted=env->CallBooleanMethod(activity,method,static_cast<jint>(scene.episode),
+       static_cast<jint>(key.level),static_cast<jint>(key.stage),static_cast<jlong>(packed),
+       static_cast<jint>(part.partIndex),static_cast<jint>(part.partCount),
+       static_cast<jint>(part.definition),static_cast<jint>(part.healthBits));
+      if(!env->ExceptionCheck())outcome=accepted==JNI_TRUE?2142:2141;
+    }
+  }
  if(env->ExceptionCheck())env->ExceptionClear();
- env->PopLocalFrame(nullptr);
+  env->PopLocalFrame(nullptr);
+  report(outcome);
 }
 
 inline OriginalPropDamageObservation ObserveOriginalPropDamageBefore(

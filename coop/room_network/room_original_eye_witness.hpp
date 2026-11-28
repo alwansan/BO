@@ -170,6 +170,12 @@ inline void ObserveOriginalPlayerEye(uint32_t original_player)noexcept{
     OriginalModHumanScenes().Observe(coreEpisode,world,
         static_cast<uint32_t>(coreLevel),static_cast<uint32_t>(coreStage),
         originalLocalSceneRunning&&lookSourceMatched,at);
+    static bool sceneReported=false;
+    const bool sceneQualified=originalLocalSceneRunning&&lookSourceMatched;
+    if(sceneQualified!=sceneReported){
+        sceneReported=sceneQualified;
+        SendSafeWorldCodeToAndroid(sceneQualified?2143:2144);
+    }
     // Same genuine original game thread and independently stable loaded level.
     // The actual other-human BODY source is checked again at DRAW time.
     // P0: Are real ORIGINAL AI-target slots available for later REAL

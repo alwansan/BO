@@ -4,6 +4,7 @@
 #include "coop/room_mod_human_presentation_witness.hpp"
 #include "coop/room_mod_placeholder_upload_kernel.hpp"
 #include "coop/room_original_world_camera_witness.hpp"
+#include "coop/room_world_tick.hpp"
 void blackcoop::DrawOriginalModHumans(const ModHumanOriginalScene &scene,
                                       const ModHumanPresentation &packet,
                                       uint32_t grid,
@@ -53,8 +54,13 @@ void blackcoop::DrawOriginalModHumans(const ModHumanOriginalScene &scene,
              current.serial == camera.serial &&
              current.source.world == scene.world && stageMatches();
     };
-    (void)SubmitModHumanPresentation(*d3d::g_backend, upload, d3d::State(),
-                                     camera, packet, scope);
+    const auto submitted=SubmitModHumanPresentation(*d3d::g_backend, upload, d3d::State(),
+                                                     camera, packet, scope);
+    static uint32_t reportedEpisode=0;
+    if(submitted&&reportedEpisode!=scene.episode){
+      reportedEpisode=scene.episode;
+      SendSafeWorldCodeToAndroid(2145);
+    }
     // Completed leases are freed by the real fence path. Quarantine remains
     // bounded inside upload; never free uncertain queued data on room leave.
   } catch (...) {

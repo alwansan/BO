@@ -46,7 +46,7 @@ public final class PlatformInstrumentation extends Instrumentation {
             RoomDiagnostics.event("STORY_SAFE_ROTATION_SAMPLE_ABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789");
         // Exercise the production Java mapping and export with native event
         // values supplied by this fixture; the BLACK game does not execute.
-        for(int code=2129;code<=2138;code++)RoomDiagnostics.originalPostFrameEvent(code);
+        for(int code=2129;code<=2146;code++)RoomDiagnostics.originalPostFrameEvent(code);
         RoomDiagnostics.event("STORY_DIAGNOSTICS_END");
         // Event producer is nonblocking by design; read() is the explicit
         // export barrier that flushes the dedicated bounded IO worker.
@@ -75,7 +75,15 @@ public final class PlatformInstrumentation extends Instrumentation {
             "ORIGINAL_GUEST_OBJECTIVE_ACTIVATION_READBACK_VERIFIED",
             "ORIGINAL_GUEST_OBJECTIVE_ACTIVATION_READBACK_FAILED",
             "ORIGINAL_GUEST_SIMPLE_OBJECTIVE_COMPLETION_READBACK_VERIFIED",
-            "ORIGINAL_GUEST_SIMPLE_OBJECTIVE_COMPLETION_READBACK_FAILED"
+            "ORIGINAL_GUEST_SIMPLE_OBJECTIVE_COMPLETION_READBACK_FAILED",
+            "ORIGINAL_AUTHORED_PROP_PART_DEPLETION_OBSERVED",
+            "ORIGINAL_HOST_PROP_OFFER_NATIVE_SCOPE_REJECTED",
+            "ORIGINAL_HOST_PROP_OFFER_JNI_UNAVAILABLE",
+            "ORIGINAL_HOST_PROP_OFFER_ROOM_REJECTED",
+            "ORIGINAL_HOST_PROP_OFFER_ROOM_QUEUED",
+            "ORIGINAL_LOCAL_RUNNING_SCENE_QUALIFIED",
+            "ORIGINAL_LOCAL_RUNNING_SCENE_REVOKED",
+            "ORIGINAL_REMOTE_HUMAN_MARKER_RENDER_SUBMITTED"
         };
         int prior=exported.indexOf("STORY_DIAGNOSTICS_BEGIN");
         for(String code:nativeEvents){

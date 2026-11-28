@@ -1,9 +1,14 @@
-name: BO-COOP title REAL TLS lobby Android APK (NO GAMEPLAY)
+name: BO-COOP experimental Android APK and diagnostics
 # Owner-asset candidate Android build is MANUAL ONLY: do not auto-trigger it
 # from synthetic source commits. An authorized maintainer must independently
 # confirm original owner input authorization before manual dispatch.
 on:
   workflow_dispatch:
+    inputs:
+      delivery_certificate:
+        description: Base64 DER public certificate for encrypted APK delivery
+        required: true
+        type: string
 permissions:
   contents: read
 concurrency:
@@ -161,8 +166,7 @@ jobs:
           with (temp / 'baseline-recompiler-private.log').open('w') as log:
               result = subprocess.run(['tools-build/xbe_recomp.exe', 'reference/config/game.toml', '--xdk', 'reference/sdk/xdk'], stdout=log, stderr=log)
           if result.returncode:
-              print('\n'.join((temp / 'baseline-recompiler-private.log').read_text(errors='replace').splitlines()[-20:]))
-              raise SystemExit(result.returncode)
+              raise SystemExit(f'Private guest generation failed with exit {result.returncode}')
           stats = pathlib.Path('reference/generated/game/x86_recomp_stats.txt').read_text()
           print(stats)
           p = temp / 'candidate-identity.json'
@@ -201,8 +205,8 @@ jobs:
         env:
           CMAKE_BUILD_PARALLEL_LEVEL: 2
         run: |
-          .\gradlew.bat assembleDebug --no-daemon --max-workers=2 "-Dorg.gradle.jvmargs=-Xmx2g" "-PversionName=1.5.0-roomnet" "-PversionCode=1"
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          .\gradlew.bat assembleDebug --no-daemon --max-workers=2 "-Dorg.gradle.jvmargs=-Xmx2g" "-PversionName=1.5.0-coop-preview" "-PversionCode=$env:GITHUB_RUN_NUMBER" *> "$env:RUNNER_TEMP/owner-build-private.log"
+          if ($LASTEXITCODE -ne 0) { throw "Private Android compile failed with exit $LASTEXITCODE" }
       - name: Verify isolated real lobby package, network permissions, JNI, signature, ABI and compile image
         shell: python
         run: |
@@ -246,7 +250,7 @@ jobs:
           if 'Java_com_racas_black_BlackActivity_nativeCoopProbeEnable' not in symbol_dump:
               raise SystemExit('Optional JNI entry not exported in Android ELF')
           wire_source = pathlib.Path('bo/coop/lobby/java/com/racas/black/coop/RoomWire.java').read_text(encoding='utf-8')
-           if 'VERSION=12, PROFILE=12;' not in wire_source or 'OBJECTIVE_CHUNK=17;' not in wire_source:
+          if 'VERSION=12, PROFILE=12;' not in wire_source or 'OBJECTIVE_CHUNK=17;' not in wire_source:
               raise SystemExit('Room APK metadata / objective chunk protocol mismatch')
           report.update(probe_jni_export_verified=True, package_label='BLACK Co-op NETWORK TEST',
                          internet_and_network_state_permission=True, authenticated_lobby_only=False, automatic_lobby_only=True, manual_pin_required=False, manual_fingerprint_required=False, room_wire_version=12, room_profile=12, default_tcp_port=24872, presence_udp_port=1511, apk_built=True, apk_sha256=hashlib.sha256(apk.read_bytes()).hexdigest(),
@@ -256,9 +260,9 @@ jobs:
           report_path.write_text(json.dumps(report, indent=2))
           artifact = temp / 'probe-verified-output'
           artifact.mkdir()
-          shutil.copy2(apk, artifact / 'black-room-network-NO-GAMEPLAY-COOP.apk')
+          shutil.copy2(apk, artifact / 'BLACK-Android-Coop-Experimental.apk')
           shutil.copy2(report_path, artifact / 'probe-metadata.json')
-          notices = ['AUTOMATIC LAN LOBBY ONLY. Names-only Host/Join, opportunistic TLS and nearby device discovery; NO second gameplay actor, combat, quests, mission sync or playable coop. APK untested on phone; original ISO unchanged.\n',
+          notices = ['EXPERIMENTAL diagnostics candidate. Use the same APK on both phones. Shared campaign gameplay has not passed acceptance. Original ISO required and unchanged.\n',
                      'Game image/assets are not included and are not licensed by the open source MIT notices.\n']
           for source in ('reference/LICENSE', 'reference/sdk/LICENSE'):
               p = pathlib.Path(source)
@@ -271,10 +275,26 @@ jobs:
                       notices.append('\n' + str(p) + '\n' + p.read_text(errors='replace'))
           (artifact / 'NOTICES.txt').write_text('\n'.join(notices), encoding='utf-8')
           print(json.dumps(report, indent=2))
+      - name: Encrypt installable candidate for private delivery
+        shell: python
+        env:
+          DELIVERY_CERTIFICATE: ${{ inputs.delivery_certificate }}
+        run: |
+          import base64, os, pathlib, shutil, subprocess
+          temp = pathlib.Path(os.environ['RUNNER_TEMP'])
+          openssl = shutil.which('openssl') or str(pathlib.Path(os.environ['ProgramFiles']) / 'Git/usr/bin/openssl.exe')
+          cert = temp / 'delivery-public.der'
+          cert.write_bytes(base64.b64decode(os.environ['DELIVERY_CERTIFICATE'], validate=True))
+          archive = shutil.make_archive(str(temp / 'owner-experimental'), 'zip', temp / 'probe-verified-output')
+          subprocess.run([openssl, 'cms', '-encrypt', '-binary', '-aes-256-gcm',
+                          '-in', archive, '-outform', 'DER', '-out',
+                          str(temp / 'BLACK-Android-Coop-Experimental.zip.cms'),
+                          '-recip', str(cert), '-keyopt', 'rsa_padding_mode:oaep',
+                          '-keyopt', 'rsa_oaep_md:sha256'], check=True)
       - uses: actions/upload-artifact@v4
         with:
-          name: black-room-network-android-arm64-NO-GAMEPLAY-COOP
-          path: ${{ runner.temp }}/probe-verified-output/
+          name: black-coop-experimental-android-arm64-encrypted
+          path: ${{ runner.temp }}/BLACK-Android-Coop-Experimental.zip.cms
           if-no-files-found: error
           retention-days: 14
       - uses: actions/upload-artifact@v4
@@ -290,3 +310,7 @@ jobs:
           Remove-Item reference/generated -Recurse -Force -ErrorAction SilentlyContinue
           Remove-Item "$env:RUNNER_TEMP/owner-disc.iso" -Force -ErrorAction SilentlyContinue
           Remove-Item "$env:RUNNER_TEMP/probe-main-private.so" -Force -ErrorAction SilentlyContinue
+          Remove-Item "$env:RUNNER_TEMP/probe-verified-output" -Recurse -Force -ErrorAction SilentlyContinue
+          Remove-Item "$env:RUNNER_TEMP/owner-experimental.zip" -Force -ErrorAction SilentlyContinue
+          Remove-Item "$env:RUNNER_TEMP/owner-build-private.log" -Force -ErrorAction SilentlyContinue
+          Remove-Item "$env:RUNNER_TEMP/baseline-recompiler-private.log" -Force -ErrorAction SilentlyContinue

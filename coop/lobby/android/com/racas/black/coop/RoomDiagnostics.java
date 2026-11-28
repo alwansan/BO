@@ -70,6 +70,13 @@ public final class RoomDiagnostics {
             case 2136: event("ORIGINAL_GUEST_SIMPLE_OBJECTIVE_COMPLETION_READBACK_VERIFIED"); break;
             case 2137: event("ORIGINAL_GUEST_SIMPLE_OBJECTIVE_COMPLETION_READBACK_FAILED"); break;
             case 2138: event("ORIGINAL_AUTHORED_PROP_PART_DEPLETION_OBSERVED"); break;
+            case 2139: event("ORIGINAL_HOST_PROP_OFFER_NATIVE_SCOPE_REJECTED"); break;
+            case 2140: event("ORIGINAL_HOST_PROP_OFFER_JNI_UNAVAILABLE"); break;
+            case 2141: event("ORIGINAL_HOST_PROP_OFFER_ROOM_REJECTED"); break;
+            case 2142: event("ORIGINAL_HOST_PROP_OFFER_ROOM_QUEUED"); break;
+            case 2143: event("ORIGINAL_LOCAL_RUNNING_SCENE_QUALIFIED"); break;
+            case 2144: event("ORIGINAL_LOCAL_RUNNING_SCENE_REVOKED"); break;
+            case 2145: event("ORIGINAL_REMOTE_HUMAN_MARKER_RENDER_SUBMITTED"); break;
             default: break;
         }
     }

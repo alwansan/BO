@@ -20,7 +20,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-28_bo-coop-work55-retain-qualified-scene.md",
+  "lastSession": "memory/sessions/2026-11-28_bo-coop-work56-experimental-apk.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -4669,6 +4669,16 @@
     "mappingUsedForSynchronization": false,
     "acceptanceApk": false,
     "next": "trace the original objective writer and its UI readback in the Android campaign, then verify scoped guest effect and APK diagnostics before activation"
+  },
+  "workBatch56": {
+    "date": "2026-11-28",
+    "session": "memory/sessions/2026-11-28_bo-coop-work56-experimental-apk.md",
+    "ownerRequestedExperimentalDeviceTrialBeforeAcceptance": true,
+    "apkWorkflow": ".github/workflows/black-coop-room-network-apk.yml",
+    "publicActionsArtifactEncryptedForLocalDelivery": true,
+    "experimentalApkVerified": false,
+    "acceptanceApk": false,
+    "next": "Run the manual Android build, then decrypt its APK locally and verify metadata, APK SHA-256 and signature before delivering the same build for both phones."
   },
   "workBatch55": {
     "date": "2026-11-28",
