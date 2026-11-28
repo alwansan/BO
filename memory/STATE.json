@@ -4675,10 +4675,15 @@
     "session": "memory/sessions/2026-11-28_bo-coop-work56-experimental-apk.md",
     "ownerRequestedExperimentalDeviceTrialBeforeAcceptance": true,
     "apkWorkflow": ".github/workflows/black-coop-room-network-apk.yml",
+    "verifiedSourceRevision": "690a5917931a2d7ddf98cf6745914bcd182e884b",
+    "apkRunId": 46093543219,
+    "successfulSourceAndTransportChecks": [46093529541, 46093529533, 46093529506, 46093529578],
+    "apkObserverJobSucceeded": true,
+    "apkBuildLastObserved": "in_progress",
     "publicActionsArtifactEncryptedForLocalDelivery": true,
     "experimentalApkVerified": false,
     "acceptanceApk": false,
-    "next": "Run the manual Android build, then decrypt its APK locally and verify metadata, APK SHA-256 and signature before delivering the same build for both phones."
+    "next": "Read the completion of Actions run 46093543219, then decrypt its APK locally and verify metadata, APK SHA-256 and signature before delivering the same build for both phones."
   },
   "workBatch55": {
     "date": "2026-11-28",
