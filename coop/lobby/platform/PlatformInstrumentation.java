@@ -219,9 +219,14 @@ public final class PlatformInstrumentation extends Instrumentation {
                     check(again.port()==restartPort&&connection.snapshot().players.size()==2);
                 }
             }
-            // Exercise the same bounded session lifecycle on a real Android
-            // socket provider. This remains independent of the game's Flash/UI.
-            try(RoomSession hosting=RoomSession.create();RoomSession joining=RoomSession.create()){
+             Intent intent=new Intent(Intent.ACTION_MAIN);
+             intent.setClassName(getTargetContext().getPackageName(),
+                 "com.racas.black.coop.RoomHarnessActivity");
+             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+             Activity harness=startActivitySync(intent);
+             check(harness!=null&&!harness.isFinishing());
+             RoomSession joining=RoomAppRooms.obtain();
+             try(RoomSession hosting=RoomSession.create()){
                 hosting.startHost(()->new RoomSession.HostIdentity(
                     first.serverContext(),first.fingerprint()),loop,0,
                     "Phone Host","Android Room");
@@ -240,10 +245,14 @@ public final class PlatformInstrumentation extends Instrumentation {
                 // overlay after HOST START even though BLACK loaded behind it.
                 // Authenticate the same first-stage ticket over real Android
                 // TLS and close ONLY the guest UI, not the connection.
-                RoomWire.State waiting=joining.snapshot().roster;
-                check(!RoomOverlay.shouldDismissGuestOnAuthenticatedFirstStage(
-                    RoomSession.Phase.JOINED,null,waiting));
-                check(hosting.requestTwoPhoneFirstStageFromLobby());
+                 RoomWire.State waiting=joining.snapshot().roster;
+                 check(!RoomOverlay.shouldDismissGuestOnAuthenticatedFirstStage(
+                     RoomSession.Phase.JOINED,null,waiting));
+                 runOnMainSync(()->{
+                     RoomOverlay.show(harness,-103);
+                     check(RoomOverlay.isShowingForTest());
+                 });
+                 check(hosting.requestTwoPhoneFirstStageFromLobby());
                 until=System.nanoTime()+7_000_000_000L;
                 while(joining.storyStatus().ticket==null){
                     check(System.nanoTime()<until);Thread.sleep(20);
@@ -256,7 +265,7 @@ public final class PlatformInstrumentation extends Instrumentation {
                      RoomSession.Phase.JOINED,joining.storyStatus(),joined,null));
                  check(!RoomOverlay.shouldDismissGuestOnNewFirstStage(
                      RoomSession.Phase.JOINED,joining.storyStatus(),joined,prepared));
-                check(!RoomOverlay.shouldDismissGuestOnAuthenticatedFirstStage(
+                 check(!RoomOverlay.shouldDismissGuestOnAuthenticatedFirstStage(
                     RoomSession.Phase.HOSTING,prepared,joined));
                 check(!RoomOverlay.shouldDismissGuestOnAuthenticatedFirstStage(
                     RoomSession.Phase.JOINED,
@@ -267,19 +276,25 @@ public final class PlatformInstrumentation extends Instrumentation {
                     RoomSession.Phase.JOINED,
                     new RoomStoryWire.Ticket(prepared.session(),prepared.token,
                         prepared.rosterRevision+1,0,1,prepared.sceneEpoch,
-                        prepared.participants),joined));
-                check(joining.snapshot().phase==RoomSession.Phase.JOINED);
+                         prepared.participants),joined));
+                 until=System.nanoTime()+7_000_000_000L;
+                 java.util.concurrent.atomic.AtomicBoolean showing=new java.util.concurrent.atomic.AtomicBoolean(true);
+                 while(showing.get()){
+                     check(System.nanoTime()<until);
+                     runOnMainSync(()->showing.set(RoomOverlay.isShowingForTest()));
+                     if(showing.get())Thread.sleep(50);
+                 }
+                 runOnMainSync(()->RoomOverlay.show(harness,-103));
+                 Thread.sleep(600); // allow the original 400ms dismissal check to run
+                 runOnMainSync(()->check(RoomOverlay.isShowingForTest()));
+                 sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
+                 waitForIdleSync();
+                 check(joining.snapshot().phase==RoomSession.Phase.JOINED);
                 joining.stop();hosting.stop();
                 check(joining.snapshot().phase==RoomSession.Phase.IDLE);
             }
             // Verify the actual Android Back key dismisses a same-Activity room dialog
             // without calling finish() on the underlying game-activity surrogate.
-            Intent intent=new Intent(Intent.ACTION_MAIN);
-            intent.setClassName(getTargetContext().getPackageName(),
-                "com.racas.black.coop.RoomHarnessActivity");
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            Activity harness=startActivitySync(intent);
-            check(harness!=null&&!harness.isFinishing());
             runOnMainSync(()->RoomOverlay.show(harness,-102));
             waitForIdleSync();
             runOnMainSync(()->RoomOverlay.startHostForTest());
@@ -309,7 +324,7 @@ public final class PlatformInstrumentation extends Instrumentation {
             while(Thread.getAllStackTraces().keySet().stream().anyMatch(t->t.isAlive()&&t.getName().startsWith("bo-room-"))){
                 if(System.nanoTime()>deadline)throw new AssertionError("Room threads survived close");Thread.sleep(10);
             }
-            result.putString("stream","TLS_PLATFORM_PASS: AndroidKeyStore TLS room, host-story PREPARE / guest explicit READY / host COMMIT and same-port rapid rehost succeeded over Android29 sockets; names-only Host, automatic Join and Back regression passed; ROOM_LOG_ROTATION_PASS verified safe rotated MediaStore export and tamper refusal; ROOM_LOG_ASYNC_PASS bounded off-thread disk writer with export barrier; STORY_READY_ASYNC_ANDROID_PASS write on network worker; ROOM_ACTIVE_SCAN_GATE_PASS no scan storm or duplicate host while connected (NO BLACK game loader/actor)\n");
+             result.putString("stream","TLS_PLATFORM_PASS: AndroidKeyStore TLS room, host-story PREPARE / guest explicit READY / host COMMIT and same-port rapid rehost succeeded over Android29 sockets; AUTOMATIC_ROOM_DOWNLOADS_LOG_PASS initial log and continued appends without manual export; GUEST_ROOM_REOPEN_PASS same authenticated room stays open; ROOM_LOG_ROTATION_PASS verified safe rotated MediaStore export and tamper refusal; ROOM_LOG_ASYNC_PASS bounded off-thread disk writer with export barrier; STORY_READY_ASYNC_ANDROID_PASS write on network worker; ROOM_ACTIVE_SCAN_GATE_PASS no scan storm or duplicate host while connected (NO BLACK game loader/actor)\n");
             finish(Activity.RESULT_OK,result);
         }catch(Throwable failure){
             android.util.Log.e("BlackTlsPlatform","Platform test failed",failure);

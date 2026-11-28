@@ -134,6 +134,9 @@ public final class RoomOverlay {
         View button=active.dialog.getWindow().getDecorView().findViewWithTag("room_host_start");
         if(button==null||!button.performClick())throw new IllegalStateException("Host button missing");
     }
+    static boolean isShowingForTest(){
+        return active!=null&&!active.closed&&active.dialog.isShowing();
+    }
     private RoomOverlay(Activity context){
         activity=context;RoomAppRooms.attach(context);session=RoomAppRooms.obtain();
         storyAtOpen=session.storyStatus().ticket;

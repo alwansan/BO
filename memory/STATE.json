@@ -4683,9 +4683,18 @@
     "guestAutoMenuConfirmCountInIncompleteLog": 3,
     "automaticDownloadsLogImplemented": true,
     "automaticDownloadsLogDeviceVerified": false,
+    "automaticDownloadsLogVerifiedInAndroid29Emulator": true,
+    "verifiedSourceRevision": "eae47be7d26a72197c5524f2747b6ea4c43c8698",
+    "successfulSourceAndTransportChecks": [46102439360, 46102439355, 46102439344, 46102439339, 46102439346, 46102439348],
+    "unitUnlinkPollLinkOwnerThreadCountsInOneNativeRestart": [3, 181, 2],
+    "unitPublicationOffThreadCallsObserved": 0,
+    "unitPublicationRevokedAtSameObjectAndRecordAddresses": true,
+    "stockSoundRowTableBinder": "00141560",
+    "stockAudioTableBindingReadback": [1, 4, 4, 1, 1],
+    "ownedP2SoundTableReady": false,
     "guestOverlayAndNativeStartReplayFixImplemented": true,
     "acceptanceApk": false,
-    "next": "Verify Android Downloads appends and reopened guest overlay in CI. Use authenticated guest part events to prove live authored part lifetime, contact and writer readback, then validate real host-owned actors and full shared campaign."
+    "next": "Finish the real Android dialog reopen regression. Use the measured publication boundaries to integrate exact scoped guest part application; continue P2 audio ownership and independent actor work."
   },
   "workBatch56": {
     "date": "2026-11-28",
