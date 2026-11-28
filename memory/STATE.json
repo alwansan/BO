@@ -4676,6 +4676,9 @@
     "publicationSerializationOptInOnly": true,
     "productionGuestPartWriterActivated": false,
     "publicationScopeSanitizersPassed": true,
+    "publicationSameGenerationContenderRejected": true,
+    "successfulSourceChecks": [46113830147, 46113830175, 46113830156, 46113830194],
+    "nativeScopedPartTrialStatus": "running",
     "guestRoomReopenAndroid29Verified": true,
     "androidRoomReopenRunId": 46102965675,
     "next": "Validate the opt-in publication scope against native part application and readback before enabling any production writer. Complete owned P2 sound resources and visible actors separately."

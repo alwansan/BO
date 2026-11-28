@@ -203,6 +203,22 @@ static void TestPublicationWriteScope(){
  }catch(int){}
  assert(activity.TryWithGeneration(latest,operation)&&calls==3);
  assert(!activity.TryWithGeneration(latest,[]{return false;}));
+ // A second writer cannot enter an already-held transaction, even when it
+ // presents the same generation. The callback must not wait for that writer.
+ bool competingCalled=false;
+ assert(activity.TryWithGeneration(latest,[&]{
+  std::thread contender([&]{
+   assert(!activity.TryWithGeneration(latest,[&]{competingCalled=true;return true;}));
+  });
+  contender.join();
+  return true;
+ }));
+ assert(!competingCalled&&activity.Generation()==latest);
+ assert(activity.TryWithGeneration(latest,[&]{
+  assert(!activity.TryWithGeneration(latest,operation));
+  return true;
+ }));
+ assert(calls==3);
  std::cout<<"ORIGINAL_UNIT_PUBLICATION_WRITE_SCOPE_PASS: stale, active and reentrant publication rejected\n";
 }
 

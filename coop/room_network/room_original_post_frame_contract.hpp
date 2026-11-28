@@ -116,6 +116,7 @@ struct OriginalUnitPropHandle {
 class OriginalUnitPublicationActivity final {
  const bool serialize_;
  std::recursive_mutex publication_;
+ bool writing_=false; // protected by publication_; reject recursive application
  std::atomic<uint64_t> generation_{1};
  std::atomic<unsigned> active_{0};
 public:
@@ -148,8 +149,13 @@ public:
   template<class Operation> bool TryWithGeneration(uint64_t expected,Operation&& operation){
    if(!serialize_)return false;
    std::unique_lock<std::recursive_mutex> guard(publication_,std::try_to_lock);
-   return guard.owns_lock()&&expected&&Generation()==expected&&
-          operation()&&Generation()==expected;
+   if(!guard.owns_lock()||writing_||!expected||Generation()!=expected)return false;
+   struct WriteScope {
+    bool& writing;
+    explicit WriteScope(bool& value)noexcept:writing(value){writing=true;}
+    ~WriteScope(){writing=false;}
+   } scope(writing_);
+   return operation()&&Generation()==expected;
   }
 };
 
