@@ -401,6 +401,19 @@
     "engineSignalObserved": false,
     "allowlistedMarkersSha256": "acfb6eb8cde7122c07af16bf23c66fac2fcfc0375fc32f258ad69f833f16be5d"
   },
+  "stockAimSceneQualificationReadback": {
+    "dateVerified": "2026-11-28",
+    "originalRunningPhaseSampleIndex": 100,
+    "readbackEpisodeResourcePairStreamStableIdentityAndFinalScene": [1, 1, 1, 1, 1, 0],
+    "syntheticChainedQualificationFirstIdentityAndFinalSceneSamples": [88, 117],
+    "validSyntheticSceneAtSample100": false,
+    "firedAtChosenGeometry": true,
+    "selectedPartDepletionObserved": false,
+    "framesAtLeast": 3480,
+    "processExit": 124,
+    "engineSignalObserved": false,
+    "allowlistedMarkersSha256": "e7626f9250d1db025bc6acb9432678a7a46a4cb72159199cde82ac07e06a8985"
+  },
   "nativeGuardedPartInboxWithRealTlsRelay": {
     "dateVerified": "2026-11-28",
     "realTlsGuestFrameWords": 14,

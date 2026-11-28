@@ -4684,8 +4684,10 @@
     "stockHitReachedPublisher": true,
     "stockHitOnAimedTargetReachedPublisher": false,
     "stockHitPassedPublisherSceneCheck": false,
+    "originalSceneSample100HadAllInputsExceptFinalSustainedGate": true,
+    "syntheticChainedSceneGateFirstAllowedSample": 117,
     "acceptanceApk": false,
-    "next": "Read the original episode, stream, resource-pair and stability booleans in the private hub; tie a selected authored part depletion to a P1 shot and pass the native scene check."
+    "next": "Read the private qualification-transition trial with P1 fire gated on the same current-scene witness as the publisher; tie a selected authored part depletion to a P1 shot."
   },
   "workBatch53": {
     "date": "2026-11-28",
