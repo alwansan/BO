@@ -177,6 +177,35 @@ static void TestAuthoredPropResolution(){
  std::cout<<"ORIGINAL_AUTHORED_PROP_RESOLUTION_PASS: packed ordinal, live membership, scene and publication scope\n";
 }
 
+static void TestPublicationWriteScope(){
+ OriginalUnitPublicationActivity readOnly,activity(true);
+ const auto first=activity.Generation();
+ unsigned calls=0;
+ const auto operation=[&]{++calls;return true;};
+ assert(!readOnly.TryWithGeneration(readOnly.Generation(),operation)&&!calls);
+ assert(activity.TryWithGeneration(first,operation)&&calls==1);
+ {
+  const OriginalUnitPublicationActivity::Mutation inProgress(activity);
+  std::thread writer([&]{assert(!activity.TryWithGeneration(first,operation));});
+  writer.join();
+ }
+ assert(!activity.TryWithGeneration(first,operation)&&calls==1);
+ const auto newer=activity.Generation();
+ assert(!activity.TryWithGeneration(newer,[&]{
+  const OriginalUnitPublicationActivity::Mutation reentrant(activity);
+  return operation();
+ }));
+ assert(calls==2&&activity.Generation()>newer);
+ const auto latest=activity.Generation();
+ try{
+  activity.TryWithGeneration(latest,[]()->bool{throw 1;});
+  assert(false);
+ }catch(int){}
+ assert(activity.TryWithGeneration(latest,operation)&&calls==3);
+ assert(!activity.TryWithGeneration(latest,[]{return false;}));
+ std::cout<<"ORIGINAL_UNIT_PUBLICATION_WRITE_SCOPE_PASS: stale, active and reentrant publication rejected\n";
+}
+
 static void TestUnitLifecycle(){
  constexpr uint32_t oldWorld=0x100000,newWorld=0x180000,slotOffset=0x49D0;
  constexpr uint32_t stack=0x130000;
@@ -270,6 +299,7 @@ int main(){
  TestUnitMembership();
  TestAuthoredPropResolution();
  TestUnitLifecycle();
+ TestPublicationWriteScope();
  OriginalPostFrameGate gate;
  const OriginalPostFrameSample valid{0x100000,0x120000,0x140000,0x150000,0x1C,0x1D,2,0x28CFE0};
  assert(!gate.Observe(valid,false));

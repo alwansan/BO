@@ -7,6 +7,7 @@
 #include "room_original_running_scene_source_gate.hpp"
 #include <array>
 #include <atomic>
+#include <mutex>
 #include <cstdint>
 #include <thread>
 namespace blackcoop {
@@ -110,15 +111,22 @@ struct OriginalUnitPropHandle {
 
 // Invalidate local handles around original stream, link and unlink calls,
 // even when a call comes from outside the game thread. This is a publication
-// fence, not a lock on original memory: resolve at the original frame boundary.
+// fence by default. Optional serialization covers these publication callbacks
+// only, not arbitrary engine memory: resolve at the original frame boundary.
 class OriginalUnitPublicationActivity final {
+ const bool serialize_;
+ std::recursive_mutex publication_;
  std::atomic<uint64_t> generation_{1};
  std::atomic<unsigned> active_{0};
 public:
+ explicit OriginalUnitPublicationActivity(bool serialize=false)noexcept:serialize_(serialize){}
  class Mutation final {
   OriginalUnitPublicationActivity& owner_;
- public:
-  explicit Mutation(OriginalUnitPublicationActivity& owner) noexcept:owner_(owner){
+  std::unique_lock<std::recursive_mutex> guard_;
+  public:
+   explicit Mutation(OriginalUnitPublicationActivity& owner)
+       :owner_(owner),guard_(owner.publication_,std::defer_lock){
+    if(owner_.serialize_)guard_.lock();
    owner_.active_.fetch_add(1);
    auto generation=owner_.generation_.load();
    while(generation!=UINT64_MAX&&
@@ -134,6 +142,15 @@ public:
   if(value==UINT64_MAX||active_.load()!=0||generation_.load()!=value)return 0;
   return value;
  }
+  // A guest write and its readback must share a publication generation.
+  // Do not wait for an in-progress native publication or run JNI here.
+  // Reentrant same-thread publication revokes the result for quarantine.
+  template<class Operation> bool TryWithGeneration(uint64_t expected,Operation&& operation){
+   if(!serialize_)return false;
+   std::unique_lock<std::recursive_mutex> guard(publication_,std::try_to_lock);
+   return guard.owns_lock()&&expected&&Generation()==expected&&
+          operation()&&Generation()==expected;
+  }
 };
 
 // The caller's game-thread generation source must revoke a publication on

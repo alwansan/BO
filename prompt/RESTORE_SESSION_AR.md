@@ -1,3 +1,7 @@
+## آخر تحديث Work58 (2026-11-28)
+
+- نجح [اختبار Android 10](https://github.com/alwansan/BO/actions/runs/46102965675) بحفظ السجل تلقائيًا وإعادة فتح لوحة الضيف مع بقاء الغرفة. أضيف حارس جيل نشر اختياري غير مفعل للكتابة في المنتج؛ اختباراته ترفض الجيل القديم والنشر الجاري وتحرر النطاق بعد الاستثناء. تابع اختبار المحرك وتطبيق الجزء وموارد P2؛ الحملة المشتركة غير مكتملة. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-28_bo-coop-work58-publication-scope.md).
+
 ## آخر تحديث Work57 (2026-11-28)
 
 - تجربة المالك أثبتت Start على الهاتفين دون ظهور الآخر أو مشاركة العالم. سجل المضيف أثبت COMMIT وطابور حدث الجزء؛ سجل الضيف ناقص. أُصلح إغلاق لوحة الضيف وتكرار Start ونجح الحفظ التلقائي في [Android 10](https://github.com/alwansan/BO/actions/runs/46102439360). ثبت إبطال جيل الوحدة عند إعادة الأصل وربط جدول صوت المصدر. تابع تطبيق الجزء الحي وملكية صوت P2 قبل تجربة القبول. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-28_bo-coop-work57-two-phone-trial.md).

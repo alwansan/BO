@@ -20,7 +20,7 @@
     "baselineTag": "v1.5.0",
     "baselineSha": "f3754d6985a8c35204e7df071546e586b10f1806"
   },
-  "lastSession": "memory/sessions/2026-11-28_bo-coop-work57-two-phone-trial.md",
+  "lastSession": "memory/sessions/2026-11-28_bo-coop-work58-publication-scope.md",
   "accepted": {
     "NET_001": {
       "status": "pass_loopback_only",
@@ -4670,6 +4670,16 @@
     "acceptanceApk": false,
     "next": "trace the original objective writer and its UI readback in the Android campaign, then verify scoped guest effect and APK diagnostics before activation"
   },
+  "workBatch58": {
+    "date": "2026-11-28",
+    "session": "memory/sessions/2026-11-28_bo-coop-work58-publication-scope.md",
+    "publicationSerializationOptInOnly": true,
+    "productionGuestPartWriterActivated": false,
+    "publicationScopeSanitizersPassed": true,
+    "guestRoomReopenAndroid29Verified": true,
+    "androidRoomReopenRunId": 46102965675,
+    "next": "Validate the opt-in publication scope against native part application and readback before enabling any production writer. Complete owned P2 sound resources and visible actors separately."
+  },
   "workBatch57": {
     "date": "2026-11-28",
     "session": "memory/sessions/2026-11-28_bo-coop-work57-two-phone-trial.md",
@@ -4693,6 +4703,8 @@
     "stockAudioTableBindingReadback": [1, 4, 4, 1, 1],
     "ownedP2SoundTableReady": false,
     "guestOverlayAndNativeStartReplayFixImplemented": true,
+    "guestDialogReopenAndroid29Verified": true,
+    "guestDialogReopenAndroid29RunId": 46102965675,
     "acceptanceApk": false,
     "next": "Finish the real Android dialog reopen regression. Use the measured publication boundaries to integrate exact scoped guest part application; continue P2 audio ownership and independent actor work."
   },
