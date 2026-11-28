@@ -91,9 +91,11 @@ class OriginalGuestHostObjectInbox final {
     }
     // IO owns native scene and writer-specific checks. It must hold that
     // scope through the call and must not reenter the object inbox.
-    if(!io.DepleteOriginalPart(key,before)||io.OriginalScene()!=nativeScene||
-       !io.SampleOriginalPart(key,event.partIndex,after)||
-       !IsOriginalPartDepletion(before,after)){
+     if(!io.DepleteOriginalPart(key,before)||io.OriginalScene()!=nativeScene||
+        !io.CurrentOriginalPartEvent(matched,event)||
+        !io.SampleOriginalPart(key,event.partIndex,after)||
+        !IsOriginalPartDepletion(before,after)||
+        io.OriginalScene()!=nativeScene||!io.CurrentOriginalPartEvent(matched,event)){
      poisoned_=true;return OriginalObjectApplyResult::Quarantined;
     }
     return OriginalObjectApplyResult::Applied;

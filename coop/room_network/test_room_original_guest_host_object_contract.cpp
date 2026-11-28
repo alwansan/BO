@@ -22,11 +22,14 @@ struct PartIO:ObjectIO {
  using Key=blackcoop::OriginalUnitPropKey;
  Sample sample{{0x200000u,0x210000u,0x220000u,9},0x230000u,3,0x3F800000u,1,2};
  unsigned samples=0,scopeChecks=0;
- bool available=true,recycleOnRecheck=false,expireOnRecheck=false,invalidateDefinition=true;
+  bool available=true,recycleOnRecheck=false,expireOnRecheck=false,invalidateDefinition=true;
+  unsigned revokeOnScopeCheck=0;
 
  bool CurrentOriginalPartEvent(const blackcoop::OriginalGuestLaunchMatchKey&,
                               const blackcoop::OriginalHostObjectEvent&){
-  return ++scopeChecks!=2||!expireOnRecheck;
+   ++scopeChecks;
+   return !(scopeChecks==2&&expireOnRecheck)&&
+       (!revokeOnScopeCheck||scopeChecks!=revokeOnScopeCheck);
  }
  bool SampleOriginalPart(const Key& key,uint8_t part,Sample& out){
   assert(key.unitIndex==7&&key.recordCount==20&&key.ordinal==14&&part==1);
@@ -140,14 +143,16 @@ int main(){
           value.partIndex==1&&value.partCount==2&&value.partDefinition==3&&
            value.previousHealthBits==0x3F800000u);
    assert(!parts.PeekPart(key,value,authored));
-   for(unsigned mode=0;mode<6;++mode){
+    for(unsigned mode=0;mode<8;++mode){
     OriginalGuestHostObjectInbox transaction;
     PartIO writer;
     if(mode==1)writer.available=false;
     if(mode==2)writer.expireOnRecheck=true;
     if(mode==3)writer.recycleOnRecheck=true;
     if(mode==4)writer.invalidateDefinition=false;
-    if(mode==5)writer.sample.healthBits=0x40000000u;
+     if(mode==5)writer.sample.healthBits=0x40000000u;
+     if(mode==6)writer.revokeOnScopeCheck=3; // revoked during native call
+     if(mode==7)writer.revokeOnScopeCheck=4; // revoked during readback
     assert(transaction.Ingest(part,std::size(part),key));
     const auto result=transaction.ApplyNext(writer,key,99);
     if(mode==0){
@@ -159,9 +164,9 @@ int main(){
      assert(transaction.Pending()==1&&writer.calls==0);
     }else{
      assert(result==OriginalObjectApplyResult::Quarantined&&transaction.Poisoned());
-     assert(writer.calls==(mode==4?1u:0u));
+      assert(writer.calls==((mode==4||mode>=6)?1u:0u));
      assert(transaction.ApplyNext(writer,key,99)==OriginalObjectApplyResult::Quarantined);
-     assert(writer.calls==(mode==4?1u:0u));
+      assert(writer.calls==((mode==4||mode>=6)?1u:0u));
     }
    }
  }
