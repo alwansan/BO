@@ -441,6 +441,47 @@
     "engineSignalObserved": false,
     "allowlistedMarkersSha256": "d971ef63bada067cf8a84221a1e02ea2310b529d0e8f7b158d062fc24f990c55"
   },
+  "stockSceneFileWindowExpiredDuringFinalQualification": {
+    "dateVerified": "2026-11-28",
+    "sourceRevision": "cdbb043661c92286156cbccdbbd24ceabc37cbf0",
+    "runningSample100": [1, 1, 1, 1, 1, 0],
+    "runningSample140": [1, 0, 1, 1, 0, 0],
+    "finalSceneQualificationObserved": false,
+    "selectedRemovablePartHitByReadOnlyAimRay": true,
+    "p1Fired": false,
+    "framesAtLeast": 4500,
+    "processExit": 124,
+    "engineSignalObserved": false,
+    "allowlistedMarkersSha256": "58ed3635b0fec1bef4218e148369082b479a42ed6a6e5a547298f6622ba22213"
+  },
+  "stockImpactPassedPublisherSceneCheck": {
+    "dateVerified": "2026-11-28",
+    "finalSceneQualificationObserved": true,
+    "retainedExpiredPairMarkerObserved": true,
+    "originalP1RoundsConsumed": 25,
+    "selectedPartP1ImpactReadbacksAtLeast": 19,
+    "selectedPartP1Depleted": false,
+    "differentPartDepletedAndDefinitionInvalidated": true,
+    "differentPartPassedPublisherSceneCheck": true,
+    "differentPartAttackerVerified": false,
+    "jniOfferOrTlsPublicationExercised": false,
+    "directWriterRejectionMarkerCount": 0,
+    "framesAtLeast": 4920,
+    "processExit": 124,
+    "engineSignalObserved": false,
+    "allowlistedMarkersSha256": "59dd5b6c04b54ac9f3326d173a39ed9fb2f5097a742b0339389ae180bcdaf3ed"
+  },
+  "stockRemovablePartLowHealthAimWithoutWorldQuery": {
+    "dateVerified": "2026-11-28",
+    "finalSceneQualificationObserved": true,
+    "retainedExpiredPairMarkerObserved": true,
+    "originalP1RoundsConsumed": 45,
+    "selectedPartP1ImpactReadbacks": 0,
+    "framesAtLeast": 4560,
+    "processExit": 124,
+    "engineSignalObserved": false,
+    "allowlistedMarkersSha256": "8b4d93e0e8684f3e71f11aa4bc0b69abe9d66e9819686518546eb1d33e7c4b71"
+  },
   "nativeGuardedPartInboxWithRealTlsRelay": {
     "dateVerified": "2026-11-28",
     "realTlsGuestFrameWords": 14,

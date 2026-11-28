@@ -4681,9 +4681,14 @@
     "successfulSourceCheckRunIds": [46086347849, 46086347863, 46086347888, 46086347895, 46086347924],
     "fixedRuntimeRetentionVerified": true,
     "p1RoundsAndMatchingReadbacksAfterFileOpenExpiry": [6, 6],
+    "preFinalGateExpiryReproducedInRuntime": true,
+    "continuousIdentityAcrossFinalGateFixturePassed": true,
+    "stockImpactOnDifferentPartPassedStagedPublisherSceneGate": true,
+    "selectedPartP1ImpactReadbacks": 19,
+    "liveBlackActivityPropOfferVerified": false,
     "aimedP1DepletionReachedScopedPublisher": false,
     "acceptanceApk": false,
-    "next": "Read the private removable-descriptor trial and require exact selected-part depletion, original P1 attacker identity, and scoped publisher entry. Then prove the guest Unit lifetime and actual Activity handoff."
+    "next": "Use the original stock world-ray hit to rank removable parts and keep a current exact per-part hit, then require original P1 attacker identity on the depletion that passes the scoped publisher."
   },
   "workBatch54": {
     "date": "2026-11-28",

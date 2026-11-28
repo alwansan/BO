@@ -1,6 +1,6 @@
 ## آخر تحديث Work55 (2026-11-28)
 
-- أثبت تشغيل Android الخاص أن الإصلاح يحافظ على شاهد المشهد بعد مهلة فتح الملفين. أطلق P1 ست طلقات بعدها مع ست قراءات ضرر مطابقة دون نفاد. نجح [فحص المصدر](https://github.com/alwansan/BO/actions/runs/46086347895) و[وحدات Android](https://github.com/alwansan/BO/actions/runs/46086347863) على `cdbb043`. تابع تجربة الجزء القابل لإبطال تعريفه مع نسبة الضربة إلى P1 وعبور الناشر؛ لا APK قبول. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-28_bo-coop-work55-retain-qualified-scene.md).
+- حافظ إصلاح Android على دليل المشهد عبر مهلة فتح الملفين. عبر نفاد جزء أصلي فحص الناشر؛ ظلّت هوية مهاجمه مجهولة، بينما ثبتت 19 إصابة P1 غير نافدة لجزء آخر. تابع استعلام تصادم العالم الأصلي لإثبات نفاد الجزء المطابق من P1، ثم تسليم `BlackActivity`. لا APK قبول. [الاستئناف](https://github.com/alwansan/BO/blob/experiment/black-coop/memory/sessions/2026-11-28_bo-coop-work55-retain-qualified-scene.md).
 
 ## آخر تحديث Work54 (2026-11-28)
 

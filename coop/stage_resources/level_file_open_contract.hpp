@@ -16,9 +16,37 @@ struct OriginalStageResource {
 struct OriginalStageResourcePair {
     uint64_t generation=0;
     bool fresh=false;
-    bool UsableForScene(uint64_t qualifiedGeneration,bool sameQualifiedScene)const noexcept{
-        return generation&&(qualifiedGeneration?
-            generation==qualifiedGeneration&&sameQualifiedScene:fresh);
+};
+struct OriginalStageResourceScene {
+    uint32_t episode=0,world=0;
+    int level=-1,stage=-1;
+    bool operator==(const OriginalStageResourceScene&)const noexcept=default;
+};
+
+// A fresh pair must support sustained core/stream identity first. The exact
+// pair can then carry that uninterrupted identity through the final scene gate.
+class OriginalStageResourceSceneEvidence final {
+    OriginalStageResourceScene scene_{};
+    uint64_t generation_=0,lastAt_=0;
+public:
+    bool Observe(OriginalStageResourcePair pair,OriginalStageResourceScene scene,
+                 uint64_t at)noexcept{
+        if(generation_&&(generation_!=pair.generation||scene_!=scene||
+           at<lastAt_||at-lastAt_>350u)){
+            generation_=0;
+            return false; // reset downstream witnesses before starting again
+        }
+        if(!pair.generation||(!generation_&&!pair.fresh))return false;
+        if(generation_)lastAt_=at;
+        return true;
+    }
+    void ConfirmMatched(OriginalStageResourcePair pair,OriginalStageResourceScene scene,
+                        uint64_t at)noexcept{
+        if(!generation_&&pair.generation&&pair.fresh&&scene.episode&&scene.world&&at){
+            generation_=pair.generation;
+            scene_=scene;
+            lastAt_=at;
+        }
     }
 };
 inline OriginalStageResource ClassifyOriginalStageResource(std::string_view raw) {

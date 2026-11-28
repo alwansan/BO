@@ -1,4 +1,8 @@
 #include "room_original_running_scene_source_gate.hpp"
+#include "room_nonfrontend_original_player.hpp"
+#include "room_original_core_phase_witness.hpp"
+#include "room_original_core_stage_identity_contract.hpp"
+#include "../stage_resources/level_file_open_contract.hpp"
 #include <cassert>
 #include <iostream>
 using blackcoop::OriginalRunningSceneSourceGate;
@@ -26,5 +30,28 @@ int main(){
     for(int i=0;i<29;i++)assert(!scene.Observe(3,14,7,15,true));
     assert(scene.Observe(3,14,7,15,true));
     scene.Reset();assert(!scene.Observe(3,14,7,15,true));
+
+    // The running-scene gate needs 30 additional observations after
+    // core/stream identity. The original files may age out in that interval.
+    using namespace blackcoop;
+    NonFrontendOriginalPlayerWitness player;
+    OriginalCoreRunningPhaseWitness phase;
+    OriginalCoreStageIdentityWitness identity;
+    OriginalStageResourceSceneEvidence resources;
+    const OriginalStageResourceScene sampledScene{1,0x10000,0,1};
+    bool phaseMatched=false;
+    for(unsigned sample=1;sample<=130;++sample){
+        const uint64_t at=5000+sample*100;
+        const OriginalStageResourcePair pair{1,at<=15000};
+        player.Observe(100,200,20,sampledScene.world,true);
+        const bool paired=resources.Observe(pair,sampledScene,at);
+        phaseMatched=phase.Observe(1,sampledScene.world,0x1C,player.IsStable(),paired,true)||
+            (phaseMatched&&paired);
+        identity.Observe(1,sampledScene.world,phaseMatched,0,1,true,0,1);
+        const bool matched=identity.Matched(1,sampledScene.world);
+        if(matched)resources.ConfirmMatched(pair,sampledScene,at);
+        assert(matched==(sample>=88));
+        assert(scene.Observe(1,sampledScene.world,0,1,matched)==(sample>=117));
+    }
     std::cout<<"ORIGINAL_NATIVE_STABLE_LOCAL_RUNNING_WORLD_GATE_PASS: stage + original episode + world + 30 new samples; NOT SHARED WORLD\n";
 }
